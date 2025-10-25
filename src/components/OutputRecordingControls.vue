@@ -312,10 +312,10 @@ function handleNewRecording() {
 .btn-format {
   flex: 1;
   padding: 15px;
-  border: 2px solid #6B7280;
-  background: #4B5563;  /* Helleres Grau */
+  border: 2px solid #6B7280 !important;
+  background: #4B5563 !important;  /* FORCE Helleres Grau */
   border-radius: 12px;
-  color: #FFFFFF;  /* Explizit weiß */
+  color: #FFFFFF !important;  /* FORCE weiß */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -326,26 +326,27 @@ function handleNewRecording() {
 }
 
 .btn-format:hover {
-  background: #6B7280;  /* Heller beim Hover */
-  border-color: #3B82F6;
+  background: #6B7280 !important;
+  border-color: #3B82F6 !important;
   transform: translateY(-2px);
 }
 
 .btn-format.active {
-  background: #3B82F6;
-  border-color: #3B82F6;
-  color: #FFFFFF;  /* Explizit weiß */
+  background: #3B82F6 !important;
+  border-color: #3B82F6 !important;
+  color: #FFFFFF !important;
 }
 
 .btn-format i {
   font-size: 1.5em;
+  color: #FFFFFF !important;  /* FORCE weiß für Icon */
 }
 
 .format-note {
   font-size: 0.8em;
-  opacity: 0.9;
+  opacity: 1 !important;  /* Volle Deckkraft */
   font-weight: 400;
-  color: #E5E7EB;  /* Sehr helles Grau */
+  color: #E5E7EB !important;  /* FORCE helles Grau */
 }
 
 .recording-controls {

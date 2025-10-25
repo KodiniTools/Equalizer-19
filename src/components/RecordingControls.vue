@@ -256,8 +256,8 @@ function handleNewRecording() {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
-  background: #4B5563;  /* Helleres Grau */
-  border: 1px solid #6B7280;
+  background: #4B5563 !important;  /* Helleres Grau - FORCE */
+  border: 1px solid #6B7280 !important;
   padding: 15px;
   border-radius: 12px;
 }
@@ -272,23 +272,23 @@ function handleNewRecording() {
   flex: 1;
   padding: 5px;
   border-radius: 8px;
-  color: #FFFFFF;  /* Explizit weiß */
+  color: #FFFFFF !important;  /* FORCE weiß */
 }
 
 .format-selector label:hover {
-  background: #6B7280;  /* Heller beim Hover */
+  background: #6B7280 !important;
 }
 
 .format-selector input[type="radio"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #3B82F6;
+  accent-color: #3B82F6 !important;
 }
 
 .format-selector span {
   font-weight: 500;
-  color: #FFFFFF;  /* Explizit weiß */
+  color: #FFFFFF !important;  /* FORCE weiß */
 }
 
 .recording-timer {
