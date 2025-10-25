@@ -1,8 +1,8 @@
 <template>
   <div class="recording-controls">
     <div class="recording-header">
-      <h3>
-        <i class="fas fa-microphone"></i>
+      <h3 :style="{ color: '#FFFFFF' }">
+        <i class="fas fa-microphone" :style="{ color: '#FFFFFF' }"></i>
         {{ currentLanguage === 'de' ? 'Aufnahme' : 'Recording' }}
       </h3>
       <div v-if="isRecording" class="recording-indicator">
@@ -12,24 +12,24 @@
     </div>
 
     <!-- Format Selection -->
-    <div class="format-selector" v-if="!isRecording && !hasRecording">
-      <label>
-        <input 
-          type="radio" 
-          value="webm" 
+    <div class="format-selector" v-if="!isRecording && !hasRecording" :style="{ background: '#4B5563', color: '#FFFFFF' }">
+      <label :style="{ color: '#FFFFFF' }">
+        <input
+          type="radio"
+          value="webm"
           :checked="recordingFormat === 'webm'"
           @change="setFormat('webm')"
         >
-        <span>WebM (Opus)</span>
+        <span :style="{ color: '#FFFFFF' }">WebM (Opus)</span>
       </label>
-      <label>
-        <input 
-          type="radio" 
-          value="wav" 
+      <label :style="{ color: '#FFFFFF' }">
+        <input
+          type="radio"
+          value="wav"
           :checked="recordingFormat === 'wav'"
           @change="setFormat('wav')"
         >
-        <span>WAV {{ currentLanguage === 'de' ? '(unkomprimiert)' : '(uncompressed)' }}</span>
+        <span :style="{ color: '#FFFFFF' }">WAV {{ currentLanguage === 'de' ? '(unkomprimiert)' : '(uncompressed)' }}</span>
       </label>
     </div>
 

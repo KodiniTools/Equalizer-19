@@ -1,8 +1,8 @@
 <template>
-  <div class="playlist">
+  <div class="playlist" :style="{ background: '#2D3748', color: '#FFFFFF' }">
     <div class="playlist-header">
-      <h3>
-        <i class="fas fa-list"></i>
+      <h3 :style="{ color: '#FFFFFF' }">
+        <i class="fas fa-list" :style="{ color: '#FFFFFF' }"></i>
         {{ t('playlist.title') || 'Playlist' }}
       </h3>
       <span v-if="playlist && playlist.length > 0" class="track-count">
@@ -16,16 +16,17 @@
     </div>
     
     <div v-else class="playlist-items">
-      <div 
-        v-for="(track, index) in playlist" 
+      <div
+        v-for="(track, index) in playlist"
         :key="track.id"
         :class="['playlist-item', { active: currentTrackIndex === index }]"
+        :style="{ background: '#4B5563', color: '#FFFFFF' }"
         @click="handlePlayTrack(index)"
       >
         <div class="track-number">{{ index + 1 }}</div>
         <div class="track-info">
-          <div class="track-name">{{ track.name }}</div>
-          <div class="track-meta">{{ formatFileSize(track.size) }}</div>
+          <div class="track-name" :style="{ color: '#FFFFFF' }">{{ track.name }}</div>
+          <div class="track-meta" :style="{ color: '#E5E7EB', opacity: 1 }">{{ formatFileSize(track.size) }}</div>
         </div>
         <button 
           @click.stop="handleRemoveTrack(index)"

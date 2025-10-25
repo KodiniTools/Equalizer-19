@@ -1,8 +1,8 @@
 <template>
   <div class="output-recording">
     <div class="recording-header">
-      <h3>
-        <i class="fas fa-save"></i>
+      <h3 :style="{ color: '#FFFFFF' }">
+        <i class="fas fa-save" :style="{ color: '#FFFFFF' }"></i>
         {{ t('outputRecording.title') || 'Output aufnehmen' }}
       </h3>
       <div class="recording-status" v-if="isRecording">
@@ -26,18 +26,20 @@
         <button
           @click="selectFormat('webm')"
           :class="['btn-format', { active: recordingFormat === 'webm' }]"
+          :style="{ background: '#4B5563', color: '#FFFFFF' }"
         >
-          <i class="fas fa-file-audio"></i>
-          WebM
-          <span class="format-note">(Klein, gute Qualität)</span>
+          <i class="fas fa-file-audio" :style="{ color: '#FFFFFF' }"></i>
+          <span :style="{ color: '#FFFFFF' }">WebM</span>
+          <span class="format-note" :style="{ color: '#E5E7EB', opacity: 1 }">(Klein, gute Qualität)</span>
         </button>
         <button
           @click="selectFormat('wav')"
           :class="['btn-format', { active: recordingFormat === 'wav' }]"
+          :style="{ background: '#4B5563', color: '#FFFFFF' }"
         >
-          <i class="fas fa-file-audio"></i>
-          WAV
-          <span class="format-note">(Unkomprimiert)</span>
+          <i class="fas fa-file-audio" :style="{ color: '#FFFFFF' }"></i>
+          <span :style="{ color: '#FFFFFF' }">WAV</span>
+          <span class="format-note" :style="{ color: '#E5E7EB', opacity: 1 }">(Unkomprimiert)</span>
         </button>
       </div>
     </div>
