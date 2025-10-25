@@ -101,11 +101,11 @@ function formatFileSize(bytes) {
 
 <style scoped>
 .playlist {
-  background: var(--gradient-card);
-  border: 1px solid var(--border-color);
+  background: #2D3748;  /* Dunkelgrau für Container */
+  border: 1px solid #4B5563;
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 20px var(--shadow-light);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
 }
 
 .playlist-header {
@@ -122,12 +122,12 @@ function formatFileSize(bytes) {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--text-primary);
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .track-count {
-  background: var(--accent-primary);
-  color: white;
+  background: #3B82F6;
+  color: #FFFFFF;  /* Explizit weiß */
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 0.85em;
@@ -137,7 +137,7 @@ function formatFileSize(bytes) {
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: var(--text-secondary);
+  color: #9CA3AF;  /* Helles Grau */
 }
 
 .empty-state i {
@@ -165,24 +165,24 @@ function formatFileSize(bytes) {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-color);
+  background: #4B5563;  /* Helleres Grau für besseren Kontrast */
+  border: 1px solid #6B7280;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--text-primary);
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .playlist-item:hover {
-  background: var(--hover-bg);
-  border-color: var(--accent-primary);
+  background: #6B7280;  /* Noch heller beim Hover */
+  border-color: #3B82F6;
   transform: translateX(5px);
 }
 
 .playlist-item.active {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: white;
+  background: #3B82F6;
+  border-color: #3B82F6;
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .track-number {
@@ -191,15 +191,16 @@ function formatFileSize(bytes) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-primary);
-  color: white;
+  background: #3B82F6;
+  color: #FFFFFF;  /* Explizit weiß */
   border-radius: 50%;
   font-weight: 600;
   font-size: 0.9em;
 }
 
 .playlist-item.active .track-number {
-  background: var(--accent-secondary);
+  background: #005CDA;
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .track-info {
@@ -214,13 +215,13 @@ function formatFileSize(bytes) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: inherit;
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .track-meta {
   font-size: 0.8em;
-  opacity: 0.7;
-  color: inherit;
+  opacity: 0.9;
+  color: #E5E7EB;  /* Sehr helles Grau */
 }
 
 .btn-remove {

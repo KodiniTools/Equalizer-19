@@ -312,10 +312,10 @@ function handleNewRecording() {
 .btn-format {
   flex: 1;
   padding: 15px;
-  border: 2px solid var(--border-color);
-  background: var(--secondary-bg);
+  border: 2px solid #6B7280;
+  background: #4B5563;  /* Helleres Grau */
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF;  /* Explizit weiß */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -326,15 +326,15 @@ function handleNewRecording() {
 }
 
 .btn-format:hover {
-  background: var(--hover-bg);
-  border-color: var(--accent-primary);
+  background: #6B7280;  /* Heller beim Hover */
+  border-color: #3B82F6;
   transform: translateY(-2px);
 }
 
 .btn-format.active {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: white;
+  background: #3B82F6;
+  border-color: #3B82F6;
+  color: #FFFFFF;  /* Explizit weiß */
 }
 
 .btn-format i {
@@ -343,8 +343,9 @@ function handleNewRecording() {
 
 .format-note {
   font-size: 0.8em;
-  opacity: 0.8;
+  opacity: 0.9;
   font-weight: 400;
+  color: #E5E7EB;  /* Sehr helles Grau */
 }
 
 .recording-controls {
