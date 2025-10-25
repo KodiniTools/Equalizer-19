@@ -101,10 +101,11 @@ function formatFileSize(bytes) {
 
 <style scoped>
 .playlist {
-  background: white;
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px var(--shadow-light);
 }
 
 .playlist-header {
@@ -121,11 +122,11 @@ function formatFileSize(bytes) {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .track-count {
-  background: #667eea;
+  background: var(--accent-primary);
   color: white;
   padding: 5px 12px;
   border-radius: 15px;
@@ -136,7 +137,7 @@ function formatFileSize(bytes) {
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .empty-state i {
@@ -164,19 +165,23 @@ function formatFileSize(bytes) {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f8f9fa;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: var(--text-primary);
 }
 
 .playlist-item:hover {
-  background: #e9ecef;
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
   transform: translateX(5px);
 }
 
 .playlist-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: white;
 }
 
@@ -186,14 +191,15 @@ function formatFileSize(bytes) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(102, 126, 234, 0.2);
+  background: var(--accent-primary);
+  color: white;
   border-radius: 50%;
   font-weight: 600;
   font-size: 0.9em;
 }
 
 .playlist-item.active .track-number {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--accent-secondary);
 }
 
 .track-info {
@@ -208,20 +214,22 @@ function formatFileSize(bytes) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: inherit;
 }
 
 .track-meta {
   font-size: 0.8em;
   opacity: 0.7;
+  color: inherit;
 }
 
 .btn-remove {
   width: 32px;
   height: 32px;
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
+  background: var(--secondary-bg);
+  color: var(--error);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -231,18 +239,21 @@ function formatFileSize(bytes) {
 }
 
 .btn-remove:hover {
-  background: #dc3545;
+  background: var(--error);
+  border-color: var(--error);
   color: white;
   transform: scale(1.1);
 }
 
 .playlist-item.active .btn-remove {
   background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   color: white;
 }
 
 .playlist-item.active .btn-remove:hover {
   background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Scrollbar styling */
@@ -251,17 +262,17 @@ function formatFileSize(bytes) {
 }
 
 .playlist-items::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--secondary-bg);
   border-radius: 10px;
 }
 
 .playlist-items::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: var(--accent-primary);
   border-radius: 10px;
 }
 
 .playlist-items::-webkit-scrollbar-thumb:hover {
-  background: #5568d3;
+  background: var(--accent-secondary);
 }
 
 @media (max-width: 768px) {

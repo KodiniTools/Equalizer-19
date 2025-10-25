@@ -202,10 +202,11 @@ onMounted(() => {
 
 <style scoped>
 .equalizer {
-  background: white;
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px var(--shadow-light);
   margin-bottom: 25px;
 }
 
@@ -223,15 +224,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .btn-toggle {
   padding: 10px 20px;
-  border: 2px solid #ddd;
-  background: white;
+  border: 2px solid var(--border-color);
+  background: var(--secondary-bg);
   border-radius: 25px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -242,13 +243,13 @@ onMounted(() => {
 }
 
 .btn-toggle:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .btn-toggle.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: transparent;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: white;
 }
 
@@ -265,28 +266,29 @@ onMounted(() => {
 
 .equalizer-presets label {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .equalizer-presets select {
   flex: 1;
   padding: 10px 15px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   font-size: 1em;
   cursor: pointer;
-  background: white;
+  background: var(--secondary-bg);
+  color: var(--text-primary);
   transition: all 0.2s ease;
 }
 
 .equalizer-presets select:hover {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
 }
 
 .equalizer-presets select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--shadow-light);
 }
 
 .equalizer-controls {
@@ -295,7 +297,8 @@ onMounted(() => {
   align-items: flex-end;
   gap: 8px;
   padding: 20px 10px;
-  background: linear-gradient(to bottom, #f8f9fa 0%, white 100%);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 15px;
   margin-bottom: 20px;
   min-height: 300px;
@@ -328,31 +331,31 @@ onMounted(() => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-primary);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 2px 8px var(--shadow-medium);
   transition: all 0.2s ease;
 }
 
 .slider.vertical::-webkit-slider-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .slider.vertical::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-primary);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 2px 8px var(--shadow-medium);
 }
 
 .slider-value {
   font-weight: 600;
   font-size: 0.85em;
-  color: #667eea;
+  color: var(--accent-primary);
   font-family: 'Courier New', monospace;
   min-width: 35px;
   text-align: center;
@@ -360,7 +363,7 @@ onMounted(() => {
 
 .slider-label {
   font-size: 0.75em;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   text-align: center;
   min-width: 35px;
@@ -369,10 +372,10 @@ onMounted(() => {
 .btn-reset {
   width: 100%;
   padding: 12px 20px;
-  border: 2px solid #667eea;
-  background: white;
+  border: 2px solid var(--accent-primary);
+  background: var(--secondary-bg);
   border-radius: 12px;
-  color: #667eea;
+  color: var(--accent-primary);
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -384,10 +387,11 @@ onMounted(() => {
 }
 
 .btn-reset:hover {
-  background: #667eea;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .btn-reset i {

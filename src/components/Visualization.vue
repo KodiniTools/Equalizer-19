@@ -123,11 +123,12 @@ onUnmounted(() => {
 
 <style scoped>
 .visualization {
-  background: white;
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px var(--shadow-light);
 }
 
 .visualization-header h3 {
@@ -137,14 +138,15 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .visualization-canvas {
   width: 100%;
   height: 200px;
   border-radius: 12px;
-  background: #1a1a2e;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
   display: block;
 }
 
