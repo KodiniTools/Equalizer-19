@@ -8,8 +8,8 @@
   --accent-secondary: #005CDA;    /* Marken-Blau für wichtige Highlights */
   --accent-tertiary: #60A5FA;     /* Helleres Blau für Akzente */
   --text-primary: #FFFFFF;        /* Weiß für Primärtext (hoher Kontrast) */
-  --text-secondary: #9CA3AF;      /* Helles Grau für Sekundärtext */
-  --text-muted: #6B7280;          /* Mittel-Grau für Icons */
+  --text-secondary: #E5E7EB;      /* HELLES Grau für Sekundärtext - FIXED */
+  --text-muted: #9CA3AF;          /* Mittel-Grau für Icons - FIXED */
   --border-color: #4B5563;        /* Grau für Borders */
   --hover-bg: #4B5563;            /* Hover State */
   --success: #10B981;             /* Grün für Erfolg */
@@ -23,6 +23,89 @@
   --gradient-card: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9));
   --shadow-light: rgba(59, 130, 246, 0.15);
   --shadow-medium: rgba(59, 130, 246, 0.25);
+}
+
+/* ===== GLOBALE KONTRAST-FIX FÜR ALLE KOMPONENTEN ===== */
+/* Diese Regeln überschreiben ALLE Component-Styles */
+
+/* Playlist: Forciere helle Texte auf dunklem Hintergrund */
+.playlist {
+  background: #2D3748 !important;
+  color: #FFFFFF !important;
+}
+
+.playlist h3 {
+  color: #FFFFFF !important;
+}
+
+.playlist-item {
+  background: #4B5563 !important;
+  color: #FFFFFF !important;
+}
+
+.playlist-item .track-name,
+.playlist-item .track-info,
+.playlist-item div,
+.playlist-item span {
+  color: #FFFFFF !important;
+}
+
+.playlist-item .track-meta {
+  color: #E5E7EB !important;
+  opacity: 1 !important;
+}
+
+/* Recording Controls: Forciere helle Texte auf dunklem Hintergrund */
+.recording-controls {
+  background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
+  color: #FFFFFF !important;
+}
+
+.recording-controls h3 {
+  color: #FFFFFF !important;
+}
+
+.recording-header h3 {
+  color: #FFFFFF !important;
+}
+
+.format-selector {
+  background: #4B5563 !important;
+  color: #FFFFFF !important;
+}
+
+.format-selector label,
+.format-selector span {
+  color: #FFFFFF !important;
+}
+
+/* Output Recording Controls: Forciere helle Texte auf dunklem Hintergrund */
+.output-recording {
+  background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
+  color: #FFFFFF !important;
+}
+
+.output-recording h3 {
+  color: #FFFFFF !important;
+}
+
+.output-recording .recording-header h3 {
+  color: #FFFFFF !important;
+}
+
+.btn-format {
+  background: #4B5563 !important;
+  color: #FFFFFF !important;
+}
+
+.btn-format span,
+.btn-format i {
+  color: #FFFFFF !important;
+}
+
+.format-note {
+  color: #E5E7EB !important;
+  opacity: 1 !important;
 }
 
 /* Light Theme - Hoher Kontrast */
