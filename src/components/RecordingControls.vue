@@ -185,17 +185,18 @@ function handleNewRecording() {
 
 <style scoped>
 .recording-controls {
-  background: var(--card-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  color: white;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+  color: var(--text-primary);
+  box-shadow: 0 10px 40px var(--shadow-light);
   transition: all 0.3s ease;
 }
 
 .recording-controls:hover {
-  box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 15px 50px var(--shadow-medium);
   transform: translateY(-2px);
 }
 
@@ -223,12 +224,13 @@ function handleNewRecording() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9em;
   font-weight: 500;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .recording-dot {
@@ -254,10 +256,10 @@ function handleNewRecording() {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 12px;
-  backdrop-filter: blur(10px);
 }
 
 .format-selector label {
@@ -273,14 +275,14 @@ function handleNewRecording() {
 }
 
 .format-selector label:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--hover-bg);
 }
 
 .format-selector input[type="radio"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #ffd700;
+  accent-color: var(--accent-primary);
 }
 
 .format-selector span {
@@ -290,10 +292,10 @@ function handleNewRecording() {
 .recording-timer {
   margin-bottom: 20px;
   padding: 20px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   text-align: center;
-  backdrop-filter: blur(10px);
 }
 
 .timer-display {
@@ -305,7 +307,7 @@ function handleNewRecording() {
 
 .timer-display i {
   font-size: 1.5em;
-  color: #ffd700;
+  color: var(--accent-primary);
 }
 
 .time {
@@ -371,13 +373,16 @@ function handleNewRecording() {
 }
 
 .btn-start {
-  background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-  color: #003d20;
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
 }
 
 .btn-start:hover:not(:disabled) {
+  background: #059669;
+  border-color: #059669;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+  box-shadow: 0 6px 20px var(--shadow-light);
 }
 
 .btn-start:disabled {
@@ -387,39 +392,49 @@ function handleNewRecording() {
 }
 
 .btn-stop {
-  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  background: var(--error);
+  border-color: var(--error);
   color: white;
 }
 
 .btn-stop:hover {
+  background: #DC2626;
+  border-color: #DC2626;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
 .btn-download {
-  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
-  color: #664400;
-}
-
-.btn-download:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-}
-
-.btn-new {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: white;
 }
 
-.btn-new:hover {
+.btn-download:hover {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.btn-new {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-new:hover {
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px var(--shadow-light);
 }
 
 .recording-info {
   margin-top: 15px;
   padding: 12px;
-  background: rgba(0, 255, 136, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--success);
   border-radius: 10px;
   text-align: center;
   font-weight: 500;
@@ -428,19 +443,19 @@ function handleNewRecording() {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .recording-info i {
   font-size: 1.2em;
-  color: #00ff88;
+  color: var(--success);
 }
 
 .error-message {
   margin-top: 15px;
   padding: 12px;
-  background: rgba(255, 68, 68, 0.2);
-  border: 1px solid rgba(255, 68, 68, 0.3);
+  background: var(--secondary-bg);
+  border: 1px solid var(--error);
   border-radius: 10px;
   text-align: center;
   font-weight: 500;
@@ -449,12 +464,12 @@ function handleNewRecording() {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .error-message i {
   font-size: 1.2em;
-  color: #ff4444;
+  color: var(--error);
 }
 
 @media (max-width: 768px) {

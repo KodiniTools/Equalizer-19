@@ -213,12 +213,13 @@ function handleNewRecording() {
 
 <style scoped>
 .output-recording {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  color: white;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+  color: var(--text-primary);
+  box-shadow: 0 10px 40px var(--shadow-light);
 }
 
 .recording-header {
@@ -241,10 +242,11 @@ function handleNewRecording() {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 8px 16px;
   border-radius: 20px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .recording-indicator {
@@ -267,14 +269,15 @@ function handleNewRecording() {
 }
 
 .recording-info-box {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 20px;
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .recording-info-box i {
@@ -309,10 +312,10 @@ function handleNewRecording() {
 .btn-format {
   flex: 1;
   padding: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--border-color);
+  background: var(--secondary-bg);
   border-radius: 12px;
-  color: white;
+  color: var(--text-primary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -320,18 +323,18 @@ function handleNewRecording() {
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  backdrop-filter: blur(10px);
 }
 
 .btn-format:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
   transform: translateY(-2px);
 }
 
 .btn-format.active {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: white;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
 }
 
 .btn-format i {
@@ -353,10 +356,10 @@ function handleNewRecording() {
 .btn-control {
   flex: 1;
   padding: 15px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-color);
+  background: var(--secondary-bg);
   border-radius: 12px;
-  color: white;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 1em;
   cursor: pointer;
@@ -365,14 +368,13 @@ function handleNewRecording() {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  backdrop-filter: blur(10px);
 }
 
 .btn-control:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px var(--shadow-light);
 }
 
 .btn-control i {
@@ -380,43 +382,47 @@ function handleNewRecording() {
 }
 
 .btn-start {
-  background: rgba(76, 175, 80, 0.3);
-  border-color: rgba(76, 175, 80, 0.5);
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
 }
 
 .btn-start:hover {
-  background: rgba(76, 175, 80, 0.5);
-  border-color: #4caf50;
+  background: #059669;
+  border-color: #059669;
 }
 
 .btn-stop {
-  background: rgba(244, 67, 54, 0.3);
-  border-color: rgba(244, 67, 54, 0.5);
+  background: var(--error);
+  border-color: var(--error);
+  color: white;
 }
 
 .btn-stop:hover {
-  background: rgba(244, 67, 54, 0.5);
-  border-color: #f44336;
+  background: #DC2626;
+  border-color: #DC2626;
 }
 
 .btn-download {
-  background: rgba(33, 150, 243, 0.3);
-  border-color: rgba(33, 150, 243, 0.5);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
 }
 
 .btn-download:hover {
-  background: rgba(33, 150, 243, 0.5);
-  border-color: #2196f3;
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
 }
 
 .btn-new {
-  background: rgba(255, 152, 0, 0.3);
-  border-color: rgba(255, 152, 0, 0.5);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .btn-new:hover {
-  background: rgba(255, 152, 0, 0.5);
-  border-color: #ff9800;
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
 }
 
 .recording-info {
@@ -426,36 +432,48 @@ function handleNewRecording() {
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .recording-info.success {
-  background: rgba(76, 175, 80, 0.3);
-  border: 2px solid rgba(76, 175, 80, 0.5);
+  background: var(--secondary-bg);
+  border: 1px solid var(--success);
+}
+
+.recording-info.success i {
+  color: var(--success);
 }
 
 .error-message {
-  background: rgba(244, 67, 54, 0.3);
-  border: 2px solid rgba(244, 67, 54, 0.5);
+  background: var(--secondary-bg);
+  border: 1px solid var(--error);
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+}
+
+.error-message i {
+  color: var(--error);
 }
 
 .important-note {
-  background: rgba(255, 152, 0, 0.2);
-  border: 2px solid rgba(255, 152, 0, 0.4);
+  background: var(--secondary-bg);
+  border: 1px solid var(--warning);
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
   align-items: flex-start;
   gap: 10px;
   font-size: 0.9em;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+}
+
+.important-note i {
+  color: var(--warning);
 }
 
 .important-note i {

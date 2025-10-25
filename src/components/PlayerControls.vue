@@ -257,17 +257,18 @@ function formatFileSize(bytes) {
 
 <style scoped>
 .player-controls {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  color: white;
-  box-shadow: 0 10px 40px rgba(30, 60, 114, 0.3);
+  color: var(--text-primary);
+  box-shadow: 0 10px 40px var(--shadow-light);
   transition: all 0.3s ease;
 }
 
 .player-controls:hover {
-  box-shadow: 0 15px 50px rgba(30, 60, 114, 0.4);
+  box-shadow: 0 15px 50px var(--shadow-medium);
   transform: translateY(-2px);
 }
 
@@ -294,8 +295,8 @@ function formatFileSize(bytes) {
 .btn-upload {
   flex: 1;
   padding: 15px 20px;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-  border: none;
+  background: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
   border-radius: 12px;
   color: white;
   font-size: 1em;
@@ -306,12 +307,14 @@ function formatFileSize(bytes) {
   justify-content: center;
   gap: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 15px var(--shadow-light);
 }
 
 .btn-upload:hover {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+  box-shadow: 0 6px 20px var(--shadow-medium);
 }
 
 .btn-upload i {
@@ -322,20 +325,21 @@ function formatFileSize(bytes) {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 10px 15px;
   border-radius: 10px;
   font-size: 0.95em;
   font-weight: 500;
-  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 
 .current-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 20px;
-  backdrop-filter: blur(10px);
 }
 
 .track-info {
@@ -346,7 +350,7 @@ function formatFileSize(bytes) {
 
 .track-info > i {
   font-size: 2em;
-  color: #00d4ff;
+  color: var(--accent-primary);
 }
 
 .track-details {
@@ -396,14 +400,15 @@ function formatFileSize(bytes) {
 .progress-bar {
   position: relative;
   height: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   overflow: visible;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
+  background: var(--accent-primary);
   border-radius: 10px;
   transition: width 0.1s ease;
 }
@@ -435,21 +440,21 @@ function formatFileSize(bytes) {
 .btn-control {
   width: 50px;
   height: 50px;
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: var(--secondary-bg);
+  color: var(--text-primary);
   font-size: 1.2em;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 
 .btn-control:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
   transform: scale(1.1);
 }
 
@@ -462,32 +467,35 @@ function formatFileSize(bytes) {
   width: 70px;
   height: 70px;
   font-size: 1.8em;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+  box-shadow: 0 4px 15px var(--shadow-light);
 }
 
 .btn-play-pause:hover:not(:disabled) {
-  background: linear-gradient(135deg, #00e4ff 0%, #00a9dd 100%);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 6px 20px var(--shadow-medium);
 }
 
 .volume-control {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   padding: 12px 15px;
   border-radius: 12px;
-  backdrop-filter: blur(10px);
 }
 
 .btn-volume {
   width: 40px;
   height: 40px;
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: var(--secondary-bg);
+  color: var(--text-primary);
   font-size: 1.1em;
   cursor: pointer;
   display: flex;
@@ -497,7 +505,8 @@ function formatFileSize(bytes) {
 }
 
 .btn-volume:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--hover-bg);
+  border-color: var(--accent-primary);
   transform: scale(1.1);
 }
 
@@ -505,7 +514,8 @@ function formatFileSize(bytes) {
   flex: 1;
   height: 6px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;

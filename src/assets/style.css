@@ -1,54 +1,54 @@
 /* ===== CSS VARIABLES & THEME SYSTEM ===== */
 :root {
-  /* Dark Theme (Default) - Verbesserte Kontraste */
-  --primary-bg: #0A0A0D;
-  --secondary-bg: #1A1A22;
-  --card-bg: #252530;
-  --accent-primary: #00D9FF;
-  --accent-secondary: #FF3366;
-  --accent-tertiary: #7B68EE;
-  --text-primary: #FFFFFF;
-  --text-secondary: #C8C8D5;
-  --text-muted: #8B8B9A;
-  --border-color: #3A3A48;
-  --hover-bg: #323240;
-  --success: #4ADE80;
-  --warning: #FBBF24;
-  --error: #EF4444;
-  --vol-fill: #4ADE80;
-  --seek-fill: #4ADE80;
+  /* Dark Theme (Default) - Neues Farbschema mit hohem Kontrast */
+  --primary-bg: #1F2937;          /* Dunkel-Grau/Slate für Hintergründe */
+  --secondary-bg: #374151;        /* Helleres Grau für Cards */
+  --card-bg: #2D3748;             /* Medium Grau für Cards */
+  --accent-primary: #3B82F6;      /* Kräftiges Blau für Buttons/Highlights */
+  --accent-secondary: #005CDA;    /* Marken-Blau für wichtige Highlights */
+  --accent-tertiary: #60A5FA;     /* Helleres Blau für Akzente */
+  --text-primary: #FFFFFF;        /* Weiß für Primärtext (hoher Kontrast) */
+  --text-secondary: #9CA3AF;      /* Helles Grau für Sekundärtext */
+  --text-muted: #6B7280;          /* Mittel-Grau für Icons */
+  --border-color: #4B5563;        /* Grau für Borders */
+  --hover-bg: #4B5563;            /* Hover State */
+  --success: #10B981;             /* Grün für Erfolg */
+  --warning: #F59E0B;             /* Orange für Warnung */
+  --error: #EF4444;               /* Rot für Fehler */
+  --vol-fill: #3B82F6;            /* Blau für Volume */
+  --seek-fill: #3B82F6;           /* Blau für Seek */
   --neutral-fill: var(--secondary-bg);
-  --nav-bg: rgba(26, 26, 36, 0.95);
-  --gradient-primary: linear-gradient(135deg, var(--primary-bg), #14141C);
-  --gradient-card: linear-gradient(135deg, var(--card-bg), rgba(37, 37, 48, 0.85));
-  --shadow-light: rgba(0, 217, 255, 0.12);
-  --shadow-medium: rgba(0, 217, 255, 0.2);
+  --nav-bg: rgba(31, 41, 55, 0.95);
+  --gradient-primary: linear-gradient(135deg, #1F2937, #111827);
+  --gradient-card: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9));
+  --shadow-light: rgba(59, 130, 246, 0.15);
+  --shadow-medium: rgba(59, 130, 246, 0.25);
 }
 
-/* Light Theme - Stark verbesserte Kontraste */
+/* Light Theme - Hoher Kontrast */
 [data-theme="light"] {
-  --primary-bg: #F8F9FA;
-  --secondary-bg: #FFFFFF;
-  --card-bg: #FEFEFE;
-  --accent-primary: #0066CC;
-  --accent-secondary: #DC2626;
-  --accent-tertiary: #7C3AED;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --border-color: #CBD5E1;
-  --hover-bg: #F1F5F9;
-  --success: #16A34A;
-  --warning: #EA580C;
-  --error: #DC2626;
-  --vol-fill: #16A34A;
-  --seek-fill: #16A34A;
-  --neutral-fill: #E2E8F0;
+  --primary-bg: #F9FAFB;          /* Sehr helles Grau */
+  --secondary-bg: #FFFFFF;        /* Weiß */
+  --card-bg: #FFFFFF;             /* Weiß */
+  --accent-primary: #3B82F6;      /* Kräftiges Blau */
+  --accent-secondary: #005CDA;    /* Marken-Blau */
+  --accent-tertiary: #60A5FA;     /* Helleres Blau */
+  --text-primary: #111827;        /* Sehr dunkles Grau für Text (hoher Kontrast) */
+  --text-secondary: #6B7280;      /* Mittel-Grau */
+  --text-muted: #9CA3AF;          /* Helleres Grau */
+  --border-color: #D1D5DB;        /* Helles Grau für Borders */
+  --hover-bg: #F3F4F6;            /* Sehr helles Grau */
+  --success: #059669;             /* Dunkles Grün */
+  --warning: #D97706;             /* Dunkles Orange */
+  --error: #DC2626;               /* Dunkles Rot */
+  --vol-fill: #3B82F6;            /* Blau */
+  --seek-fill: #3B82F6;           /* Blau */
+  --neutral-fill: #E5E7EB;
   --nav-bg: rgba(255, 255, 255, 0.95);
-  --gradient-primary: linear-gradient(135deg, var(--primary-bg), #E2E8F0);
-  --gradient-card: linear-gradient(135deg, var(--card-bg), rgba(254, 254, 254, 0.9));
-  --shadow-light: rgba(0, 102, 204, 0.1);
-  --shadow-medium: rgba(0, 102, 204, 0.18);
+  --gradient-primary: linear-gradient(135deg, #F9FAFB, #F3F4F6);
+  --gradient-card: linear-gradient(135deg, #FFFFFF, rgba(255, 255, 255, 0.95));
+  --shadow-light: rgba(59, 130, 246, 0.1);
+  --shadow-medium: rgba(59, 130, 246, 0.2);
 }
 
 /* ===== CONTROLS SECTION - KOMPAKTER ===== */
