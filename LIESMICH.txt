@@ -1,0 +1,91 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║              EQUALIZER 19 - Vue 3 Edition                            ║
+║              Professional Audio Processor                             ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+SCHNELLSTART
+═══════════════════════════════════════════════════════════════════════
+
+Windows-Benutzer:
+-----------------
+1. Doppelklick auf "START.bat"
+2. Fertig! Die App öffnet sich im Browser.
+
+Mac/Linux-Benutzer:
+-------------------
+1. Öffnen Sie das Terminal in diesem Ordner
+2. Führen Sie aus: ./start.sh
+3. Fertig! Die App öffnet sich im Browser.
+
+ALTERNATIV: Manuelle Installation
+═══════════════════════════════════════════════════════════════════════
+
+1. Node.js installieren (falls nicht vorhanden):
+   → Download: https://nodejs.org/
+
+2. Terminal/Kommandozeile in diesem Ordner öffnen
+
+3. Dependencies installieren:
+   npm install
+
+4. Entwicklungsserver starten:
+   npm run dev
+
+5. Browser öffnet sich automatisch auf http://localhost:3000
+
+DOKUMENTATION
+═══════════════════════════════════════════════════════════════════════
+
+README.md            - Vollständige Projektdokumentation (Englisch)
+INSTALLATION.md      - Detaillierte Installationsanleitung (Deutsch)
+QUICKSTART.md        - Schnelleinstieg für Benutzer
+
+FUNKTIONEN
+═══════════════════════════════════════════════════════════════════════
+
+✓ 19-Band Parametrischer Equalizer
+✓ Dynamics Processor mit Echtzeit-Feedback
+✓ LUFS Loudness-Normalisierung
+✓ Sättigungseffekte mit Oversampling
+✓ Echtzeit Spektrum-Analyzer
+✓ 8 EQ-Presets + 5 Kompressor-Presets
+✓ Playlist-Management
+✓ Dark/Light Theme
+✓ Deutsch/Englisch
+
+TASTENKOMBINATIONEN
+═══════════════════════════════════════════════════════════════════════
+
+Leertaste    - Play/Pause
+←/→          - ±10 Sekunden springen
+M            - Mute/Unmute
+Strg+L       - Sprache wechseln
+Strg+D       - Theme wechseln
+
+SYSTEM-ANFORDERUNGEN
+═══════════════════════════════════════════════════════════════════════
+
+• Node.js 16+ (empfohlen: 18+)
+• Moderner Browser (Chrome, Firefox, Safari, Edge)
+• Mindestens 2 GB RAM
+• Web Audio API-Unterstützung
+
+HILFE & SUPPORT
+═══════════════════════════════════════════════════════════════════════
+
+Bei Problemen:
+1. Schauen Sie in INSTALLATION.md
+2. Überprüfen Sie die Browser-Konsole (F12)
+3. Besuchen Sie: https://kodinitools.com
+
+LIZENZ
+═══════════════════════════════════════════════════════════════════════
+
+MIT License - Frei verwendbar für private und kommerzielle Zwecke
+Copyright (c) 2025 KodiniTools
+
+═══════════════════════════════════════════════════════════════════════
+                    Viel Spaß mit EQUALIZER 19! 🎵
+═══════════════════════════════════════════════════════════════════════
