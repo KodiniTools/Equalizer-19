@@ -211,7 +211,7 @@ function handleNewRecording() {
 }
 </script>
 
-<style scoped>
+<style>
 .output-recording {
   background: var(--gradient-card);
   border: 1px solid var(--border-color);

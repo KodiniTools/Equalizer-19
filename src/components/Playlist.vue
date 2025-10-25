@@ -99,7 +99,7 @@ function formatFileSize(bytes) {
 }
 </script>
 
-<style scoped>
+<style>
 .playlist {
   background: #2D3748 !important;  /* Dunkelgrau - FORCE */
   border: 1px solid #4B5563 !important;

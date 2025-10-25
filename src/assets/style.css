@@ -26,23 +26,33 @@
 }
 
 /* ===== GLOBALE KONTRAST-FIX FÜR ALLE KOMPONENTEN ===== */
-/* Diese Regeln überschreiben ALLE Component-Styles */
+/* MAXIMALE SPEZIFITÄT: Überschreibt Vue's scoped styles (data-v-*) */
 
 /* Playlist: Forciere helle Texte auf dunklem Hintergrund */
-.playlist {
+html body div .playlist,
+.playlist.playlist,
+div.playlist {
   background: #2D3748 !important;
   color: #FFFFFF !important;
 }
 
-.playlist h3 {
+html body div .playlist h3,
+.playlist h3.h3,
+.playlist-header h3 {
   color: #FFFFFF !important;
 }
 
-.playlist-item {
+html body div .playlist-item,
+.playlist-item.playlist-item,
+div.playlist-item {
   background: #4B5563 !important;
   color: #FFFFFF !important;
 }
 
+html body div .playlist-item .track-name,
+html body div .playlist-item .track-info,
+html body div .playlist-item div,
+html body div .playlist-item span,
 .playlist-item .track-name,
 .playlist-item .track-info,
 .playlist-item div,
@@ -50,60 +60,73 @@
   color: #FFFFFF !important;
 }
 
+html body div .playlist-item .track-meta,
 .playlist-item .track-meta {
   color: #E5E7EB !important;
   opacity: 1 !important;
 }
 
 /* Recording Controls: Forciere helle Texte auf dunklem Hintergrund */
-.recording-controls {
+html body div .recording-controls,
+.recording-controls.recording-controls,
+div.recording-controls {
   background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
   color: #FFFFFF !important;
 }
 
-.recording-controls h3 {
-  color: #FFFFFF !important;
-}
-
+html body div .recording-controls h3,
+html body div .recording-header h3,
+.recording-controls h3,
 .recording-header h3 {
   color: #FFFFFF !important;
 }
 
-.format-selector {
+html body div .format-selector,
+.format-selector.format-selector,
+div.format-selector {
   background: #4B5563 !important;
   color: #FFFFFF !important;
 }
 
+html body div .format-selector label,
+html body div .format-selector span,
 .format-selector label,
 .format-selector span {
   color: #FFFFFF !important;
 }
 
 /* Output Recording Controls: Forciere helle Texte auf dunklem Hintergrund */
-.output-recording {
+html body div .output-recording,
+.output-recording.output-recording,
+div.output-recording {
   background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
   color: #FFFFFF !important;
 }
 
-.output-recording h3 {
-  color: #FFFFFF !important;
-}
-
+html body div .output-recording h3,
+html body div .output-recording .recording-header h3,
+.output-recording h3,
 .output-recording .recording-header h3 {
   color: #FFFFFF !important;
 }
 
-.btn-format {
+html body div .btn-format,
+.btn-format.btn-format,
+button.btn-format {
   background: #4B5563 !important;
   color: #FFFFFF !important;
 }
 
+html body div .btn-format span,
+html body div .btn-format i,
 .btn-format span,
 .btn-format i {
   color: #FFFFFF !important;
 }
 
-.format-note {
+html body div .format-note,
+.format-note.format-note,
+span.format-note {
   color: #E5E7EB !important;
   opacity: 1 !important;
 }
