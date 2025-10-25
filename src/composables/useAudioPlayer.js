@@ -164,6 +164,9 @@ export function useAudioPlayer() {
 
   // Playlist management
   function addFiles(files) {
+    console.log('🔧 addFiles called with', files.length, 'files')
+    console.log('📊 Current playlist size:', playlist.value.length)
+
     const newTracks = Array.from(files).map((file, index) => ({
       id: Date.now() + index,
       name: file.name,
@@ -174,10 +177,13 @@ export function useAudioPlayer() {
       duration: 0
     }))
 
+    console.log('➕ Adding', newTracks.length, 'new tracks')
     playlist.value.push(...newTracks)
+    console.log('📊 New playlist size:', playlist.value.length)
 
-    // If no track is selected, select the first one
+    // If no track is selected, select the first one (but don't auto-play)
     if (currentTrackIndex.value === -1 && playlist.value.length > 0) {
+      console.log('🎯 Loading first track (index 0)')
       currentTrackIndex.value = 0
       loadTrack(0)
     }

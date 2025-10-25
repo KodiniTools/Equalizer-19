@@ -217,9 +217,13 @@ function triggerFileSelect() {
 }
 
 async function handleFileSelect(event) {
+  console.log('🎵 handleFileSelect triggered')
   const files = event.target.files
+  console.log('📂 Files selected:', files ? files.length : 0)
+
   if (files && files.length > 0) {
     // Emit event to parent (App.vue) which will handle adding files
+    console.log('📤 Emitting files-selected event')
     emit('files-selected', files)
   }
 
