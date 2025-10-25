@@ -23,13 +23,21 @@
         {{ t('outputRecording.format') || 'Format:' }}
       </label>
       <div class="format-buttons">
-        <button 
+        <button
           @click="selectFormat('webm')"
           :class="['btn-format', { active: recordingFormat === 'webm' }]"
         >
           <i class="fas fa-file-audio"></i>
           WebM
           <span class="format-note">(Klein, gute Qualität)</span>
+        </button>
+        <button
+          @click="selectFormat('wav')"
+          :class="['btn-format', { active: recordingFormat === 'wav' }]"
+        >
+          <i class="fas fa-file-audio"></i>
+          WAV
+          <span class="format-note">(Unkomprimiert)</span>
         </button>
       </div>
     </div>
@@ -57,13 +65,13 @@
       </button>
 
       <!-- Download -->
-      <button 
+      <button
         v-if="hasRecording && !isRecording"
         @click="handleDownload"
         class="btn-control btn-download"
       >
         <i class="fas fa-download"></i>
-        {{ t('outputRecording.download') || 'Herunterladen' }}
+        {{ t('outputRecording.download') || 'Herunterladen' }} ({{ recordingFormat.toUpperCase() }})
       </button>
 
       <!-- New Recording -->

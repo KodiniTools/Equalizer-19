@@ -16,6 +16,77 @@ export function useOutputRecorder() {
   const hasRecording = computed(() => recordedChunks.value.length > 0)
 
   /**
+   * WAV Encoding Function
+   */
+  function encodeWAV(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2)
+    const view = new DataView(buffer)
+
+    // Write WAV header
+    const writeString = (offset, string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i))
+      }
+    }
+
+    writeString(0, 'RIFF')
+    view.setUint32(4, 36 + samples.length * 2, true)
+    writeString(8, 'WAVE')
+    writeString(12, 'fmt ')
+    view.setUint32(16, 16, true) // fmt chunk size
+    view.setUint16(20, 1, true) // PCM format
+    view.setUint16(22, 1, true) // mono
+    view.setUint32(24, sampleRate, true)
+    view.setUint32(28, sampleRate * 2, true) // byte rate
+    view.setUint16(32, 2, true) // block align
+    view.setUint16(34, 16, true) // bits per sample
+    writeString(36, 'data')
+    view.setUint32(40, samples.length * 2, true)
+
+    // Write audio data
+    let offset = 44
+    for (let i = 0; i < samples.length; i++) {
+      const s = Math.max(-1, Math.min(1, samples[i]))
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true)
+      offset += 2
+    }
+
+    return new Blob([buffer], { type: 'audio/wav' })
+  }
+
+  /**
+   * Convert WebM recording to WAV
+   */
+  async function convertToWAV() {
+    try {
+      console.log('🔄 Converting to WAV...')
+
+      // Create WebM Blob
+      const webmBlob = new Blob(recordedChunks.value, { type: 'audio/webm' })
+
+      // Decode audio data
+      const arrayBuffer = await webmBlob.arrayBuffer()
+      const tempContext = new (window.AudioContext || window.webkitAudioContext)()
+      const audioBuffer = await tempContext.decodeAudioData(arrayBuffer)
+
+      // Extract audio samples
+      const samples = audioBuffer.getChannelData(0)
+
+      // Encode to WAV
+      const wavBlob = encodeWAV(samples, audioBuffer.sampleRate)
+
+      // Replace chunks with WAV blob
+      recordedChunks.value = [wavBlob]
+
+      await tempContext.close()
+      console.log('✅ Converted to WAV successfully')
+    } catch (error) {
+      console.error('❌ Error converting to WAV:', error)
+      // Keep WebM on error
+    }
+  }
+
+  /**
    * Set the audio engine reference
    */
   function setAudioEngine(engine) {
@@ -76,11 +147,16 @@ export function useOutputRecorder() {
         }
       }
 
-      mediaRecorder.value.onstop = () => {
+      mediaRecorder.value.onstop = async () => {
         console.log('⏹️ Recording stopped, total chunks:', recordedChunks.value.length)
         if (timerInterval) {
           clearInterval(timerInterval)
           timerInterval = null
+        }
+
+        // Convert to WAV if selected
+        if (recordingFormat.value === 'wav') {
+          await convertToWAV()
         }
       }
 
@@ -135,20 +211,23 @@ export function useOutputRecorder() {
     }
 
     try {
-      const mimeType = recordingFormat.value === 'webm' 
-        ? 'audio/webm'
+      const mimeType = recordingFormat.value === 'wav'
+        ? 'audio/wav'
         : 'audio/webm'
-      
+
       const blob = new Blob(recordedChunks.value, { type: mimeType })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.style.display = 'none'
       a.href = url
-      a.download = `${filename}.${recordingFormat.value === 'webm' ? 'webm' : 'webm'}`
-      
+
+      // Use correct file extension based on format
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
+      a.download = `${filename}_${timestamp}.${recordingFormat.value}`
+
       document.body.appendChild(a)
       a.click()
-      
+
       setTimeout(() => {
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
