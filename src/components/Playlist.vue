@@ -125,6 +125,10 @@ function formatFileSize(bytes) {
   color: #FFFFFF !important;  /* FORCE weiß */
 }
 
+.playlist-header h3 i {
+  color: #FFFFFF !important;  /* Icon auch weiß */
+}
+
 .track-count {
   background: #3B82F6 !important;
   color: #FFFFFF !important;
@@ -173,16 +177,28 @@ function formatFileSize(bytes) {
   color: #FFFFFF !important;  /* Explizit weiß - FORCE */
 }
 
+.playlist-item * {
+  color: #FFFFFF !important;  /* ALLE Kindelemente weiß */
+}
+
 .playlist-item:hover {
   background: #6B7280 !important;  /* Noch heller - FORCE */
   border-color: #3B82F6 !important;
   transform: translateX(5px);
 }
 
+.playlist-item:hover * {
+  color: #FFFFFF !important;  /* Beim Hover auch alle weiß */
+}
+
 .playlist-item.active {
   background: #3B82F6 !important;
   border-color: #3B82F6 !important;
   color: #FFFFFF !important;
+}
+
+.playlist-item.active * {
+  color: #FFFFFF !important;  /* Auch beim aktiven Track alles weiß */
 }
 
 .track-number {

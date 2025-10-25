@@ -325,16 +325,28 @@ function handleNewRecording() {
   gap: 5px;
 }
 
+.btn-format * {
+  color: #FFFFFF !important;  /* ALLE Kindelemente weiß */
+}
+
 .btn-format:hover {
   background: #6B7280 !important;
   border-color: #3B82F6 !important;
   transform: translateY(-2px);
 }
 
+.btn-format:hover * {
+  color: #FFFFFF !important;  /* Beim Hover auch alle weiß */
+}
+
 .btn-format.active {
   background: #3B82F6 !important;
   border-color: #3B82F6 !important;
   color: #FFFFFF !important;
+}
+
+.btn-format.active * {
+  color: #FFFFFF !important;  /* Auch beim aktiven Button alles weiß */
 }
 
 .btn-format i {

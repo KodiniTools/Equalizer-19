@@ -262,6 +262,10 @@ function handleNewRecording() {
   border-radius: 12px;
 }
 
+.format-selector * {
+  color: #FFFFFF !important;  /* ALLE Elemente weiß - FORCE */
+}
+
 .format-selector label {
   display: flex;
   align-items: center;
@@ -277,6 +281,10 @@ function handleNewRecording() {
 
 .format-selector label:hover {
   background: #6B7280 !important;
+}
+
+.format-selector label * {
+  color: #FFFFFF !important;  /* Alle Kindelemente weiß */
 }
 
 .format-selector input[type="radio"] {
