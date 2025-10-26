@@ -96,7 +96,7 @@ html body div .playlist-item .track-meta,
 html body div .recording-controls,
 .recording-controls.recording-controls,
 div.recording-controls {
-  background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
+  background: #2D3748 !important;  /* SOLIDE FARBE - KEIN GRADIENT */
   color: #FFFFFF !important;
 }
 
@@ -125,7 +125,7 @@ html body div .format-selector span,
 html body div .output-recording,
 .output-recording.output-recording,
 div.output-recording {
-  background: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9)) !important;
+  background: #2D3748 !important;  /* SOLIDE FARBE - KEIN GRADIENT */
   color: #FFFFFF !important;
 }
 
