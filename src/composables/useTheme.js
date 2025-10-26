@@ -1,37 +1,26 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 
-const currentTheme = ref(
-  localStorage.getItem('equalizer-theme') || detectSystemTheme()
-)
+// FORCE LIGHT MODE - Dunkelmodus deaktiviert
+const currentTheme = ref('light')
 
 function detectSystemTheme() {
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'light' // Immer Light Mode
 }
 
 export function useTheme() {
   const setTheme = (theme) => {
-    if (theme !== currentTheme.value && (theme === 'dark' || theme === 'light')) {
-      currentTheme.value = theme
-      localStorage.setItem('equalizer-theme', theme)
-      document.documentElement.setAttribute('data-theme', theme)
-    }
+    // Nur Light Mode erlauben
+    currentTheme.value = 'light'
+    localStorage.setItem('equalizer-theme', 'light')
+    document.documentElement.setAttribute('data-theme', 'light')
   }
-  
-  // Initialize theme on mount
-  document.documentElement.setAttribute('data-theme', currentTheme.value)
-  
-  // Listen for system theme changes
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!localStorage.getItem('equalizer-theme')) {
-        currentTheme.value = e.matches ? 'dark' : 'light'
-        document.documentElement.setAttribute('data-theme', currentTheme.value)
-      }
-    })
-  }
-  
+
+  // Initialize theme on mount - IMMER LIGHT
+  document.documentElement.setAttribute('data-theme', 'light')
+  localStorage.setItem('equalizer-theme', 'light')
+
   return {
-    currentTheme: computed(() => currentTheme.value),
+    currentTheme: computed(() => 'light'),
     setTheme
   }
 }
