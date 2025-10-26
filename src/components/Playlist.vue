@@ -124,6 +124,8 @@ function formatFileSize(bytes) {
   align-items: center;
   gap: 10px;
   color: #FFFFFF !important;  /* FORCE weiß */
+  position: relative;
+  z-index: 10;
 }
 
 .playlist-header h3 i {
@@ -233,12 +235,16 @@ function formatFileSize(bytes) {
   overflow: hidden;
   text-overflow: ellipsis;
   color: #FFFFFF !important;  /* FORCE weiß */
+  position: relative;
+  z-index: 10;
 }
 
 .track-meta {
   font-size: 0.8em;
   opacity: 1 !important;  /* Volle Deckkraft */
   color: #E5E7EB !important;  /* Sehr helles Grau - FORCE */
+  position: relative;
+  z-index: 10;
 }
 
 .btn-remove {

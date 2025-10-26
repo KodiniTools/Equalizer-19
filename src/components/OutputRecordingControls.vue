@@ -215,12 +215,12 @@ function handleNewRecording() {
 
 <style>
 .output-recording {
-  background: var(--gradient-card);
+  background: #2D3748 !important;  /* Solide Farbe statt Gradient */
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   box-shadow: 0 10px 40px var(--shadow-light);
 }
 
