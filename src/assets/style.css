@@ -25,6 +25,32 @@
   --shadow-medium: rgba(59, 130, 246, 0.25);
 }
 
+/* Dark Theme EXPLICIT - CRITICAL FIX */
+[data-theme="dark"] {
+  --primary-bg: #1F2937;          /* Dunkel-Grau/Slate für Hintergründe */
+  --secondary-bg: #374151;        /* Helleres Grau für Cards */
+  --card-bg: #2D3748;             /* Medium Grau für Cards */
+  --accent-primary: #3B82F6;      /* Kräftiges Blau für Buttons/Highlights */
+  --accent-secondary: #005CDA;    /* Marken-Blau für wichtige Highlights */
+  --accent-tertiary: #60A5FA;     /* Helleres Blau für Akzente */
+  --text-primary: #FFFFFF;        /* Weiß für Primärtext (hoher Kontrast) */
+  --text-secondary: #E5E7EB;      /* HELLES Grau für Sekundärtext */
+  --text-muted: #9CA3AF;          /* Mittel-Grau für Icons */
+  --border-color: #4B5563;        /* Grau für Borders */
+  --hover-bg: #4B5563;            /* Hover State */
+  --success: #10B981;             /* Grün für Erfolg */
+  --warning: #F59E0B;             /* Orange für Warnung */
+  --error: #EF4444;               /* Rot für Fehler */
+  --vol-fill: #3B82F6;            /* Blau für Volume */
+  --seek-fill: #3B82F6;           /* Blau für Seek */
+  --neutral-fill: var(--secondary-bg);
+  --nav-bg: rgba(31, 41, 55, 0.95);
+  --gradient-primary: linear-gradient(135deg, #1F2937, #111827);
+  --gradient-card: linear-gradient(135deg, #2D3748, rgba(45, 55, 72, 0.9));
+  --shadow-light: rgba(59, 130, 246, 0.15);
+  --shadow-medium: rgba(59, 130, 246, 0.25);
+}
+
 /* ===== GLOBALE KONTRAST-FIX FÜR ALLE KOMPONENTEN ===== */
 /* MAXIMALE SPEZIFITÄT: Überschreibt Vue's scoped styles (data-v-*) */
 
