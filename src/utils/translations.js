@@ -60,7 +60,19 @@ export const translations = {
     next: "Weiter",
     shuffle: "Zufall",
     loop: "Wiederh.",
-    volume: "Lautstärke"
+    volume: "Lautstärke",
+    outputRecording: {
+      title: "Output aufnehmen",
+      description: "Nimmt das verarbeitete Audio (mit EQ und Dynamics) auf",
+      format: "Format:",
+      start: "Aufnahme starten",
+      stop: "Aufnahme beenden",
+      download: "Herunterladen",
+      new: "Neue Aufnahme",
+      ready: "Aufnahme bereit zum Download",
+      noteTitle: "Wichtig:",
+      note: "Audio muss abgespielt werden während der Aufnahme!"
+    }
   },
   en: {
     brand: "EQUALIZER 19",
@@ -123,6 +135,18 @@ export const translations = {
     next: "Next",
     shuffle: "Shuffle",
     loop: "Loop",
-    volume: "Volume"
+    volume: "Volume",
+    outputRecording: {
+      title: "Record Output",
+      description: "Records the processed audio (with EQ and Dynamics)",
+      format: "Format:",
+      start: "Start Recording",
+      stop: "Stop Recording",
+      download: "Download",
+      new: "New Recording",
+      ready: "Recording ready for download",
+      noteTitle: "Important:",
+      note: "Audio must be playing during recording!"
+    }
   }
 }

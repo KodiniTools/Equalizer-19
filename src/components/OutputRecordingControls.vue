@@ -3,7 +3,7 @@
     <div class="recording-header">
       <h3>
         <i class="fas fa-save"></i>
-        {{ t('outputRecording.title') || 'Record Output' }}
+        {{ t.outputRecording?.title || 'Record Output' }}
       </h3>
       <div class="recording-status" v-if="isRecording">
         <span class="recording-indicator"></span>
@@ -13,14 +13,14 @@
 
     <div class="recording-info-box">
       <i class="fas fa-info-circle"></i>
-      <p>{{ t('outputRecording.description') || 'Records the processed audio (with EQ and Dynamics)' }}</p>
+      <p>{{ t.outputRecording?.description || 'Records the processed audio (with EQ and Dynamics)' }}</p>
     </div>
 
     <!-- Format Selection -->
     <div v-if="!hasRecording && !isRecording" class="format-selection">
       <label>
         <i class="fas fa-file-audio"></i>
-        {{ t('outputRecording.format') || 'Format:' }}
+        {{ t.outputRecording?.format || 'Format:' }}
       </label>
       <div class="format-buttons">
         <button 
@@ -43,7 +43,7 @@
         class="btn-control btn-start"
       >
         <i class="fas fa-circle"></i>
-        {{ t('outputRecording.start') || 'Start Recording' }}
+        {{ t.outputRecording?.start || 'Start Recording' }}
       </button>
 
       <!-- Stop Recording -->
@@ -53,7 +53,7 @@
         class="btn-control btn-stop"
       >
         <i class="fas fa-stop"></i>
-        {{ t('outputRecording.stop') || 'Stop Recording' }}
+        {{ t.outputRecording?.stop || 'Stop Recording' }}
       </button>
 
       <!-- Download -->
@@ -63,7 +63,7 @@
         class="btn-control btn-download"
       >
         <i class="fas fa-download"></i>
-        {{ t('outputRecording.download') || 'Download' }}
+        {{ t.outputRecording?.download || 'Download' }}
       </button>
 
       <!-- New Recording -->
@@ -73,14 +73,14 @@
         class="btn-control btn-new"
       >
         <i class="fas fa-plus"></i>
-        {{ t('outputRecording.new') || 'New Recording' }}
+        {{ t.outputRecording?.new || 'New Recording' }}
       </button>
     </div>
 
     <!-- Success Message -->
     <div v-if="hasRecording && !isRecording" class="recording-info success">
       <i class="fas fa-check-circle"></i>
-      {{ t('outputRecording.ready') || 'Recording ready for download' }}
+      {{ t.outputRecording?.ready || 'Recording ready for download' }}
     </div>
 
     <!-- Error Message -->
@@ -92,8 +92,8 @@
     <!-- Important Note -->
     <div class="important-note">
       <i class="fas fa-exclamation-circle"></i>
-      <strong>{{ t('outputRecording.noteTitle') || 'Important:' }}</strong>
-      {{ t('outputRecording.note') || 'Audio must be playing during recording!' }}
+      <strong>{{ t.outputRecording?.noteTitle || 'Important:' }}</strong>
+      {{ t.outputRecording?.note || 'Audio must be playing during recording!' }}
     </div>
   </div>
 </template>
@@ -103,28 +103,24 @@ import { ref, inject, computed } from 'vue'
 import { useOutputRecorder } from '../composables/useOutputRecorder'
 
 // Get dependencies
-const i18n = inject('i18n', { t: (key) => key })
+const i18n = inject('i18n', null)
 const audioEngine = inject('audioEngine')
 const notify = inject('notify', () => {})
 
-// Make t function available
-const t = (key) => {
-  if (i18n && typeof i18n.t === 'function') {
-    return i18n.t(key)
+// Use central i18n system with fallbacks
+const t = i18n?.t || {
+  outputRecording: {
+    title: 'Record Output',
+    description: 'Records the processed audio (with EQ and Dynamics)',
+    format: 'Format:',
+    start: 'Start Recording',
+    stop: 'Stop Recording',
+    download: 'Download',
+    new: 'New Recording',
+    ready: 'Recording ready for download',
+    noteTitle: 'Important:',
+    note: 'Audio must be playing during recording!'
   }
-  const translations = {
-    'outputRecording.title': 'Record Output',
-    'outputRecording.description': 'Records the processed audio (with EQ and Dynamics)',
-    'outputRecording.format': 'Format:',
-    'outputRecording.start': 'Start Recording',
-    'outputRecording.stop': 'Stop Recording',
-    'outputRecording.download': 'Download',
-    'outputRecording.new': 'New Recording',
-    'outputRecording.ready': 'Recording ready for download',
-    'outputRecording.noteTitle': 'Important:',
-    'outputRecording.note': 'Audio must be playing during recording!'
-  }
-  return translations[key] || key
 }
 
 const {
