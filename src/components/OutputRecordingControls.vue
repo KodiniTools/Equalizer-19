@@ -23,13 +23,21 @@
         {{ t.outputRecording?.format || 'Format:' }}
       </label>
       <div class="format-buttons">
-        <button 
+        <button
           @click="selectFormat('webm')"
           :class="['btn-format', { active: recordingFormat === 'webm' }]"
         >
           <i class="fas fa-file-audio"></i>
           WebM
           <span class="format-note">(Small, good quality)</span>
+        </button>
+        <button
+          @click="selectFormat('wav')"
+          :class="['btn-format', { active: recordingFormat === 'wav' }]"
+        >
+          <i class="fas fa-file-audio"></i>
+          WAV
+          <span class="format-note">(Uncompressed)</span>
         </button>
       </div>
     </div>
