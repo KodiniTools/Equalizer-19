@@ -93,12 +93,20 @@ provide('notify', (message, type = 'info') => {
 })
 
 const handleFilesSelected = (files) => {
-  audioPlayer.addFiles(files)
+  const tracks = audioPlayer.addFiles(files)
+
   if (notificationRef.value) {
-    const message = currentLanguage.value === 'de' 
+    const message = currentLanguage.value === 'de'
       ? `${files.length} Datei(en) hinzugefügt`
       : `${files.length} file(s) added`
     notificationRef.value.show(message, 'success')
+  }
+
+  // Auto-play first track
+  if (tracks.length > 0) {
+    setTimeout(() => {
+      audioPlayer.play()
+    }, 100)
   }
 }
 
