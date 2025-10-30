@@ -107,3 +107,5 @@ MIT License - Erstellt von KodiniTools
 - Original JavaScript-Version: EQUALIZER 19
 - Vue 3 Migration: 2025
 - Icons: Font Awesome
+- ```
+  Author: Dinko Ramić - Kodini Tools - kodinitools.com
