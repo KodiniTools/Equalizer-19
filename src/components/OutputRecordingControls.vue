@@ -3,7 +3,7 @@
     <div class="recording-header">
       <h3>
         <i class="fas fa-save"></i>
-        {{ t('outputRecording.title') || 'Output aufnehmen' }}
+        {{ t('outputRecording.title') || 'Record Output' }}
       </h3>
       <div class="recording-status" v-if="isRecording">
         <span class="recording-indicator"></span>
@@ -13,7 +13,7 @@
 
     <div class="recording-info-box">
       <i class="fas fa-info-circle"></i>
-      <p>{{ t('outputRecording.description') || 'Nimmt das verarbeitete Audio (mit EQ und Dynamics) auf' }}</p>
+      <p>{{ t('outputRecording.description') || 'Records the processed audio (with EQ and Dynamics)' }}</p>
     </div>
 
     <!-- Format Selection -->
@@ -29,7 +29,7 @@
         >
           <i class="fas fa-file-audio"></i>
           WebM
-          <span class="format-note">(Klein, gute Qualität)</span>
+          <span class="format-note">(Small, good quality)</span>
         </button>
       </div>
     </div>
@@ -43,7 +43,7 @@
         class="btn-control btn-start"
       >
         <i class="fas fa-circle"></i>
-        {{ t('outputRecording.start') || 'Aufnahme starten' }}
+        {{ t('outputRecording.start') || 'Start Recording' }}
       </button>
 
       <!-- Stop Recording -->
@@ -53,7 +53,7 @@
         class="btn-control btn-stop"
       >
         <i class="fas fa-stop"></i>
-        {{ t('outputRecording.stop') || 'Aufnahme beenden' }}
+        {{ t('outputRecording.stop') || 'Stop Recording' }}
       </button>
 
       <!-- Download -->
@@ -63,7 +63,7 @@
         class="btn-control btn-download"
       >
         <i class="fas fa-download"></i>
-        {{ t('outputRecording.download') || 'Herunterladen' }}
+        {{ t('outputRecording.download') || 'Download' }}
       </button>
 
       <!-- New Recording -->
@@ -73,14 +73,14 @@
         class="btn-control btn-new"
       >
         <i class="fas fa-plus"></i>
-        {{ t('outputRecording.new') || 'Neue Aufnahme' }}
+        {{ t('outputRecording.new') || 'New Recording' }}
       </button>
     </div>
 
     <!-- Success Message -->
     <div v-if="hasRecording && !isRecording" class="recording-info success">
       <i class="fas fa-check-circle"></i>
-      {{ t('outputRecording.ready') || 'Aufnahme bereit zum Download' }}
+      {{ t('outputRecording.ready') || 'Recording ready for download' }}
     </div>
 
     <!-- Error Message -->
@@ -92,8 +92,8 @@
     <!-- Important Note -->
     <div class="important-note">
       <i class="fas fa-exclamation-circle"></i>
-      <strong>{{ t('outputRecording.noteTitle') || 'Wichtig:' }}</strong>
-      {{ t('outputRecording.note') || 'Audio muss abgespielt werden während der Aufnahme!' }}
+      <strong>{{ t('outputRecording.noteTitle') || 'Important:' }}</strong>
+      {{ t('outputRecording.note') || 'Audio must be playing during recording!' }}
     </div>
   </div>
 </template>
@@ -113,16 +113,16 @@ const t = (key) => {
     return i18n.t(key)
   }
   const translations = {
-    'outputRecording.title': 'Output aufnehmen',
-    'outputRecording.description': 'Nimmt das verarbeitete Audio (mit EQ und Dynamics) auf',
+    'outputRecording.title': 'Record Output',
+    'outputRecording.description': 'Records the processed audio (with EQ and Dynamics)',
     'outputRecording.format': 'Format:',
-    'outputRecording.start': 'Aufnahme starten',
-    'outputRecording.stop': 'Aufnahme beenden',
-    'outputRecording.download': 'Herunterladen',
-    'outputRecording.new': 'Neue Aufnahme',
-    'outputRecording.ready': 'Aufnahme bereit zum Download',
-    'outputRecording.noteTitle': 'Wichtig:',
-    'outputRecording.note': 'Audio muss abgespielt werden während der Aufnahme!'
+    'outputRecording.start': 'Start Recording',
+    'outputRecording.stop': 'Stop Recording',
+    'outputRecording.download': 'Download',
+    'outputRecording.new': 'New Recording',
+    'outputRecording.ready': 'Recording ready for download',
+    'outputRecording.noteTitle': 'Important:',
+    'outputRecording.note': 'Audio must be playing during recording!'
   }
   return translations[key] || key
 }
@@ -160,46 +160,46 @@ function selectFormat(format) {
 
 async function handleStart() {
   errorMessage.value = ''
-  
+
   if (!audioEngine) {
-    errorMessage.value = 'AudioEngine nicht verfügbar'
+    errorMessage.value = 'AudioEngine not available'
     return
   }
 
   const success = await startRecording()
-  
+
   if (!success) {
-    errorMessage.value = 'Fehler beim Starten der Aufnahme'
-    notify('Fehler beim Starten der Aufnahme', 'error')
+    errorMessage.value = 'Error starting recording'
+    notify('Error starting recording', 'error')
   } else {
-    notify('Output-Aufnahme gestartet', 'success')
+    notify('Output recording started', 'success')
   }
 }
 
 function handleStop() {
   const success = stopRecording()
-  
+
   if (success) {
-    notify('Aufnahme beendet', 'success')
+    notify('Recording stopped', 'success')
   }
 }
 
 function handleDownload() {
   const success = downloadRecording('processed-audio')
-  
+
   if (success) {
-    notify('Aufnahme heruntergeladen', 'success')
+    notify('Recording downloaded', 'success')
   } else {
-    errorMessage.value = 'Fehler beim Herunterladen'
-    notify('Fehler beim Herunterladen', 'error')
+    errorMessage.value = 'Error downloading recording'
+    notify('Error downloading recording', 'error')
   }
 }
 
 function handleNewRecording() {
   discardRecording()
   errorMessage.value = ''
-  
-  notify('Bereit für neue Aufnahme', 'info')
+
+  notify('Ready for new recording', 'info')
 }
 </script>
 
