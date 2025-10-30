@@ -14,12 +14,9 @@
       <div class="grid">
         <!-- Left Column -->
         <div>
-          <!-- 🎙️ MIKROFON RECORDING -->
-          <RecordingControls />
-          
-          <!-- 💾 OUTPUT RECORDING - NEU! -->
+          <!-- 💾 OUTPUT RECORDING -->
           <OutputRecordingControls />
-          
+
           <!-- File Upload & Player Controls -->
           <PlayerControls
             @files-selected="handleFilesSelected"
@@ -58,7 +55,6 @@ import { useAudioPlayer } from './composables/useAudioPlayer'
 import Notification from './components/Notification.vue'
 import LanguageThemeSwitcher from './components/LanguageThemeSwitcher.vue'
 import PromoSection from './components/PromoSection.vue'
-import RecordingControls from './components/RecordingControls.vue'  // 🎙️ Mikrofon
 import OutputRecordingControls from './components/OutputRecordingControls.vue'  // 💾 Output
 import PlayerControls from './components/PlayerControls.vue'
 import Equalizer from './components/Equalizer.vue'
