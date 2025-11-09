@@ -220,23 +220,15 @@ function triggerFileSelect() {
 async function handleFileSelect(event) {
   const files = event.target.files
   if (files && files.length > 0) {
-    const tracks = addFiles(files)
-    
-    notify(
-      `${files.length} ${t('player.tracks')} hinzugefügt`,
-      'success'
-    )
-    
+    // Emit event to parent (App.vue handles adding files)
     emit('files-selected', files)
-    
-    // Auto-play first track
-    if (tracks.length > 0) {
-      setTimeout(() => {
-        play()
-      }, 100)
-    }
+
+    // Auto-play first track after a short delay
+    setTimeout(() => {
+      play()
+    }, 150)
   }
-  
+
   // Reset input
   event.target.value = ''
 }
