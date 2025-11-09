@@ -268,30 +268,30 @@ function formatFileSize(bytes) {
 <style scoped>
 .player-controls {
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
   color: white;
-  box-shadow: 0 10px 40px rgba(30, 60, 114, 0.3);
+  box-shadow: 0 4px 20px rgba(30, 60, 114, 0.2);
   transition: all 0.3s ease;
 }
 
 .player-controls:hover {
-  box-shadow: 0 15px 50px rgba(30, 60, 114, 0.4);
-  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(30, 60, 114, 0.3);
+  transform: translateY(-1px);
 }
 
 .player-header {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .player-header h3 {
   margin: 0;
-  font-size: 1.4em;
+  font-size: 1.1em;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .upload-section {
@@ -303,29 +303,29 @@ function formatFileSize(bytes) {
 
 .btn-upload {
   flex: 1;
-  padding: 15px 20px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
-  font-size: 1em;
+  font-size: 0.9em;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 212, 255, 0.2);
 }
 
 .btn-upload:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
 }
 
 .btn-upload i {
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 .file-info {
@@ -443,13 +443,13 @@ function formatFileSize(bytes) {
 }
 
 .btn-control {
-  width: 50px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  font-size: 1.2em;
+  font-size: 1em;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -460,7 +460,7 @@ function formatFileSize(bytes) {
 
 .btn-control:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .btn-control:disabled {
@@ -469,16 +469,16 @@ function formatFileSize(bytes) {
 }
 
 .btn-play-pause {
-  width: 70px;
-  height: 70px;
-  font-size: 1.8em;
+  width: 50px;
+  height: 50px;
+  font-size: 1.4em;
   background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
 }
 
 .btn-play-pause:hover:not(:disabled) {
   background: linear-gradient(135deg, #00e4ff 0%, #00a9dd 100%);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
 }
 
 .volume-control {

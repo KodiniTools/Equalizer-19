@@ -27,9 +27,6 @@
           <PlayerControls
             @files-selected="handleFilesSelected"
           />
-
-          <!-- Pro Features -->
-          <ProFeatures />
         </div>
 
         <!-- Right Column -->
@@ -67,7 +64,6 @@ import Equalizer from './components/Equalizer.vue'
 import DynamicsProcessor from './components/DynamicsProcessor.vue'
 import Visualization from './components/Visualization.vue'
 import Playlist from './components/Playlist.vue'
-import ProFeatures from './components/ProFeatures.vue'
 import AudioConverter from './components/AudioConverter.vue'
 
 // Initialize composables

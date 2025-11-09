@@ -124,26 +124,26 @@ onUnmounted(() => {
 <style scoped>
 .visualization {
   background: white;
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
 .visualization-header h3 {
-  margin: 0 0 20px 0;
-  font-size: 1.4em;
+  margin: 0 0 12px 0;
+  font-size: 1.1em;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: #333;
 }
 
 .visualization-canvas {
   width: 100%;
-  height: 200px;
-  border-radius: 12px;
+  height: 160px;
+  border-radius: 8px;
   background: #1a1a2e;
   display: block;
 }

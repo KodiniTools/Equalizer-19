@@ -206,27 +206,27 @@ function handleNewRecording() {
 <style scoped>
 .output-recording {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
   color: white;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
 }
 
 .recording-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .recording-header h3 {
   margin: 0;
-  font-size: 1.4em;
+  font-size: 1.1em;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .recording-status {
@@ -260,28 +260,29 @@ function handleNewRecording() {
 
 .recording-info-box {
   background: rgba(255, 255, 255, 0.15);
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
   backdrop-filter: blur(10px);
+  font-size: 0.9em;
 }
 
 .recording-info-box i {
-  font-size: 1.2em;
+  font-size: 1em;
   margin-top: 2px;
 }
 
 .recording-info-box p {
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
   opacity: 0.95;
 }
 
 .format-selection {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .format-selection label {
@@ -344,19 +345,19 @@ function handleNewRecording() {
 
 .btn-control {
   flex: 1;
-  padding: 15px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
   font-weight: 600;
-  font-size: 1em;
+  font-size: 0.85em;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
   backdrop-filter: blur(10px);
 }
 

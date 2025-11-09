@@ -244,41 +244,42 @@ onMounted(() => {
 <style scoped>
 .dynamics-processor {
   background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
 }
 
 .dynamics-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 16px;
 }
 
 .dynamics-header h3 {
   margin: 0;
-  font-size: 1.4em;
+  font-size: 1.1em;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: #333;
 }
 
 .btn-toggle {
-  padding: 10px 20px;
-  border: 2px solid #ddd;
+  padding: 7px 14px;
+  border: 1px solid #ddd;
   background: white;
-  border-radius: 25px;
+  border-radius: 20px;
   color: #666;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.3s ease;
-  font-size: 0.95em;
+  font-size: 0.85em;
 }
 
 .btn-toggle:hover {
@@ -293,14 +294,14 @@ onMounted(() => {
 }
 
 .btn-toggle i {
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 .dynamics-controls {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .dynamics-controls.disabled {
