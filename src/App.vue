@@ -16,10 +16,7 @@
         <div>
           <!-- 🎙️ MIKROFON RECORDING -->
           <RecordingControls />
-          
-          <!-- 💾 OUTPUT RECORDING - NEU! -->
-          <OutputRecordingControls />
-          
+
           <!-- File Upload & Player Controls -->
           <PlayerControls
             @files-selected="handleFilesSelected"
@@ -59,7 +56,6 @@ import Notification from './components/Notification.vue'
 import LanguageThemeSwitcher from './components/LanguageThemeSwitcher.vue'
 import PromoSection from './components/PromoSection.vue'
 import RecordingControls from './components/RecordingControls.vue'  // 🎙️ Mikrofon
-import OutputRecordingControls from './components/OutputRecordingControls.vue'  // 💾 Output
 import PlayerControls from './components/PlayerControls.vue'
 import Equalizer from './components/Equalizer.vue'
 import DynamicsProcessor from './components/DynamicsProcessor.vue'
@@ -97,9 +93,9 @@ provide('notify', (message, type = 'info') => {
 })
 
 const handleFilesSelected = (files) => {
-  audioPlayer.addFiles(files)
+  // Files are already added in PlayerControls, just show notification
   if (notificationRef.value) {
-    const message = currentLanguage.value === 'de' 
+    const message = currentLanguage.value === 'de'
       ? `${files.length} Datei(en) hinzugefügt`
       : `${files.length} file(s) added`
     notificationRef.value.show(message, 'success')
