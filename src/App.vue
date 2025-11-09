@@ -2,47 +2,50 @@
   <div class="app-container">
     <!-- Notification System -->
     <Notification ref="notificationRef" />
-    
+
     <!-- Language & Theme Switcher -->
     <LanguageThemeSwitcher />
-    
+
     <!-- Promo Section -->
     <PromoSection />
-    
+
     <!-- Main Content -->
     <div class="container">
+      <!-- 19-Band Equalizer - Full Width -->
+      <div class="equalizer-section">
+        <Equalizer />
+      </div>
+
+      <!-- Two Column Layout for Other Sections -->
       <div class="grid">
         <!-- Left Column -->
         <div>
-          <!-- 🎙️ MIKROFON RECORDING -->
-          <RecordingControls />
-          
-          <!-- 💾 OUTPUT RECORDING - NEU! -->
+          <!-- 💾 OUTPUT RECORDING -->
           <OutputRecordingControls />
-          
+
           <!-- File Upload & Player Controls -->
           <PlayerControls
             @files-selected="handleFilesSelected"
           />
-          
-          <!-- Equalizer -->
-          <Equalizer />
-          
-          <!-- Dynamics Processor -->
-          <DynamicsProcessor />
+
+          <!-- Pro Features -->
+          <ProFeatures />
         </div>
-        
+
         <!-- Right Column -->
         <div>
+          <!-- Dynamics Processor -->
+          <DynamicsProcessor />
+
           <!-- Visualization -->
           <Visualization />
-          
+
           <!-- Playlist -->
           <Playlist />
         </div>
       </div>
     </div>
-    
+
     <!-- Audio Converter Promo -->
     <AudioConverter />
   </div>
@@ -58,13 +61,13 @@ import { useAudioPlayer } from './composables/useAudioPlayer'
 import Notification from './components/Notification.vue'
 import LanguageThemeSwitcher from './components/LanguageThemeSwitcher.vue'
 import PromoSection from './components/PromoSection.vue'
-import RecordingControls from './components/RecordingControls.vue'  // 🎙️ Mikrofon
-import OutputRecordingControls from './components/OutputRecordingControls.vue'  // 💾 Output
+import OutputRecordingControls from './components/OutputRecordingControls.vue'
 import PlayerControls from './components/PlayerControls.vue'
 import Equalizer from './components/Equalizer.vue'
 import DynamicsProcessor from './components/DynamicsProcessor.vue'
 import Visualization from './components/Visualization.vue'
 import Playlist from './components/Playlist.vue'
+import ProFeatures from './components/ProFeatures.vue'
 import AudioConverter from './components/AudioConverter.vue'
 
 // Initialize composables
@@ -117,7 +120,6 @@ onMounted(() => {
   document.addEventListener('click', init, { once: true })
   
   console.log('✅ Equalizer 19 Vue 3 ready!')
-  console.log('🎙️ Recording Controls active!')
   console.log('🎛️ AudioEngine initialized and connected!')
   console.log('💡 Tipp: Teste Audio-Routing mit TEST_AUDIO_ROUTING.js in Console')
 })
@@ -126,5 +128,16 @@ onMounted(() => {
 <style scoped>
 .app-container {
   min-height: 100vh;
+}
+
+.equalizer-section {
+  margin-bottom: 25px;
+}
+
+/* Responsive: Equalizer bleibt full-width */
+@media (max-width: 768px) {
+  .equalizer-section {
+    margin-bottom: 20px;
+  }
 }
 </style>
