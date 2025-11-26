@@ -2,113 +2,73 @@ import { ref, computed } from 'vue'
 
 /**
  * Output Recorder - Records processed audio from AudioEngine
- * This records what you HEAR (after EQ and Dynamics processing)
+ * Supports WAV and WebM export formats
  */
 export function useOutputRecorder() {
   const isRecording = ref(false)
   const recordedChunks = ref([])
   const mediaRecorder = ref(null)
-  const recordingFormat = ref('webm') // 'webm' or 'wav'
+  const recordingFormat = ref('webm')
   const recordingTime = ref(0)
   let timerInterval = null
   let audioEngineRef = null
 
   const hasRecording = computed(() => recordedChunks.value.length > 0)
 
-  /**
-   * Set the audio engine reference
-   */
   function setAudioEngine(engine) {
     audioEngineRef = engine
-    console.log('✅ AudioEngine set for output recording')
   }
 
-  /**
-   * Start recording the processed audio output
-   */
   async function startRecording() {
-    if (!audioEngineRef) {
-      console.error('❌ AudioEngine not set! Cannot record output.')
-      return false
-    }
-
-    if (!audioEngineRef.audioContext?.value) {
-      console.error('❌ AudioContext not available')
-      return false
-    }
+    if (!audioEngineRef) return false
+    if (!audioEngineRef.audioContext?.value) return false
 
     try {
       recordedChunks.value = []
       recordingTime.value = 0
 
       const audioContext = audioEngineRef.audioContext.value
-
-      // Create MediaStreamDestination to capture the output
       const destination = audioContext.createMediaStreamDestination()
-      
-      // Connect the gain node (master output) to our recording destination
+
       if (audioEngineRef.gainNode?.value) {
         audioEngineRef.gainNode.value.connect(destination)
-        console.log('✅ Connected gain node to recording destination')
       } else {
-        console.error('❌ Gain node not available')
         return false
       }
 
-      // Create MediaRecorder from the destination stream
-      const mimeType = recordingFormat.value === 'webm' 
-        ? 'audio/webm;codecs=opus'
-        : 'audio/webm;codecs=opus' // We'll convert to WAV later if needed
+      const mimeType = 'audio/webm;codecs=opus'
 
-      const options = { mimeType }
-      
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        console.error('❌ MIME type not supported:', mimeType)
-        return false
-      }
+      if (!MediaRecorder.isTypeSupported(mimeType)) return false
 
-      mediaRecorder.value = new MediaRecorder(destination.stream, options)
+      mediaRecorder.value = new MediaRecorder(destination.stream, { mimeType })
 
       mediaRecorder.value.ondataavailable = (event) => {
         if (event.data.size > 0) {
           recordedChunks.value.push(event.data)
-          console.log('📼 Recording chunk:', event.data.size, 'bytes')
         }
       }
 
       mediaRecorder.value.onstop = () => {
-        console.log('⏹️ Recording stopped, total chunks:', recordedChunks.value.length)
         if (timerInterval) {
           clearInterval(timerInterval)
           timerInterval = null
         }
       }
 
-      mediaRecorder.value.onerror = (error) => {
-        console.error('❌ MediaRecorder error:', error)
-      }
-
-      // Start recording
-      mediaRecorder.value.start(100) // Collect data every 100ms
+      mediaRecorder.value.start(100)
       isRecording.value = true
 
-      // Start timer
       timerInterval = setInterval(() => {
         recordingTime.value++
       }, 1000)
 
-      console.log('🎙️ Output recording started')
       return true
-
     } catch (error) {
-      console.error('❌ Failed to start output recording:', error)
+      console.error('Failed to start recording:', error)
       return false
     }
   }
 
-  /**
-   * Stop recording
-   */
   function stopRecording() {
     if (mediaRecorder.value && isRecording.value) {
       mediaRecorder.value.stop()
@@ -118,75 +78,135 @@ export function useOutputRecorder() {
         clearInterval(timerInterval)
         timerInterval = null
       }
-
-      console.log('⏹️ Output recording stopped')
       return true
     }
     return false
   }
 
   /**
-   * Download the recorded audio
+   * Convert AudioBuffer to WAV format
    */
-  function downloadRecording(filename = 'processed-audio') {
-    if (recordedChunks.value.length === 0) {
-      console.warn('⚠️ No recording to download')
-      return false
+  function audioBufferToWav(buffer) {
+    const numChannels = buffer.numberOfChannels
+    const sampleRate = buffer.sampleRate
+    const format = 1 // PCM
+    const bitDepth = 16
+
+    const bytesPerSample = bitDepth / 8
+    const blockAlign = numChannels * bytesPerSample
+
+    const samples = buffer.length
+    const dataSize = samples * blockAlign
+    const bufferSize = 44 + dataSize
+
+    const arrayBuffer = new ArrayBuffer(bufferSize)
+    const view = new DataView(arrayBuffer)
+
+    // WAV header
+    writeString(view, 0, 'RIFF')
+    view.setUint32(4, bufferSize - 8, true)
+    writeString(view, 8, 'WAVE')
+    writeString(view, 12, 'fmt ')
+    view.setUint32(16, 16, true)
+    view.setUint16(20, format, true)
+    view.setUint16(22, numChannels, true)
+    view.setUint32(24, sampleRate, true)
+    view.setUint32(28, sampleRate * blockAlign, true)
+    view.setUint16(32, blockAlign, true)
+    view.setUint16(34, bitDepth, true)
+    writeString(view, 36, 'data')
+    view.setUint32(40, dataSize, true)
+
+    // Interleave channels and write samples
+    const offset = 44
+    const channelData = []
+    for (let i = 0; i < numChannels; i++) {
+      channelData.push(buffer.getChannelData(i))
     }
 
+    for (let i = 0; i < samples; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        let sample = channelData[ch][i]
+        sample = Math.max(-1, Math.min(1, sample))
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF
+        view.setInt16(offset + (i * blockAlign) + (ch * bytesPerSample), sample, true)
+      }
+    }
+
+    return new Blob([arrayBuffer], { type: 'audio/wav' })
+  }
+
+  function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i))
+    }
+  }
+
+  /**
+   * Convert WebM blob to WAV using AudioContext
+   */
+  async function convertToWav(webmBlob) {
     try {
-      const mimeType = recordingFormat.value === 'webm' 
-        ? 'audio/webm'
-        : 'audio/webm'
-      
-      const blob = new Blob(recordedChunks.value, { type: mimeType })
+      const arrayBuffer = await webmBlob.arrayBuffer()
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+      audioContext.close()
+      return audioBufferToWav(audioBuffer)
+    } catch (error) {
+      console.error('WAV conversion failed:', error)
+      return null
+    }
+  }
+
+  async function downloadRecording(filename = 'audio-export') {
+    if (recordedChunks.value.length === 0) return false
+
+    try {
+      let blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
+      let ext = 'webm'
+
+      if (recordingFormat.value === 'wav') {
+        const wavBlob = await convertToWav(blob)
+        if (wavBlob) {
+          blob = wavBlob
+          ext = 'wav'
+        }
+      }
+
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.style.display = 'none'
       a.href = url
-      a.download = `${filename}.${recordingFormat.value === 'webm' ? 'webm' : 'webm'}`
-      
+      a.download = `${filename}.${ext}`
+
       document.body.appendChild(a)
       a.click()
-      
+
       setTimeout(() => {
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
       }, 100)
 
-      console.log('💾 Recording downloaded:', a.download)
       return true
-
     } catch (error) {
-      console.error('❌ Failed to download recording:', error)
+      console.error('Download failed:', error)
       return false
     }
   }
 
-  /**
-   * Set recording format
-   */
   function setFormat(format) {
     if (!isRecording.value) {
       recordingFormat.value = format
       recordedChunks.value = []
       recordingTime.value = 0
-      console.log('📝 Recording format set to:', format)
     }
   }
 
-  /**
-   * Discard current recording
-   */
   function discardRecording() {
     recordedChunks.value = []
     recordingTime.value = 0
-    console.log('🗑️ Recording discarded')
   }
 
-  /**
-   * Cleanup
-   */
   function cleanup() {
     if (timerInterval) {
       clearInterval(timerInterval)
