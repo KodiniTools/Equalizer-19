@@ -96,9 +96,9 @@ provide('notify', (message, type = 'info') => {
 })
 
 const handleFilesSelected = (files) => {
-  audioPlayer.addFiles(files)
+  // Files already added by PlayerControls, just show notification
   if (notificationRef.value) {
-    const message = currentLanguage.value === 'de' 
+    const message = currentLanguage.value === 'de'
       ? `${files.length} Datei(en) hinzugefügt`
       : `${files.length} file(s) added`
     notificationRef.value.show(message, 'success')
