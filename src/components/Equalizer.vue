@@ -202,11 +202,11 @@ onMounted(() => {
 
 <style scoped>
 .equalizer {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 25px;
+  background: var(--card-bg, white);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-color, #e9ecef);
+  margin-bottom: 0;
 }
 
 .equalizer-header {
@@ -218,27 +218,27 @@ onMounted(() => {
 
 .equalizer-header h3 {
   margin: 0;
-  font-size: 1.4em;
+  font-size: 1.3em;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #333;
+  color: var(--text-primary, #333);
 }
 
 .btn-toggle {
-  padding: 10px 20px;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 25px;
-  color: #666;
+  padding: 8px 16px;
+  border: 1px solid var(--border-color, #ddd);
+  background: var(--secondary-bg, white);
+  border-radius: 20px;
+  color: var(--text-secondary, #666);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 
 .btn-toggle:hover {
@@ -265,17 +265,18 @@ onMounted(() => {
 
 .equalizer-presets label {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary, #333);
 }
 
 .equalizer-presets select {
   flex: 1;
   padding: 10px 15px;
-  border: 2px solid #e9ecef;
+  border: 1px solid var(--border-color, #e9ecef);
   border-radius: 10px;
   font-size: 1em;
   cursor: pointer;
-  background: white;
+  background: var(--secondary-bg, white);
+  color: var(--text-primary, #333);
   transition: all 0.2s ease;
 }
 
@@ -291,14 +292,16 @@ onMounted(() => {
 
 .equalizer-controls {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-end;
-  gap: 8px;
-  padding: 20px 10px;
-  background: linear-gradient(to bottom, #f8f9fa 0%, white 100%);
-  border-radius: 15px;
+  gap: 4px;
+  padding: 20px 15px;
+  background: var(--secondary-bg, #f8f9fa);
+  border: 1px solid var(--border-color, #e9ecef);
+  border-radius: 12px;
   margin-bottom: 20px;
-  min-height: 300px;
+  min-height: 280px;
+  width: 100%;
 }
 
 .equalizer-controls.disabled {
@@ -310,7 +313,10 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex: 1;
+  min-width: 30px;
+  max-width: 45px;
 }
 
 .slider.vertical {
@@ -351,19 +357,21 @@ onMounted(() => {
 
 .slider-value {
   font-weight: 600;
-  font-size: 0.85em;
+  font-size: 0.8em;
   color: #667eea;
   font-family: 'Courier New', monospace;
-  min-width: 35px;
+  min-width: 28px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .slider-label {
-  font-size: 0.75em;
-  color: #666;
+  font-size: 0.7em;
+  color: var(--text-secondary, #666);
   font-weight: 500;
   text-align: center;
-  min-width: 35px;
+  min-width: 28px;
+  white-space: nowrap;
 }
 
 .btn-reset {
