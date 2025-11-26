@@ -1,22 +1,11 @@
 <template>
   <div class="equalizer">
-    <div class="equalizer-header">
-      <div class="header-icon" :title="t('equalizer.title') || '19-Band Equalizer'">
-        <i class="fas fa-sliders-h"></i>
-      </div>
-      <button
-        @click="toggleBypass"
-        :class="['btn-toggle', { active: !isEqBypassed }]"
-        :title="!isEqBypassed ? (t('equalizer.enabled') || 'An') : (t('equalizer.disabled') || 'Aus')"
-      >
+    <div class="eq-header">
+      <button @click="toggleBypass" :class="['toggle-btn', { active: !isEqBypassed }]">
         <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
       </button>
-    </div>
-
-    <div class="equalizer-presets">
-      <label>{{ t('equalizer.presets') || 'Presets:' }}</label>
-      <select @change="handlePresetChange" v-model="selectedPreset">
-        <option value="">{{ t('equalizer.custom') || 'Custom' }}</option>
+      <select @change="handlePresetChange" v-model="selectedPreset" class="preset-select">
+        <option value="">Custom</option>
         <option value="flat">Flat</option>
         <option value="bass_boost">Bass Boost</option>
         <option value="treble_boost">Treble Boost</option>
@@ -27,14 +16,13 @@
         <option value="pop">Pop</option>
         <option value="electronic">Electronic</option>
       </select>
+      <button @click="resetEqualizer" class="reset-btn">
+        <i class="fas fa-undo"></i>
+      </button>
     </div>
 
-    <div class="equalizer-controls" :class="{ disabled: isEqBypassed }">
-      <div 
-        v-for="(band, index) in localBands" 
-        :key="band.frequency"
-        class="eq-slider"
-      >
+    <div class="eq-bands" :class="{ disabled: isEqBypassed }">
+      <div v-for="(band, index) in localBands" :key="band.frequency" class="band">
         <input
           type="range"
           min="-12"
@@ -43,42 +31,20 @@
           :value="band.gain"
           @input="handleGainChange($event, index)"
           :disabled="isEqBypassed"
-          class="slider vertical"
+          class="slider-v"
         />
-        <div class="slider-value">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</div>
-        <div class="slider-label">{{ formatFrequency(band.frequency) }}</div>
+        <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
+        <span class="freq">{{ formatFrequency(band.frequency) }}</span>
       </div>
     </div>
-
-    <button @click="resetEqualizer" class="btn-reset" :title="t('equalizer.reset') || 'Zurücksetzen'">
-      <i class="fas fa-undo"></i>
-    </button>
   </div>
 </template>
 
 <script setup>
-import { ref, inject, computed, watch, onMounted } from 'vue'
+import { ref, inject, watch, onMounted } from 'vue'
 
-// Get dependencies
-const i18n = inject('i18n', { t: (key) => key })
 const audioEngine = inject('audioEngine')
 const notify = inject('notify', () => {})
-
-// Make t function available
-const t = (key) => {
-  if (i18n && typeof i18n.t === 'function') {
-    return i18n.t(key)
-  }
-  const translations = {
-    'equalizer.title': '19-Band Equalizer',
-    'equalizer.enabled': 'An',
-    'equalizer.disabled': 'Aus',
-    'equalizer.presets': 'Presets:',
-    'equalizer.custom': 'Custom',
-    'equalizer.reset': 'Zurücksetzen'
-  }
-  return translations[key] || key
-}
 
 // Local state - initialize with 19 bands
 const localBands = ref([
@@ -200,228 +166,200 @@ onMounted(() => {
 
 <style scoped>
 .equalizer {
-  background: var(--card-bg, white);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid var(--border-color, #e9ecef);
-  margin-bottom: 0;
-}
-
-.equalizer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-icon {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--card-bg, #252530);
+  border: 1px solid var(--border-color, #3a3a48);
   border-radius: 12px;
+  padding: 12px;
+}
+
+.eq-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.3em;
-  color: white;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-.btn-toggle {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border-color, #ddd);
-  background: var(--secondary-bg, white);
-  border-radius: 12px;
-  color: var(--text-secondary, #666);
+.toggle-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color, #3a3a48);
+  background: var(--secondary-bg, #1a1a22);
+  border-radius: 6px;
+  color: var(--text-secondary, #8a8a9a);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 1.3em;
+  font-size: 0.85em;
+  transition: all 0.2s ease;
 }
 
-.btn-toggle:hover {
+.toggle-btn:hover {
   border-color: #667eea;
   color: #667eea;
 }
 
-.btn-toggle.active {
+.toggle-btn.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: transparent;
   color: white;
 }
 
-.btn-toggle i {
-  font-size: 1.2em;
-}
-
-.equalizer-presets {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.equalizer-presets label {
-  font-weight: 600;
-  color: var(--text-primary, #333);
-}
-
-.equalizer-presets select {
+.preset-select {
   flex: 1;
-  padding: 10px 15px;
-  border: 1px solid var(--border-color, #e9ecef);
-  border-radius: 10px;
-  font-size: 1em;
+  padding: 5px 8px;
+  border: 1px solid var(--border-color, #3a3a48);
+  border-radius: 6px;
+  font-size: 0.7em;
   cursor: pointer;
-  background: var(--secondary-bg, white);
-  color: var(--text-primary, #333);
+  background: var(--secondary-bg, #1a1a22);
+  color: var(--text-secondary, #c8c8d5);
   transition: all 0.2s ease;
 }
 
-.equalizer-presets select:hover {
+.preset-select:hover {
   border-color: #667eea;
 }
 
-.equalizer-presets select:focus {
+.preset-select:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.equalizer-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 4px;
-  padding: 20px 15px;
-  background: var(--secondary-bg, #f8f9fa);
-  border: 1px solid var(--border-color, #e9ecef);
-  border-radius: 12px;
-  margin-bottom: 20px;
-  min-height: 280px;
-  width: 100%;
-}
-
-.equalizer-controls.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.eq-slider {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 30px;
-  max-width: 45px;
-}
-
-.slider.vertical {
-  writing-mode: bt-lr;
-  -webkit-appearance: slider-vertical;
-  width: 8px;
-  height: 200px;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-.slider.vertical::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-  transition: all 0.2s ease;
-}
-
-.slider.vertical::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
-}
-
-.slider.vertical::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-}
-
-.slider-value {
-  font-weight: 600;
-  font-size: 0.8em;
-  color: #667eea;
-  font-family: 'Courier New', monospace;
-  min-width: 28px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.slider-label {
-  font-size: 0.7em;
-  color: var(--text-secondary, #666);
-  font-weight: 500;
-  text-align: center;
-  min-width: 28px;
-  white-space: nowrap;
-}
-
-.btn-reset {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border-color, #ddd);
-  background: var(--secondary-bg, white);
-  border-radius: 12px;
-  color: var(--text-secondary, #666);
+.reset-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color, #3a3a48);
+  background: var(--secondary-bg, #1a1a22);
+  border-radius: 6px;
+  color: var(--text-secondary, #8a8a9a);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 1.1em;
-  margin: 0 auto;
+  font-size: 0.7em;
+  transition: all 0.2s ease;
 }
 
-.btn-reset:hover {
+.reset-btn:hover {
   background: #667eea;
   color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-.btn-reset i {
-  font-size: 1.1em;
+.eq-bands {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 12px 8px;
+  background: var(--secondary-bg, #1a1a22);
+  border: 1px solid var(--border-color, #3a3a48);
+  border-radius: 8px;
+  min-height: 220px;
 }
 
-@media (max-width: 768px) {
-  .equalizer {
-    padding: 20px;
+.eq-bands.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 22px;
+  max-width: 36px;
+}
+
+.slider-v {
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  width: 6px;
+  height: 160px;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background: transparent;
+}
+
+.slider-v::-webkit-slider-runnable-track {
+  width: 6px;
+  background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
+  border-radius: 3px;
+}
+
+.slider-v::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+  transition: all 0.15s ease;
+}
+
+.slider-v::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.7);
+}
+
+.slider-v::-moz-range-track {
+  width: 6px;
+  background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
+  border-radius: 3px;
+}
+
+.slider-v::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+}
+
+.val {
+  font-size: 0.6em;
+  font-weight: 600;
+  color: #667eea;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  min-width: 24px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.freq {
+  font-size: 0.55em;
+  color: var(--text-secondary, #8a8a9a);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .eq-bands {
+    gap: 1px;
+    padding: 10px 4px;
   }
 
-  .equalizer-controls {
-    gap: 4px;
-    padding: 15px 5px;
-    overflow-x: auto;
+  .slider-v {
+    height: 130px;
   }
 
-  .slider.vertical {
-    height: 150px;
+  .band {
+    min-width: 18px;
   }
 
-  .slider-value {
-    font-size: 0.75em;
+  .val {
+    font-size: 0.55em;
   }
 
-  .slider-label {
-    font-size: 0.7em;
+  .freq {
+    font-size: 0.5em;
   }
 }
 </style>
