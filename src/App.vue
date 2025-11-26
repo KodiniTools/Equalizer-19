@@ -10,35 +10,38 @@
     <PromoSection />
     
     <!-- Main Content -->
-    <div class="container">
-      <div class="grid">
-        <!-- Left Column -->
-        <div>
+    <div class="container main-layout">
+      <div class="grid-three-column">
+        <!-- Left Column: Recorder & Player -->
+        <div class="column-left">
           <!-- 🎙️ MIKROFON RECORDING -->
           <RecordingControls />
-          
-          <!-- 💾 OUTPUT RECORDING - NEU! -->
+
+          <!-- 💾 OUTPUT RECORDING -->
           <OutputRecordingControls />
-          
+
           <!-- File Upload & Player Controls -->
           <PlayerControls
             @files-selected="handleFilesSelected"
           />
-          
-          <!-- Equalizer -->
-          <Equalizer />
-          
-          <!-- Dynamics Processor -->
-          <DynamicsProcessor />
-        </div>
-        
-        <!-- Right Column -->
-        <div>
-          <!-- Visualization -->
-          <Visualization />
-          
+
           <!-- Playlist -->
           <Playlist />
+        </div>
+
+        <!-- Center Column: Equalizer & Visualizer -->
+        <div class="column-center">
+          <!-- Equalizer -->
+          <Equalizer />
+
+          <!-- Visualization -->
+          <Visualization />
+        </div>
+
+        <!-- Right Column: Dynamics Processor -->
+        <div class="column-right">
+          <!-- Dynamics Processor -->
+          <DynamicsProcessor />
         </div>
       </div>
     </div>
