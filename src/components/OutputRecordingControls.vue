@@ -1,98 +1,71 @@
 <template>
-  <div class="output-recording">
-    <div class="recording-header">
-      <div class="header-icon" :title="t('outputRecording.title') || 'Output aufnehmen'">
-        <i class="fas fa-circle-dot"></i>
-      </div>
-      <div class="recording-status" v-if="isRecording">
-        <span class="recording-indicator"></span>
-        <span class="recording-time">{{ formattedTime }}</span>
-      </div>
+  <div class="recorder">
+    <!-- Recording time display -->
+    <div class="rec-time" v-if="isRecording">
+      <span class="rec-dot"></span>
+      <span class="time">{{ formattedTime }}</span>
     </div>
 
-    <div class="recording-info-box">
-      <i class="fas fa-info-circle"></i>
-      <p>{{ t('outputRecording.description') || 'Nimmt das verarbeitete Audio (mit EQ und Dynamics) auf' }}</p>
+    <!-- Format toggle (only when not recording and no recording available) -->
+    <div class="format-toggle" v-if="!isRecording && !hasRecording">
+      <button
+        @click="selectFormat('wav')"
+        :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
+        title="WAV (Unkomprimiert)"
+      >WAV</button>
+      <button
+        @click="selectFormat('webm')"
+        :class="['fmt-btn', { active: recordingFormat === 'webm' }]"
+        title="WebM (Komprimiert)"
+      >WebM</button>
     </div>
 
-    <!-- Format Selection -->
-    <div v-if="!hasRecording && !isRecording" class="format-selection">
-      <label>
-        <i class="fas fa-file-audio"></i>
-        {{ t('outputRecording.format') || 'Format:' }}
-      </label>
-      <div class="format-buttons">
-        <button 
-          @click="selectFormat('webm')"
-          :class="['btn-format', { active: recordingFormat === 'webm' }]"
-        >
-          <i class="fas fa-file-audio"></i>
-          WebM
-          <span class="format-note">(Klein, gute Qualität)</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Recording Controls -->
-    <div class="recording-controls">
-      <!-- Start Recording -->
-      <button 
+    <!-- Control buttons -->
+    <div class="controls">
+      <!-- Record button -->
+      <button
         v-if="!isRecording && !hasRecording"
         @click="handleStart"
-        class="btn-control btn-start"
+        class="ctrl-btn rec"
+        title="Aufnahme starten"
       >
         <i class="fas fa-circle"></i>
-        {{ t('outputRecording.start') || 'Aufnahme starten' }}
       </button>
 
-      <!-- Stop Recording -->
-      <button 
+      <!-- Stop button -->
+      <button
         v-if="isRecording"
         @click="handleStop"
-        class="btn-control btn-stop"
+        class="ctrl-btn stop"
+        title="Stoppen"
       >
         <i class="fas fa-stop"></i>
-        {{ t('outputRecording.stop') || 'Aufnahme beenden' }}
       </button>
 
-      <!-- Download -->
-      <button 
+      <!-- Download button -->
+      <button
         v-if="hasRecording && !isRecording"
         @click="handleDownload"
-        class="btn-control btn-download"
+        class="ctrl-btn download"
+        title="Herunterladen"
       >
         <i class="fas fa-download"></i>
-        {{ t('outputRecording.download') || 'Herunterladen' }}
       </button>
 
-      <!-- New Recording -->
-      <button 
+      <!-- New recording button -->
+      <button
         v-if="hasRecording && !isRecording"
         @click="handleNewRecording"
-        class="btn-control btn-new"
+        class="ctrl-btn new"
+        title="Neue Aufnahme"
       >
-        <i class="fas fa-plus"></i>
-        {{ t('outputRecording.new') || 'Neue Aufnahme' }}
+        <i class="fas fa-redo"></i>
       </button>
     </div>
 
-    <!-- Success Message -->
-    <div v-if="hasRecording && !isRecording" class="recording-info success">
-      <i class="fas fa-check-circle"></i>
-      {{ t('outputRecording.ready') || 'Aufnahme bereit zum Download' }}
-    </div>
-
-    <!-- Error Message -->
-    <div v-if="errorMessage" class="error-message">
-      <i class="fas fa-exclamation-triangle"></i>
-      {{ errorMessage }}
-    </div>
-
-    <!-- Important Note -->
-    <div class="important-note">
-      <i class="fas fa-exclamation-circle"></i>
-      <strong>{{ t('outputRecording.noteTitle') || 'Wichtig:' }}</strong>
-      {{ t('outputRecording.note') || 'Audio muss abgespielt werden während der Aufnahme!' }}
+    <!-- Error indicator -->
+    <div v-if="errorMessage" class="error-dot" :title="errorMessage">
+      <i class="fas fa-exclamation"></i>
     </div>
   </div>
 </template>
@@ -101,30 +74,8 @@
 import { ref, inject, computed } from 'vue'
 import { useOutputRecorder } from '../composables/useOutputRecorder'
 
-// Get dependencies
-const i18n = inject('i18n', { t: (key) => key })
 const audioEngine = inject('audioEngine')
 const notify = inject('notify', () => {})
-
-// Make t function available
-const t = (key) => {
-  if (i18n && typeof i18n.t === 'function') {
-    return i18n.t(key)
-  }
-  const translations = {
-    'outputRecording.title': 'Output aufnehmen',
-    'outputRecording.description': 'Nimmt das verarbeitete Audio (mit EQ und Dynamics) auf',
-    'outputRecording.format': 'Format:',
-    'outputRecording.start': 'Aufnahme starten',
-    'outputRecording.stop': 'Aufnahme beenden',
-    'outputRecording.download': 'Herunterladen',
-    'outputRecording.new': 'Neue Aufnahme',
-    'outputRecording.ready': 'Aufnahme bereit zum Download',
-    'outputRecording.noteTitle': 'Wichtig:',
-    'outputRecording.note': 'Audio muss abgespielt werden während der Aufnahme!'
-  }
-  return translations[key] || key
-}
 
 const {
   isRecording,
@@ -139,14 +90,12 @@ const {
   discardRecording
 } = useOutputRecorder()
 
-// Set audio engine reference
 if (audioEngine) {
   setAudioEngine(audioEngine)
 }
 
 const errorMessage = ref('')
 
-// Format recording time
 const formattedTime = computed(() => {
   const mins = Math.floor(recordingTime.value / 60)
   const secs = recordingTime.value % 60
@@ -159,315 +108,172 @@ function selectFormat(format) {
 
 async function handleStart() {
   errorMessage.value = ''
-  
   if (!audioEngine) {
     errorMessage.value = 'AudioEngine nicht verfügbar'
     return
   }
-
   const success = await startRecording()
-  
   if (!success) {
-    errorMessage.value = 'Fehler beim Starten der Aufnahme'
+    errorMessage.value = 'Fehler beim Starten'
     notify('Fehler beim Starten der Aufnahme', 'error')
-  } else {
-    notify('Output-Aufnahme gestartet', 'success')
   }
 }
 
 function handleStop() {
-  const success = stopRecording()
-  
-  if (success) {
-    notify('Aufnahme beendet', 'success')
-  }
+  stopRecording()
 }
 
 function handleDownload() {
-  const success = downloadRecording('processed-audio')
-  
-  if (success) {
-    notify('Aufnahme heruntergeladen', 'success')
-  } else {
-    errorMessage.value = 'Fehler beim Herunterladen'
-    notify('Fehler beim Herunterladen', 'error')
+  const success = downloadRecording('audio-export')
+  if (!success) {
+    errorMessage.value = 'Download fehlgeschlagen'
   }
 }
 
 function handleNewRecording() {
   discardRecording()
   errorMessage.value = ''
-  
-  notify('Bereit für neue Aufnahme', 'info')
 }
 </script>
 
 <style scoped>
-.output-recording {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
-  color: white;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-}
-
-.recording-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-icon {
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.2);
+.recorder {
+  background: var(--card-bg, #252530);
+  border: 1px solid var(--border-color, #3a3a48);
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5em;
-  backdrop-filter: blur(10px);
-}
-
-.recording-status {
+  padding: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
 }
 
-.recording-indicator {
-  width: 12px;
-  height: 12px;
-  background: #ff4444;
+.rec-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 0.85em;
+  color: var(--text-primary, #fff);
+  background: rgba(239, 68, 68, 0.15);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
   border-radius: 50%;
-  animation: pulse 1.5s infinite;
+  animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  50% { opacity: 0.4; }
 }
 
-.recording-time {
-  font-family: 'Courier New', monospace;
+.time {
   font-weight: 600;
-  font-size: 1.1em;
 }
 
-.recording-info-box {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+.format-toggle {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  backdrop-filter: blur(10px);
+  gap: 2px;
+  background: var(--secondary-bg, #1a1a22);
+  border-radius: 6px;
+  padding: 2px;
 }
 
-.recording-info-box i {
-  font-size: 1.2em;
-  margin-top: 2px;
-}
-
-.recording-info-box p {
-  margin: 0;
-  line-height: 1.5;
-  opacity: 0.95;
-}
-
-.format-selection {
-  margin-bottom: 20px;
-}
-
-.format-selection label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.fmt-btn {
+  padding: 4px 8px;
+  font-size: 0.7em;
   font-weight: 600;
-  margin-bottom: 12px;
-  font-size: 1em;
-}
-
-.format-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.btn-format {
-  flex: 1;
-  padding: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #8b8b9a);
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s;
+}
+
+.fmt-btn:hover {
+  color: var(--text-primary, #fff);
+}
+
+.fmt-btn.active {
+  background: var(--accent-primary, #00d9ff);
+  color: #000;
+}
+
+.controls {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  backdrop-filter: blur(10px);
+  gap: 6px;
+  margin-left: auto;
 }
 
-.btn-format:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-.btn-format.active {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: white;
-}
-
-.btn-format i {
-  font-size: 1.5em;
-}
-
-.format-note {
-  font-size: 0.8em;
-  opacity: 0.8;
-  font-weight: 400;
-}
-
-.recording-controls {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 15px;
-}
-
-.btn-control {
-  flex: 1;
-  padding: 15px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  font-size: 1em;
+.ctrl-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  backdrop-filter: blur(10px);
+  font-size: 0.85em;
+  transition: all 0.2s;
 }
 
-.btn-control:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.ctrl-btn.rec {
+  background: #ef4444;
+  color: white;
 }
 
-.btn-control i {
-  font-size: 1.1em;
+.ctrl-btn.rec:hover {
+  background: #dc2626;
+  transform: scale(1.05);
 }
 
-.btn-start {
-  background: rgba(76, 175, 80, 0.3);
-  border-color: rgba(76, 175, 80, 0.5);
+.ctrl-btn.stop {
+  background: #f59e0b;
+  color: white;
 }
 
-.btn-start:hover {
-  background: rgba(76, 175, 80, 0.5);
-  border-color: #4caf50;
+.ctrl-btn.stop:hover {
+  background: #d97706;
+  transform: scale(1.05);
 }
 
-.btn-stop {
-  background: rgba(244, 67, 54, 0.3);
-  border-color: rgba(244, 67, 54, 0.5);
+.ctrl-btn.download {
+  background: #10b981;
+  color: white;
 }
 
-.btn-stop:hover {
-  background: rgba(244, 67, 54, 0.5);
-  border-color: #f44336;
+.ctrl-btn.download:hover {
+  background: #059669;
+  transform: scale(1.05);
 }
 
-.btn-download {
-  background: rgba(33, 150, 243, 0.3);
-  border-color: rgba(33, 150, 243, 0.5);
+.ctrl-btn.new {
+  background: var(--secondary-bg, #1a1a22);
+  color: var(--text-secondary, #c8c8d5);
+  border: 1px solid var(--border-color, #3a3a48);
 }
 
-.btn-download:hover {
-  background: rgba(33, 150, 243, 0.5);
-  border-color: #2196f3;
+.ctrl-btn.new:hover {
+  background: var(--hover-bg, #323240);
+  transform: scale(1.05);
 }
 
-.btn-new {
-  background: rgba(255, 152, 0, 0.3);
-  border-color: rgba(255, 152, 0, 0.5);
-}
-
-.btn-new:hover {
-  background: rgba(255, 152, 0, 0.5);
-  border-color: #ff9800;
-}
-
-.recording-info {
-  padding: 12px 16px;
-  border-radius: 10px;
+.error-dot {
+  width: 24px;
+  height: 24px;
+  background: rgba(239, 68, 68, 0.2);
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  backdrop-filter: blur(10px);
-}
-
-.recording-info.success {
-  background: rgba(76, 175, 80, 0.3);
-  border: 2px solid rgba(76, 175, 80, 0.5);
-}
-
-.error-message {
-  background: rgba(244, 67, 54, 0.3);
-  border: 2px solid rgba(244, 67, 54, 0.5);
-  padding: 12px 16px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  backdrop-filter: blur(10px);
-}
-
-.important-note {
-  background: rgba(255, 152, 0, 0.2);
-  border: 2px solid rgba(255, 152, 0, 0.4);
-  padding: 12px 16px;
-  border-radius: 10px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 0.9em;
-  backdrop-filter: blur(10px);
-}
-
-.important-note i {
-  font-size: 1.1em;
-  margin-top: 2px;
-}
-
-@media (max-width: 768px) {
-  .output-recording {
-    padding: 20px;
-  }
-
-  .recording-controls {
-    flex-direction: column;
-  }
-
-  .format-buttons {
-    flex-direction: column;
-  }
+  justify-content: center;
+  color: #ef4444;
+  font-size: 0.7em;
 }
 </style>

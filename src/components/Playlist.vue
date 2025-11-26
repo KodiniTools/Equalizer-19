@@ -101,99 +101,100 @@ function formatFileSize(bytes) {
 
 <style scoped>
 .playlist {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg, #252530);
+  border: 1px solid var(--border-color, #3a3a48);
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .playlist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .playlist-header h3 {
   margin: 0;
-  font-size: 1.4em;
+  font-size: 0.8em;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #333;
+  gap: 8px;
+  color: var(--text-primary, #fff);
 }
 
 .track-count {
-  background: #667eea;
-  color: white;
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 0.85em;
+  background: var(--accent-primary, #00d9ff);
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
   font-weight: 600;
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  color: #999;
+  padding: 20px 10px;
+  color: var(--text-muted, #8b8b9a);
 }
 
 .empty-state i {
-  font-size: 3em;
-  margin-bottom: 15px;
+  font-size: 1.5em;
+  margin-bottom: 8px;
   display: block;
   opacity: 0.5;
 }
 
 .empty-state p {
   margin: 0;
-  font-size: 1.1em;
+  font-size: 0.75em;
 }
 
 .playlist-items {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 400px;
+  gap: 4px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
 .playlist-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 10px;
+  gap: 8px;
+  padding: 8px;
+  background: var(--secondary-bg, #1a1a22);
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .playlist-item:hover {
-  background: #e9ecef;
-  transform: translateX(5px);
+  background: var(--hover-bg, #323240);
 }
 
 .playlist-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--accent-primary, #00d9ff);
+  color: #000;
 }
 
 .track-number {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(102, 126, 234, 0.2);
+  background: rgba(0, 217, 255, 0.2);
   border-radius: 50%;
   font-weight: 600;
-  font-size: 0.9em;
+  font-size: 0.65em;
+  color: var(--text-secondary, #c8c8d5);
 }
 
 .playlist-item.active .track-number {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  color: #000;
 }
 
 .track-info {
@@ -202,75 +203,72 @@ function formatFileSize(bytes) {
 }
 
 .track-name {
-  font-weight: 600;
-  font-size: 0.95em;
-  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 0.7em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-primary, #fff);
+}
+
+.playlist-item.active .track-name {
+  color: #000;
 }
 
 .track-meta {
-  font-size: 0.8em;
-  opacity: 0.7;
+  font-size: 0.6em;
+  color: var(--text-muted, #8b8b9a);
+}
+
+.playlist-item.active .track-meta {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .btn-remove {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   border: none;
   border-radius: 50%;
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  font-size: 0.9em;
+  font-size: 0.6em;
 }
 
 .btn-remove:hover {
-  background: #dc3545;
+  background: #ef4444;
   color: white;
-  transform: scale(1.1);
 }
 
 .playlist-item.active .btn-remove {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(0, 0, 0, 0.2);
+  color: #000;
 }
 
 .playlist-item.active .btn-remove:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Scrollbar styling */
 .playlist-items::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 .playlist-items::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
+  background: var(--secondary-bg, #1a1a22);
+  border-radius: 4px;
 }
 
 .playlist-items::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 10px;
+  background: var(--accent-primary, #00d9ff);
+  border-radius: 4px;
 }
 
 .playlist-items::-webkit-scrollbar-thumb:hover {
-  background: #5568d3;
-}
-
-@media (max-width: 768px) {
-  .playlist {
-    padding: 20px;
-  }
-  
-  .playlist-items {
-    max-height: 300px;
-  }
+  background: #00c4e6;
 }
 </style>
