@@ -1,14 +1,7 @@
 <template>
   <div class="visualization">
-    <div class="visualization-header">
-      <h3>
-        <i class="fas fa-wave-square"></i>
-        {{ t('visualization.title') || 'Visualisierung' }}
-      </h3>
-    </div>
-    
-    <canvas 
-      ref="canvasRef" 
+    <canvas
+      ref="canvasRef"
       class="visualization-canvas"
       :width="canvasWidth"
       :height="canvasHeight"
@@ -19,21 +12,7 @@
 <script setup>
 import { ref, inject, onMounted, onUnmounted } from 'vue'
 
-// Get dependencies
-const i18n = inject('i18n', { t: (key) => key })
 const audioEngine = inject('audioEngine')
-
-// Make t function available in template
-const t = (key) => {
-  if (i18n && typeof i18n.t === 'function') {
-    return i18n.t(key)
-  }
-  // Fallback translations
-  const translations = {
-    'visualization.title': 'Visualisierung'
-  }
-  return translations[key] || key
-}
 
 const canvasRef = ref(null)
 const canvasWidth = ref(800)
@@ -123,38 +102,23 @@ onUnmounted(() => {
 
 <style scoped>
 .visualization {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.visualization-header h3 {
-  margin: 0 0 20px 0;
-  font-size: 1.4em;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #333;
+  background: var(--card-bg, #252530);
+  border: 1px solid var(--border-color, #3a3a48);
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .visualization-canvas {
   width: 100%;
-  height: 200px;
-  border-radius: 12px;
-  background: #1a1a2e;
+  height: 180px;
+  border-radius: 8px;
+  background: var(--secondary-bg, #1a1a22);
   display: block;
 }
 
 @media (max-width: 768px) {
-  .visualization {
-    padding: 20px;
-  }
-  
   .visualization-canvas {
-    height: 150px;
+    height: 140px;
   }
 }
 </style>
