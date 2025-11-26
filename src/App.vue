@@ -14,9 +14,6 @@
       <div class="grid-three-column">
         <!-- Left Column: Recorder & Player -->
         <div class="column-left">
-          <!-- 🎙️ MIKROFON RECORDING -->
-          <RecordingControls />
-
           <!-- 💾 OUTPUT RECORDING -->
           <OutputRecordingControls />
 
@@ -61,8 +58,7 @@ import { useAudioPlayer } from './composables/useAudioPlayer'
 import Notification from './components/Notification.vue'
 import LanguageThemeSwitcher from './components/LanguageThemeSwitcher.vue'
 import PromoSection from './components/PromoSection.vue'
-import RecordingControls from './components/RecordingControls.vue'  // 🎙️ Mikrofon
-import OutputRecordingControls from './components/OutputRecordingControls.vue'  // 💾 Output
+import OutputRecordingControls from './components/OutputRecordingControls.vue'
 import PlayerControls from './components/PlayerControls.vue'
 import Equalizer from './components/Equalizer.vue'
 import DynamicsProcessor from './components/DynamicsProcessor.vue'
@@ -120,9 +116,7 @@ onMounted(() => {
   document.addEventListener('click', init, { once: true })
   
   console.log('✅ Equalizer 19 Vue 3 ready!')
-  console.log('🎙️ Recording Controls active!')
   console.log('🎛️ AudioEngine initialized and connected!')
-  console.log('💡 Tipp: Teste Audio-Routing mit TEST_AUDIO_ROUTING.js in Console')
 })
 </script>
 

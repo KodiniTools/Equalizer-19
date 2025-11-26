@@ -1,16 +1,15 @@
 <template>
   <div class="equalizer">
     <div class="equalizer-header">
-      <h3>
+      <div class="header-icon" :title="t('equalizer.title') || '19-Band Equalizer'">
         <i class="fas fa-sliders-h"></i>
-        {{ t('equalizer.title') || '19-Band Equalizer' }}
-      </h3>
-      <button 
+      </div>
+      <button
         @click="toggleBypass"
         :class="['btn-toggle', { active: !isEqBypassed }]"
+        :title="!isEqBypassed ? (t('equalizer.enabled') || 'An') : (t('equalizer.disabled') || 'Aus')"
       >
         <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
-        {{ !isEqBypassed ? (t('equalizer.enabled') || 'An') : (t('equalizer.disabled') || 'Aus') }}
       </button>
     </div>
 
@@ -51,9 +50,8 @@
       </div>
     </div>
 
-    <button @click="resetEqualizer" class="btn-reset">
+    <button @click="resetEqualizer" class="btn-reset" :title="t('equalizer.reset') || 'Zurücksetzen'">
       <i class="fas fa-undo"></i>
-      {{ t('equalizer.reset') || 'Zurücksetzen' }}
     </button>
   </div>
 </template>
@@ -216,29 +214,31 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.equalizer-header h3 {
-  margin: 0;
-  font-size: 1.3em;
-  font-weight: 600;
+.header-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--text-primary, #333);
+  justify-content: center;
+  font-size: 1.3em;
+  color: white;
 }
 
 .btn-toggle {
-  padding: 8px 16px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--border-color, #ddd);
   background: var(--secondary-bg, white);
-  border-radius: 20px;
+  border-radius: 12px;
   color: var(--text-secondary, #666);
-  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   transition: all 0.3s ease;
-  font-size: 0.9em;
+  font-size: 1.3em;
 }
 
 .btn-toggle:hover {
@@ -375,20 +375,19 @@ onMounted(() => {
 }
 
 .btn-reset {
-  width: 100%;
-  padding: 12px 20px;
-  border: 2px solid #667eea;
-  background: white;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color, #ddd);
+  background: var(--secondary-bg, white);
   border-radius: 12px;
-  color: #667eea;
-  font-weight: 600;
+  color: var(--text-secondary, #666);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   transition: all 0.3s ease;
-  font-size: 1em;
+  font-size: 1.1em;
+  margin: 0 auto;
 }
 
 .btn-reset:hover {

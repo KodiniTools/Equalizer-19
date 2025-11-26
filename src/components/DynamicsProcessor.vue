@@ -1,16 +1,15 @@
 <template>
   <div class="dynamics-processor">
     <div class="dynamics-header">
-      <h3>
-        <i class="fas fa-sliders-h"></i>
-        {{ t('dynamics.title') || 'Dynamics Processor' }}
-      </h3>
-      <button 
+      <div class="header-icon" :title="t('dynamics.title') || 'Dynamics Processor'">
+        <i class="fas fa-compress-alt"></i>
+      </div>
+      <button
         @click="toggleDynamics"
         :class="['btn-toggle', { active: dynamicsEnabled }]"
+        :title="dynamicsEnabled ? (t('dynamics.enabled') || 'An') : (t('dynamics.disabled') || 'Aus')"
       >
         <i :class="dynamicsEnabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
-        {{ dynamicsEnabled ? (t('dynamics.enabled') || 'An') : (t('dynamics.disabled') || 'Aus') }}
       </button>
     </div>
 
@@ -107,9 +106,8 @@
     </div>
 
     <!-- Reset Button -->
-    <button @click="resetDynamics" class="btn-reset">
+    <button @click="resetDynamics" class="btn-reset" :title="t('dynamics.reset') || 'Zurücksetzen'">
       <i class="fas fa-undo"></i>
-      {{ t('dynamics.reset') || 'Zurücksetzen' }}
     </button>
   </div>
 </template>
@@ -243,42 +241,44 @@ onMounted(() => {
 
 <style scoped>
 .dynamics-processor {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg, white);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-color, #e9ecef);
 }
 
 .dynamics-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
-.dynamics-header h3 {
-  margin: 0;
-  font-size: 1.4em;
-  font-weight: 600;
+.header-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #333;
+  justify-content: center;
+  font-size: 1.3em;
+  color: white;
 }
 
 .btn-toggle {
-  padding: 10px 20px;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 25px;
-  color: #666;
-  font-weight: 600;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color, #ddd);
+  background: var(--secondary-bg, white);
+  border-radius: 12px;
+  color: var(--text-secondary, #666);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   transition: all 0.3s ease;
-  font-size: 0.95em;
+  font-size: 1.3em;
 }
 
 .btn-toggle:hover {
@@ -319,7 +319,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary, #333);
   font-size: 0.95em;
 }
 
@@ -339,7 +339,8 @@ onMounted(() => {
   width: 100%;
   height: 8px;
   border-radius: 5px;
-  background: #e9ecef;
+  background: var(--secondary-bg, #e9ecef);
+  border: 1px solid var(--border-color, #ddd);
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;
@@ -378,20 +379,19 @@ onMounted(() => {
 }
 
 .btn-reset {
-  width: 100%;
-  padding: 12px 20px;
-  border: 2px solid #667eea;
-  background: white;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color, #ddd);
+  background: var(--secondary-bg, white);
   border-radius: 12px;
-  color: #667eea;
-  font-weight: 600;
+  color: var(--text-secondary, #666);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   transition: all 0.3s ease;
-  font-size: 1em;
+  font-size: 1.1em;
+  margin: 0 auto;
 }
 
 .btn-reset:hover {

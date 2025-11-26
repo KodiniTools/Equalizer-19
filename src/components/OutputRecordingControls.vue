@@ -1,10 +1,9 @@
 <template>
   <div class="output-recording">
     <div class="recording-header">
-      <h3>
-        <i class="fas fa-save"></i>
-        {{ t('outputRecording.title') || 'Output aufnehmen' }}
-      </h3>
+      <div class="header-icon" :title="t('outputRecording.title') || 'Output aufnehmen'">
+        <i class="fas fa-circle-dot"></i>
+      </div>
       <div class="recording-status" v-if="isRecording">
         <span class="recording-indicator"></span>
         <span class="recording-time">{{ formattedTime }}</span>
@@ -220,13 +219,16 @@ function handleNewRecording() {
   margin-bottom: 20px;
 }
 
-.recording-header h3 {
-  margin: 0;
-  font-size: 1.4em;
-  font-weight: 600;
+.header-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  font-size: 1.5em;
+  backdrop-filter: blur(10px);
 }
 
 .recording-status {

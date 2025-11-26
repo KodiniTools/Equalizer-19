@@ -1,10 +1,9 @@
 <template>
   <div class="player-controls">
     <div class="player-header">
-      <h3>
-        <i class="fas fa-play-circle"></i>
-        {{ t('player.title') }}
-      </h3>
+      <div class="header-icon" :title="t('player.title')">
+        <i class="fas fa-play"></i>
+      </div>
     </div>
 
     <!-- File Upload -->
@@ -285,13 +284,16 @@ function formatFileSize(bytes) {
   margin-bottom: 20px;
 }
 
-.player-header h3 {
-  margin: 0;
-  font-size: 1.4em;
-  font-weight: 600;
+.header-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  font-size: 1.5em;
+  backdrop-filter: blur(10px);
 }
 
 .upload-section {
