@@ -23,16 +23,19 @@
 
     <div class="eq-bands" :class="{ disabled: isEqBypassed }">
       <div v-for="(band, index) in localBands" :key="band.frequency" class="band">
-        <input
-          type="range"
-          min="-12"
-          max="12"
-          step="0.5"
-          :value="band.gain"
-          @input="handleGainChange($event, index)"
-          :disabled="isEqBypassed"
-          class="slider-v"
-        />
+        <div class="slider-wrapper" :class="{ active: band.gain !== 0 }">
+          <input
+            type="range"
+            min="-12"
+            max="12"
+            step="0.5"
+            :value="band.gain"
+            @input="handleGainChange($event, index)"
+            :disabled="isEqBypassed"
+            class="slider-v"
+            :class="{ active: band.gain !== 0 }"
+          />
+        </div>
         <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
         <span class="freq">{{ formatFrequency(band.frequency) }}</span>
       </div>
@@ -273,53 +276,99 @@ onMounted(() => {
   max-width: 36px;
 }
 
-.slider-v {
-  writing-mode: bt-lr;
-  -webkit-appearance: slider-vertical;
-  width: 6px;
+/* Slider Wrapper für Zentrierung und Glow */
+.slider-wrapper {
+  position: relative;
+  width: 24px;
   height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+/* Aktiver Slider mit hellgrünem Glow */
+.slider-wrapper.active {
+  background: rgba(76, 217, 100, 0.1);
+  box-shadow: 0 0 12px rgba(76, 217, 100, 0.4),
+              inset 0 0 8px rgba(76, 217, 100, 0.15);
+}
+
+.slider-v {
+  -webkit-appearance: none;
+  appearance: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 8px;
+  height: 150px;
   padding: 0;
   margin: 0;
   cursor: pointer;
-  background: transparent;
+  background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
+  border-radius: 4px;
+  outline: none;
+  border: none;
 }
 
-.slider-v::-webkit-slider-runnable-track {
-  width: 6px;
-  background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
-  border-radius: 3px;
+/* Track für aktive Slider hellgrün */
+.slider-v.active {
+  background: linear-gradient(to top, #2d8a3e 0%, #4cd964 100%);
+  box-shadow: 0 0 6px rgba(76, 217, 100, 0.5);
 }
 
 .slider-v::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
+  appearance: none;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
   transition: all 0.15s ease;
+  border: 2px solid #fff;
+}
+
+.slider-v.active::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #4cd964 0%, #2d8a3e 100%);
+  box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
 }
 
 .slider-v::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.7);
+  transform: scale(1.2);
+  box-shadow: 0 3px 12px rgba(102, 126, 234, 0.7);
 }
 
+.slider-v.active::-webkit-slider-thumb:hover {
+  box-shadow: 0 3px 12px rgba(76, 217, 100, 0.8);
+}
+
+/* Firefox Support */
 .slider-v::-moz-range-track {
-  width: 6px;
+  width: 8px;
   background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
-  border-radius: 3px;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider-v.active::-moz-range-track {
+  background: linear-gradient(to top, #2d8a3e 0%, #4cd964 100%);
 }
 
 .slider-v::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   cursor: pointer;
-  border: none;
+  border: 2px solid #fff;
   box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+}
+
+.slider-v.active::-moz-range-thumb {
+  background: linear-gradient(135deg, #4cd964 0%, #2d8a3e 100%);
+  box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
 }
 
 .val {
@@ -346,8 +395,13 @@ onMounted(() => {
     padding: 10px 4px;
   }
 
-  .slider-v {
+  .slider-wrapper {
     height: 130px;
+    width: 20px;
+  }
+
+  .slider-v {
+    height: 120px;
   }
 
   .band {
