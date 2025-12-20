@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject, onMounted, watch } from 'vue'
 
 const audioEngine = inject('audioEngine')
 
@@ -110,6 +110,21 @@ if (audioEngine && audioEngine.dynamics) {
   attack.value = audioEngine.dynamics.attack
   release.value = audioEngine.dynamics.release
   dynamicsEnabled.value = audioEngine.dynamicsEnabled?.value ?? true
+}
+
+// Watch for external changes (e.g., from presets)
+if (audioEngine && audioEngine.dynamics) {
+  watch(
+    () => ({ ...audioEngine.dynamics }),
+    (newVal) => {
+      threshold.value = newVal.threshold
+      ratio.value = newVal.ratio
+      knee.value = newVal.knee
+      attack.value = newVal.attack
+      release.value = newVal.release
+    },
+    { deep: true }
+  )
 }
 
 function applySettings() {

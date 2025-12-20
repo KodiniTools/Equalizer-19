@@ -39,6 +39,9 @@
         <div class="column-right">
           <!-- Dynamics Processor -->
           <DynamicsProcessor />
+
+          <!-- Compressor Presets -->
+          <CompressorPresets />
         </div>
       </div>
     </div>
@@ -62,6 +65,7 @@ import OutputRecordingControls from './components/OutputRecordingControls.vue'
 import PlayerControls from './components/PlayerControls.vue'
 import Equalizer from './components/Equalizer.vue'
 import DynamicsProcessor from './components/DynamicsProcessor.vue'
+import CompressorPresets from './components/CompressorPresets.vue'
 import Visualization from './components/Visualization.vue'
 import Playlist from './components/Playlist.vue'
 import AudioConverter from './components/AudioConverter.vue'
