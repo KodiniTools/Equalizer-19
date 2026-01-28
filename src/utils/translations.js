@@ -1,74 +1,316 @@
 export const translations = {
   de: {
+    // Brand & Navigation
     brand: "EQUALIZER 19",
+    nav_home: "Start",
+    nav_start_app: "App starten",
+    nav_faq: "FAQ",
     settings_controls: "Einstellungen & Steuerung",
     language: "Sprache",
     theme: "Design",
     dark_theme: "Dunkel",
     light_theme: "Hell",
+
+    // Hero Section
+    hero_title: "Professionelle Audio-Verarbeitung im Browser",
+    hero_subtitle: "Entdecken Sie die Kraft des 19-Band Equalizers und Dynamics Processors - alles direkt in Ihrem Browser, ohne Installation.",
+    hero_cta_start: "Jetzt starten",
+    hero_cta_learn: "Mehr erfahren",
+
+    // Hero Cards
+    card_eq_title: "19-Band Equalizer",
+    card_eq_desc: "Präzise Frequenzanpassung mit ISO 1/3-Oktav Bändern",
+    card_eq_feature1: "Lowshelf, Peaking & Highshelf Filter",
+    card_eq_feature2: "-12 bis +12 dB pro Band",
+    card_eq_feature3: "8 professionelle Genre-Presets",
+    card_comp_title: "Dynamics Processor",
+    card_comp_desc: "Professionelle Kompression mit voller Kontrolle",
+    card_comp_feature1: "Threshold, Ratio, Knee einstellbar",
+    card_comp_feature2: "Attack & Release Kontrolle",
+    card_comp_feature3: "14+ Anwendungs-Presets",
+    card_rec_title: "Recording & Export",
+    card_rec_desc: "Nehmen Sie Ihr Audio mit allen Effekten auf",
+    card_rec_feature1: "WebM & WAV Export",
+    card_rec_feature2: "Alle Effekte werden aufgenommen",
+    card_rec_feature3: "Sofortiger Download",
+    card_badge_popular: "Beliebt",
+
+    // Features Section
+    features_title: "Leistungsstarke Funktionen",
+    features_subtitle: "Alles was Sie fur professionelle Audio-Bearbeitung brauchen",
+    feature_webaudio_title: "Web Audio API",
+    feature_webaudio_desc: "Echtzeit-Audio-Verarbeitung mit nativer Browser-Performance, ohne Plugins.",
+    feature_viz_title: "Echtzeit-Visualisierung",
+    feature_viz_desc: "FFT-Spektrum-Analyzer mit 60 FPS fur visuelles Feedback.",
+    feature_presets_title: "Preset-System",
+    feature_presets_desc: "Sofort einsatzbereite Presets fur verschiedene Musikgenres und Anwendungen.",
+    feature_export_title: "Flexibler Export",
+    feature_export_desc: "Exportieren Sie Ihre Aufnahmen in WebM oder WAV Format.",
+    feature_responsive_title: "Responsive Design",
+    feature_responsive_desc: "Optimiert fur Desktop, Tablet und mobile Gerate.",
+    feature_privacy_title: "100% Privatsphare",
+    feature_privacy_desc: "Alle Verarbeitung erfolgt lokal - keine Daten werden an Server gesendet.",
+
+    // Tech Stack
+    tech_title: "Moderne Technologie",
+    tech_subtitle: "Gebaut mit den besten Web-Technologien",
+    tech_vue_desc: "Composition API fur reaktive und modulare Architektur",
+    tech_webaudio_desc: "Native Browser-API fur Audio-Verarbeitung in Echtzeit",
+    tech_vite_desc: "Blitzschnelle Entwicklung und optimierte Builds",
+    tech_css_desc: "Nahtloses Dark/Light Theme mit CSS Custom Properties",
+
+    // Stats
+    stat_bands: "Frequenzbander",
+    stat_quality: "Qualitat",
+    stat_latency: "Latenz",
+    stat_presets: "Presets",
+    stat_fps: "FPS Visualisierung",
+    stat_server: "Server benotigt",
+
+    // CTA Section
+    cta_title: "Bereit zum Loslegen?",
+    cta_subtitle: "Starten Sie jetzt und erleben Sie professionelle Audio-Verarbeitung direkt im Browser.",
+    cta_button: "App starten",
+
+    // Footer
+    footer_desc: "Professionelle Audio-Verarbeitung im Browser - kostenlos und ohne Installation.",
+
+    // FAQ Page
+    faq_title: "Haufig gestellte Fragen",
+    faq_subtitle: "Alles was Sie uber Equalizer 19 wissen mussen",
+    faq_cat_general: "Allgemeine Fragen",
+    faq_cat_equalizer: "Equalizer",
+    faq_cat_compressor: "Kompressor",
+    faq_cat_recording: "Aufnahme",
+    faq_cat_technical: "Technisches",
+
+    // General FAQ
+    faq_q1: "Was ist Equalizer 19?",
+    faq_a1: "Equalizer 19 ist eine professionelle Audio-Processing-Anwendung, die vollstandig im Browser lauft. Sie bietet einen 19-Band parametrischen Equalizer, einen Dynamics Processor und Aufnahmefunktionen - alles ohne Installation oder Plugins.",
+    faq_q2: "Ist die Nutzung kostenlos?",
+    faq_a2: "Ja, Equalizer 19 ist vollkommen kostenlos nutzbar. Es gibt keine versteckten Kosten, keine Registrierung erforderlich und keine Werbung.",
+    faq_q3: "Werden meine Audiodateien auf einen Server hochgeladen?",
+    faq_a3: "Nein! Alle Audio-Verarbeitung erfolgt vollstandig lokal in Ihrem Browser. Keine Daten werden an externe Server gesendet. Ihre Privatsphare ist garantiert.",
+
+    // Equalizer FAQ
+    faq_eq_q1: "Was bedeuten die 19 Bander?",
+    faq_eq_a1: "Die 19 Bander entsprechen dem ISO 1/3-Oktav Standard und decken den Frequenzbereich von 20 Hz bis 1250 Hz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik prazise zu formen.",
+    faq_eq_q2: "Was bewirken die verschiedenen Presets?",
+    faq_eq_a2: "Die Presets sind vorkonfigurierte EQ-Kurven fur verschiedene Musikgenres. 'Rock' betont Mitten und Hohen, 'Bass Boost' verstarkt tiefe Frequenzen, 'V-Shape' hebt Basse und Hohen an wahrend Mitten abgesenkt werden, und weitere.",
+    faq_eq_q3: "Was macht der Bypass-Button?",
+    faq_eq_a3: "Der Bypass-Button umgeht den Equalizer temporar, sodass Sie den Unterschied zwischen bearbeitetem und unbearbeitetem Audio horen konnen. Das ist nutzlich um Ihre Einstellungen zu uberprufen.",
+
+    // Compressor FAQ
+    faq_comp_q1: "Wofur brauche ich einen Kompressor?",
+    faq_comp_a1: "Ein Kompressor reduziert den Dynamikumfang von Audio, indem er laute Signale abschwacht. Das macht den Gesamtklang gleichmaßiger und kann Musik druckvoller klingen lassen.",
+    faq_comp_q2: "Was bedeuten Threshold und Ratio?",
+    faq_comp_a2: "Threshold bestimmt, ab welchem Lautstarke-Pegel die Kompression einsetzt. Ratio gibt an, wie stark komprimiert wird - bei 4:1 werden 4 dB uber dem Threshold zu 1 dB am Ausgang.",
+    faq_comp_q3: "Welches Preset sollte ich verwenden?",
+    faq_comp_a3: "Das hangt von Ihrem Material ab: 'Gentle' fur subtile Kompression, 'Vocal' fur Sprachaufnahmen, 'Drums' fur punchigen Sound, 'Master' fur sanfte Gesamtkompression, oder 'Limiter' um Ubersteuerung zu verhindern.",
+
+    // Recording FAQ
+    faq_rec_q1: "In welchen Formaten kann ich aufnehmen?",
+    faq_rec_a1: "Aufnahmen werden im WebM-Format (mit Opus-Codec) gespeichert, das eine hervorragende Qualitat bei kompakter Dateigro.e bietet. Sie konnen externe Konverter nutzen, um in andere Formate wie MP3 oder WAV zu konvertieren.",
+    faq_rec_q2: "Werden alle meine EQ-Einstellungen mit aufgenommen?",
+    faq_rec_a2: "Ja! Die Aufnahme erfolgt nach der kompletten Audio-Verarbeitungskette - alle Ihre EQ-Anpassungen und Kompressor-Einstellungen werden im aufgenommenen Audio enthalten sein.",
+    faq_rec_q3: "Warum hore ich nichts wahrend der Aufnahme?",
+    faq_rec_a3: "Stellen Sie sicher, dass eine Audiodatei geladen und abgespielt wird. Die Aufnahme nimmt den Audio-Output auf - wenn nichts abgespielt wird, wird auch nichts aufgenommen.",
+
+    // Technical FAQ
+    faq_tech_q1: "Welche Browser werden unterstutzt?",
+    faq_tech_a1: "Equalizer 19 funktioniert in allen modernen Browsern: Chrome 90+, Firefox 88+, Safari 14.1+, Edge 90+ und Opera 76+. Fur beste Performance empfehlen wir Chrome oder Firefox.",
+    faq_tech_q2: "Warum muss ich erst klicken, bevor Audio funktioniert?",
+    faq_tech_a2: "Das ist eine Sicherheitsmaßnahme moderner Browser (Autoplay-Policy). Audio kann erst nach einer Benutzerinteraktion abgespielt werden, um ungewollte Gerausche zu verhindern.",
+    faq_tech_q3: "Kann ich Equalizer 19 offline nutzen?",
+    faq_tech_a3: "Derzeit wird eine Internetverbindung zum Laden der Anwendung benotigt. Sobald geladen, erfolgt alle Verarbeitung jedoch lokal und benotigt keine weitere Serververbindung.",
+
+    // FAQ CTA
+    faq_cta_title: "Noch Fragen?",
+    faq_cta_desc: "Probieren Sie Equalizer 19 einfach selbst aus - es ist kostenlos!",
+
+    // Original app translations
     promo_title: "Professional Audio Processing",
     promo_subtitle: "Erleben Sie professionelle Audiobearbeitung direkt in Ihrem Browser",
     feature_eq_title: "19-Band Equalizer",
-    feature_eq_desc: "Präzise Frequenzanpassung mit professionellen Filtern",
+    feature_eq_desc: "Prazise Frequenzanpassung mit professionellen Filtern",
     feature_comp_title: "Dynamics Processor",
     feature_comp_desc: "Professionelle Kompression mit Echtzeit-Feedback",
     feature_rec_title: "High-Quality Recording",
     feature_rec_desc: "Aufnahme in WebM und WAV mit allen Effekten",
     feature_viz_title: "Real-time Visualization",
     feature_viz_desc: "Spektrum-Analyzer und Waveform-Darstellung",
-    stat_bands: "Bänder",
-    stat_quality: "Qualität",
-    stat_latency: "Latenz",
-    stat_presets: "Presets",
     main_title: "EQUALIZER 19 – Vue 3 Edition",
     fullscreen: "Vollbild",
     exit_fullscreen: "Vollbild beenden",
-    choose_files: "Audio-Dateien wählen",
+    choose_files: "Audio-Dateien wahlen",
     no_track: "Kein Track wird abgespielt",
     rec: "Aufn.",
     stop: "Stop",
     download: "Download",
     equalizer: "Equalizer",
-    reset: "Zurücksetzen",
+    reset: "Zurucksetzen",
     dynamics: "Dynamics Processor",
     threshold: "Schwelle",
     knee: "Knee",
-    ratio: "Verhältnis",
+    ratio: "Verhaltnis",
     attack: "Attack",
     release: "Release",
     bypass: "Bypass",
     gain_reduction: "Gain Reduction",
     pro_upgrades: "Pro Upgrades",
     loudness_norm: "Lautheitsnorm",
-    saturation: "Sättigung",
+    saturation: "Sattigung",
     linear_phase: "Linear-Phase (Latenz)",
     drive: "Drive",
     oversampling: "Oversampling",
     target: "Ziel",
     playlist: "Playlist",
-    clear: "Löschen",
+    clear: "Loschen",
     audio_converter: "Audio-Konverter",
     convert_now: "Jetzt konvertieren",
     pro_tip: "Profi-Hinweis:",
-    converter_desc: "Für die Weiterverarbeitung deiner Aufnahmen (z. B. in andere Formate) nutze unseren Online-Audiokonverter. Öffnet in einem neuen Tab.",
+    converter_desc: "Fur die Weiterverarbeitung deiner Aufnahmen (z. B. in andere Formate) nutze unseren Online-Audiokonverter. Offnet in einem neuen Tab.",
     example_formats: "Beispiel-Formate: MP3 / WAV / WebM / FLAC / AAC / OGG",
     lang_de: "Deutsch",
     lang_en: "Englisch",
     play: "Abspielen",
     pause: "Pause",
-    prev: "Zurück",
+    prev: "Zuruck",
     next: "Weiter",
     shuffle: "Zufall",
     loop: "Wiederh.",
-    volume: "Lautstärke"
+    volume: "Lautstarke"
   },
   en: {
+    // Brand & Navigation
     brand: "EQUALIZER 19",
+    nav_home: "Home",
+    nav_start_app: "Start App",
+    nav_faq: "FAQ",
     settings_controls: "Settings & Controls",
     language: "Language",
     theme: "Theme",
     dark_theme: "Dark",
     light_theme: "Light",
+
+    // Hero Section
+    hero_title: "Professional Audio Processing in Your Browser",
+    hero_subtitle: "Discover the power of the 19-band equalizer and dynamics processor - all directly in your browser, without installation.",
+    hero_cta_start: "Get Started",
+    hero_cta_learn: "Learn More",
+
+    // Hero Cards
+    card_eq_title: "19-Band Equalizer",
+    card_eq_desc: "Precise frequency adjustment with ISO 1/3-octave bands",
+    card_eq_feature1: "Lowshelf, Peaking & Highshelf filters",
+    card_eq_feature2: "-12 to +12 dB per band",
+    card_eq_feature3: "8 professional genre presets",
+    card_comp_title: "Dynamics Processor",
+    card_comp_desc: "Professional compression with full control",
+    card_comp_feature1: "Adjustable Threshold, Ratio, Knee",
+    card_comp_feature2: "Attack & Release control",
+    card_comp_feature3: "14+ application presets",
+    card_rec_title: "Recording & Export",
+    card_rec_desc: "Record your audio with all effects applied",
+    card_rec_feature1: "WebM & WAV export",
+    card_rec_feature2: "All effects are recorded",
+    card_rec_feature3: "Instant download",
+    card_badge_popular: "Popular",
+
+    // Features Section
+    features_title: "Powerful Features",
+    features_subtitle: "Everything you need for professional audio editing",
+    feature_webaudio_title: "Web Audio API",
+    feature_webaudio_desc: "Real-time audio processing with native browser performance, no plugins required.",
+    feature_viz_title: "Real-time Visualization",
+    feature_viz_desc: "FFT spectrum analyzer at 60 FPS for visual feedback.",
+    feature_presets_title: "Preset System",
+    feature_presets_desc: "Ready-to-use presets for various music genres and applications.",
+    feature_export_title: "Flexible Export",
+    feature_export_desc: "Export your recordings in WebM or WAV format.",
+    feature_responsive_title: "Responsive Design",
+    feature_responsive_desc: "Optimized for desktop, tablet, and mobile devices.",
+    feature_privacy_title: "100% Privacy",
+    feature_privacy_desc: "All processing happens locally - no data is sent to any server.",
+
+    // Tech Stack
+    tech_title: "Modern Technology",
+    tech_subtitle: "Built with the best web technologies",
+    tech_vue_desc: "Composition API for reactive and modular architecture",
+    tech_webaudio_desc: "Native browser API for real-time audio processing",
+    tech_vite_desc: "Lightning-fast development and optimized builds",
+    tech_css_desc: "Seamless Dark/Light theme with CSS Custom Properties",
+
+    // Stats
+    stat_bands: "Frequency Bands",
+    stat_quality: "Quality",
+    stat_latency: "Latency",
+    stat_presets: "Presets",
+    stat_fps: "FPS Visualization",
+    stat_server: "Server Required",
+
+    // CTA Section
+    cta_title: "Ready to Get Started?",
+    cta_subtitle: "Start now and experience professional audio processing directly in your browser.",
+    cta_button: "Start App",
+
+    // Footer
+    footer_desc: "Professional audio processing in the browser - free and without installation.",
+
+    // FAQ Page
+    faq_title: "Frequently Asked Questions",
+    faq_subtitle: "Everything you need to know about Equalizer 19",
+    faq_cat_general: "General Questions",
+    faq_cat_equalizer: "Equalizer",
+    faq_cat_compressor: "Compressor",
+    faq_cat_recording: "Recording",
+    faq_cat_technical: "Technical",
+
+    // General FAQ
+    faq_q1: "What is Equalizer 19?",
+    faq_a1: "Equalizer 19 is a professional audio processing application that runs entirely in your browser. It offers a 19-band parametric equalizer, a dynamics processor, and recording capabilities - all without installation or plugins.",
+    faq_q2: "Is it free to use?",
+    faq_a2: "Yes, Equalizer 19 is completely free to use. There are no hidden costs, no registration required, and no advertisements.",
+    faq_q3: "Are my audio files uploaded to a server?",
+    faq_a3: "No! All audio processing happens entirely locally in your browser. No data is sent to external servers. Your privacy is guaranteed.",
+
+    // Equalizer FAQ
+    faq_eq_q1: "What do the 19 bands mean?",
+    faq_eq_a1: "The 19 bands correspond to the ISO 1/3-octave standard and cover the frequency range from 20 Hz to 1250 Hz. Each band can be adjusted from -12 to +12 dB to precisely shape the sound character.",
+    faq_eq_q2: "What do the different presets do?",
+    faq_eq_a2: "Presets are pre-configured EQ curves for different music genres. 'Rock' emphasizes mids and highs, 'Bass Boost' amplifies low frequencies, 'V-Shape' raises bass and treble while lowering mids, and more.",
+    faq_eq_q3: "What does the Bypass button do?",
+    faq_eq_a3: "The Bypass button temporarily bypasses the equalizer, allowing you to hear the difference between processed and unprocessed audio. This is useful for checking your settings.",
+
+    // Compressor FAQ
+    faq_comp_q1: "Why do I need a compressor?",
+    faq_comp_a1: "A compressor reduces the dynamic range of audio by attenuating loud signals. This makes the overall sound more consistent and can make music sound more powerful.",
+    faq_comp_q2: "What do Threshold and Ratio mean?",
+    faq_comp_a2: "Threshold determines at what volume level compression begins. Ratio indicates how much compression is applied - at 4:1, 4 dB above the threshold becomes 1 dB at the output.",
+    faq_comp_q3: "Which preset should I use?",
+    faq_comp_a3: "It depends on your material: 'Gentle' for subtle compression, 'Vocal' for voice recordings, 'Drums' for punchy sound, 'Master' for gentle overall compression, or 'Limiter' to prevent clipping.",
+
+    // Recording FAQ
+    faq_rec_q1: "What formats can I record in?",
+    faq_rec_a1: "Recordings are saved in WebM format (with Opus codec), which offers excellent quality with compact file size. You can use external converters to convert to other formats like MP3 or WAV.",
+    faq_rec_q2: "Are all my EQ settings recorded?",
+    faq_rec_a2: "Yes! Recording happens after the complete audio processing chain - all your EQ adjustments and compressor settings will be included in the recorded audio.",
+    faq_rec_q3: "Why don't I hear anything during recording?",
+    faq_rec_a3: "Make sure an audio file is loaded and playing. The recording captures the audio output - if nothing is playing, nothing will be recorded.",
+
+    // Technical FAQ
+    faq_tech_q1: "Which browsers are supported?",
+    faq_tech_a1: "Equalizer 19 works in all modern browsers: Chrome 90+, Firefox 88+, Safari 14.1+, Edge 90+, and Opera 76+. For best performance, we recommend Chrome or Firefox.",
+    faq_tech_q2: "Why do I need to click before audio works?",
+    faq_tech_a2: "This is a security measure in modern browsers (Autoplay Policy). Audio can only be played after user interaction to prevent unwanted sounds.",
+    faq_tech_q3: "Can I use Equalizer 19 offline?",
+    faq_tech_a3: "Currently, an internet connection is required to load the application. Once loaded, however, all processing happens locally and requires no further server connection.",
+
+    // FAQ CTA
+    faq_cta_title: "Still have questions?",
+    faq_cta_desc: "Just try Equalizer 19 for yourself - it's free!",
+
+    // Original app translations
     promo_title: "Professional Audio Processing",
     promo_subtitle: "Experience professional audio processing directly in your browser",
     feature_eq_title: "19-Band Equalizer",
@@ -79,10 +321,6 @@ export const translations = {
     feature_rec_desc: "Recording in WebM and WAV with all effects applied",
     feature_viz_title: "Real-time Visualization",
     feature_viz_desc: "Spectrum analyzer and waveform visualization",
-    stat_bands: "Bands",
-    stat_quality: "Quality",
-    stat_latency: "Latency",
-    stat_presets: "Presets",
     main_title: "EQUALIZER 19 – Vue 3 Edition",
     fullscreen: "Fullscreen",
     exit_fullscreen: "Exit Fullscreen",
