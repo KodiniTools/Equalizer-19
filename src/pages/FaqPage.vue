@@ -10,11 +10,11 @@
         <div class="nav-links">
           <router-link to="/" class="nav-link">
             <i class="fas fa-home"></i>
-            {{ t('nav_home') }}
+            {{ t.nav_home }}
           </router-link>
           <router-link to="/app" class="nav-link nav-link-primary">
             <i class="fas fa-play-circle"></i>
-            {{ t('nav_start_app') }}
+            {{ t.nav_start_app }}
           </router-link>
           <div class="nav-controls">
             <button
@@ -28,7 +28,7 @@
             <button
               @click="toggleTheme"
               class="nav-btn"
-              :title="currentTheme === 'dark' ? t('light_theme') : t('dark_theme')"
+              :title="currentTheme === 'dark' ? t.light_theme : t.dark_theme"
             >
               <i :class="currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'"></i>
             </button>
@@ -41,102 +41,102 @@
     <main class="faq-main">
       <div class="faq-container">
         <div class="faq-header">
-          <h1>{{ t('faq_title') }}</h1>
-          <p>{{ t('faq_subtitle') }}</p>
+          <h1>{{ t.faq_title }}</h1>
+          <p>{{ t.faq_subtitle }}</p>
         </div>
 
         <div class="faq-categories">
           <!-- General Questions -->
           <section class="faq-category">
-            <h2><i class="fas fa-info-circle"></i> {{ t('faq_cat_general') }}</h2>
+            <h2><i class="fas fa-info-circle"></i> {{ t.faq_cat_general }}</h2>
             <div class="faq-list">
               <details class="faq-item">
-                <summary>{{ t('faq_q1') }}</summary>
-                <div class="faq-answer">{{ t('faq_a1') }}</div>
+                <summary>{{ t.faq_q1 }}</summary>
+                <div class="faq-answer">{{ t.faq_a1 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_q2') }}</summary>
-                <div class="faq-answer">{{ t('faq_a2') }}</div>
+                <summary>{{ t.faq_q2 }}</summary>
+                <div class="faq-answer">{{ t.faq_a2 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_q3') }}</summary>
-                <div class="faq-answer">{{ t('faq_a3') }}</div>
+                <summary>{{ t.faq_q3 }}</summary>
+                <div class="faq-answer">{{ t.faq_a3 }}</div>
               </details>
             </div>
           </section>
 
           <!-- Equalizer Questions -->
           <section class="faq-category">
-            <h2><i class="fas fa-sliders-h"></i> {{ t('faq_cat_equalizer') }}</h2>
+            <h2><i class="fas fa-sliders-h"></i> {{ t.faq_cat_equalizer }}</h2>
             <div class="faq-list">
               <details class="faq-item">
-                <summary>{{ t('faq_eq_q1') }}</summary>
-                <div class="faq-answer">{{ t('faq_eq_a1') }}</div>
+                <summary>{{ t.faq_eq_q1 }}</summary>
+                <div class="faq-answer">{{ t.faq_eq_a1 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_eq_q2') }}</summary>
-                <div class="faq-answer">{{ t('faq_eq_a2') }}</div>
+                <summary>{{ t.faq_eq_q2 }}</summary>
+                <div class="faq-answer">{{ t.faq_eq_a2 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_eq_q3') }}</summary>
-                <div class="faq-answer">{{ t('faq_eq_a3') }}</div>
+                <summary>{{ t.faq_eq_q3 }}</summary>
+                <div class="faq-answer">{{ t.faq_eq_a3 }}</div>
               </details>
             </div>
           </section>
 
           <!-- Compressor Questions -->
           <section class="faq-category">
-            <h2><i class="fas fa-compress-alt"></i> {{ t('faq_cat_compressor') }}</h2>
+            <h2><i class="fas fa-compress-alt"></i> {{ t.faq_cat_compressor }}</h2>
             <div class="faq-list">
               <details class="faq-item">
-                <summary>{{ t('faq_comp_q1') }}</summary>
-                <div class="faq-answer">{{ t('faq_comp_a1') }}</div>
+                <summary>{{ t.faq_comp_q1 }}</summary>
+                <div class="faq-answer">{{ t.faq_comp_a1 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_comp_q2') }}</summary>
-                <div class="faq-answer">{{ t('faq_comp_a2') }}</div>
+                <summary>{{ t.faq_comp_q2 }}</summary>
+                <div class="faq-answer">{{ t.faq_comp_a2 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_comp_q3') }}</summary>
-                <div class="faq-answer">{{ t('faq_comp_a3') }}</div>
+                <summary>{{ t.faq_comp_q3 }}</summary>
+                <div class="faq-answer">{{ t.faq_comp_a3 }}</div>
               </details>
             </div>
           </section>
 
           <!-- Recording Questions -->
           <section class="faq-category">
-            <h2><i class="fas fa-microphone-alt"></i> {{ t('faq_cat_recording') }}</h2>
+            <h2><i class="fas fa-microphone-alt"></i> {{ t.faq_cat_recording }}</h2>
             <div class="faq-list">
               <details class="faq-item">
-                <summary>{{ t('faq_rec_q1') }}</summary>
-                <div class="faq-answer">{{ t('faq_rec_a1') }}</div>
+                <summary>{{ t.faq_rec_q1 }}</summary>
+                <div class="faq-answer">{{ t.faq_rec_a1 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_rec_q2') }}</summary>
-                <div class="faq-answer">{{ t('faq_rec_a2') }}</div>
+                <summary>{{ t.faq_rec_q2 }}</summary>
+                <div class="faq-answer">{{ t.faq_rec_a2 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_rec_q3') }}</summary>
-                <div class="faq-answer">{{ t('faq_rec_a3') }}</div>
+                <summary>{{ t.faq_rec_q3 }}</summary>
+                <div class="faq-answer">{{ t.faq_rec_a3 }}</div>
               </details>
             </div>
           </section>
 
           <!-- Technical Questions -->
           <section class="faq-category">
-            <h2><i class="fas fa-cogs"></i> {{ t('faq_cat_technical') }}</h2>
+            <h2><i class="fas fa-cogs"></i> {{ t.faq_cat_technical }}</h2>
             <div class="faq-list">
               <details class="faq-item">
-                <summary>{{ t('faq_tech_q1') }}</summary>
-                <div class="faq-answer">{{ t('faq_tech_a1') }}</div>
+                <summary>{{ t.faq_tech_q1 }}</summary>
+                <div class="faq-answer">{{ t.faq_tech_a1 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_tech_q2') }}</summary>
-                <div class="faq-answer">{{ t('faq_tech_a2') }}</div>
+                <summary>{{ t.faq_tech_q2 }}</summary>
+                <div class="faq-answer">{{ t.faq_tech_a2 }}</div>
               </details>
               <details class="faq-item">
-                <summary>{{ t('faq_tech_q3') }}</summary>
-                <div class="faq-answer">{{ t('faq_tech_a3') }}</div>
+                <summary>{{ t.faq_tech_q3 }}</summary>
+                <div class="faq-answer">{{ t.faq_tech_a3 }}</div>
               </details>
             </div>
           </section>
@@ -144,11 +144,11 @@
 
         <!-- CTA -->
         <div class="faq-cta">
-          <h3>{{ t('faq_cta_title') }}</h3>
-          <p>{{ t('faq_cta_desc') }}</p>
+          <h3>{{ t.faq_cta_title }}</h3>
+          <p>{{ t.faq_cta_desc }}</p>
           <router-link to="/app" class="cta-btn">
             <i class="fas fa-rocket"></i>
-            {{ t('nav_start_app') }}
+            {{ t.nav_start_app }}
           </router-link>
         </div>
       </div>
@@ -162,8 +162,8 @@
           <span>EQUALIZER 19</span>
         </div>
         <div class="footer-links">
-          <router-link to="/">{{ t('nav_home') }}</router-link>
-          <router-link to="/app">{{ t('nav_start_app') }}</router-link>
+          <router-link to="/">{{ t.nav_home }}</router-link>
+          <router-link to="/app">{{ t.nav_start_app }}</router-link>
         </div>
       </div>
     </footer>

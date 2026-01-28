@@ -10,11 +10,11 @@
         <div class="nav-links">
           <router-link to="/app" class="nav-link nav-link-primary">
             <i class="fas fa-play-circle"></i>
-            {{ t('nav_start_app') }}
+            {{ t.nav_start_app }}
           </router-link>
           <router-link to="/faq" class="nav-link">
             <i class="fas fa-question-circle"></i>
-            {{ t('nav_faq') }}
+            {{ t.nav_faq }}
           </router-link>
           <div class="nav-controls">
             <button
@@ -28,7 +28,7 @@
             <button
               @click="toggleTheme"
               class="nav-btn"
-              :title="currentTheme === 'dark' ? t('light_theme') : t('dark_theme')"
+              :title="currentTheme === 'dark' ? t.light_theme : t.dark_theme"
             >
               <i :class="currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'"></i>
             </button>
@@ -41,16 +41,16 @@
     <section class="hero-section">
       <div class="hero-container">
         <div class="hero-content">
-          <h1 class="hero-title">{{ t('hero_title') }}</h1>
-          <p class="hero-subtitle">{{ t('hero_subtitle') }}</p>
+          <h1 class="hero-title">{{ t.hero_title }}</h1>
+          <p class="hero-subtitle">{{ t.hero_subtitle }}</p>
           <div class="hero-cta">
             <router-link to="/app" class="cta-btn cta-btn-primary">
               <i class="fas fa-rocket"></i>
-              {{ t('hero_cta_start') }}
+              {{ t.hero_cta_start }}
             </router-link>
             <a href="#features" class="cta-btn cta-btn-secondary">
               <i class="fas fa-info-circle"></i>
-              {{ t('hero_cta_learn') }}
+              {{ t.hero_cta_learn }}
             </a>
           </div>
         </div>
@@ -61,26 +61,26 @@
             <div class="hero-card-icon">
               <i class="fas fa-sliders-h"></i>
             </div>
-            <h3>{{ t('card_eq_title') }}</h3>
-            <p>{{ t('card_eq_desc') }}</p>
+            <h3>{{ t.card_eq_title }}</h3>
+            <p>{{ t.card_eq_desc }}</p>
             <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t('card_eq_feature1') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_eq_feature2') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_eq_feature3') }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_eq_feature1 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_eq_feature2 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_eq_feature3 }}</li>
             </ul>
           </div>
 
           <div class="hero-card hero-card-featured">
-            <div class="hero-card-badge">{{ t('card_badge_popular') }}</div>
+            <div class="hero-card-badge">{{ t.card_badge_popular }}</div>
             <div class="hero-card-icon">
               <i class="fas fa-compress-alt"></i>
             </div>
-            <h3>{{ t('card_comp_title') }}</h3>
-            <p>{{ t('card_comp_desc') }}</p>
+            <h3>{{ t.card_comp_title }}</h3>
+            <p>{{ t.card_comp_desc }}</p>
             <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t('card_comp_feature1') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_comp_feature2') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_comp_feature3') }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_comp_feature1 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_comp_feature2 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_comp_feature3 }}</li>
             </ul>
           </div>
 
@@ -88,12 +88,12 @@
             <div class="hero-card-icon">
               <i class="fas fa-microphone-alt"></i>
             </div>
-            <h3>{{ t('card_rec_title') }}</h3>
-            <p>{{ t('card_rec_desc') }}</p>
+            <h3>{{ t.card_rec_title }}</h3>
+            <p>{{ t.card_rec_desc }}</p>
             <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t('card_rec_feature1') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_rec_feature2') }}</li>
-              <li><i class="fas fa-check"></i> {{ t('card_rec_feature3') }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_rec_feature1 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_rec_feature2 }}</li>
+              <li><i class="fas fa-check"></i> {{ t.card_rec_feature3 }}</li>
             </ul>
           </div>
         </div>
@@ -104,8 +104,8 @@
     <section id="features" class="features-section">
       <div class="features-container">
         <div class="section-header">
-          <h2>{{ t('features_title') }}</h2>
-          <p>{{ t('features_subtitle') }}</p>
+          <h2>{{ t.features_title }}</h2>
+          <p>{{ t.features_subtitle }}</p>
         </div>
 
         <div class="features-grid">
@@ -114,8 +114,8 @@
               <i class="fas fa-wave-square"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_webaudio_title') }}</h3>
-              <p>{{ t('feature_webaudio_desc') }}</p>
+              <h3>{{ t.feature_webaudio_title }}</h3>
+              <p>{{ t.feature_webaudio_desc }}</p>
             </div>
           </div>
 
@@ -124,8 +124,8 @@
               <i class="fas fa-chart-bar"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_viz_title') }}</h3>
-              <p>{{ t('feature_viz_desc') }}</p>
+              <h3>{{ t.feature_viz_title }}</h3>
+              <p>{{ t.feature_viz_desc }}</p>
             </div>
           </div>
 
@@ -134,8 +134,8 @@
               <i class="fas fa-cogs"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_presets_title') }}</h3>
-              <p>{{ t('feature_presets_desc') }}</p>
+              <h3>{{ t.feature_presets_title }}</h3>
+              <p>{{ t.feature_presets_desc }}</p>
             </div>
           </div>
 
@@ -144,8 +144,8 @@
               <i class="fas fa-download"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_export_title') }}</h3>
-              <p>{{ t('feature_export_desc') }}</p>
+              <h3>{{ t.feature_export_title }}</h3>
+              <p>{{ t.feature_export_desc }}</p>
             </div>
           </div>
 
@@ -154,8 +154,8 @@
               <i class="fas fa-mobile-alt"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_responsive_title') }}</h3>
-              <p>{{ t('feature_responsive_desc') }}</p>
+              <h3>{{ t.feature_responsive_title }}</h3>
+              <p>{{ t.feature_responsive_desc }}</p>
             </div>
           </div>
 
@@ -164,8 +164,8 @@
               <i class="fas fa-lock"></i>
             </div>
             <div class="feature-content">
-              <h3>{{ t('feature_privacy_title') }}</h3>
-              <p>{{ t('feature_privacy_desc') }}</p>
+              <h3>{{ t.feature_privacy_title }}</h3>
+              <p>{{ t.feature_privacy_desc }}</p>
             </div>
           </div>
         </div>
@@ -176,8 +176,8 @@
     <section class="tech-section">
       <div class="tech-container">
         <div class="section-header">
-          <h2>{{ t('tech_title') }}</h2>
-          <p>{{ t('tech_subtitle') }}</p>
+          <h2>{{ t.tech_title }}</h2>
+          <p>{{ t.tech_subtitle }}</p>
         </div>
 
         <div class="tech-grid">
@@ -186,7 +186,7 @@
               <i class="fab fa-vuejs"></i>
             </div>
             <h4>Vue.js 3</h4>
-            <p>{{ t('tech_vue_desc') }}</p>
+            <p>{{ t.tech_vue_desc }}</p>
           </div>
 
           <div class="tech-item">
@@ -194,7 +194,7 @@
               <i class="fas fa-music"></i>
             </div>
             <h4>Web Audio API</h4>
-            <p>{{ t('tech_webaudio_desc') }}</p>
+            <p>{{ t.tech_webaudio_desc }}</p>
           </div>
 
           <div class="tech-item">
@@ -202,7 +202,7 @@
               <i class="fas fa-bolt"></i>
             </div>
             <h4>Vite</h4>
-            <p>{{ t('tech_vite_desc') }}</p>
+            <p>{{ t.tech_vite_desc }}</p>
           </div>
 
           <div class="tech-item">
@@ -210,7 +210,7 @@
               <i class="fas fa-palette"></i>
             </div>
             <h4>CSS Variables</h4>
-            <p>{{ t('tech_css_desc') }}</p>
+            <p>{{ t.tech_css_desc }}</p>
           </div>
         </div>
       </div>
@@ -221,19 +221,19 @@
       <div class="stats-container">
         <div class="stat-box">
           <span class="stat-number">19</span>
-          <span class="stat-label">{{ t('stat_bands') }}</span>
+          <span class="stat-label">{{ t.stat_bands }}</span>
         </div>
         <div class="stat-box">
           <span class="stat-number">14+</span>
-          <span class="stat-label">{{ t('stat_presets') }}</span>
+          <span class="stat-label">{{ t.stat_presets }}</span>
         </div>
         <div class="stat-box">
           <span class="stat-number">60</span>
-          <span class="stat-label">{{ t('stat_fps') }}</span>
+          <span class="stat-label">{{ t.stat_fps }}</span>
         </div>
         <div class="stat-box">
           <span class="stat-number">0</span>
-          <span class="stat-label">{{ t('stat_server') }}</span>
+          <span class="stat-label">{{ t.stat_server }}</span>
         </div>
       </div>
     </section>
@@ -241,11 +241,11 @@
     <!-- CTA Section -->
     <section class="cta-section">
       <div class="cta-container">
-        <h2>{{ t('cta_title') }}</h2>
-        <p>{{ t('cta_subtitle') }}</p>
+        <h2>{{ t.cta_title }}</h2>
+        <p>{{ t.cta_subtitle }}</p>
         <router-link to="/app" class="cta-btn cta-btn-large">
           <i class="fas fa-play"></i>
-          {{ t('cta_button') }}
+          {{ t.cta_button }}
         </router-link>
       </div>
     </section>
@@ -258,11 +258,11 @@
             <i class="fas fa-sliders-h"></i>
             <span>EQUALIZER 19</span>
           </div>
-          <p>{{ t('footer_desc') }}</p>
+          <p>{{ t.footer_desc }}</p>
         </div>
         <div class="footer-links">
-          <router-link to="/app">{{ t('nav_start_app') }}</router-link>
-          <router-link to="/faq">{{ t('nav_faq') }}</router-link>
+          <router-link to="/app">{{ t.nav_start_app }}</router-link>
+          <router-link to="/faq">{{ t.nav_faq }}</router-link>
         </div>
       </div>
     </footer>
