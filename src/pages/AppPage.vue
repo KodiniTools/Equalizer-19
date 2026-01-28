@@ -153,7 +153,7 @@ onMounted(() => {
 .app-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50;
   background: var(--nav-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
