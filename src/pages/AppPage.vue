@@ -11,11 +11,11 @@
         <nav class="header-nav">
           <router-link to="/" class="header-link">
             <i class="fas fa-home"></i>
-            <span>{{ t('nav_home') }}</span>
+            <span>{{ t.nav_home }}</span>
           </router-link>
           <router-link to="/faq" class="header-link">
             <i class="fas fa-question-circle"></i>
-            <span>{{ t('nav_faq') }}</span>
+            <span>{{ t.nav_faq }}</span>
           </router-link>
         </nav>
 
@@ -38,14 +38,14 @@
             <button
               @click="setTheme('dark')"
               :class="['control-btn', { active: currentTheme === 'dark' }]"
-              :title="t('dark_theme')"
+              :title="t.dark_theme"
             >
               <i class="fas fa-moon"></i>
             </button>
             <button
               @click="setTheme('light')"
               :class="['control-btn', { active: currentTheme === 'light' }]"
-              :title="t('light_theme')"
+              :title="t.light_theme"
             >
               <i class="fas fa-sun"></i>
             </button>
