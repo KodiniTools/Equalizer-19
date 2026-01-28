@@ -1,7 +1,7 @@
 <template>
   <div class="faq-page">
     <!-- Navigation -->
-    <nav class="faq-nav">
+    <nav class="faq-nav" :class="{ 'nav-scrolled': isScrolled }">
       <div class="nav-container">
         <router-link to="/" class="nav-logo">
           <i class="fas fa-sliders-h"></i>
@@ -153,28 +153,16 @@
         </div>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="faq-footer">
-      <div class="footer-container">
-        <div class="footer-brand">
-          <i class="fas fa-sliders-h"></i>
-          <span>EQUALIZER 19</span>
-        </div>
-        <div class="footer-links">
-          <router-link to="/">{{ t.nav_home }}</router-link>
-          <router-link to="/app">{{ t.nav_start_app }}</router-link>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref, onMounted, onUnmounted } from 'vue'
 
 const { t, currentLanguage, setLanguage } = inject('i18n')
 const { currentTheme, setTheme } = inject('theme')
+
+const isScrolled = ref(false)
 
 const toggleLanguage = () => {
   setLanguage(currentLanguage.value === 'de' ? 'en' : 'de')
@@ -183,6 +171,19 @@ const toggleLanguage = () => {
 const toggleTheme = () => {
   setTheme(currentTheme.value === 'dark' ? 'light' : 'dark')
 }
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  handleScroll()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -194,15 +195,20 @@ const toggleTheme = () => {
 
 /* Navigation */
 .faq-nav {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--nav-bg);
+  z-index: 100;
+  background: transparent;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.faq-nav.nav-scrolled {
+  background: var(--nav-bg);
+  border-bottom-color: var(--border-color);
+  box-shadow: 0 2px 20px var(--shadow-light);
 }
 
 .nav-container {
@@ -298,7 +304,7 @@ const toggleTheme = () => {
 /* Main Content */
 .faq-main {
   flex: 1;
-  padding: 100px 24px 60px;
+  padding: 40px 24px 60px;
   background: var(--primary-bg);
 }
 
@@ -460,50 +466,6 @@ const toggleTheme = () => {
   box-shadow: 0 8px 30px var(--shadow-medium);
 }
 
-/* Footer */
-.faq-footer {
-  padding: 32px 24px;
-  background: var(--secondary-bg);
-  border-top: 1px solid var(--border-color);
-}
-
-.footer-container {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.footer-brand i {
-  color: var(--accent-primary);
-}
-
-.footer-links {
-  display: flex;
-  gap: 24px;
-}
-
-.footer-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.footer-links a:hover {
-  color: var(--accent-primary);
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .nav-links {
@@ -511,7 +473,7 @@ const toggleTheme = () => {
   }
 
   .faq-main {
-    padding: 90px 16px 40px;
+    padding: 30px 16px 40px;
   }
 
   .faq-item summary {
@@ -526,12 +488,6 @@ const toggleTheme = () => {
 
   .faq-cta {
     padding: 32px 24px;
-  }
-
-  .footer-container {
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
   }
 }
 

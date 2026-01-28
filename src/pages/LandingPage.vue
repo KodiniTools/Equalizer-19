@@ -1,7 +1,7 @@
 <template>
   <div class="landing-page">
     <!-- Navigation -->
-    <nav class="landing-nav">
+    <nav class="landing-nav" :class="{ 'nav-scrolled': isScrolled }">
       <div class="nav-container">
         <router-link to="/" class="nav-logo">
           <i class="fas fa-sliders-h"></i>
@@ -249,31 +249,16 @@
         </router-link>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="landing-footer">
-      <div class="footer-container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <i class="fas fa-sliders-h"></i>
-            <span>EQUALIZER 19</span>
-          </div>
-          <p>{{ t.footer_desc }}</p>
-        </div>
-        <div class="footer-links">
-          <router-link to="/app">{{ t.nav_start_app }}</router-link>
-          <router-link to="/faq">{{ t.nav_faq }}</router-link>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref, onMounted, onUnmounted } from 'vue'
 
 const { t, currentLanguage, setLanguage } = inject('i18n')
 const { currentTheme, setTheme } = inject('theme')
+
+const isScrolled = ref(false)
 
 const toggleLanguage = () => {
   setLanguage(currentLanguage.value === 'de' ? 'en' : 'de')
@@ -282,20 +267,38 @@ const toggleLanguage = () => {
 const toggleTheme = () => {
   setTheme(currentTheme.value === 'dark' ? 'light' : 'dark')
 }
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  handleScroll()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
 /* Landing Navigation */
 .landing-nav {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--nav-bg);
+  z-index: 100;
+  background: transparent;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.landing-nav.nav-scrolled {
+  background: var(--nav-bg);
+  border-bottom-color: var(--border-color);
+  box-shadow: 0 2px 20px var(--shadow-light);
 }
 
 .nav-container {
@@ -390,9 +393,9 @@ const toggleTheme = () => {
 
 /* Hero Section */
 .hero-section {
-  padding: 120px 24px 80px;
+  padding: 60px 24px 80px;
   background: var(--gradient-primary);
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
 }
@@ -788,59 +791,6 @@ const toggleTheme = () => {
   font-size: 18px;
 }
 
-/* Footer */
-.landing-footer {
-  padding: 40px 24px;
-  background: var(--primary-bg);
-  border-top: 1px solid var(--border-color);
-}
-
-.footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.footer-brand i {
-  color: var(--accent-primary);
-}
-
-.footer-content p {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.footer-links {
-  display: flex;
-  gap: 24px;
-}
-
-.footer-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.footer-links a:hover {
-  color: var(--accent-primary);
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
   .hero-cards {
@@ -876,7 +826,7 @@ const toggleTheme = () => {
   }
 
   .hero-section {
-    padding: 100px 16px 60px;
+    padding: 40px 16px 60px;
   }
 
   .features-grid {
@@ -894,11 +844,6 @@ const toggleTheme = () => {
 
   .stat-number {
     font-size: 36px;
-  }
-
-  .footer-container {
-    flex-direction: column;
-    text-align: center;
   }
 }
 
