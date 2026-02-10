@@ -40,6 +40,8 @@ provide('notify', (message, type = 'info') => {
 })
 
 onMounted(() => {
+  // Dispatch initial language-changed so SSI partials (nav, footer, cookie-banner) sync
+  window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang: currentLanguage.value } }))
   console.log('Equalizer 19 Vue 3 ready!')
 })
 </script>
