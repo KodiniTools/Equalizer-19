@@ -13,7 +13,10 @@ function detectBrowserLanguage() {
 // Update all SSI elements that use the data-lang-de / data-lang-en pattern
 function updateDataLangElements(lang) {
   document.querySelectorAll('[data-lang-de][data-lang-en]').forEach(el => {
-    el.textContent = el.getAttribute(`data-lang-${lang}`)
+    const text = el.getAttribute(`data-lang-${lang}`)
+    if (el.textContent !== text) {
+      el.textContent = text
+    }
   })
 }
 
@@ -27,9 +30,14 @@ function initSSILanguageSync(lang) {
   // After next frame (catches late paints / server-injected fragments)
   requestAnimationFrame(() => updateDataLangElements(lang))
 
-  // MutationObserver: populate new data-lang-* nodes added after initial load
+  // MutationObserver: only react to NEW child nodes being added (not text changes)
   if (!ssiObserver) {
-    ssiObserver = new MutationObserver(() => updateDataLangElements(currentLanguage.value))
+    ssiObserver = new MutationObserver((mutations) => {
+      const hasNewNodes = mutations.some(m => m.addedNodes.length > 0)
+      if (hasNewNodes) {
+        updateDataLangElements(currentLanguage.value)
+      }
+    })
     ssiObserver.observe(document.body, { childList: true, subtree: true })
   }
 }
