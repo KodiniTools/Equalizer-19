@@ -53,107 +53,6 @@
   --shadow-medium: rgba(1, 79, 153, 0.18);
 }
 
-/* ===== CONTROLS SECTION - KOMPAKTER ===== */
-.controls-section {
-  margin-bottom: 20px;
-  background: var(--gradient-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.controls-header {
-  text-align: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.controls-header h3 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: 0.3px;
-}
-
-.controls-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-  max-width: 550px;
-  margin: 0 auto;
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-}
-
-.control-group label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-align: center;
-  letter-spacing: 0.3px;
-}
-
-.theme-switcher, .lang-switcher {
-  display: flex;
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 3px;
-  gap: 3px;
-  transition: all 0.2s ease;
-}
-
-.theme-switcher:hover, .lang-switcher:hover {
-  border-color: var(--accent-primary);
-  box-shadow: 0 3px 12px var(--shadow-light);
-}
-
-.switch-option {
-  padding: 9px 14px;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 85px;
-  justify-content: center;
-  background: transparent;
-}
-
-.switch-option:hover {
-  background: var(--hover-bg);
-  color: var(--text-primary);
-  transform: translateY(-1px);
-}
-
-.switch-option.active {
-  background: var(--accent-primary);
-  color: var(--accent-text);
-  font-weight: 600;
-  transform: scale(1.02);
-  box-shadow: 0 3px 10px var(--shadow-medium);
-}
-
-.switch-option i {
-  font-size: 14px;
-  color: inherit;
-}
-
 /* ===== MAIN CONTENT STYLES ===== */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -871,10 +770,6 @@ select:focus {
     gap: 18px;
   }
 
-  .controls-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
 }
 
 @media (max-width: 600px) {
@@ -887,32 +782,12 @@ select:focus {
     margin-top: 12px;
   }
   
-  .controls-section {
-    padding: 14px;
-  }
-  
   .promo-title {
     font-size: 18px;
   }
   
   .promo-subtitle {
     font-size: 12px;
-  }
-  
-  .controls-grid {
-    gap: 10px;
-  }
-  
-  .switch-option {
-    padding: 8px 12px;
-    min-width: 70px;
-    font-size: 11px;
-  }
-  
-  .control-btn {
-    padding: 8px 16px;
-    min-width: 90px;
-    font-size: 11px;
   }
   
   .controls {
@@ -985,14 +860,6 @@ select:focus {
     height: 44px;
   }
   
-  .controls-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .switch-option {
-    min-width: 65px;
-    padding: 7px 10px;
-  }
 }
 
 /* ===== ANIMATIONS ===== */
@@ -1081,7 +948,3 @@ select:focus {
   }
 }
 
-/* ===== FIX für Switcher-Buttons ===== */
-.switch-option span {
-  white-space: nowrap;
-}

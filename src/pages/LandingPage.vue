@@ -1,42 +1,5 @@
 <template>
   <div class="landing-page">
-    <!-- Navigation -->
-    <nav class="landing-nav" :class="{ 'nav-scrolled': isScrolled }">
-      <div class="nav-container">
-        <router-link to="/" class="nav-logo">
-          <i class="fas fa-sliders-h"></i>
-          <span>EQUALIZER 19</span>
-        </router-link>
-        <div class="nav-links">
-          <router-link to="/app" class="nav-link nav-link-primary">
-            <i class="fas fa-play-circle"></i>
-            {{ t.nav_start_app }}
-          </router-link>
-          <router-link to="/faq" class="nav-link">
-            <i class="fas fa-question-circle"></i>
-            {{ t.nav_faq }}
-          </router-link>
-          <div class="nav-controls">
-            <button
-              @click="toggleLanguage"
-              class="nav-btn"
-              :title="currentLanguage === 'de' ? 'Switch to English' : 'Zu Deutsch wechseln'"
-            >
-              <i class="fas fa-globe"></i>
-              {{ currentLanguage === 'de' ? 'EN' : 'DE' }}
-            </button>
-            <button
-              @click="toggleTheme"
-              class="nav-btn"
-              :title="currentTheme === 'dark' ? t.light_theme : t.dark_theme"
-            >
-              <i :class="currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-container">
@@ -253,149 +216,17 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted, onUnmounted } from 'vue'
+import { inject } from 'vue'
 
-const { t, currentLanguage, setLanguage } = inject('i18n')
-const { currentTheme, setTheme } = inject('theme')
-
-const isScrolled = ref(false)
-
-const toggleLanguage = () => {
-  setLanguage(currentLanguage.value === 'de' ? 'en' : 'de')
-}
-
-const toggleTheme = () => {
-  setTheme(currentTheme.value === 'dark' ? 'light' : 'dark')
-}
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  handleScroll()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+const { t } = inject('i18n')
 </script>
 
 <style scoped>
-/* Landing Navigation */
-.landing-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: transparent;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.landing-nav.nav-scrolled {
-  background: var(--nav-bg);
-  border-bottom-color: var(--border-color);
-  box-shadow: 0 2px 20px var(--shadow-light);
-}
-
-.nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 24px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.nav-logo i {
-  color: var(--accent-primary);
-  font-size: 22px;
-}
-
-.nav-logo:hover {
-  color: var(--accent-primary);
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  color: var(--text-primary);
-  background: var(--hover-bg);
-}
-
-.nav-link-primary {
-  background: var(--accent-primary);
-  color: #fff;
-}
-
-.nav-link-primary:hover {
-  background: var(--accent-secondary);
-  color: #fff;
-}
-
-.nav-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--secondary-bg);
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.nav-btn:hover {
-  color: var(--text-primary);
-  border-color: var(--accent-primary);
-  background: var(--hover-bg);
-}
-
 /* Hero Section */
 .hero-section {
   padding: 60px 24px 80px;
   background: var(--gradient-primary);
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
 }
@@ -817,14 +648,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .nav-links {
-    gap: 12px;
-  }
-
-  .nav-link span {
-    display: none;
-  }
-
   .hero-section {
     padding: 40px 16px 60px;
   }
@@ -848,10 +671,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 480px) {
-  .nav-container {
-    padding: 0 16px;
-  }
-
   .hero-cards {
     gap: 16px;
   }
