@@ -17,6 +17,23 @@ function updateDataLangElements(lang) {
   })
 }
 
+// Ensure SSI data-lang-* elements are populated as soon as the DOM is ready
+// and keep watching for any SSI content injected later
+let ssiObserver = null
+function initSSILanguageSync(lang) {
+  // Immediate pass
+  updateDataLangElements(lang)
+
+  // After next frame (catches late paints / server-injected fragments)
+  requestAnimationFrame(() => updateDataLangElements(lang))
+
+  // MutationObserver: populate new data-lang-* nodes added after initial load
+  if (!ssiObserver) {
+    ssiObserver = new MutationObserver(() => updateDataLangElements(currentLanguage.value))
+    ssiObserver.observe(document.body, { childList: true, subtree: true })
+  }
+}
+
 export function useI18n() {
   const t = computed(() => translations[currentLanguage.value])
 
@@ -65,8 +82,8 @@ export function useI18n() {
     }
   })
 
-  // Initial update of data-lang-* elements (SSI HTML is already in the DOM)
-  updateDataLangElements(currentLanguage.value)
+  // Bootstrap: populate SSI elements + start observer
+  initSSILanguageSync(currentLanguage.value)
 
   return {
     t,
