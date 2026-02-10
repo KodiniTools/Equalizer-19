@@ -10,6 +10,13 @@ function detectBrowserLanguage() {
   return lang.startsWith('de') ? 'de' : 'en'
 }
 
+// Update all SSI elements that use the data-lang-de / data-lang-en pattern
+function updateDataLangElements(lang) {
+  document.querySelectorAll('[data-lang-de][data-lang-en]').forEach(el => {
+    el.textContent = el.getAttribute(`data-lang-${lang}`)
+  })
+}
+
 export function useI18n() {
   const t = computed(() => translations[currentLanguage.value])
 
@@ -26,6 +33,12 @@ export function useI18n() {
       document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
       document.querySelector('meta[name="description"]')?.setAttribute('content', t.value.promo_subtitle)
       document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.value.promo_subtitle)
+
+      // Dispatch language-changed event for SSI partials (cookie banner, etc.)
+      window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang } }))
+
+      // Update data-lang-* elements in SSI partials
+      updateDataLangElements(lang)
     }
   }
 
@@ -46,8 +59,14 @@ export function useI18n() {
       document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
       document.querySelector('meta[name="description"]')?.setAttribute('content', t.value.promo_subtitle)
       document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.value.promo_subtitle)
+
+      // Update data-lang-* elements in SSI partials
+      updateDataLangElements(lang)
     }
   })
+
+  // Initial update of data-lang-* elements (SSI HTML is already in the DOM)
+  updateDataLangElements(currentLanguage.value)
 
   return {
     t,
