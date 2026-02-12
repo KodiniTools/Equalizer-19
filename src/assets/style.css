@@ -1,3 +1,12 @@
+/* ===== CUSTOM FONTS ===== */
+@font-face {
+  font-family: 'Supreme';
+  src: url('/fonts/Supreme-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ===== CSS VARIABLES & THEME SYSTEM ===== */
 :root {
   /* Dark Theme - Gold & Blau Farbschema */
@@ -55,7 +64,7 @@
 
 /* ===== MAIN CONTENT STYLES ===== */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Supreme', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--gradient-primary);
   color: var(--text-primary);
   margin: 0;
