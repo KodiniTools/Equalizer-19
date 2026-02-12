@@ -650,14 +650,46 @@ const { t } = inject('i18n')
 @media (max-width: 768px) {
   .hero-section {
     padding: 40px 16px 60px;
+    min-height: auto;
+  }
+
+  .hero-content {
+    margin-bottom: 40px;
+  }
+
+  .features-section {
+    padding: 60px 16px;
+  }
+
+  .tech-section {
+    padding: 60px 16px;
+  }
+
+  .cta-section {
+    padding: 60px 16px;
+  }
+
+  .section-header {
+    margin-bottom: 36px;
   }
 
   .features-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature-item {
+    padding: 20px;
+    gap: 16px;
   }
 
   .tech-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .tech-item {
+    padding: 24px 16px;
   }
 
   .stats-container {
@@ -665,12 +697,37 @@ const { t } = inject('i18n')
     gap: 16px;
   }
 
+  .stats-section {
+    padding: 40px 16px;
+  }
+
   .stat-number {
     font-size: 36px;
+  }
+
+  .stat-label {
+    font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
+  .hero-section {
+    padding: 30px 12px 40px;
+  }
+
+  .hero-content {
+    margin-bottom: 30px;
+  }
+
+  .hero-subtitle {
+    margin-bottom: 24px;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .hero-cards {
     gap: 16px;
   }
@@ -679,17 +736,84 @@ const { t } = inject('i18n')
     padding: 24px 20px;
   }
 
+  .hero-card-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+  }
+
+  .hero-card h3 {
+    font-size: 17px;
+  }
+
+  .features-section {
+    padding: 40px 12px;
+  }
+
+  .tech-section {
+    padding: 40px 12px;
+  }
+
   .tech-grid {
     grid-template-columns: 1fr;
+  }
+
+  .tech-item {
+    padding: 20px 16px;
   }
 
   .stats-container {
     grid-template-columns: 1fr 1fr;
   }
 
+  .stats-section {
+    padding: 30px 12px;
+  }
+
+  .stat-number {
+    font-size: 30px;
+  }
+
+  .cta-section {
+    padding: 40px 12px;
+  }
+
   .cta-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .cta-btn-large {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+
+  .section-header {
+    margin-bottom: 28px;
+  }
+
+  .section-header p {
+    font-size: 14px;
+  }
+
+  .feature-item {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 16px;
+  }
+
+  .feature-content h3 {
+    font-size: 14px;
+  }
+
+  .feature-content p {
+    font-size: 13px;
   }
 }
 </style>

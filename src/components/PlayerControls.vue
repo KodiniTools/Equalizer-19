@@ -335,9 +335,40 @@ function handleVolumeChange(event) {
   border: none;
 }
 
+@media (max-width: 768px) {
+  .ctrl-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75em;
+  }
+
+  .ctrl-btn.play {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9em;
+  }
+
+  .vol-slider {
+    width: 50px;
+  }
+}
+
 @media (max-width: 500px) {
   .player {
     padding: 10px;
+    gap: 8px;
+  }
+
+  .track-info {
+    min-width: 80px;
+  }
+
+  .track-name {
+    font-size: 0.7em;
+  }
+
+  .track-time {
+    font-size: 0.6em;
   }
 
   .volume {
@@ -348,6 +379,31 @@ function handleVolumeChange(event) {
 
   .vol-slider {
     flex: 1;
+  }
+
+  .ctrl-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .ctrl-btn.play {
+    width: 42px;
+    height: 42px;
+  }
+
+  .btn-upload {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .player {
+    padding: 8px;
+  }
+
+  .controls {
+    gap: 3px;
   }
 }
 </style>

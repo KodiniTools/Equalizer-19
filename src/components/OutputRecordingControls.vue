@@ -276,4 +276,48 @@ function handleNewRecording() {
   color: #ef4444;
   font-size: 0.7em;
 }
+
+@media (max-width: 600px) {
+  .recorder {
+    padding: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .rec-time {
+    font-size: 0.8em;
+    padding: 3px 8px;
+  }
+
+  .fmt-btn {
+    padding: 5px 10px;
+    font-size: 0.75em;
+  }
+
+  .ctrl-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .controls {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 400px) {
+  .recorder {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .controls {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .format-toggle {
+    flex: 1;
+  }
+}
 </style>

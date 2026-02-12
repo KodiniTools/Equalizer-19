@@ -271,4 +271,57 @@ function formatFileSize(bytes) {
 .playlist-items::-webkit-scrollbar-thumb:hover {
   background: #00c4e6;
 }
+
+@media (max-width: 600px) {
+  .playlist {
+    padding: 10px;
+  }
+
+  .playlist-header h3 {
+    font-size: 0.75em;
+  }
+
+  .playlist-item {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .track-name {
+    font-size: 0.65em;
+  }
+
+  .track-meta {
+    font-size: 0.55em;
+  }
+
+  .btn-remove {
+    width: 24px;
+    height: 24px;
+    font-size: 0.65em;
+  }
+
+  .playlist-items {
+    max-height: 160px;
+  }
+}
+
+@media (max-width: 400px) {
+  .playlist {
+    padding: 8px;
+  }
+
+  .playlist-item {
+    padding: 5px;
+  }
+
+  .track-number {
+    width: 18px;
+    height: 18px;
+    font-size: 0.6em;
+  }
+
+  .playlist-items {
+    max-height: 140px;
+  }
+}
 </style>

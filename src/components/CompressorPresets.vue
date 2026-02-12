@@ -174,4 +174,42 @@ function applyPreset(presetName) {
   border-color: var(--accent-primary, #00d9ff);
   color: #000;
 }
+
+@media (max-width: 600px) {
+  .comp-presets {
+    padding: 10px;
+  }
+
+  .preset-btn {
+    padding: 5px 8px;
+    font-size: 0.6em;
+  }
+
+  .category-label {
+    font-size: 0.6em;
+  }
+
+  .preset-categories {
+    gap: 8px;
+  }
+
+  .preset-buttons {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 400px) {
+  .comp-presets {
+    padding: 8px;
+  }
+
+  .preset-btn {
+    padding: 4px 7px;
+    font-size: 0.55em;
+  }
+
+  .presets-title {
+    font-size: 0.7em;
+  }
+}
 </style>
