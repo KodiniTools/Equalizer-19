@@ -88,4 +88,52 @@ const t = (key) => {
   font-size: 1.2em;
   color: #ffd700;
 }
+
+@media (max-width: 600px) {
+  .pro-features {
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  .pro-header h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+
+  .pro-description {
+    font-size: 0.9em;
+  }
+
+  .pro-badge {
+    padding: 8px 16px;
+    font-size: 0.9em;
+  }
+
+  .pro-content {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .pro-features {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .pro-header h3 {
+    font-size: 1.1em;
+    gap: 8px;
+  }
+
+  .pro-description {
+    font-size: 0.85em;
+  }
+
+  .pro-badge {
+    padding: 7px 14px;
+    font-size: 0.85em;
+    border-radius: 20px;
+  }
+}
 </style>

@@ -121,4 +121,25 @@ onUnmounted(() => {
     height: 140px;
   }
 }
+
+@media (max-width: 600px) {
+  .visualization {
+    padding: 10px;
+  }
+
+  .visualization-canvas {
+    height: 120px;
+  }
+}
+
+@media (max-width: 400px) {
+  .visualization {
+    padding: 8px;
+  }
+
+  .visualization-canvas {
+    height: 100px;
+    border-radius: 6px;
+  }
+}
 </style>

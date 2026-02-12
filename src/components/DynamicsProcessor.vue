@@ -284,4 +284,64 @@ onMounted(() => {
   background: var(--hover-bg, #323240);
   color: var(--text-primary, #fff);
 }
+
+@media (max-width: 600px) {
+  .dynamics {
+    padding: 10px;
+  }
+
+  .label {
+    width: 52px;
+    font-size: 0.65em;
+  }
+
+  .val {
+    width: 40px;
+    font-size: 0.6em;
+  }
+
+  .control-row {
+    gap: 6px;
+  }
+
+  .control-row input[type="range"]::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .control-row input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .toggle-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .reset-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dynamics {
+    padding: 8px;
+  }
+
+  .label {
+    width: 46px;
+    font-size: 0.6em;
+  }
+
+  .val {
+    width: 36px;
+    font-size: 0.55em;
+  }
+
+  .controls {
+    gap: 6px;
+  }
+}
 </style>

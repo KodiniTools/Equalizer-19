@@ -486,6 +486,62 @@ function handleNewRecording() {
   }
 }
 
+@media (max-width: 480px) {
+  .recording-controls {
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+  }
+
+  .recording-header h3 {
+    font-size: 1.1em;
+  }
+
+  .recording-header h3 i {
+    font-size: 1em;
+  }
+
+  .recording-indicator {
+    padding: 6px 12px;
+    font-size: 0.8em;
+  }
+
+  .format-selector {
+    padding: 10px;
+    margin-bottom: 14px;
+  }
+
+  .format-selector label {
+    font-size: 0.85em;
+  }
+
+  .recording-buttons button {
+    padding: 12px 16px;
+    font-size: 0.9em;
+    min-width: 100%;
+  }
+
+  .recording-timer {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .time {
+    font-size: 1.6em;
+  }
+
+  .timer-display i {
+    font-size: 1.2em;
+  }
+
+  .recording-info,
+  .error-message {
+    font-size: 0.85em;
+    padding: 10px;
+    margin-top: 10px;
+  }
+}
+
 /* Dark/Light Theme Support */
 @media (prefers-color-scheme: light) {
   .recording-controls {
