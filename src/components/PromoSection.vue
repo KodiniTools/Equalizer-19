@@ -8,33 +8,21 @@
       
       <div class="promo-features">
         <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-sliders-h"></i>
-          </div>
           <h2 class="feature-title">{{ t.feature_eq_title }}</h2>
           <p class="feature-desc">{{ t.feature_eq_desc }}</p>
         </div>
-        
+
         <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-compress-arrows-alt"></i>
-          </div>
           <h2 class="feature-title">{{ t.feature_comp_title }}</h2>
           <p class="feature-desc">{{ t.feature_comp_desc }}</p>
         </div>
-        
+
         <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-circle-dot"></i>
-          </div>
           <h2 class="feature-title">{{ t.feature_rec_title }}</h2>
           <p class="feature-desc">{{ t.feature_rec_desc }}</p>
         </div>
-        
+
         <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-wave-square"></i>
-          </div>
           <h2 class="feature-title">{{ t.feature_viz_title }}</h2>
           <p class="feature-desc">{{ t.feature_viz_desc }}</p>
         </div>
