@@ -105,7 +105,7 @@ body {
 
 .promo-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .promo-title {
@@ -131,15 +131,15 @@ body {
 .promo-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .feature-card {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 16px;
+  padding: 12px 14px;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -168,28 +168,10 @@ body {
   transform: scaleX(1);
 }
 
-.feature-icon {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px auto;
-  font-size: 20px;
-  color: var(--accent-text);
-  transition: all 0.3s ease;
-}
-
-.feature-card:hover .feature-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
 .feature-title {
   font-size: 14px;
   font-weight: 600;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: var(--text-primary);
 }
 
@@ -203,7 +185,7 @@ body {
 .promo-stats {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 28px;
   flex-wrap: wrap;
 }
 
@@ -809,11 +791,15 @@ select:focus {
 
   .promo-features {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .promo-stats {
     gap: 14px;
+  }
+
+  .feature-desc {
+    font-size: 11px;
   }
 
   .stat-number {
@@ -825,14 +811,7 @@ select:focus {
   }
 
   .feature-card {
-    padding: 12px;
-  }
-
-  .feature-icon {
-    width: 38px;
-    height: 38px;
-    font-size: 16px;
-    border-radius: 10px;
+    padding: 10px 12px;
   }
 
   .feature-title {
@@ -942,7 +921,7 @@ select:focus {
   }
 
   .promo-header {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .promo-title {
