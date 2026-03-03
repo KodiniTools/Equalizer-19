@@ -38,12 +38,16 @@ const router = createRouter({
   }
 })
 
-// Update page title on route change
+// Redirect landing page with ?source=audiokonverter to the app
 router.beforeEach((to, from, next) => {
-  if (to.meta.title) {
-    document.title = to.meta.title
+  if (to.name === 'Landing' && to.query.source === 'audiokonverter') {
+    next({ name: 'App', query: { source: 'audiokonverter' } })
+  } else {
+    if (to.meta.title) {
+      document.title = to.meta.title
+    }
+    next()
   }
-  next()
 })
 
 export default router

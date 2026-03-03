@@ -379,6 +379,62 @@ export function useAudioPlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Analyze a Blob (instead of File) via Web Audio API
+  async function analyzeBlob(blob, name) {
+    const arrayBuffer = await blob.arrayBuffer()
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+    audioContext.close()
+
+    return {
+      name: name,
+      duration: audioBuffer.duration,
+      sampleRate: audioBuffer.sampleRate,
+      numberOfChannels: audioBuffer.numberOfChannels,
+      length: audioBuffer.length
+    }
+  }
+
+  // Handle shared files from IndexedDB (Audio Konverter handoff)
+  async function handleSharedFiles(sharedRecords) {
+    let processed = 0
+
+    for (const record of sharedRecords) {
+      const blob = record.blob instanceof Blob
+        ? record.blob
+        : new Blob([record.blob], { type: record.mimeType || 'audio/wav' })
+
+      if (blob.size === 0) continue
+
+      try {
+        await analyzeBlob(blob, record.name)
+
+        const url = URL.createObjectURL(blob)
+        const track = {
+          id: Date.now() + processed,
+          name: record.name,
+          file: null,
+          url: url,
+          size: blob.size,
+          type: record.mimeType || blob.type || 'audio/wav',
+          duration: 0
+        }
+
+        playlist.value.push(track)
+        processed++
+
+        if (currentTrackIndex.value === -1) {
+          currentTrackIndex.value = 0
+          loadTrack(0)
+        }
+      } catch (err) {
+        console.error('Error processing shared file:', record.name, err)
+      }
+    }
+
+    return { processed }
+  }
+
   // Cleanup
   function cleanup() {
     if (audioElement.value) {
@@ -452,6 +508,8 @@ export function useAudioPlayer() {
     seekToPercent,
     setVolume,
     toggleMute,
+    analyzeBlob,
+    handleSharedFiles,
     cleanup
   }
 }
