@@ -110,7 +110,7 @@ async function loadSharedFiles() {
     if (!records?.length) {
       sharedBanner.value = {
         type: 'warning',
-        message: t('sharedFilesEmpty')
+        message: t.value.sharedFilesEmpty
       }
       setTimeout(() => { sharedBanner.value = null }, 5000)
       return
@@ -118,7 +118,7 @@ async function loadSharedFiles() {
 
     sharedBanner.value = {
       type: 'info',
-      message: t('sharedFilesLoading').replace('{count}', records.length)
+      message: t.value.sharedFilesLoading.replace('{count}', records.length)
     }
 
     const { processed } = await audioPlayer.handleSharedFiles(records)
@@ -126,14 +126,14 @@ async function loadSharedFiles() {
     if (processed > 0) {
       sharedBanner.value = {
         type: 'success',
-        message: t('sharedFilesLoaded').replace('{count}', processed)
+        message: t.value.sharedFilesLoaded.replace('{count}', processed)
       }
       await clearSharedFiles()
       setTimeout(() => { sharedBanner.value = null }, 5000)
     } else {
       sharedBanner.value = {
         type: 'warning',
-        message: t('sharedFilesEmpty')
+        message: t.value.sharedFilesEmpty
       }
       setTimeout(() => { sharedBanner.value = null }, 5000)
     }
@@ -141,7 +141,7 @@ async function loadSharedFiles() {
     console.error('Error loading shared files:', err)
     sharedBanner.value = {
       type: 'error',
-      message: t('sharedFilesError')
+      message: t.value.sharedFilesError
     }
     setTimeout(() => { sharedBanner.value = null }, 5000)
   }
