@@ -62,6 +62,9 @@ export function useI18n() {
       // Dispatch language-changed event for SSI partials (cookie banner, etc.)
       window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang } }))
 
+      // Dispatch locale-changed event for SSI global nav
+      window.dispatchEvent(new CustomEvent('locale-changed', { detail: { locale: lang } }))
+
       // Update data-lang-* elements in SSI partials
       updateDataLangElements(lang)
     }
@@ -70,12 +73,12 @@ export function useI18n() {
   // Sync SSI nav localStorage key on init
   localStorage.setItem('locale', currentLanguage.value)
 
-  // Listen for SSI navigation language-changed events
-  window.addEventListener('language-changed', (e) => {
-    const lang = e.detail?.lang
+  // Handle language change from any source (internal or SSI nav)
+  function handleExternalLanguageChange(lang) {
     if (lang && (lang === 'de' || lang === 'en') && lang !== currentLanguage.value) {
       currentLanguage.value = lang
       localStorage.setItem('equalizer-language', lang)
+      localStorage.setItem('locale', lang)
       document.documentElement.lang = lang
 
       // Update meta tags
@@ -88,6 +91,16 @@ export function useI18n() {
       // Update data-lang-* elements in SSI partials
       updateDataLangElements(lang)
     }
+  }
+
+  // Listen for internal language-changed events
+  window.addEventListener('language-changed', (e) => {
+    handleExternalLanguageChange(e.detail?.lang)
+  })
+
+  // Listen for SSI global nav locale-changed events
+  window.addEventListener('locale-changed', (e) => {
+    handleExternalLanguageChange(e.detail?.locale)
   })
 
   // Bootstrap: populate SSI elements + start observer
