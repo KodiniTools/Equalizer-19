@@ -23,7 +23,7 @@
 
     <div class="eq-bands" :class="{ disabled: isEqBypassed }">
       <div v-for="(band, index) in localBands" :key="band.frequency" class="band">
-        <div class="slider-wrapper" :class="{ active: band.gain !== 0 }">
+        <div class="slider-wrapper" :class="{ active: band.gain !== 0, negative: band.gain < 0 }">
           <input
             type="range"
             min="-12"
@@ -33,7 +33,7 @@
             @input="handleGainChange($event, index)"
             :disabled="isEqBypassed"
             class="slider-v"
-            :class="{ active: band.gain !== 0 }"
+            :class="{ active: band.gain !== 0, negative: band.gain < 0 }"
           />
         </div>
         <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
@@ -295,6 +295,13 @@ onMounted(() => {
               inset 0 0 8px rgba(76, 217, 100, 0.15);
 }
 
+/* Negativer Slider mit rotem Glow */
+.slider-wrapper.active.negative {
+  background: rgba(255, 69, 58, 0.1);
+  box-shadow: 0 0 12px rgba(255, 69, 58, 0.4),
+              inset 0 0 8px rgba(255, 69, 58, 0.15);
+}
+
 .slider-v {
   -webkit-appearance: none;
   appearance: none;
@@ -317,6 +324,12 @@ onMounted(() => {
   box-shadow: 0 0 6px rgba(76, 217, 100, 0.5);
 }
 
+/* Track für negative Slider rot */
+.slider-v.active.negative {
+  background: linear-gradient(to top, #8a1a1a 0%, #ff453a 100%);
+  box-shadow: 0 0 6px rgba(255, 69, 58, 0.5);
+}
+
 .slider-v::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -335,6 +348,11 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
 }
 
+.slider-v.active.negative::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #ff453a 0%, #8a1a1a 100%);
+  box-shadow: 0 2px 8px rgba(255, 69, 58, 0.6);
+}
+
 .slider-v::-webkit-slider-thumb:hover {
   transform: scale(1.2);
   box-shadow: 0 3px 12px rgba(102, 126, 234, 0.7);
@@ -342,6 +360,10 @@ onMounted(() => {
 
 .slider-v.active::-webkit-slider-thumb:hover {
   box-shadow: 0 3px 12px rgba(76, 217, 100, 0.8);
+}
+
+.slider-v.active.negative::-webkit-slider-thumb:hover {
+  box-shadow: 0 3px 12px rgba(255, 69, 58, 0.8);
 }
 
 /* Firefox Support */
@@ -354,6 +376,10 @@ onMounted(() => {
 
 .slider-v.active::-moz-range-track {
   background: linear-gradient(to top, #2d8a3e 0%, #4cd964 100%);
+}
+
+.slider-v.active.negative::-moz-range-track {
+  background: linear-gradient(to top, #8a1a1a 0%, #ff453a 100%);
 }
 
 .slider-v::-moz-range-thumb {
@@ -369,6 +395,11 @@ onMounted(() => {
 .slider-v.active::-moz-range-thumb {
   background: linear-gradient(135deg, #4cd964 0%, #2d8a3e 100%);
   box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
+}
+
+.slider-v.active.negative::-moz-range-thumb {
+  background: linear-gradient(135deg, #ff453a 0%, #8a1a1a 100%);
+  box-shadow: 0 2px 8px rgba(255, 69, 58, 0.6);
 }
 
 .val {
