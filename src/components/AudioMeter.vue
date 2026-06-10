@@ -1,15 +1,24 @@
 <template>
   <div class="audio-meter-wrap">
     <div class="meter-header">
-      <span class="meter-title"><i class="fas fa-signal"></i> {{ t.meter_title }}</span>
-      <span class="meter-hint">dBFS</span>
+      <span class="meter-title"><i class="fas fa-signal" aria-hidden="true"></i> {{ t.meter_title }}</span>
+      <span class="meter-hint" aria-hidden="true">dBFS</span>
     </div>
 
-    <div class="meters-row">
-      <div class="meter-block" v-for="m in meters" :key="m.label">
-        <span class="meter-label">{{ m.label }}</span>
+    <div class="meters-row" role="group" :aria-label="t.meter_title">
+      <div
+        class="meter-block"
+        v-for="(m, i) in meters"
+        :key="m.label"
+        role="meter"
+        :aria-label="(i === 0 ? t.a11y_meter_in : t.a11y_meter_out).replace('{val}', m.dbText)"
+        :aria-valuenow="isFinite(m.db) ? m.db : -60"
+        aria-valuemin="-60"
+        aria-valuemax="0"
+      >
+        <span class="meter-label" aria-hidden="true">{{ m.label }}</span>
 
-        <div class="meter-track" ref="tracks">
+        <div class="meter-track" ref="tracks" aria-hidden="true">
           <!-- Gradient background: green → yellow → red -->
           <!-- Dark mask covers the empty (top) part of the bar -->
           <div class="meter-mask" :style="{ height: (100 - m.fillPct) + '%' }"></div>
@@ -21,14 +30,14 @@
           ></div>
         </div>
 
-        <span class="meter-db" :class="{ clipping: m.db >= -0.5 }">
+        <span class="meter-db" :class="{ clipping: m.db >= -0.5 }" aria-hidden="true">
           {{ m.dbText }}
         </span>
       </div>
     </div>
 
     <!-- Scale marks -->
-    <div class="meter-scale">
+    <div class="meter-scale" aria-hidden="true">
       <span>0</span>
       <span>-6</span>
       <span>-12</span>

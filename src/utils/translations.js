@@ -245,6 +245,22 @@ export const translations = {
 
     // Level Meter
     meter_title: 'Pegel-Meter',
+
+    // Accessibility labels
+    a11y_eq_bypass: 'Equalizer umschalten',
+    a11y_eq_band: '{freq} Hz Band, {gain} dB',
+    a11y_eq_select_preset: 'EQ-Preset auswählen',
+    a11y_eq_save_name: 'Name für neues Preset',
+    a11y_dynamics_toggle: 'Dynamics Processor umschalten',
+    a11y_threshold: 'Schwelle: {val} dB',
+    a11y_ratio: 'Ratio: {val}:1',
+    a11y_knee: 'Knee: {val} dB',
+    a11y_attack: 'Attack: {val} ms',
+    a11y_release: 'Release: {val} ms',
+    a11y_volume: 'Lautstärke: {val}%',
+    a11y_visualization: 'Frequenzspektrum-Visualisierung',
+    a11y_meter_in: 'Eingangs-Pegel: {val} dBFS',
+    a11y_meter_out: 'Ausgangs-Pegel: {val} dBFS',
   },
   en: {
     // Brand & Navigation
@@ -490,5 +506,21 @@ export const translations = {
 
     // Level Meter
     meter_title: 'Level Meter',
+
+    // Accessibility labels
+    a11y_eq_bypass: 'Toggle equalizer',
+    a11y_eq_band: '{freq} Hz band, {gain} dB',
+    a11y_eq_select_preset: 'Select EQ preset',
+    a11y_eq_save_name: 'New preset name',
+    a11y_dynamics_toggle: 'Toggle dynamics processor',
+    a11y_threshold: 'Threshold: {val} dB',
+    a11y_ratio: 'Ratio: {val}:1',
+    a11y_knee: 'Knee: {val} dB',
+    a11y_attack: 'Attack: {val} ms',
+    a11y_release: 'Release: {val} ms',
+    a11y_volume: 'Volume: {val}%',
+    a11y_visualization: 'Frequency spectrum visualization',
+    a11y_meter_in: 'Input level: {val} dBFS',
+    a11y_meter_out: 'Output level: {val} dBFS',
   },
 }

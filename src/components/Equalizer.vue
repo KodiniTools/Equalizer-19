@@ -1,11 +1,21 @@
 <template>
   <div class="equalizer">
     <div class="eq-header">
-      <button @click="toggleBypass" :class="['toggle-btn', { active: !isEqBypassed }]">
-        <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+      <button
+        @click="toggleBypass"
+        :class="['toggle-btn', { active: !isEqBypassed }]"
+        :aria-label="t.a11y_eq_bypass"
+        :aria-pressed="!isEqBypassed"
+      >
+        <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'" aria-hidden="true"></i>
       </button>
 
-      <select @change="handlePresetChange" v-model="selectedPreset" class="preset-select">
+      <select
+        @change="handlePresetChange"
+        v-model="selectedPreset"
+        class="preset-select"
+        :aria-label="t.a11y_eq_select_preset"
+      >
         <option value="">Custom</option>
         <optgroup :label="t.eq_builtin_group">
           <option v-for="(_, name) in EQ_PRESETS" :key="name" :value="name">{{ name }}</option>
@@ -21,8 +31,9 @@
         @click="deleteSelectedCustomPreset"
         class="icon-btn delete-btn"
         :title="t.eq_preset_delete"
+        :aria-label="t.eq_preset_delete"
       >
-        <i class="fas fa-trash-alt"></i>
+        <i class="fas fa-trash-alt" aria-hidden="true"></i>
       </button>
 
       <!-- Save preset button -->
@@ -31,12 +42,13 @@
         @click="showSaveForm = true"
         class="icon-btn save-btn"
         :title="t.eq_preset_save_title"
+        :aria-label="t.eq_preset_save_title"
       >
-        <i class="fas fa-floppy-disk"></i>
+        <i class="fas fa-floppy-disk" aria-hidden="true"></i>
       </button>
 
-      <button @click="resetEqualizer" class="icon-btn reset-btn" :title="t.reset">
-        <i class="fas fa-undo"></i>
+      <button @click="resetEqualizer" class="icon-btn reset-btn" :title="t.reset" :aria-label="t.reset">
+        <i class="fas fa-undo" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -47,15 +59,22 @@
         @keydown.enter="confirmSavePreset"
         @keydown.escape="cancelSavePreset"
         :placeholder="t.eq_preset_name_placeholder"
+        :aria-label="t.a11y_eq_save_name"
         class="preset-name-input"
         maxlength="32"
         ref="presetNameInput"
       />
-      <button @click="confirmSavePreset" class="icon-btn save-confirm-btn" :disabled="!newPresetName.trim()" :title="t.eq_save">
-        <i class="fas fa-check"></i>
+      <button
+        @click="confirmSavePreset"
+        class="icon-btn save-confirm-btn"
+        :disabled="!newPresetName.trim()"
+        :title="t.eq_save"
+        :aria-label="t.eq_save"
+      >
+        <i class="fas fa-check" aria-hidden="true"></i>
       </button>
-      <button @click="cancelSavePreset" class="icon-btn cancel-btn" :title="t.eq_cancel">
-        <i class="fas fa-times"></i>
+      <button @click="cancelSavePreset" class="icon-btn cancel-btn" :title="t.eq_cancel" :aria-label="t.eq_cancel">
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -72,6 +91,10 @@
             :disabled="isEqBypassed"
             class="slider-v"
             :class="{ active: band.gain !== 0, negative: band.gain < 0 }"
+            :aria-label="t.a11y_eq_band.replace('{freq}', formatFrequency(band.frequency)).replace('{gain}', band.gain)"
+            :aria-valuenow="band.gain"
+            aria-valuemin="-12"
+            aria-valuemax="12"
           />
         </div>
         <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>

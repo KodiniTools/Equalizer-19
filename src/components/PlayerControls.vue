@@ -27,17 +27,17 @@
 
     <!-- Upload buttons -->
     <div class="upload-group">
-      <button @click="triggerFileSelect" class="btn-upload" :title="t.player_select_files">
-        <i class="fas fa-file-audio"></i>
+      <button @click="triggerFileSelect" class="btn-upload" :title="t.player_select_files" :aria-label="t.player_select_files">
+        <i class="fas fa-file-audio" aria-hidden="true"></i>
       </button>
-      <button @click="triggerFolderSelect" class="btn-upload" :title="t.player_select_folder">
-        <i class="fas fa-folder-open"></i>
+      <button @click="triggerFolderSelect" class="btn-upload" :title="t.player_select_folder" :aria-label="t.player_select_folder">
+        <i class="fas fa-folder-open" aria-hidden="true"></i>
       </button>
     </div>
 
     <!-- Drop overlay hint -->
-    <div v-if="isDragOver" class="drop-hint">
-      <i class="fas fa-cloud-upload-alt"></i>
+    <div v-if="isDragOver" class="drop-hint" aria-live="polite">
+      <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
       <span>{{ t.player_drop_hint }}</span>
     </div>
 
@@ -61,35 +61,37 @@
 
     <!-- Control buttons -->
     <div class="controls">
-      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" :title="t.player_prev">
-        <i class="fas fa-step-backward"></i>
+      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" :title="t.player_prev" :aria-label="t.player_prev">
+        <i class="fas fa-step-backward" aria-hidden="true"></i>
       </button>
 
       <button
         @click="togglePlayPause"
         class="ctrl-btn play"
         :title="isPlaying ? t.pause : t.play"
+        :aria-label="isPlaying ? t.pause : t.play"
+        :aria-pressed="isPlaying"
       >
-        <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
-        <i v-else-if="isPlaying" class="fas fa-pause"></i>
-        <i v-else class="fas fa-play"></i>
+        <i v-if="isLoading" class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+        <i v-else-if="isPlaying" class="fas fa-pause" aria-hidden="true"></i>
+        <i v-else class="fas fa-play" aria-hidden="true"></i>
       </button>
 
-      <button @click="stop" class="ctrl-btn" :title="t.stop">
-        <i class="fas fa-stop"></i>
+      <button @click="stop" class="ctrl-btn" :title="t.stop" :aria-label="t.stop">
+        <i class="fas fa-stop" aria-hidden="true"></i>
       </button>
 
-      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" :title="t.player_next">
-        <i class="fas fa-step-forward"></i>
+      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" :title="t.player_next" :aria-label="t.player_next">
+        <i class="fas fa-step-forward" aria-hidden="true"></i>
       </button>
     </div>
 
     <!-- Volume -->
     <div class="volume">
-      <button @click="toggleMute" class="vol-btn" :title="t.player_mute">
-        <i v-if="isMuted" class="fas fa-volume-mute"></i>
-        <i v-else-if="volume > 0.5" class="fas fa-volume-up"></i>
-        <i v-else class="fas fa-volume-down"></i>
+      <button @click="toggleMute" class="vol-btn" :title="t.player_mute" :aria-label="t.player_mute" :aria-pressed="isMuted">
+        <i v-if="isMuted" class="fas fa-volume-mute" aria-hidden="true"></i>
+        <i v-else-if="volume > 0.5" class="fas fa-volume-up" aria-hidden="true"></i>
+        <i v-else class="fas fa-volume-down" aria-hidden="true"></i>
       </button>
       <input
         type="range"
@@ -99,6 +101,10 @@
         @input="handleVolumeChange"
         class="vol-slider"
         :title="t.player_vol_hint"
+        :aria-label="t.a11y_volume.replace('{val}', Math.round(volume * 100))"
+        :aria-valuenow="Math.round(volume * 100)"
+        aria-valuemin="0"
+        aria-valuemax="100"
       />
     </div>
   </div>
