@@ -4,20 +4,66 @@
       <button @click="toggleBypass" :class="['toggle-btn', { active: !isEqBypassed }]">
         <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
       </button>
+
       <select @change="handlePresetChange" v-model="selectedPreset" class="preset-select">
         <option value="">Custom</option>
-        <option value="flat">Flat</option>
-        <option value="bass_boost">Bass Boost</option>
-        <option value="treble_boost">Treble Boost</option>
-        <option value="vocal">Vocal</option>
-        <option value="rock">Rock</option>
-        <option value="jazz">Jazz</option>
-        <option value="classical">Classical</option>
-        <option value="pop">Pop</option>
-        <option value="electronic">Electronic</option>
+        <optgroup label="Built-in">
+          <option value="flat">Flat</option>
+          <option value="bass_boost">Bass Boost</option>
+          <option value="treble_boost">Treble Boost</option>
+          <option value="vocal">Vocal</option>
+          <option value="rock">Rock</option>
+          <option value="jazz">Jazz</option>
+          <option value="classical">Classical</option>
+          <option value="pop">Pop</option>
+          <option value="electronic">Electronic</option>
+        </optgroup>
+        <optgroup v-if="customPresets.length" label="Eigene Presets">
+          <option v-for="p in customPresets" :key="p.id" :value="p.id">{{ p.name }}</option>
+        </optgroup>
       </select>
-      <button @click="resetEqualizer" class="reset-btn">
+
+      <!-- Delete custom preset -->
+      <button
+        v-if="isCustomSelected"
+        @click="deleteSelectedCustomPreset"
+        class="icon-btn delete-btn"
+        title="Preset löschen"
+      >
+        <i class="fas fa-trash-alt"></i>
+      </button>
+
+      <!-- Save preset button -->
+      <button
+        v-if="!showSaveForm"
+        @click="showSaveForm = true"
+        class="icon-btn save-btn"
+        title="Aktuelle Einstellung als Preset speichern"
+      >
+        <i class="fas fa-floppy-disk"></i>
+      </button>
+
+      <button @click="resetEqualizer" class="icon-btn reset-btn" title="Zurücksetzen">
         <i class="fas fa-undo"></i>
+      </button>
+    </div>
+
+    <!-- Inline save form -->
+    <div v-if="showSaveForm" class="save-form">
+      <input
+        v-model="newPresetName"
+        @keydown.enter="confirmSavePreset"
+        @keydown.escape="cancelSavePreset"
+        placeholder="Preset-Name eingeben …"
+        class="preset-name-input"
+        maxlength="32"
+        ref="presetNameInput"
+      />
+      <button @click="confirmSavePreset" class="icon-btn save-confirm-btn" :disabled="!newPresetName.trim()" title="Speichern">
+        <i class="fas fa-check"></i>
+      </button>
+      <button @click="cancelSavePreset" class="icon-btn cancel-btn" title="Abbrechen">
+        <i class="fas fa-times"></i>
       </button>
     </div>
 
@@ -44,12 +90,13 @@
 </template>
 
 <script setup>
-  import { ref, inject, watch, onMounted } from 'vue'
+  import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
+
+  const STORAGE_KEY = 'eq19_custom_presets'
 
   const audioEngine = inject('audioEngine')
   const notify = inject('notify', () => {})
 
-  // Local state - initialize with 19 bands
   const localBands = ref([
     { frequency: 20, gain: 0 },
     { frequency: 25, gain: 0 },
@@ -75,7 +122,64 @@
   const selectedPreset = ref('')
   const isEqBypassed = ref(false)
 
-  // Sync with audioEngine if available
+  // Custom presets
+  const customPresets = ref([])
+  const showSaveForm = ref(false)
+  const newPresetName = ref('')
+  const presetNameInput = ref(null)
+
+  const isCustomSelected = computed(
+    () => selectedPreset.value && selectedPreset.value.startsWith('__custom__')
+  )
+
+  // Load custom presets from localStorage
+  function loadCustomPresets() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) customPresets.value = JSON.parse(raw)
+    } catch (_e) {
+      customPresets.value = []
+    }
+  }
+
+  function persistCustomPresets() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customPresets.value))
+  }
+
+  function confirmSavePreset() {
+    const name = newPresetName.value.trim()
+    if (!name) return
+
+    const gains = localBands.value.map((b) => b.gain)
+    const id = `__custom__${Date.now()}`
+    customPresets.value.push({ id, name, gains })
+    persistCustomPresets()
+    selectedPreset.value = id
+    showSaveForm.value = false
+    newPresetName.value = ''
+    notify(`Preset "${name}" gespeichert`, 'success')
+  }
+
+  function cancelSavePreset() {
+    showSaveForm.value = false
+    newPresetName.value = ''
+  }
+
+  function deleteSelectedCustomPreset() {
+    const preset = customPresets.value.find((p) => p.id === selectedPreset.value)
+    if (!preset) return
+    customPresets.value = customPresets.value.filter((p) => p.id !== selectedPreset.value)
+    persistCustomPresets()
+    selectedPreset.value = ''
+    notify(`Preset "${preset.name}" gelöscht`, 'info')
+  }
+
+  // Focus input when save form opens
+  watch(showSaveForm, (v) => {
+    if (v) nextTick(() => presetNameInput.value?.focus())
+  })
+
+  // Sync with audioEngine
   if (audioEngine && audioEngine.eqBands) {
     watch(
       () => audioEngine.eqBands,
@@ -97,41 +201,50 @@
 
   function handleGainChange(event, index) {
     const value = parseFloat(event.target.value)
-
-    // Update local state safely
     if (localBands.value && localBands.value[index]) {
       localBands.value[index].gain = value
     }
-
-    // Update audioEngine
     if (audioEngine && audioEngine.updateEqBand) {
       audioEngine.updateEqBand(index, value)
     }
-
-    selectedPreset.value = '' // Mark as custom
+    selectedPreset.value = ''
   }
 
   function handlePresetChange() {
-    if (selectedPreset.value && audioEngine && audioEngine.applyEqPreset) {
-      audioEngine.applyEqPreset(selectedPreset.value)
+    if (!selectedPreset.value) return
 
-      // Update local display
+    if (isCustomSelected.value) {
+      const preset = customPresets.value.find((p) => p.id === selectedPreset.value)
+      if (preset) {
+        applyGains(preset.gains)
+        notify(`Preset "${preset.name}" angewendet`, 'success')
+      }
+      return
+    }
+
+    if (audioEngine && audioEngine.applyEqPreset) {
+      audioEngine.applyEqPreset(selectedPreset.value)
       if (audioEngine.eqBands) {
         localBands.value = audioEngine.eqBands.map((band) => ({
           frequency: band.frequency,
           gain: band.gain,
         }))
       }
-
       notify(`Preset "${selectedPreset.value}" angewendet`, 'success')
     }
+  }
+
+  function applyGains(gains) {
+    gains.forEach((gain, index) => {
+      if (localBands.value[index]) localBands.value[index].gain = gain
+      if (audioEngine && audioEngine.updateEqBand) audioEngine.updateEqBand(index, gain)
+    })
   }
 
   function toggleBypass() {
     if (audioEngine && audioEngine.toggleEqBypass) {
       audioEngine.toggleEqBypass()
       isEqBypassed.value = audioEngine.eqBypass?.value ?? false
-
       notify(isEqBypassed.value ? 'Equalizer deaktiviert' : 'Equalizer aktiviert', 'info')
     }
   }
@@ -139,27 +252,19 @@
   function resetEqualizer() {
     if (audioEngine && audioEngine.resetEq) {
       audioEngine.resetEq()
-
-      // Reset local display
-      localBands.value.forEach((band) => {
-        band.gain = 0
-      })
-
+      localBands.value.forEach((band) => { band.gain = 0 })
       selectedPreset.value = ''
-
       notify('Equalizer zurückgesetzt', 'info')
     }
   }
 
   function formatFrequency(freq) {
-    if (freq >= 1000) {
-      return (freq / 1000).toFixed(1) + 'k'
-    }
+    if (freq >= 1000) return (freq / 1000).toFixed(1) + 'k'
     return freq.toString()
   }
 
   onMounted(() => {
-    console.log('✅ Equalizer mounted with', localBands.value.length, 'bands')
+    loadCustomPresets()
   })
 </script>
 
@@ -174,8 +279,8 @@
   .eq-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 8px;
   }
 
   .toggle-btn {
@@ -191,6 +296,7 @@
     justify-content: center;
     font-size: 0.85em;
     transition: all 0.2s ease;
+    flex-shrink: 0;
   }
 
   .toggle-btn:hover {
@@ -214,18 +320,16 @@
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-secondary, #c8c8d5);
     transition: all 0.2s ease;
+    min-width: 0;
   }
 
-  .preset-select:hover {
-    border-color: #667eea;
-  }
-
+  .preset-select:hover,
   .preset-select:focus {
-    outline: none;
     border-color: #667eea;
+    outline: none;
   }
 
-  .reset-btn {
+  .icon-btn {
     width: 28px;
     height: 28px;
     border: 1px solid var(--border-color, #3a3a48);
@@ -238,13 +342,74 @@
     justify-content: center;
     font-size: 0.7em;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .save-btn:hover {
+    background: #667eea;
+    border-color: transparent;
+    color: white;
+  }
+
+  .save-confirm-btn:not(:disabled):hover {
+    background: #1db954;
+    border-color: transparent;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background: #ef4444;
+    border-color: transparent;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background: #ef4444;
+    border-color: transparent;
+    color: white;
   }
 
   .reset-btn:hover {
     background: #667eea;
     color: white;
+    border-color: transparent;
   }
 
+  /* Inline save form */
+  .save-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.15s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .preset-name-input {
+    flex: 1;
+    padding: 5px 10px;
+    border: 1px solid #667eea;
+    border-radius: 6px;
+    background: var(--secondary-bg, #1a1a22);
+    color: var(--text-primary, #fff);
+    font-size: 0.75em;
+    outline: none;
+  }
+
+  .preset-name-input::placeholder {
+    color: var(--text-muted, #8b8b9a);
+  }
+
+  /* EQ bands */
   .eq-bands {
     display: flex;
     justify-content: space-between;
@@ -272,7 +437,6 @@
     max-width: 36px;
   }
 
-  /* Slider Wrapper für Zentrierung und Glow */
   .slider-wrapper {
     position: relative;
     width: 24px;
@@ -284,7 +448,6 @@
     transition: all 0.3s ease;
   }
 
-  /* Aktiver Slider mit hellgrünem Glow */
   .slider-wrapper.active {
     background: rgba(76, 217, 100, 0.1);
     box-shadow:
@@ -292,7 +455,6 @@
       inset 0 0 8px rgba(76, 217, 100, 0.15);
   }
 
-  /* Negativer Slider mit rotem Glow */
   .slider-wrapper.active.negative {
     background: rgba(255, 69, 58, 0.1);
     box-shadow:
@@ -316,13 +478,11 @@
     border: none;
   }
 
-  /* Track für aktive Slider hellgrün */
   .slider-v.active {
     background: linear-gradient(to top, #2d8a3e 0%, #4cd964 100%);
     box-shadow: 0 0 6px rgba(76, 217, 100, 0.5);
   }
 
-  /* Track für negative Slider rot */
   .slider-v.active.negative {
     background: linear-gradient(to top, #8a1a1a 0%, #ff453a 100%);
     box-shadow: 0 0 6px rgba(255, 69, 58, 0.5);
@@ -364,7 +524,6 @@
     box-shadow: 0 3px 12px rgba(255, 69, 58, 0.8);
   }
 
-  /* Firefox Support */
   .slider-v::-moz-range-track {
     width: 8px;
     background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
@@ -452,11 +611,11 @@
     }
 
     .eq-header {
-      gap: 6px;
+      gap: 5px;
     }
 
     .toggle-btn,
-    .reset-btn {
+    .icon-btn {
       width: 32px;
       height: 32px;
     }
