@@ -2,7 +2,9 @@ import { ref, computed } from 'vue'
 import { translations } from '../utils/translations'
 
 const currentLanguage = ref(
-  localStorage.getItem('equalizer-language') || localStorage.getItem('locale') || detectBrowserLanguage()
+  localStorage.getItem('equalizer-language') ||
+    localStorage.getItem('locale') ||
+    detectBrowserLanguage()
 )
 
 function detectBrowserLanguage() {
@@ -12,7 +14,7 @@ function detectBrowserLanguage() {
 
 // Update all SSI elements that use the data-lang-de / data-lang-en pattern
 function updateDataLangElements(lang) {
-  document.querySelectorAll('[data-lang-de][data-lang-en]').forEach(el => {
+  document.querySelectorAll('[data-lang-de][data-lang-en]').forEach((el) => {
     const text = el.getAttribute(`data-lang-${lang}`)
     if (el.textContent !== text) {
       el.textContent = text
@@ -33,7 +35,7 @@ function initSSILanguageSync(lang) {
   // MutationObserver: only react to NEW child nodes being added (not text changes)
   if (!ssiObserver) {
     ssiObserver = new MutationObserver((mutations) => {
-      const hasNewNodes = mutations.some(m => m.addedNodes.length > 0)
+      const hasNewNodes = mutations.some((m) => m.addedNodes.length > 0)
       if (hasNewNodes) {
         updateDataLangElements(currentLanguage.value)
       }
@@ -56,8 +58,12 @@ export function useI18n() {
       const title = t.value.main_title
       document.title = title
       document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-      document.querySelector('meta[name="description"]')?.setAttribute('content', t.value.promo_subtitle)
-      document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.value.promo_subtitle)
+      document
+        .querySelector('meta[name="description"]')
+        ?.setAttribute('content', t.value.promo_subtitle)
+      document
+        .querySelector('meta[property="og:description"]')
+        ?.setAttribute('content', t.value.promo_subtitle)
 
       // Dispatch language-changed event for SSI partials (cookie banner, etc.)
       window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang } }))
@@ -85,8 +91,12 @@ export function useI18n() {
       const title = t.value.main_title
       document.title = title
       document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-      document.querySelector('meta[name="description"]')?.setAttribute('content', t.value.promo_subtitle)
-      document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.value.promo_subtitle)
+      document
+        .querySelector('meta[name="description"]')
+        ?.setAttribute('content', t.value.promo_subtitle)
+      document
+        .querySelector('meta[property="og:description"]')
+        ?.setAttribute('content', t.value.promo_subtitle)
 
       // Update data-lang-* elements in SSI partials
       updateDataLangElements(lang)
@@ -109,6 +119,6 @@ export function useI18n() {
   return {
     t,
     currentLanguage: computed(() => currentLanguage.value),
-    setLanguage
+    setLanguage,
   }
 }

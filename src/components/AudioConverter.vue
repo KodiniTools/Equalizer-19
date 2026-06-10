@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <div class="card promo-card">
-      <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="row" style="justify-content: space-between; align-items: center">
         <strong>{{ t.audio_converter }}</strong>
-        <a 
-          class="btn primary" 
-          href="https://kodinitools.com/audiokonverter/" 
-          target="_blank" 
+        <a
+          class="btn primary"
+          href="https://kodinitools.com/audiokonverter/"
+          target="_blank"
           rel="noopener"
         >
           <i class="fas fa-wand-magic-sparkles"></i>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
+  import { inject } from 'vue'
 
-const { t } = inject('i18n')
+  const { t } = inject('i18n')
 </script>

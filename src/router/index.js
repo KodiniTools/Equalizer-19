@@ -8,20 +8,20 @@ const routes = [
     path: '/',
     name: 'Landing',
     component: LandingPage,
-    meta: { title: 'Equalizer 19 - Professional Audio Processing' }
+    meta: { title: 'Equalizer 19 - Professional Audio Processing' },
   },
   {
     path: '/app',
     name: 'App',
     component: AppPage,
-    meta: { title: 'Equalizer 19 - Audio Processor' }
+    meta: { title: 'Equalizer 19 - Audio Processor' },
   },
   {
     path: '/faq',
     name: 'FAQ',
     component: FaqPage,
-    meta: { title: 'Equalizer 19 - FAQ' }
-  }
+    meta: { title: 'Equalizer 19 - FAQ' },
+  },
 ]
 
 const router = createRouter({
@@ -35,7 +35,7 @@ const router = createRouter({
     } else {
       return { top: 0, behavior: 'smooth' }
     }
-  }
+  },
 })
 
 // Redirect landing page with ?source=audiokonverter to the app

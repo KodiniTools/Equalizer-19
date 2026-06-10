@@ -51,7 +51,7 @@ export function useAudioPlayer() {
     if (!audioElement.value) {
       audioElement.value = new Audio()
       audioElement.value.crossOrigin = 'anonymous'
-      
+
       // Event listeners
       audioElement.value.addEventListener('loadedmetadata', handleLoadedMetadata)
       audioElement.value.addEventListener('timeupdate', handleTimeUpdate)
@@ -60,7 +60,7 @@ export function useAudioPlayer() {
       audioElement.value.addEventListener('canplay', handleCanPlay)
       audioElement.value.addEventListener('waiting', handleWaiting)
       audioElement.value.addEventListener('playing', handlePlaying)
-      
+
       console.log('✅ Audio element initialized')
     }
   }
@@ -84,7 +84,9 @@ export function useAudioPlayer() {
     if (!mediaElementSource && audioEngineRef.audioContext.value) {
       try {
         console.log('🎵 Creating MediaElementSource from audio element...')
-        mediaElementSource = audioEngineRef.audioContext.value.createMediaElementSource(audioElement.value)
+        mediaElementSource = audioEngineRef.audioContext.value.createMediaElementSource(
+          audioElement.value
+        )
         console.log('✅ MediaElementSource created:', mediaElementSource)
       } catch (e) {
         console.error('❌ Failed to create MediaElementSource:', e)
@@ -122,7 +124,7 @@ export function useAudioPlayer() {
     isPlaying.value = false
     isPaused.value = false
     currentTime.value = 0
-    
+
     // Auto-play next track if available
     if (canPlayNext.value) {
       playNext()
@@ -171,7 +173,7 @@ export function useAudioPlayer() {
       url: URL.createObjectURL(file),
       size: file.size,
       type: file.type,
-      duration: 0
+      duration: 0,
     }))
 
     playlist.value.push(...newTracks)
@@ -208,7 +210,7 @@ export function useAudioPlayer() {
 
   function clearPlaylist() {
     // Clean up URLs
-    playlist.value.forEach(track => {
+    playlist.value.forEach((track) => {
       if (track.url) {
         URL.revokeObjectURL(track.url)
       }
@@ -226,14 +228,14 @@ export function useAudioPlayer() {
     }
 
     initAudio()
-    
+
     error.value = null
     isLoading.value = true
     currentTrackIndex.value = index
 
     try {
       const track = playlist.value[index]
-      
+
       // Load new audio
       audioElement.value.src = track.url
       await audioElement.value.load()
@@ -373,7 +375,7 @@ export function useAudioPlayer() {
     if (!isFinite(seconds) || isNaN(seconds)) {
       return '0:00'
     }
-    
+
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -391,7 +393,7 @@ export function useAudioPlayer() {
       duration: audioBuffer.duration,
       sampleRate: audioBuffer.sampleRate,
       numberOfChannels: audioBuffer.numberOfChannels,
-      length: audioBuffer.length
+      length: audioBuffer.length,
     }
   }
 
@@ -400,9 +402,10 @@ export function useAudioPlayer() {
     let processed = 0
 
     for (const record of sharedRecords) {
-      const blob = record.blob instanceof Blob
-        ? record.blob
-        : new Blob([record.blob], { type: record.mimeType || 'audio/wav' })
+      const blob =
+        record.blob instanceof Blob
+          ? record.blob
+          : new Blob([record.blob], { type: record.mimeType || 'audio/wav' })
 
       if (blob.size === 0) continue
 
@@ -417,7 +420,7 @@ export function useAudioPlayer() {
           url: url,
           size: blob.size,
           type: record.mimeType || blob.type || 'audio/wav',
-          duration: 0
+          duration: 0,
         }
 
         playlist.value.push(track)
@@ -476,7 +479,7 @@ export function useAudioPlayer() {
     volume,
     isMuted,
     error,
-    
+
     // Computed
     hasTrack,
     hasPlaylist,
@@ -485,10 +488,10 @@ export function useAudioPlayer() {
     progress,
     formattedCurrentTime,
     formattedDuration,
-    
+
     // Audio element
     audioElement,
-    
+
     // Methods
     setAudioEngine,
     initAudio,
@@ -510,6 +513,6 @@ export function useAudioPlayer() {
     toggleMute,
     analyzeBlob,
     handleSharedFiles,
-    cleanup
+    cleanup,
   }
 }

@@ -12,9 +12,7 @@ export function useRecorder() {
   let timerInterval = null
 
   const mimeType = computed(() => {
-    return recordingFormat.value === 'webm' 
-      ? 'audio/webm;codecs=opus' 
-      : 'audio/wav'
+    return recordingFormat.value === 'webm' ? 'audio/webm;codecs=opus' : 'audio/wav'
   })
 
   const hasRecording = computed(() => recordedChunks.value.length > 0)
@@ -49,7 +47,7 @@ export function useRecorder() {
     let offset = 44
     for (let i = 0; i < samples.length; i++) {
       const s = Math.max(-1, Math.min(1, samples[i]))
-      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true)
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true)
       offset += 2
     }
 
@@ -60,13 +58,13 @@ export function useRecorder() {
     try {
       recordedChunks.value = []
       recordingTime.value = 0
-      
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          autoGainControl: true
-        } 
+          autoGainControl: true,
+        },
       })
 
       if (recordingFormat.value === 'wav') {
@@ -78,7 +76,7 @@ export function useRecorder() {
 
         const options = {
           mimeType: 'audio/webm;codecs=opus',
-          audioBitsPerSecond: 128000
+          audioBitsPerSecond: 128000,
         }
 
         mediaRecorder.value = new MediaRecorder(destination.value.stream, options)
@@ -86,7 +84,7 @@ export function useRecorder() {
         // WebM-Recording
         const options = {
           mimeType: mimeType.value,
-          audioBitsPerSecond: 128000
+          audioBitsPerSecond: 128000,
         }
 
         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
@@ -112,10 +110,10 @@ export function useRecorder() {
         if (recordingFormat.value === 'wav') {
           await convertToWAV()
         }
-        
+
         // Stream tracks stoppen
-        stream.getTracks().forEach(track => track.stop())
-        
+        stream.getTracks().forEach((track) => track.stop())
+
         if (audioContext.value) {
           await audioContext.value.close()
           audioContext.value = null
@@ -124,22 +122,22 @@ export function useRecorder() {
 
       mediaRecorder.value.start(100) // Chunks alle 100ms
       isRecording.value = true
-      
+
       // Timer starten
       timerInterval = setInterval(() => {
         recordingTime.value++
       }, 1000)
-      
+
       return true
     } catch (error) {
       console.error('Fehler beim Starten der Aufnahme:', error)
-      
+
       // Timer aufräumen falls vorhanden
       if (timerInterval) {
         clearInterval(timerInterval)
         timerInterval = null
       }
-      
+
       return false
     }
   }
@@ -148,21 +146,21 @@ export function useRecorder() {
     try {
       // WebM Blob erstellen
       const webmBlob = new Blob(recordedChunks.value, { type: 'audio/webm' })
-      
+
       // Audio-Context für Dekodierung
       const arrayBuffer = await webmBlob.arrayBuffer()
       const tempContext = new (window.AudioContext || window.webkitAudioContext)()
       const audioBuffer = await tempContext.decodeAudioData(arrayBuffer)
-      
+
       // Audio-Daten extrahieren
       const samples = audioBuffer.getChannelData(0)
-      
+
       // WAV-Blob erstellen
       const wavBlob = encodeWAV(samples, audioBuffer.sampleRate)
-      
+
       // Chunks durch WAV-Blob ersetzen
       recordedChunks.value = [wavBlob]
-      
+
       await tempContext.close()
     } catch (error) {
       console.error('Fehler bei WAV-Konvertierung:', error)
@@ -174,7 +172,7 @@ export function useRecorder() {
     if (mediaRecorder.value && isRecording.value) {
       mediaRecorder.value.stop()
       isRecording.value = false
-      
+
       // Timer wird in onstop callback gestoppt
     }
   }
@@ -186,20 +184,20 @@ export function useRecorder() {
     }
 
     const blob = new Blob(recordedChunks.value, {
-      type: recordingFormat.value === 'wav' ? 'audio/wav' : 'audio/webm'
+      type: recordingFormat.value === 'wav' ? 'audio/wav' : 'audio/webm',
     })
 
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.style.display = 'none'
     a.href = url
-    
+
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
     a.download = `recording_${timestamp}.${recordingFormat.value}`
-    
+
     document.body.appendChild(a)
     a.click()
-    
+
     setTimeout(() => {
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
@@ -241,6 +239,6 @@ export function useRecorder() {
     downloadRecording,
     setFormat,
     discardRecording,
-    cleanup
+    cleanup,
   }
 }

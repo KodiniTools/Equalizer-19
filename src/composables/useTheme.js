@@ -46,6 +46,6 @@ export function useTheme() {
 
   return {
     currentTheme: computed(() => currentTheme.value),
-    setTheme
+    setTheme,
   }
 }

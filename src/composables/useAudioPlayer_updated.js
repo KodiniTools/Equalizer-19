@@ -43,7 +43,7 @@ export function useAudioPlayer() {
     if (!audioElement.value) {
       audioElement.value = new Audio()
       audioElement.value.crossOrigin = 'anonymous'
-      
+
       // Event listeners
       audioElement.value.addEventListener('loadedmetadata', handleLoadedMetadata)
       audioElement.value.addEventListener('timeupdate', handleTimeUpdate)
@@ -74,7 +74,7 @@ export function useAudioPlayer() {
     isPlaying.value = false
     isPaused.value = false
     currentTime.value = 0
-    
+
     // Auto-play next track if available
     if (canPlayNext.value) {
       playNext()
@@ -123,7 +123,7 @@ export function useAudioPlayer() {
       url: URL.createObjectURL(file),
       size: file.size,
       type: file.type,
-      duration: 0
+      duration: 0,
     }))
 
     playlist.value.push(...newTracks)
@@ -160,7 +160,7 @@ export function useAudioPlayer() {
 
   function clearPlaylist() {
     // Clean up URLs
-    playlist.value.forEach(track => {
+    playlist.value.forEach((track) => {
       if (track.url) {
         URL.revokeObjectURL(track.url)
       }
@@ -178,14 +178,14 @@ export function useAudioPlayer() {
     }
 
     initAudio(audioEngine)
-    
+
     error.value = null
     isLoading.value = true
     currentTrackIndex.value = index
 
     try {
       const track = playlist.value[index]
-      
+
       // Load new audio
       audioElement.value.src = track.url
       await audioElement.value.load()
@@ -194,12 +194,14 @@ export function useAudioPlayer() {
       if (audioEngine && audioEngine.audioContext.value) {
         // Create MediaElementSource only once per audio element
         if (!mediaElementSource) {
-          mediaElementSource = audioEngine.audioContext.value.createMediaElementSource(audioElement.value)
+          mediaElementSource = audioEngine.audioContext.value.createMediaElementSource(
+            audioElement.value
+          )
         }
-        
+
         // Connect the source through the processing chain
         audioEngine.connectAudioSource(mediaElementSource)
-        
+
         console.log('✅ Audio connected to processing chain (EQ + Dynamics)')
       }
 
@@ -226,7 +228,11 @@ export function useAudioPlayer() {
 
     try {
       // Resume audio context if suspended
-      if (audioEngine && audioEngine.audioContext.value && audioEngine.audioContext.value.state === 'suspended') {
+      if (
+        audioEngine &&
+        audioEngine.audioContext.value &&
+        audioEngine.audioContext.value.state === 'suspended'
+      ) {
         await audioEngine.audioContext.value.resume()
       }
 
@@ -325,7 +331,7 @@ export function useAudioPlayer() {
     if (!isFinite(seconds) || isNaN(seconds)) {
       return '0:00'
     }
-    
+
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -371,7 +377,7 @@ export function useAudioPlayer() {
     volume,
     isMuted,
     error,
-    
+
     // Computed
     hasTrack,
     hasPlaylist,
@@ -380,10 +386,10 @@ export function useAudioPlayer() {
     progress,
     formattedCurrentTime,
     formattedDuration,
-    
+
     // Audio element
     audioElement,
-    
+
     // Methods
     initAudio,
     addFiles,
@@ -401,6 +407,6 @@ export function useAudioPlayer() {
     seekToPercent,
     setVolume,
     toggleMute,
-    cleanup
+    cleanup,
   }
 }

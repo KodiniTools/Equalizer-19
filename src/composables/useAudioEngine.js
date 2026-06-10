@@ -4,16 +4,16 @@ export function useAudioEngine() {
   // Audio Context
   const audioContext = ref(null)
   const isInitialized = ref(false)
-  
+
   // Audio Nodes
   const sourceNode = ref(null)
   const analyserNode = ref(null)
   const gainNode = ref(null)
   const dynamicsNode = ref(null)
-  
+
   // Equalizer Filters (19 Bands)
   const eqFilters = ref([])
-  
+
   // Equalizer Settings
   const eqBands = reactive([
     { frequency: 20, gain: 0, q: 1.0 },
@@ -34,41 +34,41 @@ export function useAudioEngine() {
     { frequency: 630, gain: 0, q: 1.0 },
     { frequency: 800, gain: 0, q: 1.0 },
     { frequency: 1000, gain: 0, q: 1.0 },
-    { frequency: 1250, gain: 0, q: 1.0 }
+    { frequency: 1250, gain: 0, q: 1.0 },
   ])
-  
+
   // Dynamics Settings (moderate defaults to prevent clipping)
   const dynamics = reactive({
-    threshold: -30,      // dB (higher = less compression)
-    knee: 20,           // dB (smoother transition)
-    ratio: 4,           // ratio (gentler compression)
-    attack: 0.003,      // seconds
-    release: 0.25       // seconds
+    threshold: -30, // dB (higher = less compression)
+    knee: 20, // dB (smoother transition)
+    ratio: 4, // ratio (gentler compression)
+    attack: 0.003, // seconds
+    release: 0.25, // seconds
   })
-  
+
   // Master Gain (reduced to prevent clipping)
   const masterGain = ref(0.7)
-  
+
   // EQ Bypass
   const eqBypass = ref(false)
-  
+
   // Dynamics Bypass
   const dynamicsEnabled = ref(true)
-  
+
   /**
    * Initialize Audio Context and create audio nodes
    */
   function initAudioContext() {
     if (isInitialized.value) return
-    
+
     try {
       audioContext.value = new (window.AudioContext || window.webkitAudioContext)()
-      
+
       // Create Analyser Node
       analyserNode.value = audioContext.value.createAnalyser()
       analyserNode.value.fftSize = 2048
       analyserNode.value.smoothingTimeConstant = 0.8
-      
+
       // Create Dynamics Compressor
       dynamicsNode.value = audioContext.value.createDynamicsCompressor()
       dynamicsNode.value.threshold.value = dynamics.threshold
@@ -76,32 +76,31 @@ export function useAudioEngine() {
       dynamicsNode.value.ratio.value = dynamics.ratio
       dynamicsNode.value.attack.value = dynamics.attack
       dynamicsNode.value.release.value = dynamics.release
-      
+
       // Create Equalizer Filters (19 bands)
       createEqFilters()
-      
+
       // Create Master Gain Node
       gainNode.value = audioContext.value.createGain()
       gainNode.value.gain.value = masterGain.value
-      
+
       isInitialized.value = true
-      
+
       console.log('✅ Audio Engine initialized with', eqFilters.value.length, 'EQ bands')
-      
     } catch (error) {
       console.error('Failed to initialize Audio Context:', error)
     }
   }
-  
+
   /**
    * Create 19-band equalizer filters
    */
   function createEqFilters() {
     eqFilters.value = []
-    
+
     eqBands.forEach((band, index) => {
       const filter = audioContext.value.createBiquadFilter()
-      
+
       // First and last band use different filter types
       if (index === 0) {
         filter.type = 'lowshelf'
@@ -110,15 +109,15 @@ export function useAudioEngine() {
       } else {
         filter.type = 'peaking'
       }
-      
+
       filter.frequency.value = band.frequency
       filter.gain.value = band.gain
       filter.Q.value = band.q
-      
+
       eqFilters.value.push(filter)
     })
   }
-  
+
   /**
    * Connect audio source to the audio processing chain
    * Chain: Source → EQ Filters → Dynamics → Gain → Analyser → Destination
@@ -127,12 +126,12 @@ export function useAudioEngine() {
     if (!audioContext.value || !isInitialized.value) {
       initAudioContext()
     }
-    
+
     // Resume context if suspended
     if (audioContext.value.state === 'suspended') {
       audioContext.value.resume()
     }
-    
+
     // Disconnect previous source if exists
     if (sourceNode.value) {
       try {
@@ -141,17 +140,17 @@ export function useAudioEngine() {
         // Ignore disconnect errors
       }
     }
-    
+
     sourceNode.value = source
-    
+
     console.log('🔌 Connecting audio source...')
     console.log('   Source Node:', sourceNode.value)
     console.log('   EQ Bypass:', eqBypass.value)
     console.log('   Dynamics Enabled:', dynamicsEnabled.value)
-    
+
     // Build the audio chain
     let currentNode = sourceNode.value
-    
+
     // Connect through all EQ filters sequentially
     if (!eqBypass.value && eqFilters.value.length > 0) {
       console.log('   → Connecting through', eqFilters.value.length, 'EQ filters')
@@ -169,7 +168,7 @@ export function useAudioEngine() {
     } else if (eqBypass.value) {
       console.log('   ⊘ EQ bypassed')
     }
-    
+
     // Connect to Dynamics Compressor if enabled
     if (dynamicsEnabled.value && dynamicsNode.value) {
       console.log('   → Connecting to Dynamics Compressor')
@@ -184,7 +183,7 @@ export function useAudioEngine() {
     } else {
       console.log('   ⊘ Dynamics bypassed')
     }
-    
+
     // Connect to Master Gain
     if (gainNode.value) {
       console.log('   → Connecting to Gain Node')
@@ -196,7 +195,7 @@ export function useAudioEngine() {
         console.error('      Error connecting gain:', e)
       }
     }
-    
+
     // Connect to Analyser (for visualization)
     if (analyserNode.value) {
       try {
@@ -206,7 +205,7 @@ export function useAudioEngine() {
         console.error('      Error connecting analyser:', e)
       }
     }
-    
+
     // CRITICAL: Connect to Destination (speakers)
     try {
       currentNode.connect(audioContext.value.destination)
@@ -216,7 +215,7 @@ export function useAudioEngine() {
       console.error('❌ Error connecting to destination:', e)
     }
   }
-  
+
   /**
    * Disconnect audio source
    */
@@ -230,21 +229,21 @@ export function useAudioEngine() {
       sourceNode.value = null
     }
   }
-  
+
   /**
    * Update a specific EQ band
    */
   function updateEqBand(index, gain) {
     if (index >= 0 && index < eqBands.length) {
       eqBands[index].gain = gain
-      
+
       if (eqFilters.value[index]) {
         eqFilters.value[index].gain.value = gain
         console.log(`🎛️ EQ Band ${index} (${eqBands[index].frequency}Hz) set to ${gain}dB`)
       }
     }
   }
-  
+
   /**
    * Update all EQ bands at once
    */
@@ -253,7 +252,7 @@ export function useAudioEngine() {
       updateEqBand(index, gain)
     })
   }
-  
+
   /**
    * Reset all EQ bands to 0
    */
@@ -262,13 +261,13 @@ export function useAudioEngine() {
       updateEqBand(index, 0)
     })
   }
-  
+
   /**
    * Toggle EQ bypass
    */
   function toggleEqBypass() {
     eqBypass.value = !eqBypass.value
-    
+
     // Reconnect audio source to update routing
     if (sourceNode.value) {
       const source = sourceNode.value
@@ -276,13 +275,13 @@ export function useAudioEngine() {
       connectAudioSource(source)
     }
   }
-  
+
   /**
    * Update dynamics compressor settings
    */
   function updateDynamics(settings) {
     Object.assign(dynamics, settings)
-    
+
     if (dynamicsNode.value) {
       if (settings.threshold !== undefined) {
         dynamicsNode.value.threshold.value = settings.threshold
@@ -301,13 +300,13 @@ export function useAudioEngine() {
       }
     }
   }
-  
+
   /**
    * Toggle dynamics compressor
    */
   function toggleDynamics() {
     dynamicsEnabled.value = !dynamicsEnabled.value
-    
+
     // Reconnect audio source to update routing
     if (sourceNode.value) {
       const source = sourceNode.value
@@ -315,44 +314,44 @@ export function useAudioEngine() {
       connectAudioSource(source)
     }
   }
-  
+
   /**
    * Update master gain
    */
   function updateMasterGain(value) {
     masterGain.value = Math.max(0, Math.min(2, value))
-    
+
     if (gainNode.value) {
       gainNode.value.gain.value = masterGain.value
     }
   }
-  
+
   /**
    * Get frequency data for visualization
    */
   function getFrequencyData() {
     if (!analyserNode.value) return new Uint8Array(0)
-    
+
     const bufferLength = analyserNode.value.frequencyBinCount
     const dataArray = new Uint8Array(bufferLength)
     analyserNode.value.getByteFrequencyData(dataArray)
-    
+
     return dataArray
   }
-  
+
   /**
    * Get time domain data for waveform
    */
   function getTimeDomainData() {
     if (!analyserNode.value) return new Uint8Array(0)
-    
+
     const bufferLength = analyserNode.value.frequencyBinCount
     const dataArray = new Uint8Array(bufferLength)
     analyserNode.value.getByteTimeDomainData(dataArray)
-    
+
     return dataArray
   }
-  
+
   /**
    * Apply preset EQ curve (moderate gains to prevent clipping)
    */
@@ -366,15 +365,15 @@ export function useAudioEngine() {
       jazz: [1.5, 1, 0.5, 0, 0, 0, 0, 0, 0.5, 1, 1, 1, 0.5, 0.5, 0, 0, 0, 0.5, 1],
       classical: [2, 1.5, 1, 0.5, 0, 0, 0, 0, 0.5, 1, 1, 1, 1, 1, 1, 0.5, 0, 0, 0],
       pop: [1, 0.5, 0, 0, 0.5, 1, 1, 1, 1, 0.5, 0, 0, 0, 0.5, 1, 1, 1, 0.5, 0],
-      electronic: [3, 2.5, 2, 1.5, 1, 0, 0, 0, 0, 0, 0, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3]
+      electronic: [3, 2.5, 2, 1.5, 1, 0, 0, 0, 0, 0, 0, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3],
     }
-    
+
     if (presets[preset]) {
       updateAllEqBands(presets[preset])
       console.log('✅ EQ Preset applied:', preset, '(moderate gains to prevent clipping)')
     }
   }
-  
+
   /**
    * Get all audio nodes for external use
    */
@@ -385,7 +384,7 @@ export function useAudioEngine() {
       analyserNode: analyserNode.value,
       gainNode: gainNode.value,
       dynamicsNode: dynamicsNode.value,
-      eqFilters: eqFilters.value
+      eqFilters: eqFilters.value,
     }
   }
 
@@ -394,22 +393,22 @@ export function useAudioEngine() {
    */
   function cleanup() {
     disconnectAudioSource()
-    
+
     if (audioContext.value) {
       audioContext.value.close()
       audioContext.value = null
     }
-    
+
     isInitialized.value = false
   }
-  
+
   // Watch for master gain changes
   watch(masterGain, (newValue) => {
     if (gainNode.value) {
       gainNode.value.gain.value = newValue
     }
   })
-  
+
   return {
     // State
     audioContext,
@@ -424,7 +423,7 @@ export function useAudioEngine() {
     masterGain,
     eqBypass,
     dynamicsEnabled,
-    
+
     // Methods
     initAudioContext,
     connectAudioSource,
@@ -440,6 +439,6 @@ export function useAudioEngine() {
     getTimeDomainData,
     getAudioNodes,
     applyEqPreset,
-    cleanup
+    cleanup,
   }
 }
