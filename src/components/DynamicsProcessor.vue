@@ -6,8 +6,10 @@
         @click="toggleDynamics"
         :class="['toggle-btn', { active: dynamicsEnabled }]"
         :title="dynamicsEnabled ? t.comp_toggle_off : t.comp_toggle_on"
+        :aria-label="t.a11y_dynamics_toggle"
+        :aria-pressed="dynamicsEnabled"
       >
-        <i :class="dynamicsEnabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+        <i :class="dynamicsEnabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -23,6 +25,10 @@
           v-model.number="threshold"
           @input="applySettings"
           :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_threshold.replace('{val}', threshold)"
+          :aria-valuenow="threshold"
+          aria-valuemin="-60"
+          aria-valuemax="0"
         />
         <span class="val">{{ threshold }}dB</span>
       </div>
@@ -37,6 +43,10 @@
           v-model.number="ratio"
           @input="applySettings"
           :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_ratio.replace('{val}', ratio)"
+          :aria-valuenow="ratio"
+          aria-valuemin="1"
+          aria-valuemax="20"
         />
         <span class="val">{{ ratio }}:1</span>
       </div>
@@ -51,6 +61,10 @@
           v-model.number="knee"
           @input="applySettings"
           :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_knee.replace('{val}', knee)"
+          :aria-valuenow="knee"
+          aria-valuemin="0"
+          aria-valuemax="40"
         />
         <span class="val">{{ knee }}dB</span>
       </div>
@@ -65,6 +79,10 @@
           v-model.number="attack"
           @input="applySettings"
           :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
+          :aria-valuenow="(attack * 1000).toFixed(0)"
+          aria-valuemin="0"
+          aria-valuemax="1000"
         />
         <span class="val">{{ (attack * 1000).toFixed(0) }}ms</span>
       </div>
@@ -79,14 +97,18 @@
           v-model.number="release"
           @input="applySettings"
           :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
+          :aria-valuenow="(release * 1000).toFixed(0)"
+          aria-valuemin="0"
+          aria-valuemax="1000"
         />
         <span class="val">{{ (release * 1000).toFixed(0) }}ms</span>
       </div>
     </div>
 
     <!-- Reset -->
-    <button @click="resetDynamics" class="reset-btn" :title="t.reset">
-      <i class="fas fa-undo"></i>
+    <button @click="resetDynamics" class="reset-btn" :title="t.reset" :aria-label="t.reset">
+      <i class="fas fa-undo" aria-hidden="true"></i>
     </button>
   </div>
 </template>

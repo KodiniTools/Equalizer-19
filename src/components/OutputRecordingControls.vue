@@ -1,17 +1,19 @@
 <template>
   <div class="recorder">
     <!-- Recording time display -->
-    <div class="rec-time" v-if="isRecording">
-      <span class="rec-dot"></span>
+    <div class="rec-time" v-if="isRecording" aria-live="assertive" aria-atomic="true">
+      <span class="rec-dot" aria-hidden="true"></span>
       <span class="time">{{ formattedTime }}</span>
     </div>
 
     <!-- Format toggle (only when not recording and no recording available) -->
-    <div class="format-toggle" v-if="!isRecording && !hasRecording">
+    <div class="format-toggle" v-if="!isRecording && !hasRecording" role="group">
       <button
         @click="selectFormat('wav')"
         :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
         :title="t.rec_format_wav"
+        :aria-label="t.rec_format_wav"
+        :aria-pressed="recordingFormat === 'wav'"
       >
         WAV
       </button>
@@ -19,6 +21,8 @@
         @click="selectFormat('webm')"
         :class="['fmt-btn', { active: recordingFormat === 'webm' }]"
         :title="t.rec_format_webm"
+        :aria-label="t.rec_format_webm"
+        :aria-pressed="recordingFormat === 'webm'"
       >
         WebM
       </button>
@@ -32,13 +36,14 @@
         @click="handleStart"
         class="ctrl-btn rec"
         :title="t.rec_start"
+        :aria-label="t.rec_start"
       >
-        <i class="fas fa-circle"></i>
+        <i class="fas fa-circle" aria-hidden="true"></i>
       </button>
 
       <!-- Stop button -->
-      <button v-if="isRecording" @click="handleStop" class="ctrl-btn stop" :title="t.stop">
-        <i class="fas fa-stop"></i>
+      <button v-if="isRecording" @click="handleStop" class="ctrl-btn stop" :title="t.stop" :aria-label="t.stop">
+        <i class="fas fa-stop" aria-hidden="true"></i>
       </button>
 
       <!-- Download button -->
@@ -47,8 +52,9 @@
         @click="handleDownload"
         class="ctrl-btn download"
         :title="t.download"
+        :aria-label="t.download"
       >
-        <i class="fas fa-download"></i>
+        <i class="fas fa-download" aria-hidden="true"></i>
       </button>
 
       <!-- New recording button -->
@@ -57,14 +63,15 @@
         @click="handleNewRecording"
         class="ctrl-btn new"
         :title="t.rec_new"
+        :aria-label="t.rec_new"
       >
-        <i class="fas fa-redo"></i>
+        <i class="fas fa-redo" aria-hidden="true"></i>
       </button>
     </div>
 
     <!-- Error indicator -->
-    <div v-if="errorMessage" class="error-dot" :title="errorMessage">
-      <i class="fas fa-exclamation"></i>
+    <div v-if="errorMessage" class="error-dot" :title="errorMessage" role="alert">
+      <i class="fas fa-exclamation" aria-hidden="true"></i>
     </div>
   </div>
 </template>

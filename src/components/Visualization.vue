@@ -5,6 +5,8 @@
       class="visualization-canvas"
       :width="canvasWidth"
       :height="canvasHeight"
+      role="img"
+      :aria-label="t.a11y_visualization"
     ></canvas>
   </div>
 </template>
@@ -12,6 +14,7 @@
 <script setup>
   import { ref, inject, onMounted, onUnmounted } from 'vue'
 
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
 
   const canvasRef = ref(null)
@@ -51,7 +54,7 @@
       ctx.fillStyle = 'rgba(102, 126, 234, 0.3)'
       ctx.font = '16px sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText('Keine Audio-Daten', canvas.width / 2, canvas.height / 2)
+      ctx.fillText(t.value.player_no_file, canvas.width / 2, canvas.height / 2)
 
       requestAnimationFrame(drawVisualization)
       return

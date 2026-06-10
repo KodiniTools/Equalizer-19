@@ -2,7 +2,7 @@
   <div class="playlist">
     <div class="playlist-header">
       <h3>
-        <i class="fas fa-list"></i>
+        <i class="fas fa-list" aria-hidden="true"></i>
         {{ t.playlist_title }}
       </h3>
       <span v-if="playlist && playlist.length > 0" class="track-count">
@@ -11,17 +11,18 @@
     </div>
 
     <div v-if="!playlist || playlist.length === 0" class="empty-state">
-      <i class="fas fa-music"></i>
+      <i class="fas fa-music" aria-hidden="true"></i>
       <p>{{ t.playlist_empty }}</p>
     </div>
 
-    <div
+    <ol
       v-else
       class="playlist-items"
       @dragover.prevent
       @drop.prevent
+      :aria-label="t.playlist_title"
     >
-      <div
+      <li
         v-for="(track, index) in playlist"
         :key="track.id"
         :class="[
@@ -39,13 +40,15 @@
         @drop.prevent="onDrop(index)"
         @dragend="onDragEnd"
         @click="handlePlayTrack(index)"
+        :aria-current="currentTrackIndex === index ? 'true' : undefined"
+        :aria-label="track.name"
       >
         <!-- Drag handle -->
-        <span class="drag-handle" :title="t.playlist_drag_hint" @click.stop>
-          <i class="fas fa-grip-vertical"></i>
+        <span class="drag-handle" :title="t.playlist_drag_hint" :aria-label="t.playlist_drag_hint" @click.stop>
+          <i class="fas fa-grip-vertical" aria-hidden="true"></i>
         </span>
 
-        <div class="track-number">{{ index + 1 }}</div>
+        <div class="track-number" aria-hidden="true">{{ index + 1 }}</div>
         <div class="track-info">
           <div class="track-name">{{ track.name }}</div>
           <div class="track-meta">{{ formatFileSize(track.size) }}</div>
@@ -54,14 +57,15 @@
           @click.stop="handleRemoveTrack(index)"
           class="btn-remove"
           :title="t.playlist_remove"
+          :aria-label="t.playlist_remove + ' ' + track.name"
         >
-          <i class="fas fa-times"></i>
+          <i class="fas fa-times" aria-hidden="true"></i>
         </button>
-      </div>
-    </div>
+      </li>
+    </ol>
 
     <!-- Keyboard shortcuts hint -->
-    <div class="shortcuts-hint">
+    <div class="shortcuts-hint" aria-hidden="true">
       <span><kbd>Space</kbd> {{ t.play }}/{{ t.pause }}</span>
       <span><kbd>←</kbd><kbd>→</kbd> ±5s</span>
       <span><kbd>↑</kbd><kbd>↓</kbd> {{ t.volume }}</span>
