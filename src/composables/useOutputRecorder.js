@@ -130,8 +130,8 @@ export function useOutputRecorder() {
         if (!channelSamples || i >= channelSamples.length) continue
         let sample = Number(channelSamples[i]) || 0
         sample = Math.max(-1, Math.min(1, sample))
-        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF
-        view.setInt16(offset + (i * blockAlign) + (ch * bytesPerSample), sample, true)
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7fff
+        view.setInt16(offset + i * blockAlign + ch * bytesPerSample, sample, true)
       }
     }
 
@@ -230,6 +230,6 @@ export function useOutputRecorder() {
     downloadRecording,
     setFormat,
     discardRecording,
-    cleanup
+    cleanup,
   }
 }
