@@ -208,6 +208,22 @@ export function useAudioPlayer() {
     }
   }
 
+  function reorderTracks(fromIndex, toIndex) {
+    if (fromIndex === toIndex) return
+    const items = [...playlist.value]
+    const [moved] = items.splice(fromIndex, 1)
+    items.splice(toIndex, 0, moved)
+    playlist.value = items
+
+    if (currentTrackIndex.value === fromIndex) {
+      currentTrackIndex.value = toIndex
+    } else if (fromIndex < currentTrackIndex.value && toIndex >= currentTrackIndex.value) {
+      currentTrackIndex.value--
+    } else if (fromIndex > currentTrackIndex.value && toIndex <= currentTrackIndex.value) {
+      currentTrackIndex.value++
+    }
+  }
+
   function clearPlaylist() {
     // Clean up URLs
     playlist.value.forEach((track) => {
@@ -498,6 +514,7 @@ export function useAudioPlayer() {
     connectToAudioEngine,
     addFiles,
     removeTrack,
+    reorderTracks,
     clearPlaylist,
     loadTrack,
     play,
