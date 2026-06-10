@@ -30,6 +30,9 @@
             <!-- Equalizer -->
             <Equalizer />
 
+            <!-- Input / Output Level Meter -->
+            <AudioMeter />
+
             <!-- Visualization -->
             <Visualization />
           </div>
@@ -60,6 +63,7 @@
   import OutputRecordingControls from '../components/OutputRecordingControls.vue'
   import PlayerControls from '../components/PlayerControls.vue'
   import Equalizer from '../components/Equalizer.vue'
+  import AudioMeter from '../components/AudioMeter.vue'
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
   import CompressorPresets from '../components/CompressorPresets.vue'
   import Visualization from '../components/Visualization.vue'

@@ -8,6 +8,7 @@ export function useAudioEngine() {
   // Audio Nodes
   const sourceNode = ref(null)
   const analyserNode = ref(null)
+  const inputAnalyserNode = ref(null)
   const gainNode = ref(null)
   const dynamicsNode = ref(null)
 
@@ -64,10 +65,14 @@ export function useAudioEngine() {
     try {
       audioContext.value = new (window.AudioContext || window.webkitAudioContext)()
 
-      // Create Analyser Node
+      // Create Analyser Nodes
       analyserNode.value = audioContext.value.createAnalyser()
       analyserNode.value.fftSize = 2048
       analyserNode.value.smoothingTimeConstant = 0.8
+
+      inputAnalyserNode.value = audioContext.value.createAnalyser()
+      inputAnalyserNode.value.fftSize = 1024
+      inputAnalyserNode.value.smoothingTimeConstant = 0.3
 
       // Create Dynamics Compressor
       dynamicsNode.value = audioContext.value.createDynamicsCompressor()
@@ -142,6 +147,15 @@ export function useAudioEngine() {
     }
 
     sourceNode.value = source
+
+    // Side tap for input metering (before EQ chain)
+    if (inputAnalyserNode.value) {
+      try {
+        source.connect(inputAnalyserNode.value)
+      } catch (_e) {
+        // Node already connected — safe to ignore
+      }
+    }
 
     console.log('🔌 Connecting audio source...')
     console.log('   Source Node:', sourceNode.value)
@@ -375,6 +389,22 @@ export function useAudioEngine() {
   }
 
   /**
+   * Compute RMS dBFS for a given AnalyserNode (-Infinity when silent)
+   */
+  function _rmsDb(node) {
+    if (!node) return -Infinity
+    const buf = new Float32Array(node.fftSize)
+    node.getFloatTimeDomainData(buf)
+    let sum = 0
+    for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i]
+    const rms = Math.sqrt(sum / buf.length)
+    return rms > 0 ? 20 * Math.log10(rms) : -Infinity
+  }
+
+  function getInputLevel() { return _rmsDb(inputAnalyserNode.value) }
+  function getOutputLevel() { return _rmsDb(analyserNode.value) }
+
+  /**
    * Get all audio nodes for external use
    */
   function getAudioNodes() {
@@ -415,6 +445,7 @@ export function useAudioEngine() {
     isInitialized,
     sourceNode,
     analyserNode,
+    inputAnalyserNode,
     gainNode,
     dynamicsNode,
     eqFilters,
@@ -437,6 +468,8 @@ export function useAudioEngine() {
     updateMasterGain,
     getFrequencyData,
     getTimeDomainData,
+    getInputLevel,
+    getOutputLevel,
     getAudioNodes,
     applyEqPreset,
     cleanup,
