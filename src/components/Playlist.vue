@@ -15,13 +15,36 @@
       <p>{{ t('playlist.empty') || 'Keine Tracks in der Playlist' }}</p>
     </div>
 
-    <div v-else class="playlist-items">
+    <div
+      v-else
+      class="playlist-items"
+      @dragover.prevent
+      @drop.prevent
+    >
       <div
         v-for="(track, index) in playlist"
         :key="track.id"
-        :class="['playlist-item', { active: currentTrackIndex === index }]"
+        :class="[
+          'playlist-item',
+          {
+            active: currentTrackIndex === index,
+            dragging: dragIndex === index,
+            'drop-before': dropIndex === index && dropIndex !== dragIndex,
+            'drop-after': dropIndex === index + 1 && dropIndex !== dragIndex + 1,
+          },
+        ]"
+        draggable="true"
+        @dragstart="onDragStart(index, $event)"
+        @dragover.prevent="onDragOver(index)"
+        @drop.prevent="onDrop(index)"
+        @dragend="onDragEnd"
         @click="handlePlayTrack(index)"
       >
+        <!-- Drag handle -->
+        <span class="drag-handle" title="Ziehen zum Sortieren" @click.stop>
+          <i class="fas fa-grip-vertical"></i>
+        </span>
+
         <div class="track-number">{{ index + 1 }}</div>
         <div class="track-info">
           <div class="track-name">{{ track.name }}</div>
@@ -36,48 +59,74 @@
         </button>
       </div>
     </div>
+
+    <!-- Keyboard shortcuts hint -->
+    <div class="shortcuts-hint">
+      <span><kbd>Space</kbd> Play/Pause</span>
+      <span><kbd>←</kbd><kbd>→</kbd> ±5s</span>
+      <span><kbd>↑</kbd><kbd>↓</kbd> Lautstärke</span>
+      <span><kbd>N</kbd> / <kbd>P</kbd> Track</span>
+      <span><kbd>M</kbd> Mute</span>
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { inject, computed } from 'vue'
+  import { ref, inject, computed } from 'vue'
 
-  // Get dependencies
   const i18n = inject('i18n', { t: (key) => key })
-
   const audioPlayer = inject('audioPlayer', {
     playlist: { value: [] },
     currentTrackIndex: { value: -1 },
     playTrack: () => {},
     removeTrack: () => {},
+    reorderTracks: () => {},
   })
-
   const notify = inject('notify', () => {})
 
-  // Make t function available in template
   const t = (key) => {
-    if (i18n && typeof i18n.t === 'function') {
-      return i18n.t(key)
-    }
-    // Fallback translations
-    const translations = {
+    if (i18n && typeof i18n.t === 'function') return i18n.t(key)
+    const fallback = {
       'playlist.title': 'Playlist',
       'playlist.empty': 'Keine Tracks in der Playlist',
       'playlist.remove': 'Entfernen',
       'playlist.removed': 'Track entfernt',
     }
-    return translations[key] || key
+    return fallback[key] || key
   }
 
-  // Get player state
   const playlist = computed(() => audioPlayer.playlist?.value || [])
-  const currentTrackIndex = computed(() => audioPlayer.currentTrackIndex?.value || -1)
+  const currentTrackIndex = computed(() => audioPlayer.currentTrackIndex?.value ?? -1)
 
-  // Methods
-  function handlePlayTrack(index) {
-    if (audioPlayer.playTrack) {
-      audioPlayer.playTrack(index)
+  // Drag state
+  const dragIndex = ref(null)
+  const dropIndex = ref(null)
+
+  function onDragStart(index, event) {
+    dragIndex.value = index
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', String(index))
+  }
+
+  function onDragOver(index) {
+    dropIndex.value = index
+  }
+
+  function onDrop(index) {
+    if (dragIndex.value !== null && dragIndex.value !== index) {
+      audioPlayer.reorderTracks(dragIndex.value, index)
     }
+    dragIndex.value = null
+    dropIndex.value = null
+  }
+
+  function onDragEnd() {
+    dragIndex.value = null
+    dropIndex.value = null
+  }
+
+  function handlePlayTrack(index) {
+    if (audioPlayer.playTrack) audioPlayer.playTrack(index)
   }
 
   function handleRemoveTrack(index) {
@@ -164,7 +213,9 @@
     background: var(--secondary-bg, #1a1a22);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    border: 2px solid transparent;
+    user-select: none;
   }
 
   .playlist-item:hover {
@@ -174,6 +225,42 @@
   .playlist-item.active {
     background: var(--accent-primary, #00d9ff);
     color: #000;
+  }
+
+  .playlist-item.dragging {
+    opacity: 0.4;
+    border-color: var(--accent-primary, #00d9ff);
+  }
+
+  .playlist-item.drop-before {
+    border-top-color: var(--accent-primary, #00d9ff);
+  }
+
+  .playlist-item.drop-after {
+    border-bottom-color: var(--accent-primary, #00d9ff);
+  }
+
+  .drag-handle {
+    color: var(--text-muted, #8b8b9a);
+    font-size: 0.65em;
+    cursor: grab;
+    padding: 2px 1px;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  .playlist-item:hover .drag-handle {
+    opacity: 1;
+  }
+
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+
+  .playlist-item.active .drag-handle {
+    color: rgba(0, 0, 0, 0.5);
+    opacity: 0.6;
   }
 
   .track-number {
@@ -187,6 +274,7 @@
     font-weight: 600;
     font-size: 0.65em;
     color: var(--text-secondary, #c8c8d5);
+    flex-shrink: 0;
   }
 
   .playlist-item.active .track-number {
@@ -234,6 +322,7 @@
     justify-content: center;
     transition: all 0.2s ease;
     font-size: 0.6em;
+    flex-shrink: 0;
   }
 
   .btn-remove:hover {
@@ -250,7 +339,40 @@
     background: rgba(0, 0, 0, 0.3);
   }
 
-  /* Scrollbar styling */
+  /* Keyboard shortcuts hint */
+  .shortcuts-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color, #3a3a48);
+  }
+
+  .shortcuts-hint span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.6em;
+    color: var(--text-muted, #8b8b9a);
+    white-space: nowrap;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary-bg, #1a1a22);
+    border: 1px solid var(--border-color, #3a3a48);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 0.95em;
+    color: var(--accent-primary, #00d9ff);
+    line-height: 1.4;
+  }
+
+  /* Scrollbar */
   .playlist-items::-webkit-scrollbar {
     width: 4px;
   }
@@ -300,6 +422,10 @@
     .playlist-items {
       max-height: 160px;
     }
+
+    .shortcuts-hint {
+      gap: 4px 8px;
+    }
   }
 
   @media (max-width: 400px) {
@@ -319,6 +445,10 @@
 
     .playlist-items {
       max-height: 140px;
+    }
+
+    .shortcuts-hint {
+      display: none;
     }
   }
 </style>

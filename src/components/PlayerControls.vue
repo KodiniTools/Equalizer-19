@@ -1,6 +1,12 @@
 <template>
-  <div class="player">
-    <!-- File upload button -->
+  <div
+    class="player"
+    :class="{ 'drop-active': isDragOver }"
+    @dragover.prevent="isDragOver = true"
+    @dragleave.prevent="isDragOver = false"
+    @drop.prevent="handleDrop"
+  >
+    <!-- Hidden file inputs -->
     <input
       type="file"
       ref="fileInput"
@@ -9,10 +15,31 @@
       multiple
       style="display: none"
     />
+    <input
+      type="file"
+      ref="folderInput"
+      @change="handleFileSelect"
+      accept="audio/*"
+      webkitdirectory
+      mozdirectory
+      style="display: none"
+    />
 
-    <button @click="triggerFileSelect" class="btn-upload" title="Dateien auswählen">
-      <i class="fas fa-folder-open"></i>
-    </button>
+    <!-- Upload buttons -->
+    <div class="upload-group">
+      <button @click="triggerFileSelect" class="btn-upload" title="Dateien auswählen (einzelne Tracks)">
+        <i class="fas fa-file-audio"></i>
+      </button>
+      <button @click="triggerFolderSelect" class="btn-upload" title="Ordner hinzufügen">
+        <i class="fas fa-folder-open"></i>
+      </button>
+    </div>
+
+    <!-- Drop overlay hint -->
+    <div v-if="isDragOver" class="drop-hint">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <span>Dateien / Ordner ablegen</span>
+    </div>
 
     <!-- Track info -->
     <div class="track-info" v-if="currentTrack">
@@ -21,7 +48,7 @@
     </div>
     <div class="track-info empty" v-else>
       <span class="track-name">{{
-        hasPlaylist ? playlist.length + ' Tracks' : 'Keine Datei'
+        hasPlaylist ? playlist.length + ' Tracks' : 'Dateien oder Ordner ablegen'
       }}</span>
     </div>
 
@@ -34,14 +61,14 @@
 
     <!-- Control buttons -->
     <div class="controls">
-      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" title="Zurück">
+      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" title="Zurück [P]">
         <i class="fas fa-step-backward"></i>
       </button>
 
       <button
         @click="togglePlayPause"
         class="ctrl-btn play"
-        :title="isPlaying ? 'Pause' : 'Abspielen'"
+        :title="isPlaying ? 'Pause [Space]' : 'Abspielen [Space]'"
       >
         <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
         <i v-else-if="isPlaying" class="fas fa-pause"></i>
@@ -52,14 +79,14 @@
         <i class="fas fa-stop"></i>
       </button>
 
-      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" title="Weiter">
+      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" title="Weiter [N]">
         <i class="fas fa-step-forward"></i>
       </button>
     </div>
 
     <!-- Volume -->
     <div class="volume">
-      <button @click="toggleMute" class="vol-btn">
+      <button @click="toggleMute" class="vol-btn" title="Stummschalten [M]">
         <i v-if="isMuted" class="fas fa-volume-mute"></i>
         <i v-else-if="volume > 0.5" class="fas fa-volume-up"></i>
         <i v-else class="fas fa-volume-down"></i>
@@ -71,6 +98,7 @@
         :value="volume * 100"
         @input="handleVolumeChange"
         class="vol-slider"
+        title="Lautstärke [↑ ↓]"
       />
     </div>
   </div>
@@ -85,6 +113,8 @@
   const notify = inject('notify', () => {})
 
   const fileInput = ref(null)
+  const folderInput = ref(null)
+  const isDragOver = ref(false)
 
   const {
     playlist,
@@ -115,16 +145,87 @@
     fileInput.value?.click()
   }
 
+  function triggerFolderSelect() {
+    folderInput.value?.click()
+  }
+
+  function getAudioFiles(fileList) {
+    return Array.from(fileList).filter((f) => f.type.startsWith('audio/') || /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)$/i.test(f.name))
+  }
+
   async function handleFileSelect(event) {
-    const files = event.target.files
-    if (files && files.length > 0) {
+    const files = getAudioFiles(event.target.files || [])
+    if (files.length > 0) {
       const tracks = addFiles(files)
       emit('files-selected', files)
       if (tracks.length > 0) {
         setTimeout(() => play(), 100)
       }
+      notify(`${files.length} Track${files.length > 1 ? 's' : ''} hinzugefügt`, 'success')
     }
     event.target.value = ''
+  }
+
+  async function handleDrop(event) {
+    isDragOver.value = false
+    const files = getAudioFiles(event.dataTransfer.files || [])
+
+    // Also handle directory entries via DataTransferItemList
+    if (files.length === 0 && event.dataTransfer.items) {
+      const extracted = await extractFilesFromItems(event.dataTransfer.items)
+      if (extracted.length > 0) {
+        const tracks = addFiles(extracted)
+        emit('files-selected', extracted)
+        if (tracks.length > 0) setTimeout(() => play(), 100)
+        notify(`${extracted.length} Track${extracted.length > 1 ? 's' : ''} hinzugefügt`, 'success')
+        return
+      }
+    }
+
+    if (files.length > 0) {
+      const tracks = addFiles(files)
+      emit('files-selected', files)
+      if (tracks.length > 0) setTimeout(() => play(), 100)
+      notify(`${files.length} Track${files.length > 1 ? 's' : ''} hinzugefügt`, 'success')
+    }
+  }
+
+  async function extractFilesFromItems(items) {
+    const files = []
+    const promises = []
+
+    for (const item of items) {
+      const entry = item.webkitGetAsEntry?.()
+      if (entry) {
+        promises.push(traverseEntry(entry, files))
+      }
+    }
+
+    await Promise.all(promises)
+    return files.filter((f) => /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)$/i.test(f.name))
+  }
+
+  function traverseEntry(entry, files) {
+    return new Promise((resolve) => {
+      if (entry.isFile) {
+        entry.file((file) => {
+          files.push(file)
+          resolve()
+        }, resolve)
+      } else if (entry.isDirectory) {
+        const reader = entry.createReader()
+        const readAll = () => {
+          reader.readEntries(async (entries) => {
+            if (entries.length === 0) return resolve()
+            await Promise.all(entries.map((e) => traverseEntry(e, files)))
+            readAll()
+          }, resolve)
+        }
+        readAll()
+      } else {
+        resolve()
+      }
+    })
   }
 
   function handleProgressClick(event) {
@@ -150,6 +251,38 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .player.drop-active {
+    border-color: var(--accent-primary, #00d9ff);
+    background: color-mix(in srgb, var(--card-bg, #252530) 85%, var(--accent-primary, #00d9ff));
+  }
+
+  .drop-hint {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: rgba(0, 217, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--accent-primary, #00d9ff);
+    font-size: 0.85em;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .drop-hint i {
+    font-size: 1.4em;
+  }
+
+  .upload-group {
+    display: flex;
+    gap: 4px;
   }
 
   .btn-upload {

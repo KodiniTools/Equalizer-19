@@ -10,6 +10,7 @@
   import { useTheme } from './composables/useTheme'
   import { useAudioEngine } from './composables/useAudioEngine'
   import { useAudioPlayer } from './composables/useAudioPlayer'
+  import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts'
 
   // Initialize composables
   const { t, currentLanguage, setLanguage } = useI18n()
@@ -21,6 +22,8 @@
   console.log('Connecting AudioPlayer to AudioEngine...')
   audioPlayer.setAudioEngine(audioEngine)
   console.log('AudioEngine connected to AudioPlayer')
+
+  useKeyboardShortcuts(audioPlayer)
 
   // Make available globally for debugging
   if (typeof window !== 'undefined') {
