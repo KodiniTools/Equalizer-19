@@ -7,10 +7,10 @@
 
       <select @change="handlePresetChange" v-model="selectedPreset" class="preset-select">
         <option value="">Custom</option>
-        <optgroup label="Built-in">
+        <optgroup :label="t.eq_builtin_group">
           <option v-for="(_, name) in EQ_PRESETS" :key="name" :value="name">{{ name }}</option>
         </optgroup>
-        <optgroup v-if="customPresets.length" label="Eigene Presets">
+        <optgroup v-if="customPresets.length" :label="t.eq_custom_group">
           <option v-for="p in customPresets" :key="p.id" :value="p.id">{{ p.name }}</option>
         </optgroup>
       </select>
@@ -20,7 +20,7 @@
         v-if="isCustomSelected"
         @click="deleteSelectedCustomPreset"
         class="icon-btn delete-btn"
-        title="Preset löschen"
+        :title="t.eq_preset_delete"
       >
         <i class="fas fa-trash-alt"></i>
       </button>
@@ -30,12 +30,12 @@
         v-if="!showSaveForm"
         @click="showSaveForm = true"
         class="icon-btn save-btn"
-        title="Aktuelle Einstellung als Preset speichern"
+        :title="t.eq_preset_save_title"
       >
         <i class="fas fa-floppy-disk"></i>
       </button>
 
-      <button @click="resetEqualizer" class="icon-btn reset-btn" title="Zurücksetzen">
+      <button @click="resetEqualizer" class="icon-btn reset-btn" :title="t.reset">
         <i class="fas fa-undo"></i>
       </button>
     </div>
@@ -46,15 +46,15 @@
         v-model="newPresetName"
         @keydown.enter="confirmSavePreset"
         @keydown.escape="cancelSavePreset"
-        placeholder="Preset-Name eingeben …"
+        :placeholder="t.eq_preset_name_placeholder"
         class="preset-name-input"
         maxlength="32"
         ref="presetNameInput"
       />
-      <button @click="confirmSavePreset" class="icon-btn save-confirm-btn" :disabled="!newPresetName.trim()" title="Speichern">
+      <button @click="confirmSavePreset" class="icon-btn save-confirm-btn" :disabled="!newPresetName.trim()" :title="t.eq_save">
         <i class="fas fa-check"></i>
       </button>
-      <button @click="cancelSavePreset" class="icon-btn cancel-btn" title="Abbrechen">
+      <button @click="cancelSavePreset" class="icon-btn cancel-btn" :title="t.eq_cancel">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -84,6 +84,8 @@
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
   import { EQ_PRESETS } from '../utils/presets.js'
+
+  const { t } = inject('i18n')
 
   const STORAGE_KEY = 'eq19_custom_presets'
 
@@ -150,7 +152,7 @@
     selectedPreset.value = id
     showSaveForm.value = false
     newPresetName.value = ''
-    notify(`Preset "${name}" gespeichert`, 'success')
+    notify(t.value.eq_preset_saved.replace('{name}', name), 'success')
   }
 
   function cancelSavePreset() {
@@ -164,7 +166,7 @@
     customPresets.value = customPresets.value.filter((p) => p.id !== selectedPreset.value)
     persistCustomPresets()
     selectedPreset.value = ''
-    notify(`Preset "${preset.name}" gelöscht`, 'info')
+    notify(t.value.eq_preset_deleted.replace('{name}', preset.name), 'info')
   }
 
   // Focus input when save form opens
@@ -210,7 +212,7 @@
       const preset = customPresets.value.find((p) => p.id === selectedPreset.value)
       if (preset) {
         applyGains(preset.gains)
-        notify(`Preset "${preset.name}" angewendet`, 'success')
+        notify(t.value.eq_preset_applied.replace('{name}', preset.name), 'success')
       }
       return
     }
@@ -223,7 +225,7 @@
           gain: band.gain,
         }))
       }
-      notify(`Preset "${selectedPreset.value}" angewendet`, 'success')
+      notify(t.value.eq_preset_applied.replace('{name}', selectedPreset.value), 'success')
     }
   }
 
@@ -238,7 +240,7 @@
     if (audioEngine && audioEngine.toggleEqBypass) {
       audioEngine.toggleEqBypass()
       isEqBypassed.value = audioEngine.eqBypass?.value ?? false
-      notify(isEqBypassed.value ? 'Equalizer deaktiviert' : 'Equalizer aktiviert', 'info')
+      notify(isEqBypassed.value ? t.value.eq_bypassed : t.value.eq_active, 'info')
     }
   }
 
@@ -247,7 +249,7 @@
       audioEngine.resetEq()
       localBands.value.forEach((band) => { band.gain = 0 })
       selectedPreset.value = ''
-      notify('Equalizer zurückgesetzt', 'info')
+      notify(t.value.eq_reset_done, 'info')
     }
   }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="audio-meter-wrap">
     <div class="meter-header">
-      <span class="meter-title"><i class="fas fa-signal"></i> Level Meter</span>
+      <span class="meter-title"><i class="fas fa-signal"></i> {{ t.meter_title }}</span>
       <span class="meter-hint">dBFS</span>
     </div>
 
@@ -42,6 +42,7 @@
 <script setup>
   import { ref, reactive, inject, onMounted, onUnmounted } from 'vue'
 
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
   const audioPlayer = inject('audioPlayer')
 

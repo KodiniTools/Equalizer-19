@@ -94,10 +94,7 @@
 
   const handleFilesSelected = (files) => {
     if (notificationRef.value) {
-      const message =
-        currentLanguage.value === 'de'
-          ? `${files.length} Datei(en) hinzugefugt`
-          : `${files.length} file(s) added`
+      const message = t.value.player_tracks_added.replace('{count}', files.length)
       notificationRef.value.show(message, 'success')
     }
   }

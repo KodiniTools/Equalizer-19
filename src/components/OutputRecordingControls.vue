@@ -11,14 +11,14 @@
       <button
         @click="selectFormat('wav')"
         :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
-        title="WAV (Unkomprimiert)"
+        :title="t.rec_format_wav"
       >
         WAV
       </button>
       <button
         @click="selectFormat('webm')"
         :class="['fmt-btn', { active: recordingFormat === 'webm' }]"
-        title="WebM (Komprimiert)"
+        :title="t.rec_format_webm"
       >
         WebM
       </button>
@@ -31,13 +31,13 @@
         v-if="!isRecording && !hasRecording"
         @click="handleStart"
         class="ctrl-btn rec"
-        title="Aufnahme starten"
+        :title="t.rec_start"
       >
         <i class="fas fa-circle"></i>
       </button>
 
       <!-- Stop button -->
-      <button v-if="isRecording" @click="handleStop" class="ctrl-btn stop" title="Stoppen">
+      <button v-if="isRecording" @click="handleStop" class="ctrl-btn stop" :title="t.stop">
         <i class="fas fa-stop"></i>
       </button>
 
@@ -46,7 +46,7 @@
         v-if="hasRecording && !isRecording"
         @click="handleDownload"
         class="ctrl-btn download"
-        title="Herunterladen"
+        :title="t.download"
       >
         <i class="fas fa-download"></i>
       </button>
@@ -56,7 +56,7 @@
         v-if="hasRecording && !isRecording"
         @click="handleNewRecording"
         class="ctrl-btn new"
-        title="Neue Aufnahme"
+        :title="t.rec_new"
       >
         <i class="fas fa-redo"></i>
       </button>
@@ -73,6 +73,7 @@
   import { ref, inject, computed } from 'vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
 
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
   const notify = inject('notify', () => {})
 
@@ -108,13 +109,13 @@
   async function handleStart() {
     errorMessage.value = ''
     if (!audioEngine) {
-      errorMessage.value = 'AudioEngine nicht verfügbar'
+      errorMessage.value = t.value.rec_error_engine
       return
     }
     const success = await startRecording()
     if (!success) {
-      errorMessage.value = 'Fehler beim Starten'
-      notify('Fehler beim Starten der Aufnahme', 'error')
+      errorMessage.value = t.value.rec_error_start
+      notify(t.value.rec_error_start_long, 'error')
     }
   }
 
@@ -125,7 +126,7 @@
   function handleDownload() {
     const success = downloadRecording('audio-export')
     if (!success) {
-      errorMessage.value = 'Download fehlgeschlagen'
+      errorMessage.value = t.value.rec_download_failed
     }
   }
 

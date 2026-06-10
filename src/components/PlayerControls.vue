@@ -27,10 +27,10 @@
 
     <!-- Upload buttons -->
     <div class="upload-group">
-      <button @click="triggerFileSelect" class="btn-upload" title="Dateien auswählen (einzelne Tracks)">
+      <button @click="triggerFileSelect" class="btn-upload" :title="t.player_select_files">
         <i class="fas fa-file-audio"></i>
       </button>
-      <button @click="triggerFolderSelect" class="btn-upload" title="Ordner hinzufügen">
+      <button @click="triggerFolderSelect" class="btn-upload" :title="t.player_select_folder">
         <i class="fas fa-folder-open"></i>
       </button>
     </div>
@@ -38,7 +38,7 @@
     <!-- Drop overlay hint -->
     <div v-if="isDragOver" class="drop-hint">
       <i class="fas fa-cloud-upload-alt"></i>
-      <span>Dateien / Ordner ablegen</span>
+      <span>{{ t.player_drop_hint }}</span>
     </div>
 
     <!-- Track info -->
@@ -48,7 +48,7 @@
     </div>
     <div class="track-info empty" v-else>
       <span class="track-name">{{
-        hasPlaylist ? playlist.length + ' Tracks' : 'Dateien oder Ordner ablegen'
+        hasPlaylist ? playlist.length + ' Tracks' : t.player_no_file
       }}</span>
     </div>
 
@@ -61,32 +61,32 @@
 
     <!-- Control buttons -->
     <div class="controls">
-      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" title="Zurück [P]">
+      <button @click="playPrevious" :disabled="!canPlayPrevious" class="ctrl-btn" :title="t.player_prev">
         <i class="fas fa-step-backward"></i>
       </button>
 
       <button
         @click="togglePlayPause"
         class="ctrl-btn play"
-        :title="isPlaying ? 'Pause [Space]' : 'Abspielen [Space]'"
+        :title="isPlaying ? t.pause : t.play"
       >
         <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
         <i v-else-if="isPlaying" class="fas fa-pause"></i>
         <i v-else class="fas fa-play"></i>
       </button>
 
-      <button @click="stop" class="ctrl-btn" title="Stoppen">
+      <button @click="stop" class="ctrl-btn" :title="t.stop">
         <i class="fas fa-stop"></i>
       </button>
 
-      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" title="Weiter [N]">
+      <button @click="playNext" :disabled="!canPlayNext" class="ctrl-btn" :title="t.player_next">
         <i class="fas fa-step-forward"></i>
       </button>
     </div>
 
     <!-- Volume -->
     <div class="volume">
-      <button @click="toggleMute" class="vol-btn" title="Stummschalten [M]">
+      <button @click="toggleMute" class="vol-btn" :title="t.player_mute">
         <i v-if="isMuted" class="fas fa-volume-mute"></i>
         <i v-else-if="volume > 0.5" class="fas fa-volume-up"></i>
         <i v-else class="fas fa-volume-down"></i>
@@ -98,7 +98,7 @@
         :value="volume * 100"
         @input="handleVolumeChange"
         class="vol-slider"
-        title="Lautstärke [↑ ↓]"
+        :title="t.player_vol_hint"
       />
     </div>
   </div>
@@ -109,6 +109,7 @@
 
   const emit = defineEmits(['files-selected'])
 
+  const { t } = inject('i18n')
   const audioPlayer = inject('audioPlayer')
   const notify = inject('notify', () => {})
 
@@ -161,7 +162,7 @@
       if (tracks.length > 0) {
         setTimeout(() => play(), 100)
       }
-      notify(`${files.length} Track${files.length > 1 ? 's' : ''} hinzugefügt`, 'success')
+      notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
     }
     event.target.value = ''
   }
@@ -177,7 +178,7 @@
         const tracks = addFiles(extracted)
         emit('files-selected', extracted)
         if (tracks.length > 0) setTimeout(() => play(), 100)
-        notify(`${extracted.length} Track${extracted.length > 1 ? 's' : ''} hinzugefügt`, 'success')
+        notify(t.value.player_tracks_added.replace('{count}', extracted.length), 'success')
         return
       }
     }
@@ -186,7 +187,7 @@
       const tracks = addFiles(files)
       emit('files-selected', files)
       if (tracks.length > 0) setTimeout(() => play(), 100)
-      notify(`${files.length} Track${files.length > 1 ? 's' : ''} hinzugefügt`, 'success')
+      notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
     }
   }
 

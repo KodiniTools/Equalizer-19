@@ -3,7 +3,7 @@
     <div class="playlist-header">
       <h3>
         <i class="fas fa-list"></i>
-        {{ t('playlist.title') || 'Playlist' }}
+        {{ t.playlist_title }}
       </h3>
       <span v-if="playlist && playlist.length > 0" class="track-count">
         {{ playlist.length }} {{ playlist.length === 1 ? 'Track' : 'Tracks' }}
@@ -12,7 +12,7 @@
 
     <div v-if="!playlist || playlist.length === 0" class="empty-state">
       <i class="fas fa-music"></i>
-      <p>{{ t('playlist.empty') || 'Keine Tracks in der Playlist' }}</p>
+      <p>{{ t.playlist_empty }}</p>
     </div>
 
     <div
@@ -41,7 +41,7 @@
         @click="handlePlayTrack(index)"
       >
         <!-- Drag handle -->
-        <span class="drag-handle" title="Ziehen zum Sortieren" @click.stop>
+        <span class="drag-handle" :title="t.playlist_drag_hint" @click.stop>
           <i class="fas fa-grip-vertical"></i>
         </span>
 
@@ -53,7 +53,7 @@
         <button
           @click.stop="handleRemoveTrack(index)"
           class="btn-remove"
-          :title="t('playlist.remove') || 'Entfernen'"
+          :title="t.playlist_remove"
         >
           <i class="fas fa-times"></i>
         </button>
@@ -62,11 +62,11 @@
 
     <!-- Keyboard shortcuts hint -->
     <div class="shortcuts-hint">
-      <span><kbd>Space</kbd> Play/Pause</span>
+      <span><kbd>Space</kbd> {{ t.play }}/{{ t.pause }}</span>
       <span><kbd>←</kbd><kbd>→</kbd> ±5s</span>
-      <span><kbd>↑</kbd><kbd>↓</kbd> Lautstärke</span>
+      <span><kbd>↑</kbd><kbd>↓</kbd> {{ t.volume }}</span>
       <span><kbd>N</kbd> / <kbd>P</kbd> Track</span>
-      <span><kbd>M</kbd> Mute</span>
+      <span><kbd>M</kbd> {{ t.player_mute }}</span>
     </div>
   </div>
 </template>
@@ -74,7 +74,7 @@
 <script setup>
   import { ref, inject, computed } from 'vue'
 
-  const i18n = inject('i18n', { t: (key) => key })
+  const { t } = inject('i18n')
   const audioPlayer = inject('audioPlayer', {
     playlist: { value: [] },
     currentTrackIndex: { value: -1 },
@@ -83,17 +83,6 @@
     reorderTracks: () => {},
   })
   const notify = inject('notify', () => {})
-
-  const t = (key) => {
-    if (i18n && typeof i18n.t === 'function') return i18n.t(key)
-    const fallback = {
-      'playlist.title': 'Playlist',
-      'playlist.empty': 'Keine Tracks in der Playlist',
-      'playlist.remove': 'Entfernen',
-      'playlist.removed': 'Track entfernt',
-    }
-    return fallback[key] || key
-  }
 
   const playlist = computed(() => audioPlayer.playlist?.value || [])
   const currentTrackIndex = computed(() => audioPlayer.currentTrackIndex?.value ?? -1)
@@ -132,7 +121,7 @@
   function handleRemoveTrack(index) {
     if (audioPlayer.removeTrack) {
       audioPlayer.removeTrack(index)
-      notify(t('playlist.removed') || 'Track entfernt', 'info')
+      notify(t.value.playlist_removed, 'info')
     }
   }
 

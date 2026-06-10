@@ -5,7 +5,7 @@
       <button
         @click="toggleDynamics"
         :class="['toggle-btn', { active: dynamicsEnabled }]"
-        :title="dynamicsEnabled ? 'Aus' : 'An'"
+        :title="dynamicsEnabled ? t.comp_toggle_off : t.comp_toggle_on"
       >
         <i :class="dynamicsEnabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
       </button>
@@ -14,7 +14,7 @@
     <!-- Controls -->
     <div class="controls" :class="{ disabled: !dynamicsEnabled }">
       <div class="control-row">
-        <span class="label">Threshold</span>
+        <span class="label">{{ t.threshold }}</span>
         <input
           type="range"
           min="-60"
@@ -28,7 +28,7 @@
       </div>
 
       <div class="control-row">
-        <span class="label">Ratio</span>
+        <span class="label">{{ t.ratio }}</span>
         <input
           type="range"
           min="1"
@@ -42,7 +42,7 @@
       </div>
 
       <div class="control-row">
-        <span class="label">Knee</span>
+        <span class="label">{{ t.knee }}</span>
         <input
           type="range"
           min="0"
@@ -56,7 +56,7 @@
       </div>
 
       <div class="control-row">
-        <span class="label">Attack</span>
+        <span class="label">{{ t.attack }}</span>
         <input
           type="range"
           min="0"
@@ -70,7 +70,7 @@
       </div>
 
       <div class="control-row">
-        <span class="label">Release</span>
+        <span class="label">{{ t.release }}</span>
         <input
           type="range"
           min="0"
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Reset -->
-    <button @click="resetDynamics" class="reset-btn" title="Zurücksetzen">
+    <button @click="resetDynamics" class="reset-btn" :title="t.reset">
       <i class="fas fa-undo"></i>
     </button>
   </div>
@@ -94,6 +94,7 @@
 <script setup>
   import { ref, inject, onMounted, watch } from 'vue'
 
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
 
   const threshold = ref(-30)

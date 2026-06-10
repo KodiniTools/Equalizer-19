@@ -184,7 +184,67 @@ export const translations = {
     sharedFilesError: 'Fehler beim Importieren',
     play: 'Abspielen',
     pause: 'Pause',
-    volume: 'Lautstarke',
+    volume: 'Lautstärke',
+
+    // Player controls
+    player_select_files: 'Dateien auswählen',
+    player_select_folder: 'Ordner hinzufügen',
+    player_drop_hint: 'Dateien / Ordner ablegen',
+    player_no_file: 'Dateien oder Ordner ablegen',
+    player_prev: 'Zurück',
+    player_next: 'Weiter',
+    player_mute: 'Stummschalten',
+    player_vol_hint: 'Lautstärke',
+    player_tracks_added: '{count} Track(s) hinzugefügt',
+
+    // Recording
+    rec_format_wav: 'WAV (Unkomprimiert)',
+    rec_format_webm: 'WebM (Komprimiert)',
+    rec_start: 'Aufnahme starten',
+    rec_new: 'Neue Aufnahme',
+    rec_error_engine: 'AudioEngine nicht verfügbar',
+    rec_error_start: 'Fehler beim Starten',
+    rec_error_start_long: 'Fehler beim Starten der Aufnahme',
+    rec_download_failed: 'Download fehlgeschlagen',
+
+    // Equalizer
+    eq_builtin_group: 'Integriert',
+    eq_custom_group: 'Eigene Presets',
+    eq_preset_delete: 'Preset löschen',
+    eq_preset_save_title: 'Einstellung als Preset speichern',
+    eq_save: 'Speichern',
+    eq_cancel: 'Abbrechen',
+    eq_preset_name_placeholder: 'Preset-Name eingeben …',
+    eq_preset_saved: '"{name}" gespeichert',
+    eq_preset_deleted: '"{name}" gelöscht',
+    eq_preset_applied: '"{name}" angewendet',
+    eq_bypassed: 'Equalizer deaktiviert',
+    eq_active: 'Equalizer aktiviert',
+    eq_reset_done: 'Equalizer zurückgesetzt',
+
+    // Dynamics Processor
+    comp_toggle_off: 'Deaktivieren',
+    comp_toggle_on: 'Aktivieren',
+    comp_presets_title: 'Compressor Presets',
+    comp_cat_basic: 'Basis',
+    comp_cat_genre: 'Genre',
+    comp_cat_instrument: 'Instrument',
+    comp_cat_mastering: 'Mastering',
+
+    // Playlist
+    playlist_title: 'Playlist',
+    playlist_empty: 'Keine Tracks in der Playlist',
+    playlist_remove: 'Entfernen',
+    playlist_removed: 'Track entfernt',
+    playlist_drag_hint: 'Ziehen zum Sortieren',
+
+    // Pro Features
+    pro_title: 'Pro Features',
+    pro_description: 'Upgrade für erweiterte Funktionen',
+    pro_badge: 'Pro Version',
+
+    // Level Meter
+    meter_title: 'Pegel-Meter',
   },
   en: {
     // Brand & Navigation
@@ -370,5 +430,65 @@ export const translations = {
     play: 'Play',
     pause: 'Pause',
     volume: 'Volume',
+
+    // Player controls
+    player_select_files: 'Select files',
+    player_select_folder: 'Add folder',
+    player_drop_hint: 'Drop files / folder here',
+    player_no_file: 'Drop files or folder here',
+    player_prev: 'Previous',
+    player_next: 'Next',
+    player_mute: 'Mute',
+    player_vol_hint: 'Volume',
+    player_tracks_added: '{count} track(s) added',
+
+    // Recording
+    rec_format_wav: 'WAV (Uncompressed)',
+    rec_format_webm: 'WebM (Compressed)',
+    rec_start: 'Start recording',
+    rec_new: 'New recording',
+    rec_error_engine: 'Audio engine unavailable',
+    rec_error_start: 'Failed to start',
+    rec_error_start_long: 'Failed to start recording',
+    rec_download_failed: 'Download failed',
+
+    // Equalizer
+    eq_builtin_group: 'Built-in',
+    eq_custom_group: 'My Presets',
+    eq_preset_delete: 'Delete preset',
+    eq_preset_save_title: 'Save as preset',
+    eq_save: 'Save',
+    eq_cancel: 'Cancel',
+    eq_preset_name_placeholder: 'Enter preset name …',
+    eq_preset_saved: '"{name}" saved',
+    eq_preset_deleted: '"{name}" deleted',
+    eq_preset_applied: '"{name}" applied',
+    eq_bypassed: 'Equalizer bypassed',
+    eq_active: 'Equalizer enabled',
+    eq_reset_done: 'Equalizer reset',
+
+    // Dynamics Processor
+    comp_toggle_off: 'Disable',
+    comp_toggle_on: 'Enable',
+    comp_presets_title: 'Compressor Presets',
+    comp_cat_basic: 'Basic',
+    comp_cat_genre: 'Genre',
+    comp_cat_instrument: 'Instrument',
+    comp_cat_mastering: 'Mastering',
+
+    // Playlist
+    playlist_title: 'Playlist',
+    playlist_empty: 'No tracks in playlist',
+    playlist_remove: 'Remove',
+    playlist_removed: 'Track removed',
+    playlist_drag_hint: 'Drag to reorder',
+
+    // Pro Features
+    pro_title: 'Pro Features',
+    pro_description: 'Upgrade for advanced features',
+    pro_badge: 'Pro Version',
+
+    // Level Meter
+    meter_title: 'Level Meter',
   },
 }
