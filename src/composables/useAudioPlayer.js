@@ -454,6 +454,13 @@ export function useAudioPlayer() {
     return { processed }
   }
 
+  // Revoke all Object URLs when the page is unloaded to free browser memory
+  window.addEventListener('pagehide', () => {
+    playlist.value.forEach((track) => {
+      if (track.url) URL.revokeObjectURL(track.url)
+    })
+  })
+
   // Cleanup
   function cleanup() {
     if (audioElement.value) {

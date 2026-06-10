@@ -1,4 +1,5 @@
 import { ref, reactive, watch } from 'vue'
+import { EQ_PRESETS } from '../utils/presets.js'
 
 export function useAudioEngine() {
   // Audio Context
@@ -366,25 +367,9 @@ export function useAudioEngine() {
     return dataArray
   }
 
-  /**
-   * Apply preset EQ curve (moderate gains to prevent clipping)
-   */
   function applyEqPreset(preset) {
-    const presets = {
-      flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      bass_boost: [4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      treble_boost: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1.5, 2, 2.5, 3, 4],
-      vocal: [-1, -1, -0.5, 0, 0, 0, 0.5, 1, 1.5, 2, 1.5, 1, 0.5, 0, 0, -0.5, -0.5, -1, -1],
-      rock: [2.5, 2, 1.5, 1, 0.5, 0, 0, 0.5, 1, 1.5, 1.5, 1, 0.5, 0, 0, 0.5, 1, 1.5, 2],
-      jazz: [1.5, 1, 0.5, 0, 0, 0, 0, 0, 0.5, 1, 1, 1, 0.5, 0.5, 0, 0, 0, 0.5, 1],
-      classical: [2, 1.5, 1, 0.5, 0, 0, 0, 0, 0.5, 1, 1, 1, 1, 1, 1, 0.5, 0, 0, 0],
-      pop: [1, 0.5, 0, 0, 0.5, 1, 1, 1, 1, 0.5, 0, 0, 0, 0.5, 1, 1, 1, 0.5, 0],
-      electronic: [3, 2.5, 2, 1.5, 1, 0, 0, 0, 0, 0, 0, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3],
-    }
-
-    if (presets[preset]) {
-      updateAllEqBands(presets[preset])
-      console.log('✅ EQ Preset applied:', preset, '(moderate gains to prevent clipping)')
+    if (EQ_PRESETS[preset]) {
+      updateAllEqBands(EQ_PRESETS[preset])
     }
   }
 
