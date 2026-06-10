@@ -2,14 +2,14 @@
   <div class="comp-presets">
     <!-- Header -->
     <div class="presets-header">
-      <span class="presets-title">Compressor Presets</span>
+      <span class="presets-title">{{ t.comp_presets_title }}</span>
     </div>
 
     <!-- Preset Categories -->
     <div class="preset-categories">
       <!-- Basic -->
       <div class="preset-category">
-        <span class="category-label">Basic</span>
+        <span class="category-label">{{ t.comp_cat_basic }}</span>
         <div class="preset-buttons">
           <button
             v-for="preset in basicPresets"
@@ -24,7 +24,7 @@
 
       <!-- Genre -->
       <div class="preset-category">
-        <span class="category-label">Genre</span>
+        <span class="category-label">{{ t.comp_cat_genre }}</span>
         <div class="preset-buttons">
           <button
             v-for="preset in genrePresets"
@@ -39,7 +39,7 @@
 
       <!-- Instrument / Voice -->
       <div class="preset-category">
-        <span class="category-label">Instrument</span>
+        <span class="category-label">{{ t.comp_cat_instrument }}</span>
         <div class="preset-buttons">
           <button
             v-for="preset in instrumentPresets"
@@ -54,7 +54,7 @@
 
       <!-- Mastering -->
       <div class="preset-category">
-        <span class="category-label">Mastering</span>
+        <span class="category-label">{{ t.comp_cat_mastering }}</span>
         <div class="preset-buttons">
           <button
             v-for="preset in masteringPresets"
@@ -74,6 +74,7 @@
   import { ref, inject } from 'vue'
   import { COMP_PRESETS } from '../utils/presets'
 
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
 
   const activePreset = ref(null)

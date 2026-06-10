@@ -3,18 +3,18 @@
     <div class="pro-header">
       <h3>
         <i class="fas fa-crown"></i>
-        {{ t('pro.title') || 'Pro Features' }}
+        {{ t.pro_title }}
       </h3>
     </div>
 
     <div class="pro-content">
       <p class="pro-description">
-        {{ t('pro.description') || 'Upgrade für erweiterte Funktionen' }}
+        {{ t.pro_description }}
       </p>
 
       <div class="pro-badge">
         <i class="fas fa-star"></i>
-        <span>{{ t('pro.badge') || 'Pro Version' }}</span>
+        <span>{{ t.pro_badge }}</span>
       </div>
     </div>
   </div>
@@ -23,22 +23,7 @@
 <script setup>
   import { inject } from 'vue'
 
-  // Get dependencies
-  const i18n = inject('i18n', { t: (key) => key })
-
-  // Make t function available in template
-  const t = (key) => {
-    if (i18n && typeof i18n.t === 'function') {
-      return i18n.t(key)
-    }
-    // Fallback translations
-    const translations = {
-      'pro.title': 'Pro Features',
-      'pro.description': 'Upgrade für erweiterte Funktionen',
-      'pro.badge': 'Pro Version',
-    }
-    return translations[key] || key
-  }
+  const { t } = inject('i18n')
 </script>
 
 <style scoped>
