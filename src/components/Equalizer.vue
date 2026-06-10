@@ -8,15 +8,7 @@
       <select @change="handlePresetChange" v-model="selectedPreset" class="preset-select">
         <option value="">Custom</option>
         <optgroup label="Built-in">
-          <option value="flat">Flat</option>
-          <option value="bass_boost">Bass Boost</option>
-          <option value="treble_boost">Treble Boost</option>
-          <option value="vocal">Vocal</option>
-          <option value="rock">Rock</option>
-          <option value="jazz">Jazz</option>
-          <option value="classical">Classical</option>
-          <option value="pop">Pop</option>
-          <option value="electronic">Electronic</option>
+          <option v-for="(_, name) in EQ_PRESETS" :key="name" :value="name">{{ name }}</option>
         </optgroup>
         <optgroup v-if="customPresets.length" label="Eigene Presets">
           <option v-for="p in customPresets" :key="p.id" :value="p.id">{{ p.name }}</option>
@@ -91,6 +83,7 @@
 
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
+  import { EQ_PRESETS } from '../utils/presets.js'
 
   const STORAGE_KEY = 'eq19_custom_presets'
 
