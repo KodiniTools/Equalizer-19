@@ -22,6 +22,16 @@
   const canvasHeight = ref(200)
   let animationId = null
 
+  function getThemeColors() {
+    const style = getComputedStyle(document.documentElement)
+    return {
+      bg: style.getPropertyValue('--secondary-bg').trim() || '#1a1a22',
+      accent: style.getPropertyValue('--accent-primary').trim() || '#667eea',
+      accentAlt: style.getPropertyValue('--accent-secondary').trim() || '#764ba2',
+      textMuted: style.getPropertyValue('--text-muted').trim() || '#7a8da0',
+    }
+  }
+
   function drawVisualization() {
     if (!canvasRef.value || !audioEngine) {
       requestAnimationFrame(drawVisualization)
@@ -30,6 +40,7 @@
 
     const canvas = canvasRef.value
     const ctx = canvas.getContext('2d')
+    const colors = getThemeColors()
 
     // Get audio data
     let dataArray
@@ -48,11 +59,11 @@
 
     if (!dataArray || dataArray.length === 0) {
       // Draw empty state
-      ctx.fillStyle = '#1a1a2e'
+      ctx.fillStyle = colors.bg
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      ctx.fillStyle = 'rgba(102, 126, 234, 0.3)'
-      ctx.font = '16px sans-serif'
+      ctx.fillStyle = colors.textMuted
+      ctx.font = '14px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(t.value.player_no_file, canvas.width / 2, canvas.height / 2)
 
@@ -61,7 +72,7 @@
     }
 
     // Clear canvas
-    ctx.fillStyle = '#1a1a2e'
+    ctx.fillStyle = colors.bg
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     // Draw bars
@@ -71,10 +82,10 @@
     for (let i = 0; i < dataArray.length; i++) {
       const barHeight = (dataArray[i] / 255) * canvas.height
 
-      // Gradient
+      // Gradient using theme accent colors
       const gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height)
-      gradient.addColorStop(0, '#667eea')
-      gradient.addColorStop(1, '#764ba2')
+      gradient.addColorStop(0, colors.accent)
+      gradient.addColorStop(1, colors.accentAlt)
 
       ctx.fillStyle = gradient
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight)

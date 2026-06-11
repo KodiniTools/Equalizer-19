@@ -309,7 +309,7 @@
 
   .btn-upload:hover {
     background: var(--accent-primary, #00d9ff);
-    color: #000;
+    color: var(--on-accent, #000);
     border-color: var(--accent-primary, #00d9ff);
   }
 
@@ -396,12 +396,12 @@
     width: 36px;
     height: 36px;
     background: var(--accent-primary, #00d9ff);
-    color: #000;
+    color: var(--on-accent, #000);
     font-size: 0.85em;
   }
 
   .ctrl-btn.play:hover {
-    background: #00c4e6;
+    background: var(--accent-hover, #00c4e6);
     transform: scale(1.05);
   }
 

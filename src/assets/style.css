@@ -17,6 +17,8 @@
   --accent-secondary: #014f99;
   --accent-tertiary: #f8e1a9;
   --accent-text: #091428;
+  --on-accent: #091428;
+  --accent-hover: #b8843a;
   --text-primary: #f9f2d5;
   --text-secondary: #f8e1a9;
   --text-muted: #7a8da0;
@@ -44,9 +46,11 @@
   --accent-secondary: #c9984d;
   --accent-tertiary: #003971;
   --accent-text: #f5f4d6;
+  --on-accent: #ffffff;
+  --accent-hover: #013f7a;
   --text-primary: #003971;
   --text-secondary: #014f99;
-  --text-muted: #7a6b45;
+  --text-muted: #5e5030;
   --border-color: #c9984d;
   --hover-bg: #f8e1a9;
   --success: #16a34a;

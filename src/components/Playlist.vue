@@ -165,7 +165,7 @@
 
   .track-count {
     background: var(--accent-primary, #00d9ff);
-    color: #000;
+    color: var(--on-accent, #000);
     padding: 2px 8px;
     border-radius: 10px;
     font-size: 0.7em;
@@ -217,7 +217,7 @@
 
   .playlist-item.active {
     background: var(--accent-primary, #00d9ff);
-    color: #000;
+    color: var(--on-accent, #000);
   }
 
   .playlist-item.dragging {
@@ -252,7 +252,7 @@
   }
 
   .playlist-item.active .drag-handle {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--on-accent, #000);
     opacity: 0.6;
   }
 
@@ -271,8 +271,8 @@
   }
 
   .playlist-item.active .track-number {
-    background: rgba(0, 0, 0, 0.2);
-    color: #000;
+    background: rgba(128, 128, 128, 0.25);
+    color: var(--on-accent, #000);
   }
 
   .track-info {
@@ -290,7 +290,7 @@
   }
 
   .playlist-item.active .track-name {
-    color: #000;
+    color: var(--on-accent, #000);
   }
 
   .track-meta {
@@ -299,7 +299,8 @@
   }
 
   .playlist-item.active .track-meta {
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--on-accent, #000);
+    opacity: 0.75;
   }
 
   .btn-remove {
@@ -324,12 +325,12 @@
   }
 
   .playlist-item.active .btn-remove {
-    background: rgba(0, 0, 0, 0.2);
-    color: #000;
+    background: rgba(128, 128, 128, 0.25);
+    color: var(--on-accent, #000);
   }
 
   .playlist-item.active .btn-remove:hover {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(128, 128, 128, 0.4);
   }
 
   /* Keyboard shortcuts hint */
