@@ -218,7 +218,7 @@
   .toggle-btn.active {
     background: var(--accent-primary, #00d9ff);
     border-color: var(--accent-primary, #00d9ff);
-    color: #000;
+    color: var(--on-accent, #000);
   }
 
   .controls {
