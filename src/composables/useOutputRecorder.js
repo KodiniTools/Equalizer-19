@@ -160,39 +160,134 @@ export function useOutputRecorder() {
     }
   }
 
+  /**
+   * Build the final export blob, converting to WAV when that format is selected.
+   * Returns { blob, ext } or null when there is nothing to export.
+   */
+  async function buildBlob() {
+    if (recordedChunks.value.length === 0) return null
+
+    let blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
+    let ext = 'webm'
+
+    if (recordingFormat.value === 'wav') {
+      const wavBlob = await convertToWav(blob)
+      if (wavBlob) {
+        blob = wavBlob
+        ext = 'wav'
+      }
+    }
+
+    return { blob, ext }
+  }
+
+  /**
+   * Remove characters that are invalid in file names and strip a redundant
+   * audio extension the user may have typed.
+   */
+  function sanitizeFilename(name) {
+    return String(name || '')
+      .replace(/[\\/:*?"<>|]+/g, '_')
+      .replace(/\.(wav|webm)$/i, '')
+      .replace(/\.+$/, '')
+      .trim()
+      .slice(0, 120)
+  }
+
+  const supportsFolderPicker =
+    typeof window !== 'undefined' && typeof window.showSaveFilePicker === 'function'
+
+  /**
+   * Trigger a plain browser download to the default download folder.
+   */
+  function anchorDownload(blob, ext, filename) {
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = url
+    a.download = `${filename}.${ext}`
+
+    document.body.appendChild(a)
+    a.click()
+
+    setTimeout(() => {
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }, 100)
+  }
+
   async function downloadRecording(filename = 'audio-export') {
-    if (recordedChunks.value.length === 0) return false
+    const built = await buildBlob()
+    if (!built) return false
 
     try {
-      let blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
-      let ext = 'webm'
-
-      if (recordingFormat.value === 'wav') {
-        const wavBlob = await convertToWav(blob)
-        if (wavBlob) {
-          blob = wavBlob
-          ext = 'wav'
-        }
-      }
-
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.style.display = 'none'
-      a.href = url
-      a.download = `${filename}.${ext}`
-
-      document.body.appendChild(a)
-      a.click()
-
-      setTimeout(() => {
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
-      }, 100)
-
+      anchorDownload(built.blob, built.ext, sanitizeFilename(filename) || 'audio-export')
       return true
     } catch (error) {
       console.error('Download failed:', error)
       return false
+    }
+  }
+
+  /**
+   * Save the recording with a user-chosen file name. When the browser supports
+   * the File System Access API, a native dialog lets the user pick the target
+   * folder as well; otherwise it falls back to a normal download.
+   *
+   * Returns { ok, aborted } so callers can react to a cancelled dialog.
+   */
+  async function saveRecordingAs(filename = 'audio-export') {
+    if (recordedChunks.value.length === 0) return { ok: false }
+
+    const safeName = sanitizeFilename(filename) || 'audio-export'
+    const ext = recordingFormat.value === 'wav' ? 'wav' : 'webm'
+    const mime = ext === 'wav' ? 'audio/wav' : 'audio/webm'
+
+    // Preferred path: native "Save As" dialog with folder selection.
+    if (supportsFolderPicker) {
+      let handle = null
+      try {
+        // Request the handle first, while the click's user activation is fresh.
+        handle = await window.showSaveFilePicker({
+          suggestedName: `${safeName}.${ext}`,
+          types: [
+            {
+              description: `${ext.toUpperCase()} Audio`,
+              accept: { [mime]: [`.${ext}`] },
+            },
+          ],
+        })
+      } catch (error) {
+        // User dismissed the picker — do not fall back to an unwanted download.
+        if (error && error.name === 'AbortError') return { ok: false, aborted: true }
+        console.warn('Save picker unavailable, falling back to download:', error)
+      }
+
+      if (handle) {
+        try {
+          const built = await buildBlob()
+          if (!built) return { ok: false }
+          const writable = await handle.createWritable()
+          await writable.write(built.blob)
+          await writable.close()
+          return { ok: true }
+        } catch (error) {
+          console.error('Saving file failed:', error)
+          return { ok: false }
+        }
+      }
+    }
+
+    // Fallback: standard download to the browser's default folder.
+    const built = await buildBlob()
+    if (!built) return { ok: false }
+
+    try {
+      anchorDownload(built.blob, built.ext, safeName)
+      return { ok: true }
+    } catch (error) {
+      console.error('Download failed:', error)
+      return { ok: false }
     }
   }
 
@@ -228,6 +323,8 @@ export function useOutputRecorder() {
     startRecording,
     stopRecording,
     downloadRecording,
+    saveRecordingAs,
+    supportsFolderPicker,
     setFormat,
     discardRecording,
     cleanup,
