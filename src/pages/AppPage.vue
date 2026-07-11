@@ -13,14 +13,8 @@
     <main class="app-main">
       <div class="container main-layout">
         <div class="grid-three-column">
-          <!-- Left Column: Recorder & Player -->
+          <!-- Left Column: Playlist -->
           <div class="column-left">
-            <!-- OUTPUT RECORDING -->
-            <OutputRecordingControls />
-
-            <!-- File Upload & Player Controls -->
-            <PlayerControls @files-selected="handleFilesSelected" />
-
             <!-- Playlist -->
             <Playlist />
           </div>
@@ -51,6 +45,9 @@
       <!-- Audio Converter Promo -->
       <AudioConverter />
     </main>
+
+    <!-- Persistent sticky player bar (playback + recording + download) -->
+    <StickyPlayerBar @files-selected="handleFilesSelected" />
   </div>
 </template>
 
@@ -60,8 +57,7 @@
   import { getSharedFiles, clearSharedFiles } from '../utils/sharedFileRepository'
 
   import Notification from '../components/Notification.vue'
-  import OutputRecordingControls from '../components/OutputRecordingControls.vue'
-  import PlayerControls from '../components/PlayerControls.vue'
+  import StickyPlayerBar from '../components/StickyPlayerBar.vue'
   import Equalizer from '../components/Equalizer.vue'
   import AudioMeter from '../components/AudioMeter.vue'
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
@@ -190,6 +186,20 @@
   .app-main {
     flex: 1;
     padding-top: 16px;
+    /* Reserve space so the fixed sticky player bar never overlaps content */
+    padding-bottom: 110px;
+  }
+
+  @media (max-width: 900px) {
+    .app-main {
+      padding-bottom: 150px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .app-main {
+      padding-bottom: 190px;
+    }
   }
 
   /* Shared Files Banner */
