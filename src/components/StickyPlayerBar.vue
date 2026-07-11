@@ -232,12 +232,24 @@
       <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
       <span>{{ t.player_drop_hint }}</span>
     </div>
+
+    <!-- Download dialog: custom file name + (where supported) target folder -->
+    <DownloadDialog
+      :show="showDownloadDialog"
+      :default-name="'audio-export'"
+      :format="recordingFormat"
+      :folder-supported="supportsFolderPicker"
+      :saving="isSaving"
+      @close="showDownloadDialog = false"
+      @confirm="handleConfirmDownload"
+    />
   </div>
 </template>
 
 <script setup>
   import { ref, inject, computed } from 'vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
+  import DownloadDialog from './DownloadDialog.vue'
 
   const emit = defineEmits(['files-selected'])
 
@@ -285,7 +297,8 @@
     setAudioEngine,
     startRecording,
     stopRecording,
-    downloadRecording,
+    saveRecordingAs,
+    supportsFolderPicker,
     setFormat,
     discardRecording,
   } = useOutputRecorder()
@@ -295,6 +308,8 @@
   }
 
   const errorMessage = ref('')
+  const showDownloadDialog = ref(false)
+  const isSaving = ref(false)
 
   const formattedRecTime = computed(() => {
     const mins = Math.floor(recordingTime.value / 60)
@@ -427,9 +442,26 @@
   }
 
   function handleDownload() {
-    const success = downloadRecording('audio-export')
-    if (!success) {
-      errorMessage.value = t.value.rec_download_failed
+    errorMessage.value = ''
+    showDownloadDialog.value = true
+  }
+
+  async function handleConfirmDownload({ filename }) {
+    isSaving.value = true
+    try {
+      const result = await saveRecordingAs(filename)
+      if (result.ok) {
+        showDownloadDialog.value = false
+        notify(t.value.dl_success, 'success')
+      } else if (result.aborted) {
+        // User dismissed the native save dialog — keep it simple, just close.
+        showDownloadDialog.value = false
+      } else {
+        showDownloadDialog.value = false
+        errorMessage.value = t.value.rec_download_failed
+      }
+    } finally {
+      isSaving.value = false
     }
   }
 

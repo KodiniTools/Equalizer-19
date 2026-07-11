@@ -207,6 +207,17 @@ export const translations = {
     rec_error_start_long: 'Fehler beim Starten der Aufnahme',
     rec_download_failed: 'Download fehlgeschlagen',
 
+    // Download dialog
+    dl_title: 'Aufnahme herunterladen',
+    dl_filename_label: 'Dateiname',
+    dl_name_placeholder: 'audio-export',
+    dl_folder_hint_supported: 'Beim Speichern können Sie den Zielordner auswählen.',
+    dl_folder_hint_unsupported:
+      'Die Datei wird im Standard-Download-Ordner Ihres Browsers gespeichert.',
+    dl_save: 'Speichern',
+    dl_cancel: 'Abbrechen',
+    dl_success: 'Datei gespeichert',
+
     // Equalizer
     eq_builtin_group: 'Integriert',
     eq_custom_group: 'Eigene Presets',
@@ -467,6 +478,16 @@ export const translations = {
     rec_error_start: 'Failed to start',
     rec_error_start_long: 'Failed to start recording',
     rec_download_failed: 'Download failed',
+
+    // Download dialog
+    dl_title: 'Download recording',
+    dl_filename_label: 'File name',
+    dl_name_placeholder: 'audio-export',
+    dl_folder_hint_supported: 'You can choose the target folder when saving.',
+    dl_folder_hint_unsupported: "The file will be saved to your browser's default download folder.",
+    dl_save: 'Save',
+    dl_cancel: 'Cancel',
+    dl_success: 'File saved',
 
     // Equalizer
     eq_builtin_group: 'Built-in',
