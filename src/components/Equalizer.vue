@@ -457,27 +457,18 @@
 
   .slider-wrapper {
     position: relative;
-    width: 24px;
+    width: 18px;
     height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    transition: background 0.25s ease;
   }
 
-  .slider-wrapper.active {
-    background: rgba(76, 217, 100, 0.1);
-    box-shadow:
-      0 0 12px rgba(76, 217, 100, 0.4),
-      inset 0 0 8px rgba(76, 217, 100, 0.15);
-  }
-
-  .slider-wrapper.active.negative {
-    background: rgba(255, 69, 58, 0.1);
-    box-shadow:
-      0 0 12px rgba(255, 69, 58, 0.4),
-      inset 0 0 8px rgba(255, 69, 58, 0.15);
+  /* Subtle hover highlight instead of a heavy neon capsule */
+  .slider-wrapper:hover {
+    background: rgba(127, 127, 140, 0.08);
   }
 
   .slider-v {
@@ -485,67 +476,64 @@
     appearance: none;
     writing-mode: vertical-lr;
     direction: rtl;
-    width: 8px;
-    height: 150px;
+    width: 5px;
+    height: 152px;
     padding: 0;
     margin: 0;
     cursor: pointer;
-    background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
-    border-radius: 4px;
+    background: linear-gradient(to top, #34343f 0%, #40404d 100%);
+    border-radius: 3px;
     outline: none;
     border: none;
+    transition:
+      background 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .slider-v.active {
     background: linear-gradient(to top, #2d8a3e 0%, #4cd964 100%);
-    box-shadow: 0 0 6px rgba(76, 217, 100, 0.5);
+    box-shadow: 0 0 5px rgba(76, 217, 100, 0.3);
   }
 
   .slider-v.active.negative {
-    background: linear-gradient(to top, #8a1a1a 0%, #ff453a 100%);
-    box-shadow: 0 0 6px rgba(255, 69, 58, 0.5);
+    background: linear-gradient(to top, #b3271e 0%, #ff453a 100%);
+    box-shadow: 0 0 5px rgba(255, 69, 58, 0.3);
   }
 
   .slider-v::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #ffffff;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
-    transition: all 0.15s ease;
-    border: 2px solid #fff;
+    border: 2px solid #8890a8;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    transition:
+      transform 0.15s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .slider-v.active::-webkit-slider-thumb {
-    background: linear-gradient(135deg, #4cd964 0%, #2d8a3e 100%);
-    box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
+    border-color: #4cd964;
+    box-shadow: 0 1px 6px rgba(76, 217, 100, 0.45);
   }
 
   .slider-v.active.negative::-webkit-slider-thumb {
-    background: linear-gradient(135deg, #ff453a 0%, #8a1a1a 100%);
-    box-shadow: 0 2px 8px rgba(255, 69, 58, 0.6);
+    border-color: #ff453a;
+    box-shadow: 0 1px 6px rgba(255, 69, 58, 0.45);
   }
 
   .slider-v::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.7);
-  }
-
-  .slider-v.active::-webkit-slider-thumb:hover {
-    box-shadow: 0 3px 12px rgba(76, 217, 100, 0.8);
-  }
-
-  .slider-v.active.negative::-webkit-slider-thumb:hover {
-    box-shadow: 0 3px 12px rgba(255, 69, 58, 0.8);
+    transform: scale(1.18);
   }
 
   .slider-v::-moz-range-track {
-    width: 8px;
-    background: linear-gradient(to top, #3a3a48 0%, #4a4a58 100%);
-    border-radius: 4px;
+    width: 5px;
+    background: linear-gradient(to top, #34343f 0%, #40404d 100%);
+    border-radius: 3px;
     border: none;
   }
 
@@ -554,33 +542,41 @@
   }
 
   .slider-v.active.negative::-moz-range-track {
-    background: linear-gradient(to top, #8a1a1a 0%, #ff453a 100%);
+    background: linear-gradient(to top, #b3271e 0%, #ff453a 100%);
   }
 
   .slider-v::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #ffffff;
     cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+    border: 2px solid #8890a8;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    transition:
+      transform 0.15s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .slider-v.active::-moz-range-thumb {
-    background: linear-gradient(135deg, #4cd964 0%, #2d8a3e 100%);
-    box-shadow: 0 2px 8px rgba(76, 217, 100, 0.6);
+    border-color: #4cd964;
+    box-shadow: 0 1px 6px rgba(76, 217, 100, 0.45);
   }
 
   .slider-v.active.negative::-moz-range-thumb {
-    background: linear-gradient(135deg, #ff453a 0%, #8a1a1a 100%);
-    box-shadow: 0 2px 8px rgba(255, 69, 58, 0.6);
+    border-color: #ff453a;
+    box-shadow: 0 1px 6px rgba(255, 69, 58, 0.45);
+  }
+
+  .slider-v::-moz-range-thumb:hover {
+    transform: scale(1.18);
   }
 
   .val {
     font-size: 0.6em;
     font-weight: 600;
-    color: #667eea;
+    color: var(--accent-primary, #c9984d);
     font-family: 'SF Mono', 'Monaco', monospace;
     min-width: 24px;
     text-align: center;
@@ -603,7 +599,7 @@
 
     .slider-wrapper {
       height: 130px;
-      width: 20px;
+      width: 16px;
     }
 
     .slider-v {
@@ -651,12 +647,12 @@
 
     .slider-wrapper {
       height: 110px;
-      width: 18px;
+      width: 14px;
     }
 
     .slider-v {
       height: 100px;
-      width: 6px;
+      width: 4px;
     }
 
     .band {
@@ -673,13 +669,13 @@
     }
 
     .slider-v::-webkit-slider-thumb {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
     }
 
     .slider-v::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
     }
   }
 
@@ -697,12 +693,12 @@
 
     .slider-wrapper {
       height: 95px;
-      width: 16px;
+      width: 13px;
     }
 
     .slider-v {
       height: 85px;
-      width: 5px;
+      width: 4px;
     }
 
     .band {
@@ -719,15 +715,15 @@
     }
 
     .slider-v::-webkit-slider-thumb {
-      width: 12px;
-      height: 12px;
-      border-width: 1px;
+      width: 11px;
+      height: 11px;
+      border-width: 1.5px;
     }
 
     .slider-v::-moz-range-thumb {
-      width: 12px;
-      height: 12px;
-      border-width: 1px;
+      width: 11px;
+      height: 11px;
+      border-width: 1.5px;
     }
   }
 </style>
