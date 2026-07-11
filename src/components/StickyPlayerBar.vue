@@ -75,6 +75,16 @@
       <!-- CENTER: Transport controls -->
       <div class="sp-section sp-center">
         <button
+          @click="toggleShuffle"
+          :class="['ctrl-btn', 'mode', { on: isShuffle }]"
+          :title="t.player_shuffle"
+          :aria-label="t.player_shuffle"
+          :aria-pressed="isShuffle"
+        >
+          <i class="fas fa-shuffle" aria-hidden="true"></i>
+        </button>
+
+        <button
           @click="playPrevious"
           :disabled="!canPlayPrevious"
           class="ctrl-btn"
@@ -108,6 +118,17 @@
           :aria-label="t.player_next"
         >
           <i class="fas fa-step-forward" aria-hidden="true"></i>
+        </button>
+
+        <button
+          @click="cycleRepeat"
+          :class="['ctrl-btn', 'mode', { on: repeatMode !== 'off' }]"
+          :title="repeatTitle"
+          :aria-label="repeatTitle"
+          :aria-pressed="repeatMode !== 'off'"
+        >
+          <i class="fas fa-repeat" aria-hidden="true"></i>
+          <span v-if="repeatMode === 'one'" class="repeat-one" aria-hidden="true">1</span>
         </button>
       </div>
 
@@ -277,16 +298,26 @@
     progress,
     formattedCurrentTime,
     formattedDuration,
+    isShuffle,
+    repeatMode,
     addFiles,
     play,
     stop,
     togglePlayPause,
     playNext,
     playPrevious,
+    toggleShuffle,
+    cycleRepeat,
     seekToPercent,
     setVolume,
     toggleMute,
   } = audioPlayer
+
+  const repeatTitle = computed(() => {
+    if (repeatMode.value === 'all') return t.value.player_repeat_all
+    if (repeatMode.value === 'one') return t.value.player_repeat_one
+    return t.value.player_repeat_off
+  })
 
   // ---- Output recorder (record + download) ----
   const {
@@ -640,6 +671,39 @@
   .ctrl-btn.play:hover {
     background: var(--accent-hover, #00c4e6);
     transform: scale(1.05);
+  }
+
+  /* Shuffle / repeat mode buttons */
+  .ctrl-btn.mode {
+    position: relative;
+  }
+
+  .ctrl-btn.mode.on {
+    color: var(--accent-primary, #00d9ff);
+    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 22%, var(--secondary-bg, #1a1a22));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-primary, #00d9ff) 55%, transparent);
+  }
+
+  .ctrl-btn.mode.on:hover:not(:disabled) {
+    color: var(--accent-primary, #00d9ff);
+    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 32%, var(--secondary-bg, #1a1a22));
+  }
+
+  .repeat-one {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    font-size: 0.68em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent-primary, #00d9ff);
+    background: var(--card-bg, #252530);
+    border-radius: 50%;
+    width: 11px;
+    height: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* ---- Volume ---- */
