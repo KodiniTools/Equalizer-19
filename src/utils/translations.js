@@ -196,6 +196,10 @@ export const translations = {
     player_mute: 'Stummschalten',
     player_vol_hint: 'Lautstärke',
     player_tracks_added: '{count} Track(s) hinzugefügt',
+    player_shuffle: 'Zufallswiedergabe',
+    player_repeat_off: 'Wiederholung aus',
+    player_repeat_all: 'Alle wiederholen',
+    player_repeat_one: 'Titel wiederholen',
 
     // Recording
     rec_format_wav: 'WAV (Unkomprimiert)',
@@ -468,6 +472,10 @@ export const translations = {
     player_mute: 'Mute',
     player_vol_hint: 'Volume',
     player_tracks_added: '{count} track(s) added',
+    player_shuffle: 'Shuffle',
+    player_repeat_off: 'Repeat off',
+    player_repeat_all: 'Repeat all',
+    player_repeat_one: 'Repeat one',
 
     // Recording
     rec_format_wav: 'WAV (Uncompressed)',

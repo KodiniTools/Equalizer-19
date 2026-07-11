@@ -13,6 +13,11 @@ export function useAudioPlayer() {
   const isLoading = ref(false)
   const error = ref(null)
 
+  // Playback modes
+  const isShuffle = ref(false)
+  const repeatMode = ref('off') // 'off' | 'all' | 'one'
+  const shuffleHistory = ref([]) // visited indices, for shuffle "previous"
+
   // Audio Elements
   const audioElement = ref(null)
   let audioEngineRef = null
@@ -29,8 +34,17 @@ export function useAudioPlayer() {
 
   const hasTrack = computed(() => currentTrack.value !== null)
   const hasPlaylist = computed(() => playlist.value.length > 0)
-  const canPlayNext = computed(() => currentTrackIndex.value < playlist.value.length - 1)
-  const canPlayPrevious = computed(() => currentTrackIndex.value > 0)
+  const canPlayNext = computed(() => {
+    if (!hasPlaylist.value) return false
+    // Shuffle or repeat-all makes navigation wrap around the playlist
+    if (isShuffle.value || repeatMode.value === 'all') return playlist.value.length > 1
+    return currentTrackIndex.value < playlist.value.length - 1
+  })
+  const canPlayPrevious = computed(() => {
+    if (!hasPlaylist.value) return false
+    if (isShuffle.value || repeatMode.value === 'all') return playlist.value.length > 1
+    return currentTrackIndex.value > 0
+  })
 
   const progress = computed(() => {
     if (duration.value === 0) return 0
@@ -125,9 +139,18 @@ export function useAudioPlayer() {
     isPaused.value = false
     currentTime.value = 0
 
-    // Auto-play next track if available
-    if (canPlayNext.value) {
-      playNext()
+    // Repeat the current track
+    if (repeatMode.value === 'one') {
+      seek(0)
+      play()
+      return
+    }
+
+    // Otherwise advance to the next track (shuffle / repeat-all aware)
+    const nextIndex = getNextIndex()
+    if (nextIndex >= 0) {
+      if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
+      goToIndex(nextIndex)
     }
   }
 
@@ -194,6 +217,7 @@ export function useAudioPlayer() {
     }
 
     playlist.value.splice(index, 1)
+    shuffleHistory.value = []
 
     // Adjust current index if needed
     if (currentTrackIndex.value === index) {
@@ -235,6 +259,7 @@ export function useAudioPlayer() {
     stop()
     playlist.value = []
     currentTrackIndex.value = -1
+    shuffleHistory.value = []
   }
 
   // Playback control
@@ -333,25 +358,78 @@ export function useAudioPlayer() {
     }
   }
 
-  async function playNext() {
-    if (canPlayNext.value) {
-      const success = await loadTrack(currentTrackIndex.value + 1)
-      if (success) {
-        await play()
-      }
+  // Resolve the index of the next track based on shuffle / repeat mode
+  function getNextIndex() {
+    const len = playlist.value.length
+    if (len === 0) return -1
+
+    if (isShuffle.value) {
+      if (len === 1) return repeatMode.value === 'off' ? -1 : 0
+      let idx
+      do {
+        idx = Math.floor(Math.random() * len)
+      } while (idx === currentTrackIndex.value)
+      return idx
     }
+
+    const next = currentTrackIndex.value + 1
+    if (next < len) return next
+    if (repeatMode.value === 'all') return 0
+    return -1
+  }
+
+  // Resolve the index of the previous track (sequential / repeat-all)
+  function getPrevIndex() {
+    const len = playlist.value.length
+    if (len === 0) return -1
+
+    const prev = currentTrackIndex.value - 1
+    if (prev >= 0) return prev
+    if (repeatMode.value === 'all') return len - 1
+    return -1
+  }
+
+  async function goToIndex(index) {
+    if (index < 0) return
+    const success = await loadTrack(index)
+    if (success) await play()
+  }
+
+  async function playNext() {
+    const nextIndex = getNextIndex()
+    if (nextIndex < 0) return
+    if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
+    await goToIndex(nextIndex)
   }
 
   async function playPrevious() {
+    // If more than 3 seconds played, restart the current track
     if (currentTime.value > 3) {
-      // If more than 3 seconds played, restart current track
       seek(0)
-    } else if (canPlayPrevious.value) {
-      const success = await loadTrack(currentTrackIndex.value - 1)
-      if (success) {
-        await play()
-      }
+      return
     }
+
+    let prevIndex
+    if (isShuffle.value) {
+      prevIndex = shuffleHistory.value.length > 0 ? shuffleHistory.value.pop() : getNextIndex()
+    } else {
+      prevIndex = getPrevIndex()
+    }
+    await goToIndex(prevIndex)
+  }
+
+  // Playback mode toggles
+  function toggleShuffle() {
+    isShuffle.value = !isShuffle.value
+    shuffleHistory.value = []
+    return isShuffle.value
+  }
+
+  function cycleRepeat() {
+    const order = ['off', 'all', 'one']
+    const idx = order.indexOf(repeatMode.value)
+    repeatMode.value = order[(idx + 1) % order.length]
+    return repeatMode.value
   }
 
   async function playTrack(index) {
@@ -502,6 +580,8 @@ export function useAudioPlayer() {
     volume,
     isMuted,
     error,
+    isShuffle,
+    repeatMode,
 
     // Computed
     hasTrack,
@@ -531,6 +611,8 @@ export function useAudioPlayer() {
     playNext,
     playPrevious,
     playTrack,
+    toggleShuffle,
+    cycleRepeat,
     seek,
     seekToPercent,
     setVolume,
