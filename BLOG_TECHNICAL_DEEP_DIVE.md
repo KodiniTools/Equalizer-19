@@ -286,7 +286,7 @@ function createEqFilters() {
 
     filter.frequency.value = freq
     filter.gain.value = 0          // Initial: keine Änderung
-    filter.Q.value = 1.0           // Moderate Bandbreite
+    filter.Q.value = 2.5           // Passend zum Halboktav-Abstand (EQ_BAND_Q)
 
     return filter
   })
@@ -365,7 +365,7 @@ export function useAudioEngine() {
     EQ_FREQUENCIES.map(freq => ({
       frequency: freq,
       gain: 0,
-      q: 1.0
+      q: EQ_BAND_Q   // 2.5
     }))
   )
 

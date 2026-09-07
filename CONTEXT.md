@@ -125,7 +125,7 @@ Equalizer-19/
 {
   frequency: Number,    // Frequenz in Hz
   gain: Number,         // Verstärkung in dB (-12 bis +12)
-  q: Number             // Q-Faktor (Bandbreite), Standard: 1.0
+  q: Number             // Q-Faktor (Bandbreite), Standard: 2.5 (EQ_BAND_Q)
 }
 
 // Standard-Frequenzen:

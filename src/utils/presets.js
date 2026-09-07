@@ -8,6 +8,12 @@ export const EQ_BAND_FREQUENCIES = [
   900, 1350, 2000, 3000, 4500, 6300, 9000, 13500, 20000,
 ]
 
+/**
+ * Default Q (quality factor) of every EQ band. Matches the ~half-octave band
+ * spacing above so adjacent bands overlap only moderately (Q ≈ 2.5 ≙ ~0.57 oct).
+ */
+export const EQ_BAND_Q = 2.5
+
 // Gains in dB, one value per band in EQ_BAND_FREQUENCIES:
 //  20  30  45  63  90 135 200 300 450 630 900 1.35k 2k 3k 4.5k 6.3k 9k 13.5k 20k
 export const EQ_PRESETS = {

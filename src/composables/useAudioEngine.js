@@ -1,5 +1,5 @@
 import { ref, reactive, watch } from 'vue'
-import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
+import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q } from '../utils/presets.js'
 
 export function useAudioEngine() {
   // Audio Context
@@ -18,7 +18,7 @@ export function useAudioEngine() {
 
   // Equalizer Settings (19 bands, 20 Hz – 20 kHz)
   const eqBands = reactive(
-    EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0, q: 1.0 }))
+    EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0, q: EQ_BAND_Q }))
   )
 
   // Dynamics Settings (moderate defaults to prevent clipping)
