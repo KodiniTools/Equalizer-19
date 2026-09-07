@@ -511,6 +511,8 @@
       if (result.ok) {
         showDownloadDialog.value = false
         notify(t.value.dl_success, 'success')
+        // Saved: clear the take so the record button is back and a new take can start
+        discardRecording()
       } else if (result.aborted) {
         // User dismissed the native save dialog — keep it simple, just close.
         showDownloadDialog.value = false
