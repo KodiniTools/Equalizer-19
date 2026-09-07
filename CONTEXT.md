@@ -19,7 +19,8 @@
 | Technologie | Zweck |
 |-------------|-------|
 | **Web Audio API** | Echtzeit-Audio-Processing (BiquadFilter, DynamicsCompressor, AnalyserNode) |
-| **MediaRecorder API** | Audio-Aufnahme in WebM/WAV |
+| **MediaRecorder API** | Audio-Aufnahme in WebM (Opus) |
+| **AudioWorklet** | Verlustfreie WAV-Aufnahme: PCM-Mitschnitt hinter dem Master-Gain (`src/worklets/pcm-recorder.worklet.js`), Encoder in `src/utils/wavEncoder.js` (16/24 Bit PCM, 32 Bit Float) |
 
 ### Styling & Icons
 | Technologie | Version | Zweck |

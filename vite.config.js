@@ -6,11 +6,13 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     port: 3000,
-    open: true
+    open: true,
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'esbuild'
-  }
+    minify: 'esbuild',
+    // AudioWorklet modules must be loaded from a real URL, never inlined as data: URI
+    assetsInlineLimit: (filePath) => (filePath.endsWith('.worklet.js') ? false : undefined),
+  },
 })

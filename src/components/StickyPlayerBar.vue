@@ -194,6 +194,26 @@
             </button>
           </div>
 
+          <!-- WAV bit depth (only for WAV, changeable while idle) -->
+          <div
+            class="format-toggle"
+            v-if="recordingFormat === 'wav' && !isRecording"
+            role="group"
+            :aria-label="t.rec_bit_depth"
+          >
+            <button
+              v-for="depth in bitDepths"
+              :key="depth"
+              @click="setBitDepth(depth)"
+              :class="['fmt-btn', { active: bitDepth === depth }]"
+              :title="bitDepthTitle(depth)"
+              :aria-label="bitDepthTitle(depth)"
+              :aria-pressed="bitDepth === depth"
+            >
+              {{ depth === 32 ? '32f' : depth }}
+            </button>
+          </div>
+
           <div class="rec-controls">
             <!-- Record button -->
             <button
@@ -323,6 +343,8 @@
   const {
     isRecording,
     recordingFormat,
+    bitDepth,
+    bitDepths,
     hasRecording,
     recordingTime,
     setAudioEngine,
@@ -331,6 +353,7 @@
     saveRecordingAs,
     supportsFolderPicker,
     setFormat,
+    setBitDepth,
     discardRecording,
   } = useOutputRecorder()
 
@@ -455,6 +478,10 @@
     setFormat(format)
   }
 
+  function bitDepthTitle(depth) {
+    return t.value[`rec_bit_${depth}`] || `${depth} Bit`
+  }
+
   async function handleStartRecording() {
     errorMessage.value = ''
     if (!audioEngine) {
@@ -468,8 +495,8 @@
     }
   }
 
-  function handleStopRecording() {
-    stopRecording()
+  async function handleStopRecording() {
+    await stopRecording()
   }
 
   function handleDownload() {
