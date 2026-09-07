@@ -1,184 +1,276 @@
 import { ref, computed } from 'vue'
+import { encodeWavFromChunks, WAV_BIT_DEPTHS, DEFAULT_WAV_BIT_DEPTH } from '../utils/wavEncoder.js'
+
+const PCM_WORKLET_URL = new URL('../worklets/pcm-recorder.worklet.js', import.meta.url)
+const BIT_DEPTH_STORAGE_KEY = 'eq19_wav_bit_depth'
+const SCRIPT_PROCESSOR_BUFFER = 4096
 
 /**
  * Output Recorder - Records processed audio from AudioEngine
- * Supports WAV and WebM export formats
+ *
+ * WAV:  raw Float32 PCM is captured behind the master gain via an AudioWorklet
+ *       (ScriptProcessor fallback) and written as 16/24-bit PCM or 32-bit float.
+ *       No lossy intermediate step.
+ * WebM: MediaRecorder (Opus), as before.
  */
 export function useOutputRecorder() {
   const isRecording = ref(false)
-  const recordedChunks = ref([])
+  const recordedChunks = ref([]) // WebM blobs
   const mediaRecorder = ref(null)
   const recordingFormat = ref('webm')
+  const bitDepth = ref(loadBitDepth())
   const recordingTime = ref(0)
+  const pcmFrames = ref(0) // recorded PCM frames (reactive counter only)
+
   let timerInterval = null
   let audioEngineRef = null
 
-  const hasRecording = computed(() => recordedChunks.value.length > 0)
+  // --- PCM capture state (kept non-reactive: large typed arrays) ---
+  let pcmChunks = [] // Float32Array[][]  → chunk[ch]
+  let pcmSampleRate = 0
+  let pcmChannels = 0
+  let pcmNodes = null // { source, capture, silent, stop: () => Promise }
+  let wavCache = null // { bitDepth, blob }
+
+  // --- WebM state ---
+  let webmDestination = null
+
+  const hasRecording = computed(() => recordedChunks.value.length > 0 || pcmFrames.value > 0)
+
+  function loadBitDepth() {
+    try {
+      const stored = parseInt(localStorage.getItem(BIT_DEPTH_STORAGE_KEY), 10)
+      if (WAV_BIT_DEPTHS.includes(stored)) return stored
+    } catch (_e) {
+      // storage unavailable
+    }
+    return DEFAULT_WAV_BIT_DEPTH
+  }
 
   function setAudioEngine(engine) {
     audioEngineRef = engine
   }
 
-  async function startRecording() {
-    if (!audioEngineRef) return false
-    if (!audioEngineRef.audioContext?.value) return false
+  function resetBuffers() {
+    recordedChunks.value = []
+    pcmChunks = []
+    pcmFrames.value = 0
+    pcmChannels = 0
+    wavCache = null
+    recordingTime.value = 0
+  }
 
+  function pushPcmChunk(channels) {
+    if (!channels || channels.length === 0 || channels[0].length === 0) return
+    pcmChunks.push(channels)
+    pcmChannels = Math.max(pcmChannels, channels.length)
+    pcmFrames.value += channels[0].length
+  }
+
+  // ---------------------------------------------------------------------------
+  // WAV: PCM capture
+  // ---------------------------------------------------------------------------
+  async function ensureWorklet(audioContext) {
+    if (!audioContext.audioWorklet) return false
+    if (audioContext.__eq19PcmWorkletLoaded) return true
     try {
-      recordedChunks.value = []
-      recordingTime.value = 0
-
-      const audioContext = audioEngineRef.audioContext.value
-      const destination = audioContext.createMediaStreamDestination()
-
-      if (audioEngineRef.gainNode?.value) {
-        audioEngineRef.gainNode.value.connect(destination)
-      } else {
-        return false
-      }
-
-      const mimeType = 'audio/webm;codecs=opus'
-
-      if (!MediaRecorder.isTypeSupported(mimeType)) return false
-
-      mediaRecorder.value = new MediaRecorder(destination.stream, { mimeType })
-
-      mediaRecorder.value.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.value.push(event.data)
-        }
-      }
-
-      mediaRecorder.value.onstop = () => {
-        if (timerInterval) {
-          clearInterval(timerInterval)
-          timerInterval = null
-        }
-      }
-
-      mediaRecorder.value.start(100)
-      isRecording.value = true
-
-      timerInterval = setInterval(() => {
-        recordingTime.value++
-      }, 1000)
-
+      await audioContext.audioWorklet.addModule(PCM_WORKLET_URL)
+      audioContext.__eq19PcmWorkletLoaded = true
       return true
     } catch (error) {
-      console.error('Failed to start recording:', error)
+      console.warn('AudioWorklet unavailable, falling back to ScriptProcessor:', error)
       return false
     }
   }
 
-  function stopRecording() {
-    if (mediaRecorder.value && isRecording.value) {
-      mediaRecorder.value.stop()
-      isRecording.value = false
+  async function startPcmCapture(audioContext, sourceNode) {
+    pcmSampleRate = audioContext.sampleRate
+    const channelCount = Math.max(1, Math.min(2, audioContext.destination.channelCount || 2))
 
-      if (timerInterval) {
-        clearInterval(timerInterval)
-        timerInterval = null
+    // Silent sink keeps the capture node pulled by the graph without doubling the output
+    const silent = audioContext.createGain()
+    silent.gain.value = 0
+    silent.connect(audioContext.destination)
+
+    if (await ensureWorklet(audioContext)) {
+      const capture = new AudioWorkletNode(audioContext, 'pcm-recorder', {
+        numberOfInputs: 1,
+        numberOfOutputs: 1,
+        processorOptions: { channelCount },
+      })
+
+      let resolveDone = null
+      capture.port.onmessage = (event) => {
+        const msg = event.data
+        if (msg?.type === 'data') pushPcmChunk(msg.channels)
+        else if (msg?.type === 'done' && resolveDone) resolveDone()
+      }
+
+      sourceNode.connect(capture)
+      capture.connect(silent)
+
+      pcmNodes = {
+        source: sourceNode,
+        capture,
+        silent,
+        stop: () =>
+          new Promise((resolve) => {
+            resolveDone = resolve
+            capture.port.postMessage('stop')
+            setTimeout(resolve, 1000) // safety net if the processor never answers
+          }),
       }
       return true
     }
-    return false
-  }
 
-  /**
-   * Convert AudioBuffer to WAV format
-   */
-  function audioBufferToWav(buffer) {
-    const numChannels = buffer.numberOfChannels
-    const sampleRate = buffer.sampleRate
-    const format = 1 // PCM
-    const bitDepth = 16
-
-    const bytesPerSample = bitDepth / 8
-    const blockAlign = numChannels * bytesPerSample
-
-    const samples = buffer.length
-    const dataSize = samples * blockAlign
-    const bufferSize = 44 + dataSize
-
-    const arrayBuffer = new ArrayBuffer(bufferSize)
-    const view = new DataView(arrayBuffer)
-
-    // WAV header
-    writeString(view, 0, 'RIFF')
-    view.setUint32(4, bufferSize - 8, true)
-    writeString(view, 8, 'WAVE')
-    writeString(view, 12, 'fmt ')
-    view.setUint32(16, 16, true)
-    view.setUint16(20, format, true)
-    view.setUint16(22, numChannels, true)
-    view.setUint32(24, sampleRate, true)
-    view.setUint32(28, sampleRate * blockAlign, true)
-    view.setUint16(32, blockAlign, true)
-    view.setUint16(34, bitDepth, true)
-    writeString(view, 36, 'data')
-    view.setUint32(40, dataSize, true)
-
-    // Interleave channels and write samples
-    const offset = 44
-    const channelData = []
-    for (let i = 0; i < numChannels; i++) {
-      channelData.push(buffer.getChannelData(i))
-    }
-
-    for (let i = 0; i < samples; i++) {
-      for (let ch = 0; ch < numChannels; ch++) {
-        const channelSamples = channelData[ch]
-        if (!channelSamples || i >= channelSamples.length) continue
-        let sample = Number(channelSamples[i]) || 0
-        sample = Math.max(-1, Math.min(1, sample))
-        sample = sample < 0 ? sample * 0x8000 : sample * 0x7fff
-        view.setInt16(offset + i * blockAlign + ch * bytesPerSample, sample, true)
+    // Fallback: deprecated ScriptProcessorNode (still supported everywhere)
+    if (typeof audioContext.createScriptProcessor !== 'function') return false
+    const capture = audioContext.createScriptProcessor(
+      SCRIPT_PROCESSOR_BUFFER,
+      channelCount,
+      channelCount
+    )
+    let capturing = true
+    capture.onaudioprocess = (event) => {
+      if (!capturing) return
+      const channels = []
+      for (let ch = 0; ch < event.inputBuffer.numberOfChannels; ch++) {
+        channels.push(new Float32Array(event.inputBuffer.getChannelData(ch)))
       }
+      pushPcmChunk(channels)
     }
-
-    return new Blob([arrayBuffer], { type: 'audio/wav' })
+    sourceNode.connect(capture)
+    capture.connect(silent)
+    pcmNodes = {
+      source: sourceNode,
+      capture,
+      silent,
+      stop: () => {
+        capturing = false
+        return Promise.resolve()
+      },
+    }
+    return true
   }
 
-  function writeString(view, offset, string) {
-    for (let i = 0; i < string.length; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i))
-    }
-  }
-
-  /**
-   * Convert WebM blob to WAV using AudioContext
-   */
-  async function convertToWav(webmBlob) {
+  async function stopPcmCapture() {
+    if (!pcmNodes) return
+    const nodes = pcmNodes
+    pcmNodes = null
+    await nodes.stop()
     try {
-      const arrayBuffer = await webmBlob.arrayBuffer()
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-      audioContext.close()
-      return audioBufferToWav(audioBuffer)
-    } catch (error) {
-      console.error('WAV conversion failed:', error)
-      return null
+      nodes.source.disconnect(nodes.capture)
+    } catch (_e) {
+      // already disconnected
+    }
+    try {
+      nodes.capture.disconnect()
+      nodes.silent.disconnect()
+    } catch (_e) {
+      // ignore
+    }
+    if (nodes.capture.port) nodes.capture.port.onmessage = null
+  }
+
+  function buildWavBlob() {
+    if (pcmChunks.length === 0) return null
+    if (wavCache && wavCache.bitDepth === bitDepth.value) return wavCache.blob
+    const blob = encodeWavFromChunks(pcmChunks, pcmChannels, pcmSampleRate, bitDepth.value)
+    wavCache = { bitDepth: bitDepth.value, blob }
+    return blob
+  }
+
+  // ---------------------------------------------------------------------------
+  // WebM: MediaRecorder
+  // ---------------------------------------------------------------------------
+  function startWebmCapture(audioContext, sourceNode) {
+    const mimeType = 'audio/webm;codecs=opus'
+    if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported(mimeType))
+      return false
+
+    webmDestination = audioContext.createMediaStreamDestination()
+    sourceNode.connect(webmDestination)
+
+    mediaRecorder.value = new MediaRecorder(webmDestination.stream, { mimeType })
+    mediaRecorder.value.ondataavailable = (event) => {
+      if (event.data.size > 0) recordedChunks.value.push(event.data)
+    }
+    mediaRecorder.value.start(100)
+    return true
+  }
+
+  function stopWebmCapture() {
+    if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
+      mediaRecorder.value.stop()
+    }
+    mediaRecorder.value = null
+    if (webmDestination) {
+      try {
+        audioEngineRef?.gainNode?.value?.disconnect(webmDestination)
+      } catch (_e) {
+        // ignore
+      }
+      webmDestination = null
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Public recording API
+  // ---------------------------------------------------------------------------
+  async function startRecording() {
+    if (isRecording.value) return false
+    if (!audioEngineRef?.audioContext?.value || !audioEngineRef.gainNode?.value) return false
+
+    const audioContext = audioEngineRef.audioContext.value
+    const sourceNode = audioEngineRef.gainNode.value
+
+    try {
+      if (audioContext.state === 'suspended') await audioContext.resume()
+      resetBuffers()
+
+      const started =
+        recordingFormat.value === 'wav'
+          ? await startPcmCapture(audioContext, sourceNode)
+          : startWebmCapture(audioContext, sourceNode)
+      if (!started) return false
+
+      isRecording.value = true
+      timerInterval = setInterval(() => {
+        recordingTime.value++
+      }, 1000)
+      return true
+    } catch (error) {
+      console.error('Failed to start recording:', error)
+      await stopPcmCapture()
+      stopWebmCapture()
+      return false
+    }
+  }
+
+  async function stopRecording() {
+    if (!isRecording.value) return false
+    isRecording.value = false
+
+    if (timerInterval) {
+      clearInterval(timerInterval)
+      timerInterval = null
+    }
+
+    if (pcmNodes) await stopPcmCapture()
+    else stopWebmCapture()
+    return true
+  }
+
   /**
-   * Build the final export blob, converting to WAV when that format is selected.
-   * Returns { blob, ext } or null when there is nothing to export.
+   * Build the final export blob. Returns { blob, ext } or null when empty.
    */
   async function buildBlob() {
-    if (recordedChunks.value.length === 0) return null
-
-    let blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
-    let ext = 'webm'
-
-    if (recordingFormat.value === 'wav') {
-      const wavBlob = await convertToWav(blob)
-      if (wavBlob) {
-        blob = wavBlob
-        ext = 'wav'
-      }
+    if (pcmChunks.length > 0) {
+      const blob = buildWavBlob()
+      return blob ? { blob, ext: 'wav' } : null
     }
-
-    return { blob, ext }
+    if (recordedChunks.value.length === 0) return null
+    return { blob: new Blob(recordedChunks.value, { type: 'audio/webm' }), ext: 'webm' }
   }
 
   /**
@@ -237,10 +329,10 @@ export function useOutputRecorder() {
    * Returns { ok, aborted } so callers can react to a cancelled dialog.
    */
   async function saveRecordingAs(filename = 'audio-export') {
-    if (recordedChunks.value.length === 0) return { ok: false }
+    if (!hasRecording.value) return { ok: false }
 
     const safeName = sanitizeFilename(filename) || 'audio-export'
-    const ext = recordingFormat.value === 'wav' ? 'wav' : 'webm'
+    const ext = pcmChunks.length > 0 ? 'wav' : 'webm'
     const mime = ext === 'wav' ? 'audio/wav' : 'audio/webm'
 
     // Preferred path: native "Save As" dialog with folder selection.
@@ -292,16 +384,30 @@ export function useOutputRecorder() {
   }
 
   function setFormat(format) {
-    if (!isRecording.value) {
-      recordingFormat.value = format
-      recordedChunks.value = []
-      recordingTime.value = 0
+    if (isRecording.value) return
+    if (format !== 'wav' && format !== 'webm') return
+    recordingFormat.value = format
+    resetBuffers()
+  }
+
+  /**
+   * Select the WAV bit depth (16 | 24 | 32). Allowed while not recording;
+   * an existing PCM recording is simply re-encoded at the new depth on save.
+   */
+  function setBitDepth(depth) {
+    if (isRecording.value) return
+    if (!WAV_BIT_DEPTHS.includes(depth)) return
+    bitDepth.value = depth
+    try {
+      localStorage.setItem(BIT_DEPTH_STORAGE_KEY, String(depth))
+    } catch (_e) {
+      // storage unavailable
     }
   }
 
   function discardRecording() {
-    recordedChunks.value = []
-    recordingTime.value = 0
+    if (isRecording.value) return
+    resetBuffers()
   }
 
   function cleanup() {
@@ -309,7 +415,7 @@ export function useOutputRecorder() {
       clearInterval(timerInterval)
       timerInterval = null
     }
-    if (mediaRecorder.value && isRecording.value) {
+    if (isRecording.value) {
       stopRecording()
     }
   }
@@ -317,6 +423,8 @@ export function useOutputRecorder() {
   return {
     isRecording,
     recordingFormat,
+    bitDepth,
+    bitDepths: WAV_BIT_DEPTHS,
     hasRecording,
     recordingTime,
     setAudioEngine,
@@ -326,6 +434,7 @@ export function useOutputRecorder() {
     saveRecordingAs,
     supportsFolderPicker,
     setFormat,
+    setBitDepth,
     discardRecording,
     cleanup,
   }

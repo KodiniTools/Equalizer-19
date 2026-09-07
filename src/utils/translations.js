@@ -202,8 +202,12 @@ export const translations = {
     player_repeat_one: 'Titel wiederholen',
 
     // Recording
-    rec_format_wav: 'WAV (Unkomprimiert)',
-    rec_format_webm: 'WebM (Komprimiert)',
+    rec_format_wav: 'WAV (Unkomprimiert, verlustfrei)',
+    rec_format_webm: 'WebM (Komprimiert, Opus)',
+    rec_bit_depth: 'Bit-Tiefe der WAV-Datei',
+    rec_bit_16: '16 Bit PCM (CD-Qualität)',
+    rec_bit_24: '24 Bit PCM (Studio-Qualität)',
+    rec_bit_32: '32 Bit Float (verlustfrei, kein Clipping)',
     rec_start: 'Aufnahme starten',
     rec_new: 'Neue Aufnahme',
     rec_error_engine: 'AudioEngine nicht verfügbar',
@@ -478,8 +482,12 @@ export const translations = {
     player_repeat_one: 'Repeat one',
 
     // Recording
-    rec_format_wav: 'WAV (Uncompressed)',
-    rec_format_webm: 'WebM (Compressed)',
+    rec_format_wav: 'WAV (Uncompressed, lossless)',
+    rec_format_webm: 'WebM (Compressed, Opus)',
+    rec_bit_depth: 'WAV bit depth',
+    rec_bit_16: '16-bit PCM (CD quality)',
+    rec_bit_24: '24-bit PCM (studio quality)',
+    rec_bit_32: '32-bit float (lossless, no clipping)',
     rec_start: 'Start recording',
     rec_new: 'New recording',
     rec_error_engine: 'Audio engine unavailable',

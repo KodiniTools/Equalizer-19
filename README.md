@@ -6,7 +6,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 
 - **19-Band Parametrischer Equalizer** mit professionellen Filtern
 - **Dynamics Processor** mit Echtzeit-Kompression
-- **Audio-Recording** in WebM und WAV
+- **Audio-Recording** in WebM (Opus) und verlustfreiem WAV (16 / 24 Bit PCM oder 32 Bit Float, per AudioWorklet direkt als PCM mitgeschnitten)
 - **Echtzeit-Visualisierung** mit Spektrum-Analyzer
 - **LUFS Loudness-Normalisierung**
 - **Sättigungseffekte** mit Oversampling
