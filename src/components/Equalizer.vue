@@ -106,7 +106,7 @@
 
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
-  import { EQ_PRESETS } from '../utils/presets.js'
+  import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
 
   const { t } = inject('i18n')
 
@@ -115,27 +115,7 @@
   const audioEngine = inject('audioEngine')
   const notify = inject('notify', () => {})
 
-  const localBands = ref([
-    { frequency: 20, gain: 0 },
-    { frequency: 25, gain: 0 },
-    { frequency: 31.5, gain: 0 },
-    { frequency: 40, gain: 0 },
-    { frequency: 50, gain: 0 },
-    { frequency: 63, gain: 0 },
-    { frequency: 80, gain: 0 },
-    { frequency: 100, gain: 0 },
-    { frequency: 125, gain: 0 },
-    { frequency: 160, gain: 0 },
-    { frequency: 200, gain: 0 },
-    { frequency: 250, gain: 0 },
-    { frequency: 315, gain: 0 },
-    { frequency: 400, gain: 0 },
-    { frequency: 500, gain: 0 },
-    { frequency: 630, gain: 0 },
-    { frequency: 800, gain: 0 },
-    { frequency: 1000, gain: 0 },
-    { frequency: 1250, gain: 0 },
-  ])
+  const localBands = ref(EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0 })))
 
   const selectedPreset = ref('')
   const isEqBypassed = ref(false)
@@ -277,7 +257,10 @@
   }
 
   function formatFrequency(freq) {
-    if (freq >= 1000) return (freq / 1000).toFixed(1) + 'k'
+    if (freq >= 1000) {
+      const k = freq / 1000
+      return (Number.isInteger(k) ? k.toString() : k.toFixed(1)) + 'k'
+    }
     return freq.toString()
   }
 

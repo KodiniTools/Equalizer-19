@@ -120,7 +120,8 @@ Equalizer-19/
 
 ```javascript
 // Definiert in: src/composables/useAudioEngine.js
-// 19 Bänder von 20Hz bis 1250Hz (erweitert in der UI bis 16.7kHz)
+// Frequenzen: EQ_BAND_FREQUENCIES in src/utils/presets.js
+// 19 Bänder von 20 Hz bis 20 kHz (logarithmisch, ca. Halboktav-Abstand), alle 'peaking'
 {
   frequency: Number,    // Frequenz in Hz
   gain: Number,         // Verstärkung in dB (-12 bis +12)
@@ -128,8 +129,8 @@ Equalizer-19/
 }
 
 // Standard-Frequenzen:
-[20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160,
- 200, 250, 315, 400, 500, 630, 800, 1000, 1250]
+[20, 30, 45, 63, 90, 135, 200, 300, 450, 630,
+ 900, 1350, 2000, 3000, 4500, 6300, 9000, 13500, 20000]
 ```
 
 ### Dynamics/Kompressor-Einstellungen
@@ -215,7 +216,7 @@ translations = {
        ▼
 ┌──────────────────────────────────────────────────────────┐
 │                    19-Band EQ Filter                      │
-│  (BiquadFilter: lowshelf → 17x peaking → highshelf)      │
+│  (BiquadFilter: 19x peaking, 20 Hz – 20 kHz)             │
 └──────────────────────────┬───────────────────────────────┘
                            │ (bypass möglich)
                            ▼

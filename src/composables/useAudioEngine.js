@@ -1,5 +1,5 @@
 import { ref, reactive, watch } from 'vue'
-import { EQ_PRESETS } from '../utils/presets.js'
+import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
 
 export function useAudioEngine() {
   // Audio Context
@@ -16,28 +16,10 @@ export function useAudioEngine() {
   // Equalizer Filters (19 Bands)
   const eqFilters = ref([])
 
-  // Equalizer Settings
-  const eqBands = reactive([
-    { frequency: 20, gain: 0, q: 1.0 },
-    { frequency: 25, gain: 0, q: 1.0 },
-    { frequency: 31.5, gain: 0, q: 1.0 },
-    { frequency: 40, gain: 0, q: 1.0 },
-    { frequency: 50, gain: 0, q: 1.0 },
-    { frequency: 63, gain: 0, q: 1.0 },
-    { frequency: 80, gain: 0, q: 1.0 },
-    { frequency: 100, gain: 0, q: 1.0 },
-    { frequency: 125, gain: 0, q: 1.0 },
-    { frequency: 160, gain: 0, q: 1.0 },
-    { frequency: 200, gain: 0, q: 1.0 },
-    { frequency: 250, gain: 0, q: 1.0 },
-    { frequency: 315, gain: 0, q: 1.0 },
-    { frequency: 400, gain: 0, q: 1.0 },
-    { frequency: 500, gain: 0, q: 1.0 },
-    { frequency: 630, gain: 0, q: 1.0 },
-    { frequency: 800, gain: 0, q: 1.0 },
-    { frequency: 1000, gain: 0, q: 1.0 },
-    { frequency: 1250, gain: 0, q: 1.0 },
-  ])
+  // Equalizer Settings (19 bands, 20 Hz – 20 kHz)
+  const eqBands = reactive(
+    EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0, q: 1.0 }))
+  )
 
   // Dynamics Settings (moderate defaults to prevent clipping)
   const dynamics = reactive({
@@ -99,23 +81,18 @@ export function useAudioEngine() {
   }
 
   /**
-   * Create 19-band equalizer filters
+   * Create 19-band equalizer filters.
+   * All bands are peaking (bell) filters: with the outermost bands sitting at
+   * the edges of the audible range (20 Hz / 20 kHz), shelving filters there
+   * would only act outside the hearing range and the sliders would do nothing.
    */
   function createEqFilters() {
     eqFilters.value = []
 
-    eqBands.forEach((band, index) => {
+    eqBands.forEach((band) => {
       const filter = audioContext.value.createBiquadFilter()
 
-      // First and last band use different filter types
-      if (index === 0) {
-        filter.type = 'lowshelf'
-      } else if (index === eqBands.length - 1) {
-        filter.type = 'highshelf'
-      } else {
-        filter.type = 'peaking'
-      }
-
+      filter.type = 'peaking'
       filter.frequency.value = band.frequency
       filter.gain.value = band.gain
       filter.Q.value = band.q
