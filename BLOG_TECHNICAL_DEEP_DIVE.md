@@ -191,8 +191,8 @@ Beispiele:
 │                         EQ-FILTER-KETTE (19 Bänder)                       │
 │                                                                           │
 │  ┌─────────┐   ┌─────────┐   ┌─────────┐         ┌─────────┐   ┌─────────┐│
-│  │ 20 Hz   │──▶│ 25 Hz   │──▶│ 31.5 Hz │──▶ ... ▶│ 1000 Hz │──▶│ 1250 Hz ││
-│  │lowshelf │   │ peaking │   │ peaking │         │ peaking │   │highshelf││
+│  │ 20 Hz   │──▶│ 30 Hz   │──▶│ 45 Hz   │──▶ ... ▶│ 13.5 kHz│──▶│ 20 kHz  ││
+│  │ peaking │   │ peaking │   │ peaking │         │ peaking │   │ peaking ││
 │  └─────────┘   └─────────┘   └─────────┘         └─────────┘   └─────────┘│
 │                                                                           │
 │  Jeder Filter: frequency, gain (-12 bis +12 dB), Q (Bandbreite)          │
@@ -270,23 +270,19 @@ function connectAudioSource(source) {
 
 ```javascript
 function createEqFilters() {
-  // ISO 1/3-Oktav Frequenzen
+  // Logarithmisch verteilt, ca. Halboktav-Abstand, 20 Hz – 20 kHz
+  // (EQ_BAND_FREQUENCIES in src/utils/presets.js)
   const frequencies = [
-    20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160,
-    200, 250, 315, 400, 500, 630, 800, 1000, 1250
+    20, 30, 45, 63, 90, 135, 200, 300, 450, 630,
+    900, 1350, 2000, 3000, 4500, 6300, 9000, 13500, 20000
   ]
 
-  eqFilters.value = frequencies.map((freq, index) => {
+  eqFilters.value = frequencies.map((freq) => {
     const filter = audioContext.value.createBiquadFilter()
 
-    // Filter-Typ basierend auf Position
-    if (index === 0) {
-      filter.type = 'lowshelf'     // Tiefbässe
-    } else if (index === frequencies.length - 1) {
-      filter.type = 'highshelf'    // Höhen
-    } else {
-      filter.type = 'peaking'      // Mitten (Bell-Kurve)
-    }
+    // Alle Bänder als Bell-Kurve: Shelving-Filter an den Randbändern
+    // (20 Hz / 20 kHz) würden nur außerhalb des Hörbereichs wirken.
+    filter.type = 'peaking'
 
     filter.frequency.value = freq
     filter.gain.value = 0          // Initial: keine Änderung
@@ -778,7 +774,7 @@ Ein parametrischer EQ verwendet **IIR-Filter** (Infinite Impulse Response) für 
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
-│                      HIGHSHELF (1250 Hz)                        │
+│              HIGHSHELF (Beispiel, im EQ nicht verwendet)        │
 │                                                                 │
 │     Gain │                                                      │
 │      +6  │                                           ████████   │
@@ -791,29 +787,29 @@ Ein parametrischer EQ verwendet **IIR-Filter** (Infinite Impulse Response) für 
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-#### Frequenzverteilung (ISO 1/3-Oktav)
+#### Frequenzverteilung (logarithmisch, ca. Halboktav-Abstand)
 
 ```javascript
-const EQ_FREQUENCIES = [
+const EQ_BAND_FREQUENCIES = [
   20,    // Sub-Bass (unhörbar für viele)
-  25,    // Sub-Bass
-  31.5,  // Sub-Bass
-  40,    // Bass
-  50,    // Bass
+  30,    // Sub-Bass
+  45,    // Bass
   63,    // Bass
-  80,    // Bass
-  100,   // Oberer Bass
-  125,   // Tiefe Mitten
-  160,   // Tiefe Mitten
-  200,   // Mitten
-  250,   // Mitten
-  315,   // Mitten
-  400,   // Mitten
-  500,   // Mitten
-  630,   // Obere Mitten
-  800,   // Obere Mitten
-  1000,  // Präsenz
-  1250   // Präsenz / Höhen
+  90,    // Bass
+  135,   // Oberer Bass
+  200,   // Tiefe Mitten
+  300,   // Tiefe Mitten
+  450,   // Mitten
+  630,   // Mitten
+  900,   // Mitten
+  1350,  // Obere Mitten
+  2000,  // Präsenz
+  3000,  // Präsenz
+  4500,  // Präsenz / Brillanz
+  6300,  // Höhen
+  9000,  // Höhen
+  13500, // Luft
+  20000  // Luft (obere Hörgrenze)
 ]
 
 // Hinweis: Die Web Audio API geht bis Nyquist (halbe Sample-Rate)
@@ -1854,30 +1850,32 @@ export default {
 // src/utils/presets.js
 
 // ═══════════════════════════════════════════════════════════
-// EQ-FREQUENZEN (ISO 1/3-Oktav Standard)
+// EQ-FREQUENZEN (logarithmisch, ca. Halboktav-Abstand, 20 Hz – 20 kHz)
 // ═══════════════════════════════════════════════════════════
 
-export const EQ_FREQUENCIES = [
-  20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160,
-  200, 250, 315, 400, 500, 630, 800, 1000, 1250
+export const EQ_BAND_FREQUENCIES = [
+  20, 30, 45, 63, 90, 135, 200, 300, 450, 630,
+  900, 1350, 2000, 3000, 4500, 6300, 9000, 13500, 20000
 ]
 
 // ═══════════════════════════════════════════════════════════
-// EQ-PRESETS (8 Genre-basierte Kurven)
+// EQ-PRESETS (Genre-basierte Kurven)
 // ═══════════════════════════════════════════════════════════
 
 export const EQ_PRESETS = {
   // Index:     0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18
-  // Freq (Hz): 20   25  31.5  40   50   63   80  100  125  160  200  250  315  400  500  630  800 1000 1250
+  // Freq (Hz): 20   30   45   63   90  135  200  300  450  630  900 1.35k 2k   3k 4.5k 6.3k  9k 13.5k 20k
 
-  'Flat':       [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
-  'Rock':       [ -2,   0,   2,   4,   3,   1,  -1,   0,   1,   2,   3,   4,   3,   2,   1,   0,  -1,  -2,  -3],
-  'Pop':        [  1,   2,   3,   2,   1,   0,  -1,   0,   1,   2,   2,   1,   0,  -1,  -2,  -1,   0,   1,   2],
-  'Jazz':       [  2,   1,   0,  -1,   0,   1,   2,   1,   0,  -1,  -2,  -1,   0,   1,   2,   3,   2,   1,   0],
-  'Classical':  [  3,   2,   1,   0,  -1,  -2,   0,   1,   2,   1,   0,  -1,   0,   1,   2,   3,   2,   1,  -1],
-  'Electronic': [  4,   3,   2,   1,   0,  -1,  -2,   0,   2,   4,   3,   2,   1,   3,   4,   3,   2,   1,   0],
-  'Bass Boost': [  8,   6,   4,   2,   1,   0,  -1,  -2,  -1,   0,   1,   0,  -1,  -2,  -1,   0,   1,   2,   1],
-  'V-Shape':    [  4,   3,   2,   1,   0,  -1,  -2,  -3,  -2,  -1,   0,   1,   2,   3,   4,   3,   2,   1,   0]
+  'Flat':         [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+  'Rock':         [  4,   4,   3,   2,   1,   0,  -1,  -1,  -1,   0,   0,   1,   2,   3,   3,   3,   2,   2,   1],
+  'Pop':          [ -1,   0,   1,   2,   2,   1,   0,   0,   1,   2,   2,   2,   2,   1,   1,   0,  -1,  -1,  -1],
+  'Jazz':         [  3,   3,   2,   1,   0,   0,  -1,  -1,   0,   0,   0,   1,   1,   2,   2,   2,   2,   1,   1],
+  'Classical':    [  3,   3,   2,   1,   0,   0,   0,  -1,  -1,  -1,   0,   0,   1,   2,   2,   3,   3,   3,   2],
+  'Electronic':   [  5,   5,   4,   2,   0,  -1,  -2,  -2,  -1,   0,   1,   1,   2,   2,   3,   4,   4,   3,   2],
+  'Vocal':        [ -3,  -3,  -2,  -1,   0,   0,   1,   1,   2,   2,   2,   3,   3,   2,   2,   1,   0,  -1,  -2],
+  'Bass Boost':   [  8,   7,   6,   4,   2,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+  'Treble Boost': [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   2,   3,   4,   4,   4,   4],
+  'V-Shape':      [  5,   4,   3,   2,   1,   0,  -1,  -2,  -3,  -3,  -2,  -1,   0,   1,   2,   3,   4,   4,   3]
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1956,7 +1954,7 @@ ROCK                          BASS BOOST
  0 ├──██────────██────────    0 ├────██████████████████
    │██            ████████       │
 -12│                          -12│
-   20Hz          1250Hz          20Hz          1250Hz
+   20Hz          20kHz           20Hz          20kHz
 
 
 V-SHAPE                       ELECTRONIC
@@ -1965,7 +1963,7 @@ V-SHAPE                       ELECTRONIC
  0 ├──────██────██────────     0 ├──────████──────────
    │        ████                 │
 -12│                          -12│
-   20Hz          1250Hz          20Hz          1250Hz
+   20Hz          20kHz           20Hz          20kHz
 ```
 
 ---

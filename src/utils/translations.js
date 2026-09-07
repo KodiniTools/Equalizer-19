@@ -20,7 +20,7 @@ export const translations = {
 
     // Hero Cards
     card_eq_title: '19-Band Equalizer',
-    card_eq_desc: 'Präzise Frequenzanpassung mit ISO 1/3-Oktav Bändern',
+    card_eq_desc: 'Präzise Frequenzanpassung mit 19 Bändern von 20 Hz bis 20 kHz',
     card_eq_feature1: 'Lowshelf, Peaking & Highshelf Filter',
     card_eq_feature2: '-12 bis +12 dB pro Band',
     card_eq_feature3: '8 professionelle Genre-Presets',
@@ -103,7 +103,7 @@ export const translations = {
     // Equalizer FAQ
     faq_eq_q1: 'Was bedeuten die 19 Bander?',
     faq_eq_a1:
-      'Die 19 Bander entsprechen dem ISO 1/3-Oktav Standard und decken den Frequenzbereich von 20 Hz bis 1250 Hz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik prazise zu formen.',
+      'Die 19 Bander sind logarithmisch in etwa Halboktav-Schritten verteilt und decken den gesamten Horbereich von 20 Hz bis 20 kHz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik prazise zu formen.',
     faq_eq_q2: 'Was bewirken die verschiedenen Presets?',
     faq_eq_a2:
       "Die Presets sind vorkonfigurierte EQ-Kurven fur verschiedene Musikgenres. 'Rock' betont Mitten und Hohen, 'Bass Boost' verstarkt tiefe Frequenzen, 'V-Shape' hebt Basse und Hohen an wahrend Mitten abgesenkt werden, und weitere.",
@@ -298,7 +298,7 @@ export const translations = {
 
     // Hero Cards
     card_eq_title: '19-Band Equalizer',
-    card_eq_desc: 'Precise frequency adjustment with ISO 1/3-octave bands',
+    card_eq_desc: 'Precise frequency adjustment with 19 bands from 20 Hz to 20 kHz',
     card_eq_feature1: 'Lowshelf, Peaking & Highshelf filters',
     card_eq_feature2: '-12 to +12 dB per band',
     card_eq_feature3: '8 professional genre presets',
@@ -379,7 +379,7 @@ export const translations = {
     // Equalizer FAQ
     faq_eq_q1: 'What do the 19 bands mean?',
     faq_eq_a1:
-      'The 19 bands correspond to the ISO 1/3-octave standard and cover the frequency range from 20 Hz to 1250 Hz. Each band can be adjusted from -12 to +12 dB to precisely shape the sound character.',
+      'The 19 bands are spaced logarithmically in roughly half-octave steps and cover the full audible range from 20 Hz to 20 kHz. Each band can be adjusted from -12 to +12 dB to precisely shape the sound character.',
     faq_eq_q2: 'What do the different presets do?',
     faq_eq_a2:
       "Presets are pre-configured EQ curves for different music genres. 'Rock' emphasizes mids and highs, 'Bass Boost' amplifies low frequencies, 'V-Shape' raises bass and treble while lowering mids, and more.",
