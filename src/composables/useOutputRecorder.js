@@ -1,9 +1,12 @@
 import { ref, computed } from 'vue'
 import { encodeWavFromChunks, WAV_BIT_DEPTHS, DEFAULT_WAV_BIT_DEPTH } from '../utils/wavEncoder.js'
+import { loadWorkletModule } from '../utils/workletLoader.js'
 
 const PCM_WORKLET_URL = new URL('../worklets/pcm-recorder.worklet.js', import.meta.url)
 const BIT_DEPTH_STORAGE_KEY = 'eq19_wav_bit_depth'
 const SCRIPT_PROCESSOR_BUFFER = 4096
+// Max. wait for the worklet module before recording falls back to ScriptProcessor
+const WORKLET_LOAD_TIMEOUT_MS = 2000
 
 /**
  * Output Recorder - Records processed audio from AudioEngine
@@ -70,19 +73,6 @@ export function useOutputRecorder() {
   // ---------------------------------------------------------------------------
   // WAV: PCM capture
   // ---------------------------------------------------------------------------
-  async function ensureWorklet(audioContext) {
-    if (!audioContext.audioWorklet) return false
-    if (audioContext.__eq19PcmWorkletLoaded) return true
-    try {
-      await audioContext.audioWorklet.addModule(PCM_WORKLET_URL)
-      audioContext.__eq19PcmWorkletLoaded = true
-      return true
-    } catch (error) {
-      console.warn('AudioWorklet unavailable, falling back to ScriptProcessor:', error)
-      return false
-    }
-  }
-
   async function startPcmCapture(audioContext, sourceNode) {
     pcmSampleRate = audioContext.sampleRate
     const channelCount = Math.max(1, Math.min(2, audioContext.destination.channelCount || 2))
@@ -92,7 +82,7 @@ export function useOutputRecorder() {
     silent.gain.value = 0
     silent.connect(audioContext.destination)
 
-    if (await ensureWorklet(audioContext)) {
+    if (await loadWorkletModule(audioContext, PCM_WORKLET_URL, WORKLET_LOAD_TIMEOUT_MS)) {
       const capture = new AudioWorkletNode(audioContext, 'pcm-recorder', {
         numberOfInputs: 1,
         numberOfOutputs: 1,

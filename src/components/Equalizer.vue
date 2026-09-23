@@ -107,10 +107,9 @@
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
   import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
+  import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
 
   const { t } = inject('i18n')
-
-  const STORAGE_KEY = 'eq19_custom_presets'
 
   const audioEngine = inject('audioEngine')
   const notify = inject('notify', () => {})
@@ -121,38 +120,20 @@
   const isEqBypassed = ref(false)
 
   // Custom presets
-  const customPresets = ref([])
+  const { customPresets, loadCustomPresets, findPreset, addPreset, removePreset } =
+    useCustomPresets()
   const showSaveForm = ref(false)
   const newPresetName = ref('')
   const presetNameInput = ref(null)
 
-  const isCustomSelected = computed(
-    () => selectedPreset.value && selectedPreset.value.startsWith('__custom__')
-  )
-
-  // Load custom presets from localStorage
-  function loadCustomPresets() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) customPresets.value = JSON.parse(raw)
-    } catch (_e) {
-      customPresets.value = []
-    }
-  }
-
-  function persistCustomPresets() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customPresets.value))
-  }
+  const isCustomSelected = computed(() => isCustomPresetId(selectedPreset.value))
 
   function confirmSavePreset() {
     const name = newPresetName.value.trim()
     if (!name) return
 
     const gains = localBands.value.map((b) => b.gain)
-    const id = `__custom__${Date.now()}`
-    customPresets.value.push({ id, name, gains })
-    persistCustomPresets()
-    selectedPreset.value = id
+    selectedPreset.value = addPreset(name, gains).id
     showSaveForm.value = false
     newPresetName.value = ''
     notify(t.value.eq_preset_saved.replace('{name}', name), 'success')
@@ -164,10 +145,8 @@
   }
 
   function deleteSelectedCustomPreset() {
-    const preset = customPresets.value.find((p) => p.id === selectedPreset.value)
+    const preset = removePreset(selectedPreset.value)
     if (!preset) return
-    customPresets.value = customPresets.value.filter((p) => p.id !== selectedPreset.value)
-    persistCustomPresets()
     selectedPreset.value = ''
     notify(t.value.eq_preset_deleted.replace('{name}', preset.name), 'info')
   }
@@ -212,7 +191,7 @@
     if (!selectedPreset.value) return
 
     if (isCustomSelected.value) {
-      const preset = customPresets.value.find((p) => p.id === selectedPreset.value)
+      const preset = findPreset(selectedPreset.value)
       if (preset) {
         applyGains(preset.gains)
         notify(t.value.eq_preset_applied.replace('{name}', preset.name), 'success')
