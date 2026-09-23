@@ -11,7 +11,7 @@ export const translations = {
     lp_eyebrow: 'Kostenlos · Im Browser · Ohne Installation',
     lp_title: 'Professioneller Klang, direkt im Browser',
     lp_subtitle:
-      '19-Band-Equalizer, Kompressor und verlustfreie Aufnahme – die Verarbeitung läuft vollständig auf Ihrem Gerät. Keine Uploads, keine Anmeldung.',
+      '19-Band-Equalizer, Kompressor und verlustfreie Aufnahme – die Verarbeitung läuft vollständig auf deinem Gerät. Keine Uploads, keine Anmeldung.',
     lp_cta_start: 'App starten',
     lp_cta_learn: 'Funktionen ansehen',
     lp_visual_label: 'Beispiel-Kurve: Preset „V-Shape“',
@@ -22,9 +22,9 @@ export const translations = {
     lp_fact_uploads: 'Uploads – alles bleibt lokal',
     lp_modules_title: 'Drei Werkzeuge, ein Signalweg',
     lp_modules_subtitle:
-      'Equalizer, Kompressor und Aufnahme arbeiten in Echtzeit zusammen – Sie hören jede Änderung sofort.',
+      'Equalizer, Kompressor und Aufnahme arbeiten in Echtzeit zusammen – du hörst jede Änderung sofort.',
     lp_mod_eq_title: 'Equalizer',
-    lp_mod_eq_desc: 'Formen Sie den Klang mit 19 fein abgestuften Bändern.',
+    lp_mod_eq_desc: 'Forme den Klang mit 19 fein abgestuften Bändern.',
     lp_mod_eq_1: '±12 dB pro Band',
     lp_mod_eq_2: '10 Presets und eigene Presets',
     lp_mod_eq_3: 'Bypass für den direkten A/B-Vergleich',
@@ -48,7 +48,7 @@ export const translations = {
     lp_details_title: 'Durchdacht bis ins Detail',
     lp_det_privacy_title: 'Privat',
     lp_det_privacy_desc:
-      'Ihre Dateien verlassen nie das Gerät – es gibt keinen Server, der sie verarbeitet.',
+      'Deine Dateien verlassen nie das Gerät – es gibt keinen Server, der sie verarbeitet.',
     lp_det_realtime_title: 'Echtzeit',
     lp_det_realtime_desc:
       'Web Audio API und AudioWorklet verarbeiten den Klang direkt im Browser, ohne Plugins.',
@@ -62,11 +62,11 @@ export const translations = {
     lp_det_devices_title: 'Überall nutzbar',
     lp_det_devices_desc: 'Für Desktop, Tablet und Smartphone – mit hellem und dunklem Design.',
     lp_final_title: 'Bereit zum Loslegen?',
-    lp_final_desc: 'Starten Sie jetzt – kostenlos und ohne Anmeldung.',
+    lp_final_desc: 'Starte jetzt – kostenlos und ohne Anmeldung.',
 
     // FAQ Page
     faq_title: 'Häufig gestellte Fragen',
-    faq_subtitle: 'Alles, was Sie über Equalizer 19 wissen müssen',
+    faq_subtitle: 'Alles, was du über Equalizer 19 wissen musst',
     faq_eyebrow: 'Hilfe & Antworten',
     faq_nav_label: 'Themen',
     faq_cat_general: 'Allgemeine Fragen',
@@ -84,7 +84,7 @@ export const translations = {
       'Ja, Equalizer 19 ist vollkommen kostenlos nutzbar. Es gibt keine versteckten Kosten, keine Registrierung erforderlich und keine Werbung.',
     faq_q3: 'Werden meine Audiodateien auf einen Server hochgeladen?',
     faq_a3:
-      'Nein! Alle Audio-Verarbeitung erfolgt vollständig lokal in Ihrem Browser. Keine Daten werden an externe Server gesendet. Ihre Privatsphäre ist garantiert.',
+      'Nein! Die gesamte Audio-Verarbeitung erfolgt lokal in deinem Browser. Es werden keine Daten an externe Server gesendet – deine Privatsphäre bleibt geschützt.',
 
     // Equalizer FAQ
     faq_eq_q1: 'Was bedeuten die 19 Bänder?',
@@ -92,10 +92,10 @@ export const translations = {
       'Die 19 Bänder sind logarithmisch in etwa Halboktav-Schritten verteilt und decken den gesamten Hörbereich von 20 Hz bis 20 kHz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik präzise zu formen.',
     faq_eq_q2: 'Was bewirken die verschiedenen Presets?',
     faq_eq_a2:
-      "Die Presets sind vorkonfigurierte EQ-Kurven für verschiedene Musikgenres. 'Rock' betont Mitten und Höhen, 'Bass Boost' verstärkt tiefe Frequenzen, 'V-Shape' hebt Bässe und Höhen an, während Mitten abgesenkt werden. Eigene Einstellungen können Sie über das Speichern-Symbol als Preset sichern; sie bleiben im Browser erhalten.",
+      "Die Presets sind vorkonfigurierte EQ-Kurven für verschiedene Musikgenres. 'Rock' betont Mitten und Höhen, 'Bass Boost' verstärkt tiefe Frequenzen, 'V-Shape' hebt Bässe und Höhen an, während Mitten abgesenkt werden. Eigene Einstellungen kannst du über das Speichern-Symbol als Preset sichern; sie bleiben im Browser erhalten.",
     faq_eq_q3: 'Was macht der Bypass-Button?',
     faq_eq_a3:
-      'Der Bypass-Button umgeht den Equalizer temporär, sodass Sie den Unterschied zwischen bearbeitetem und unbearbeitetem Audio hören können. Das ist nützlich um Ihre Einstellungen zu überprüfen.',
+      'Der Bypass-Button umgeht den Equalizer vorübergehend, sodass du den Unterschied zwischen bearbeitetem und unbearbeitetem Audio hören kannst. Das ist nützlich, um deine Einstellungen zu überprüfen.',
 
     // Compressor FAQ
     faq_comp_q1: 'Wofür brauche ich einen Kompressor?',
@@ -106,21 +106,21 @@ export const translations = {
       'Threshold bestimmt, ab welchem Lautstärke-Pegel die Kompression einsetzt. Ratio gibt an, wie stark komprimiert wird - bei 4:1 werden 4 dB über dem Threshold zu 1 dB am Ausgang.',
     faq_comp_q3: 'Welches Preset sollte ich verwenden?',
     faq_comp_a3:
-      "Das hängt von Ihrem Material ab: 'Gentle' für subtile Kompression, 'Vocal' für Sprachaufnahmen, 'Drums' für punchigen Sound, 'Master' für sanfte Gesamtkompression, oder 'Limiter' um Übersteuerung zu verhindern.",
+      "Das hängt von deinem Material ab: 'Gentle' für subtile Kompression, 'Vocal' für Sprachaufnahmen, 'Drums' für punchigen Sound, 'Master' für sanfte Gesamtkompression oder 'Limiter', um Übersteuerung zu verhindern.",
 
     // Recording FAQ
     faq_rec_q1: 'In welchen Formaten kann ich aufnehmen?',
     faq_rec_a1:
-      'Sie haben die Wahl: WAV ist verlustfrei und wahlweise mit 16 Bit (CD-Qualität), 24 Bit (Studio-Qualität) oder 32 Bit Float (ohne Clipping) verfügbar. WebM mit Opus-Codec erzeugt deutlich kleinere Dateien bei sehr guter Qualität. Für MP3 und weitere Formate können Sie unseren Audio-Konverter nutzen.',
+      'Du hast die Wahl: WAV ist verlustfrei und wahlweise mit 16 Bit (CD-Qualität), 24 Bit (Studio-Qualität) oder 32 Bit Float (ohne Clipping) verfügbar. WebM mit Opus-Codec erzeugt deutlich kleinere Dateien bei sehr guter Qualität. Für MP3 und weitere Formate kannst du unseren Audio-Konverter nutzen.',
     faq_rec_q2: 'Werden alle meine EQ-Einstellungen mit aufgenommen?',
     faq_rec_a2:
-      'Ja! Die Aufnahme erfolgt nach der kompletten Audio-Verarbeitungskette - alle Ihre EQ-Anpassungen und Kompressor-Einstellungen werden im aufgenommenen Audio enthalten sein.',
+      'Ja! Die Aufnahme erfolgt am Ende der kompletten Verarbeitungskette – alle deine EQ-Anpassungen und Kompressor-Einstellungen sind im aufgenommenen Audio enthalten.',
     faq_rec_q3: 'Warum höre ich nichts während der Aufnahme?',
     faq_rec_a3:
-      'Stellen Sie sicher, dass eine Audiodatei geladen und abgespielt wird. Die Aufnahme nimmt den Audio-Output auf - wenn nichts abgespielt wird, wird auch nichts aufgenommen.',
+      'Stell sicher, dass eine Audiodatei geladen ist und abgespielt wird. Die Aufnahme nimmt den Audio-Ausgang auf – wenn nichts abgespielt wird, wird auch nichts aufgenommen.',
     faq_rec_q4: 'Wo wird meine Aufnahme gespeichert?',
     faq_rec_a4:
-      'Beim Speichern vergeben Sie einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählen Sie zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner Ihres Browsers.',
+      'Beim Speichern vergibst du einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählst du zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner deines Browsers.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -135,10 +135,10 @@ export const translations = {
 
     // FAQ CTA
     faq_cta_title: 'Noch Fragen?',
-    faq_cta_desc: 'Probieren Sie Equalizer 19 einfach selbst aus – kostenlos und ohne Anmeldung.',
+    faq_cta_desc: 'Probier Equalizer 19 einfach selbst aus – kostenlos und ohne Anmeldung.',
 
     // App UI translations
-    promo_subtitle: 'Erleben Sie professionelle Audiobearbeitung direkt in Ihrem Browser',
+    promo_subtitle: 'Erlebe professionelle Audiobearbeitung direkt in deinem Browser',
     main_title: 'EQUALIZER 19 – Vue 3 Edition',
     rec: 'Aufn.',
     stop: 'Stop',
@@ -207,9 +207,9 @@ export const translations = {
     dl_title: 'Aufnahme herunterladen',
     dl_filename_label: 'Dateiname',
     dl_name_placeholder: 'audio-export',
-    dl_folder_hint_supported: 'Beim Speichern können Sie den Zielordner auswählen.',
+    dl_folder_hint_supported: 'Beim Speichern kannst du den Zielordner auswählen.',
     dl_folder_hint_unsupported:
-      'Die Datei wird im Standard-Download-Ordner Ihres Browsers gespeichert.',
+      'Die Datei wird im Standard-Download-Ordner deines Browsers gespeichert.',
     dl_save: 'Speichern',
     dl_cancel: 'Abbrechen',
     dl_success: 'Datei gespeichert',

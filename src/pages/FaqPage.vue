@@ -3,6 +3,9 @@
     <!-- Header -->
     <header class="fq-hero">
       <div class="fq-wrap">
+        <router-link to="/" class="page-link page-link-strong fq-back">
+          <span aria-hidden="true">←</span> {{ t.app_back_home }}
+        </router-link>
         <p class="fq-eyebrow">{{ t.faq_eyebrow }}</p>
         <h1 class="fq-title">{{ t.faq_title }}</h1>
         <p class="fq-lead">{{ t.faq_subtitle }}</p>
@@ -88,6 +91,10 @@
     background: var(--gradient-primary);
     padding: 80px 0 56px;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  .fq-back {
+    margin-bottom: 28px;
   }
 
   .fq-eyebrow {
