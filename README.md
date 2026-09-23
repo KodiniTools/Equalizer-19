@@ -34,7 +34,10 @@ npm install
 npm run dev
 
 # Production Build erstellen
-npm build
+npm run build
+
+# Unit-Tests (Node-Testrunner, keine Zusatzpakete)
+npm test
 
 # Preview des Production Builds
 npm run preview
@@ -60,12 +63,16 @@ equalizer19-vue/
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI
 │   │   ├── Notification.vue    # Toast-Notifications
+│   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
-│   │   ├── StickyPlayerBar.vue # Player, Aufnahme & Download
+│   │   ├── RecorderControls.vue # Aufnahme & Download (Teil der Player-Leiste)
+│   │   ├── StickyPlayerBar.vue # Player-Leiste: Upload, Fortschritt, Layout
+│   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
 │   │   └── Visualization.vue   # Spektrum-Analyzer
 │   ├── composables/
 │   │   ├── useAudioEngine.js   # Audio-Engine-Management
 │   │   ├── useAudioPlayer.js   # Player-Logik
+│   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useI18n.js          # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
@@ -74,10 +81,13 @@ equalizer19-vue/
 │   ├── router/                 # Vue Router
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   └── utils/
+│       ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
+│       ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js          # EQ/Comp Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
 │       ├── translations.js     # Übersetzungen
 │       └── wavEncoder.js       # WAV-Export (16/24/32 Bit)
+└── tests/                      # Unit-Tests (npm test)
 ```
 
 ## Verwendung
