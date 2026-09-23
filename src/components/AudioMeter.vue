@@ -49,11 +49,10 @@
 </template>
 
 <script setup>
-  import { ref, reactive, inject, onMounted, onUnmounted } from 'vue'
+  import { reactive, inject, onMounted, onUnmounted } from 'vue'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
-  const audioPlayer = inject('audioPlayer')
 
   const DB_MIN = -60
   const DB_MAX = 0

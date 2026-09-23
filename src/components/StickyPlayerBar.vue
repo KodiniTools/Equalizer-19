@@ -294,6 +294,8 @@
 
   const emit = defineEmits(['files-selected'])
 
+  const AUDIO_EXT_RE = /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)$/i
+
   const { t, currentLanguage } = inject('i18n')
   const audioPlayer = inject('audioPlayer')
   const audioEngine = inject('audioEngine')
@@ -382,20 +384,21 @@
 
   function getAudioFiles(fileList) {
     return Array.from(fileList).filter(
-      (f) => f.type.startsWith('audio/') || /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)$/i.test(f.name)
+      (f) => f.type.startsWith('audio/') || AUDIO_EXT_RE.test(f.name)
     )
+  }
+
+  // Add files to the playlist, start playback and announce the new tracks
+  function addAndPlay(files) {
+    const tracks = addFiles(files)
+    emit('files-selected', files)
+    if (tracks.length > 0) setTimeout(() => play(), 100)
+    notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
   }
 
   async function handleFileSelect(event) {
     const files = getAudioFiles(event.target.files || [])
-    if (files.length > 0) {
-      const tracks = addFiles(files)
-      emit('files-selected', files)
-      if (tracks.length > 0) {
-        setTimeout(() => play(), 100)
-      }
-      notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
-    }
+    if (files.length > 0) addAndPlay(files)
     event.target.value = ''
   }
 
@@ -407,20 +410,12 @@
     if (files.length === 0 && event.dataTransfer.items) {
       const extracted = await extractFilesFromItems(event.dataTransfer.items)
       if (extracted.length > 0) {
-        const tracks = addFiles(extracted)
-        emit('files-selected', extracted)
-        if (tracks.length > 0) setTimeout(() => play(), 100)
-        notify(t.value.player_tracks_added.replace('{count}', extracted.length), 'success')
+        addAndPlay(extracted)
         return
       }
     }
 
-    if (files.length > 0) {
-      const tracks = addFiles(files)
-      emit('files-selected', files)
-      if (tracks.length > 0) setTimeout(() => play(), 100)
-      notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
-    }
+    if (files.length > 0) addAndPlay(files)
   }
 
   async function extractFilesFromItems(items) {
@@ -435,7 +430,7 @@
     }
 
     await Promise.all(promises)
-    return files.filter((f) => /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)$/i.test(f.name))
+    return files.filter((f) => AUDIO_EXT_RE.test(f.name))
   }
 
   function traverseEntry(entry, files) {

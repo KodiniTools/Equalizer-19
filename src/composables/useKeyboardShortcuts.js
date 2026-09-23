@@ -13,7 +13,6 @@ export function useKeyboardShortcuts(audioPlayer) {
     if (isInputFocused()) return
 
     const {
-      isPlaying,
       hasTrack,
       hasPlaylist,
       canPlayNext,

@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-  import { ref, provide, onMounted } from 'vue'
+  import { provide, onMounted } from 'vue'
   import { useI18n } from './composables/useI18n'
   import { useTheme } from './composables/useTheme'
   import { useAudioEngine } from './composables/useAudioEngine'

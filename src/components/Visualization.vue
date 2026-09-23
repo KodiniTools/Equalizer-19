@@ -34,7 +34,7 @@
 
   function drawVisualization() {
     if (!canvasRef.value || !audioEngine) {
-      requestAnimationFrame(drawVisualization)
+      animationId = requestAnimationFrame(drawVisualization)
       return
     }
 
@@ -47,13 +47,13 @@
     try {
       const nodes = audioEngine.getAudioNodes()
       if (!nodes || !nodes.analyserNode) {
-        requestAnimationFrame(drawVisualization)
+        animationId = requestAnimationFrame(drawVisualization)
         return
       }
 
       dataArray = audioEngine.getFrequencyData()
     } catch (e) {
-      requestAnimationFrame(drawVisualization)
+      animationId = requestAnimationFrame(drawVisualization)
       return
     }
 
@@ -67,7 +67,7 @@
       ctx.textAlign = 'center'
       ctx.fillText(t.value.player_no_file, canvas.width / 2, canvas.height / 2)
 
-      requestAnimationFrame(drawVisualization)
+      animationId = requestAnimationFrame(drawVisualization)
       return
     }
 

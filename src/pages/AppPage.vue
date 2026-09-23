@@ -69,10 +69,9 @@
   const route = useRoute()
   const router = useRouter()
 
-  const { t, currentLanguage } = inject('i18n')
+  const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
   const audioPlayer = inject('audioPlayer')
-  const notify = inject('notify')
 
   const notificationRef = ref(null)
   const sharedBanner = ref(null)
@@ -95,6 +94,18 @@
     }
   }
 
+  const BANNER_HIDE_MS = 5000
+
+  // Show the shared-files banner; autoHide removes it after BANNER_HIDE_MS
+  function showBanner(type, message, autoHide = true) {
+    sharedBanner.value = { type, message }
+    if (autoHide) {
+      setTimeout(() => {
+        sharedBanner.value = null
+      }, BANNER_HIDE_MS)
+    }
+  }
+
   async function loadSharedFiles() {
     if (sharedFilesHandled) return
     sharedFilesHandled = true
@@ -103,20 +114,11 @@
       const records = await getSharedFiles()
 
       if (!records?.length) {
-        sharedBanner.value = {
-          type: 'warning',
-          message: t.value.sharedFilesEmpty,
-        }
-        setTimeout(() => {
-          sharedBanner.value = null
-        }, 5000)
+        showBanner('warning', t.value.sharedFilesEmpty)
         return
       }
 
-      sharedBanner.value = {
-        type: 'info',
-        message: t.value.sharedFilesLoading.replace('{count}', records.length),
-      }
+      showBanner('info', t.value.sharedFilesLoading.replace('{count}', records.length), false)
 
       const { processed } = await audioPlayer.handleSharedFiles(records)
 
@@ -128,25 +130,13 @@
         await clearSharedFiles()
         setTimeout(() => {
           sharedBanner.value = null
-        }, 5000)
+        }, BANNER_HIDE_MS)
       } else {
-        sharedBanner.value = {
-          type: 'warning',
-          message: t.value.sharedFilesEmpty,
-        }
-        setTimeout(() => {
-          sharedBanner.value = null
-        }, 5000)
+        showBanner('warning', t.value.sharedFilesEmpty)
       }
     } catch (err) {
       console.error('Error loading shared files:', err)
-      sharedBanner.value = {
-        type: 'error',
-        message: t.value.sharedFilesError,
-      }
-      setTimeout(() => {
-        sharedBanner.value = null
-      }, 5000)
+      showBanner('error', t.value.sharedFilesError)
     }
   }
 

@@ -54,23 +54,30 @@ equalizer19-vue/
 │   │   └── style.css           # Globale Styles
 │   ├── components/
 │   │   ├── AudioConverter.vue  # Audio-Konverter Promo
+│   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
+│   │   ├── CompressorPresets.vue # Kompressor-Presets
+│   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI
-│   │   ├── LanguageThemeSwitcher.vue # Sprache/Theme
 │   │   ├── Notification.vue    # Toast-Notifications
-│   │   ├── PlayerControls.vue  # Player-Steuerung
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
-│   │   ├── ProFeatures.vue     # Pro-Features
-│   │   ├── PromoSection.vue    # Werbe-Sektion
+│   │   ├── StickyPlayerBar.vue # Player, Aufnahme & Download
 │   │   └── Visualization.vue   # Spektrum-Analyzer
 │   ├── composables/
 │   │   ├── useAudioEngine.js   # Audio-Engine-Management
 │   │   ├── useAudioPlayer.js   # Player-Logik
 │   │   ├── useI18n.js          # Internationalisierung
+│   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
+│   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
 │   │   └── useTheme.js         # Theme-Management
+│   ├── pages/                  # Landing, App, FAQ
+│   ├── router/                 # Vue Router
+│   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   └── utils/
 │       ├── presets.js          # EQ/Comp Presets
-│       └── translations.js     # Übersetzungen
+│       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
+│       ├── translations.js     # Übersetzungen
+│       └── wavEncoder.js       # WAV-Export (16/24/32 Bit)
 ```
 
 ## Verwendung

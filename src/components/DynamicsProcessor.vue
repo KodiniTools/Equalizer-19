@@ -115,15 +115,16 @@
 
 <script setup>
   import { ref, inject, onMounted, watch } from 'vue'
+  import { DEFAULT_DYNAMICS } from '../utils/presets.js'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
 
-  const threshold = ref(-30)
-  const ratio = ref(4)
-  const knee = ref(20)
-  const attack = ref(0.003)
-  const release = ref(0.25)
+  const threshold = ref(DEFAULT_DYNAMICS.threshold)
+  const ratio = ref(DEFAULT_DYNAMICS.ratio)
+  const knee = ref(DEFAULT_DYNAMICS.knee)
+  const attack = ref(DEFAULT_DYNAMICS.attack)
+  const release = ref(DEFAULT_DYNAMICS.release)
   const dynamicsEnabled = ref(true)
 
   if (audioEngine && audioEngine.dynamics) {
@@ -169,11 +170,11 @@
   }
 
   function resetDynamics() {
-    threshold.value = -30
-    ratio.value = 4
-    knee.value = 20
-    attack.value = 0.003
-    release.value = 0.25
+    threshold.value = DEFAULT_DYNAMICS.threshold
+    ratio.value = DEFAULT_DYNAMICS.ratio
+    knee.value = DEFAULT_DYNAMICS.knee
+    attack.value = DEFAULT_DYNAMICS.attack
+    release.value = DEFAULT_DYNAMICS.release
     applySettings()
   }
 
