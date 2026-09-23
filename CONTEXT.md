@@ -65,21 +65,31 @@ Equalizer-19/
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
 │   │   ├── Equalizer.vue              # 19-Band EQ-Interface
 │   │   ├── Notification.vue           # Toast-Benachrichtigungen
+│   │   ├── PlayerTransport.vue        # Wiedergabe-Buttons (in StickyPlayerBar)
 │   │   ├── Playlist.vue               # Track-Playlist
-│   │   ├── StickyPlayerBar.vue        # Player, Aufnahme & Download
+│   │   ├── RecorderControls.vue       # Aufnahme & Download (in StickyPlayerBar)
+│   │   ├── StickyPlayerBar.vue        # Player-Leiste: Upload, Fortschritt, Layout
+│   │   ├── VolumeControl.vue          # Lautstärke (in StickyPlayerBar)
 │   │   └── Visualization.vue          # Spektrum-Analyzer
 │   │
 │   ├── composables/        # Vue Composition API Logik
 │   │   ├── useAudioEngine.js          # Audio-Verarbeitungskette
 │   │   ├── useAudioPlayer.js          # Playback-Steuerung
+│   │   ├── useFileDrop.js             # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useI18n.js                 # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js    # Tastaturkürzel
 │   │   ├── useOutputRecorder.js       # Output-Stream-Recording
 │   │   └── useTheme.js                # Dark/Light Mode
 │   │
 │   └── utils/              # Hilfsfunktionen & Konstanten
-│       ├── presets.js      # EQ- und Kompressor-Presets
-│       └── translations.js # DE/EN Übersetzungen
+│       ├── audioBlob.js            # Blob-Prüfung für übergebene Dateien
+│       ├── playbackOrder.js        # Playlist-Navigation (reine Funktionen)
+│       ├── presets.js              # EQ- und Kompressor-Presets
+│       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
+│       ├── translations.js         # DE/EN Übersetzungen
+│       └── wavEncoder.js           # WAV-Export (16/24/32 Bit)
+│
+├── tests/                  # Unit-Tests (npm test, node:test)
 │
 ├── node_modules/           # Dependencies
 │

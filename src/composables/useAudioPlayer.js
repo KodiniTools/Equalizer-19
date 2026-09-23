@@ -1,4 +1,13 @@
 import { ref, computed, watch } from 'vue'
+import {
+  getNextIndex as nextIndexFor,
+  getPrevIndex as prevIndexFor,
+  nextRepeatMode,
+  moveItem,
+  indexAfterMove,
+  formatTime,
+} from '../utils/playbackOrder.js'
+import { analyzeBlob, recordToBlob } from '../utils/audioBlob.js'
 
 export function useAudioPlayer() {
   // State
@@ -246,18 +255,8 @@ export function useAudioPlayer() {
 
   function reorderTracks(fromIndex, toIndex) {
     if (fromIndex === toIndex) return
-    const items = [...playlist.value]
-    const [moved] = items.splice(fromIndex, 1)
-    items.splice(toIndex, 0, moved)
-    playlist.value = items
-
-    if (currentTrackIndex.value === fromIndex) {
-      currentTrackIndex.value = toIndex
-    } else if (fromIndex < currentTrackIndex.value && toIndex >= currentTrackIndex.value) {
-      currentTrackIndex.value--
-    } else if (fromIndex > currentTrackIndex.value && toIndex <= currentTrackIndex.value) {
-      currentTrackIndex.value++
-    }
+    playlist.value = moveItem(playlist.value, fromIndex, toIndex)
+    currentTrackIndex.value = indexAfterMove(currentTrackIndex.value, fromIndex, toIndex)
   }
 
   function clearPlaylist() {
@@ -370,35 +369,18 @@ export function useAudioPlayer() {
     }
   }
 
-  // Resolve the index of the next track based on shuffle / repeat mode
+  // Resolve the next / previous track index for the current playlist state
   function getNextIndex() {
-    const len = playlist.value.length
-    if (len === 0) return -1
-
-    if (isShuffle.value) {
-      if (len === 1) return repeatMode.value === 'off' ? -1 : 0
-      let idx
-      do {
-        idx = Math.floor(Math.random() * len)
-      } while (idx === currentTrackIndex.value)
-      return idx
-    }
-
-    const next = currentTrackIndex.value + 1
-    if (next < len) return next
-    if (repeatMode.value === 'all') return 0
-    return -1
+    return nextIndexFor(
+      playlist.value.length,
+      currentTrackIndex.value,
+      isShuffle.value,
+      repeatMode.value
+    )
   }
 
-  // Resolve the index of the previous track (sequential / repeat-all)
   function getPrevIndex() {
-    const len = playlist.value.length
-    if (len === 0) return -1
-
-    const prev = currentTrackIndex.value - 1
-    if (prev >= 0) return prev
-    if (repeatMode.value === 'all') return len - 1
-    return -1
+    return prevIndexFor(playlist.value.length, currentTrackIndex.value, repeatMode.value)
   }
 
   async function playNext() {
@@ -432,9 +414,7 @@ export function useAudioPlayer() {
   }
 
   function cycleRepeat() {
-    const order = ['off', 'all', 'one']
-    const idx = order.indexOf(repeatMode.value)
-    repeatMode.value = order[(idx + 1) % order.length]
+    repeatMode.value = nextRepeatMode(repeatMode.value)
     return repeatMode.value
   }
 
@@ -468,42 +448,12 @@ export function useAudioPlayer() {
     isMuted.value = !isMuted.value
   }
 
-  // Utility
-  function formatTime(seconds) {
-    if (!isFinite(seconds) || isNaN(seconds)) {
-      return '0:00'
-    }
-
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
-
-  // Analyze a Blob (instead of File) via Web Audio API
-  async function analyzeBlob(blob, name) {
-    const arrayBuffer = await blob.arrayBuffer()
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-    audioContext.close()
-
-    return {
-      name: name,
-      duration: audioBuffer.duration,
-      sampleRate: audioBuffer.sampleRate,
-      numberOfChannels: audioBuffer.numberOfChannels,
-      length: audioBuffer.length,
-    }
-  }
-
   // Handle shared files from IndexedDB (Audio Konverter handoff)
   async function handleSharedFiles(sharedRecords) {
     let processed = 0
 
     for (const record of sharedRecords) {
-      const blob =
-        record.blob instanceof Blob
-          ? record.blob
-          : new Blob([record.blob], { type: record.mimeType || 'audio/wav' })
+      const blob = recordToBlob(record)
 
       if (blob.size === 0) continue
 
