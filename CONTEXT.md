@@ -58,7 +58,7 @@ Equalizer-19/
 │   │   └── style.css       # Globale Styles (~20KB)
 │   │
 │   ├── components/         # Vue-Komponenten
-│   │   ├── AudioConverter.vue         # Audio-Konverter Promo
+│   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
 │   │   ├── BasePanel.vue              # Karten-Rahmen der Sidebars (Kopfzeile, Aktionen, Footer)
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Dropdown (in DynamicsProcessor)
