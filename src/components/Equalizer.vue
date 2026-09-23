@@ -280,14 +280,15 @@
   }
 
   .toggle-btn:hover {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: var(--accent-primary, #00d9ff);
+    color: var(--text-primary, #fff);
   }
 
+  /* Same look as the dynamics on/off switch in the sidebar */
   .toggle-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: transparent;
-    color: white;
+    background: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary, #00d9ff);
+    color: var(--on-accent, #000);
   }
 
   .preset-select {
@@ -305,7 +306,7 @@
 
   .preset-select:hover,
   .preset-select:focus {
-    border-color: #667eea;
+    border-color: var(--accent-primary, #00d9ff);
     outline: none;
   }
 
@@ -331,9 +332,9 @@
   }
 
   .save-btn:hover {
-    background: #667eea;
+    background: var(--accent-primary, #00d9ff);
     border-color: transparent;
-    color: white;
+    color: var(--on-accent, #000);
   }
 
   .save-confirm-btn:not(:disabled):hover {
@@ -355,8 +356,8 @@
   }
 
   .reset-btn:hover {
-    background: #667eea;
-    color: white;
+    background: var(--accent-primary, #00d9ff);
+    color: var(--on-accent, #000);
     border-color: transparent;
   }
 
@@ -377,7 +378,7 @@
   .preset-name-input {
     flex: 1;
     padding: 5px 10px;
-    border: 1px solid #667eea;
+    border: 1px solid var(--accent-primary, #00d9ff);
     border-radius: 6px;
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-primary, #fff);
