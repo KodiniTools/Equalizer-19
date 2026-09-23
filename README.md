@@ -79,7 +79,7 @@ equalizer19-vue/
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
 │   │   └── useTheme.js         # Theme-Management
-│   ├── pages/                  # Landing, App, FAQ
+│   ├── pages/                  # Landing (ohne Icon-Font, Kennzahlen aus presets.js), App, FAQ
 │   ├── router/                 # Vue Router
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   └── utils/

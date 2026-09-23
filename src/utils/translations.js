@@ -5,69 +5,62 @@ export const translations = {
     language: 'Sprache',
     theme: 'Design',
 
-    // Hero Section
-    hero_title: 'Professionelle Audio-Verarbeitung im Browser',
-    hero_subtitle:
-      'Entdecken Sie die Kraft des 19-Band Equalizers und Dynamics Processors - alles direkt in Ihrem Browser, ohne Installation.',
-    hero_cta_start: 'Jetzt starten',
-    hero_cta_learn: 'Mehr erfahren',
-
-    // Hero Cards
-    card_eq_title: '19-Band Equalizer',
-    card_eq_desc: 'Präzise Frequenzanpassung mit 19 Bändern von 20 Hz bis 20 kHz',
-    card_eq_feature1: 'Lowshelf, Peaking & Highshelf Filter',
-    card_eq_feature2: '-12 bis +12 dB pro Band',
-    card_eq_feature3: '8 professionelle Genre-Presets',
-    card_comp_title: 'Dynamics Processor',
-    card_comp_desc: 'Professionelle Kompression mit voller Kontrolle',
-    card_comp_feature1: 'Threshold, Ratio, Knee einstellbar',
-    card_comp_feature2: 'Attack & Release Kontrolle',
-    card_comp_feature3: '14+ Anwendungs-Presets',
-    card_rec_title: 'Recording & Export',
-    card_rec_desc: 'Nehmen Sie Ihr Audio mit allen Effekten auf',
-    card_rec_feature1: 'WebM & WAV Export',
-    card_rec_feature2: 'Alle Effekte werden aufgenommen',
-    card_rec_feature3: 'Sofortiger Download',
-    card_badge_popular: 'Beliebt',
-
-    // Features Section
-    features_title: 'Leistungsstarke Funktionen',
-    features_subtitle: 'Alles, was Sie für professionelle Audio-Bearbeitung brauchen',
-    feature_webaudio_title: 'Web Audio API',
-    feature_webaudio_desc:
-      'Echtzeit-Audio-Verarbeitung mit nativer Browser-Performance, ohne Plugins.',
-    feature_viz_title: 'Echtzeit-Visualisierung',
-    feature_viz_desc: 'FFT-Spektrum-Analyzer mit 60 FPS für visuelles Feedback.',
-    feature_presets_title: 'Preset-System',
-    feature_presets_desc:
-      'Sofort einsatzbereite Presets für verschiedene Musikgenres und Anwendungen.',
-    feature_export_title: 'Flexibler Export',
-    feature_export_desc: 'Exportieren Sie Ihre Aufnahmen in WebM oder WAV Format.',
-    feature_responsive_title: 'Responsive Design',
-    feature_responsive_desc: 'Optimiert für Desktop, Tablet und mobile Geräte.',
-    feature_privacy_title: '100% Privatsphäre',
-    feature_privacy_desc:
-      'Alle Verarbeitung erfolgt lokal - keine Daten werden an Server gesendet.',
-
-    // Tech Stack
-    tech_title: 'Moderne Technologie',
-    tech_subtitle: 'Gebaut mit den besten Web-Technologien',
-    tech_vue_desc: 'Composition API für reaktive und modulare Architektur',
-    tech_webaudio_desc: 'Native Browser-API für Audio-Verarbeitung in Echtzeit',
-    tech_vite_desc: 'Blitzschnelle Entwicklung und optimierte Builds',
-    tech_css_desc: 'Nahtloses Dark/Light Theme mit CSS Custom Properties',
-
-    // Stats
-    stat_bands: 'Frequenzbänder',
-    stat_presets: 'Presets',
-    stat_fps: 'FPS Visualisierung',
-    stat_server: 'Server benötigt',
-
-    // CTA Section
-    cta_title: 'Bereit zum Loslegen?',
-    cta_subtitle:
-      'Starten Sie jetzt und erleben Sie professionelle Audio-Verarbeitung direkt im Browser.',
-    cta_button: 'App starten',
+    // Landing page
+    lp_eyebrow: 'Kostenlos · Im Browser · Ohne Installation',
+    lp_title: 'Professioneller Klang, direkt im Browser',
+    lp_subtitle:
+      '19-Band-Equalizer, Kompressor und verlustfreie Aufnahme – die Verarbeitung läuft vollständig auf Ihrem Gerät. Keine Uploads, keine Anmeldung.',
+    lp_cta_start: 'App starten',
+    lp_cta_learn: 'Funktionen ansehen',
+    lp_visual_label: 'Beispiel-Kurve: Preset „V-Shape“',
+    lp_fact_bands: 'EQ-Bänder von 20 Hz bis 20 kHz',
+    lp_fact_presets: 'Presets für Equalizer und Kompressor',
+    lp_fact_bits_value: '32 Bit',
+    lp_fact_bits: 'Float-WAV, verlustfrei aufgenommen',
+    lp_fact_uploads: 'Uploads – alles bleibt lokal',
+    lp_modules_title: 'Drei Werkzeuge, ein Signalweg',
+    lp_modules_subtitle:
+      'Equalizer, Kompressor und Aufnahme arbeiten in Echtzeit zusammen – Sie hören jede Änderung sofort.',
+    lp_mod_eq_title: 'Equalizer',
+    lp_mod_eq_desc: 'Formen Sie den Klang mit 19 fein abgestuften Bändern.',
+    lp_mod_eq_1: '±12 dB pro Band',
+    lp_mod_eq_2: '10 Presets und eigene Presets',
+    lp_mod_eq_3: 'Bypass für den direkten A/B-Vergleich',
+    lp_mod_comp_title: 'Kompressor',
+    lp_mod_comp_desc: 'Bändigt Pegelspitzen und sorgt für einen dichten, gleichmäßigen Klang.',
+    lp_mod_comp_1: 'Threshold, Ratio, Knee, Attack, Release',
+    lp_mod_comp_2: '15 Presets von Podcast bis Limiter',
+    lp_mod_comp_3: 'Pegel-Meter für Ein- und Ausgang',
+    lp_mod_rec_title: 'Aufnahme & Export',
+    lp_mod_rec_desc: 'Nimmt das bearbeitete Signal auf – mit allen Effekten.',
+    lp_mod_rec_1: 'WAV mit 16, 24 oder 32 Bit',
+    lp_mod_rec_2: 'WebM (Opus) für kleine Dateien',
+    lp_mod_rec_3: 'Eigener Dateiname beim Speichern',
+    lp_steps_title: 'In drei Schritten zum Ergebnis',
+    lp_step1_title: 'Audio laden',
+    lp_step1_desc: 'Dateien oder ganze Ordner per Klick oder Drag & Drop hinzufügen.',
+    lp_step2_title: 'Klang anpassen',
+    lp_step2_desc: 'Equalizer und Kompressor einstellen oder ein Preset wählen.',
+    lp_step3_title: 'Aufnehmen & speichern',
+    lp_step3_desc: 'Das Ergebnis aufnehmen und als WAV oder WebM speichern.',
+    lp_details_title: 'Durchdacht bis ins Detail',
+    lp_det_privacy_title: 'Privat',
+    lp_det_privacy_desc:
+      'Ihre Dateien verlassen nie das Gerät – es gibt keinen Server, der sie verarbeitet.',
+    lp_det_realtime_title: 'Echtzeit',
+    lp_det_realtime_desc:
+      'Web Audio API und AudioWorklet verarbeiten den Klang direkt im Browser, ohne Plugins.',
+    lp_det_viz_title: 'Visualisierung',
+    lp_det_viz_desc: 'Spektrum-Analyzer und Pegel-Meter zeigen, was im Signal passiert.',
+    lp_det_playlist_title: 'Playlist',
+    lp_det_playlist_desc:
+      'Mehrere Titel, Zufallswiedergabe, Wiederholung und Sortieren per Drag & Drop.',
+    lp_det_keys_title: 'Tastenkürzel',
+    lp_det_keys_desc: 'Wiedergabe, Spulen, Lautstärke und Titelwechsel direkt über die Tastatur.',
+    lp_det_devices_title: 'Überall nutzbar',
+    lp_det_devices_desc: 'Für Desktop, Tablet und Smartphone – mit hellem und dunklem Design.',
+    lp_final_title: 'Bereit zum Loslegen?',
+    lp_final_desc: 'Starten Sie jetzt – kostenlos und ohne Anmeldung.',
 
     // FAQ Page
     faq_title: 'Häufig gestellte Fragen',
@@ -95,7 +88,7 @@ export const translations = {
       'Die 19 Bänder sind logarithmisch in etwa Halboktav-Schritten verteilt und decken den gesamten Hörbereich von 20 Hz bis 20 kHz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik präzise zu formen.',
     faq_eq_q2: 'Was bewirken die verschiedenen Presets?',
     faq_eq_a2:
-      "Die Presets sind vorkonfigurierte EQ-Kurven für verschiedene Musikgenres. 'Rock' betont Mitten und Höhen, 'Bass Boost' verstärkt tiefe Frequenzen, 'V-Shape' hebt Bässe und Höhen an während Mitten abgesenkt werden, und weitere.",
+      "Die Presets sind vorkonfigurierte EQ-Kurven für verschiedene Musikgenres. 'Rock' betont Mitten und Höhen, 'Bass Boost' verstärkt tiefe Frequenzen, 'V-Shape' hebt Bässe und Höhen an, während Mitten abgesenkt werden. Eigene Einstellungen können Sie über das Speichern-Symbol als Preset sichern; sie bleiben im Browser erhalten.",
     faq_eq_q3: 'Was macht der Bypass-Button?',
     faq_eq_a3:
       'Der Bypass-Button umgeht den Equalizer temporär, sodass Sie den Unterschied zwischen bearbeitetem und unbearbeitetem Audio hören können. Das ist nützlich um Ihre Einstellungen zu überprüfen.',
@@ -114,13 +107,16 @@ export const translations = {
     // Recording FAQ
     faq_rec_q1: 'In welchen Formaten kann ich aufnehmen?',
     faq_rec_a1:
-      'Aufnahmen werden im WebM-Format (mit Opus-Codec) gespeichert, das eine hervorragende Qualität bei kompakter Dateigröße bietet. Sie können externe Konverter nutzen, um in andere Formate wie MP3 oder WAV zu konvertieren.',
+      'Sie haben die Wahl: WAV ist verlustfrei und wahlweise mit 16 Bit (CD-Qualität), 24 Bit (Studio-Qualität) oder 32 Bit Float (ohne Clipping) verfügbar. WebM mit Opus-Codec erzeugt deutlich kleinere Dateien bei sehr guter Qualität. Für MP3 und weitere Formate können Sie unseren Audio-Konverter nutzen.',
     faq_rec_q2: 'Werden alle meine EQ-Einstellungen mit aufgenommen?',
     faq_rec_a2:
       'Ja! Die Aufnahme erfolgt nach der kompletten Audio-Verarbeitungskette - alle Ihre EQ-Anpassungen und Kompressor-Einstellungen werden im aufgenommenen Audio enthalten sein.',
     faq_rec_q3: 'Warum höre ich nichts während der Aufnahme?',
     faq_rec_a3:
       'Stellen Sie sicher, dass eine Audiodatei geladen und abgespielt wird. Die Aufnahme nimmt den Audio-Output auf - wenn nichts abgespielt wird, wird auch nichts aufgenommen.',
+    faq_rec_q4: 'Wo wird meine Aufnahme gespeichert?',
+    faq_rec_a4:
+      'Beim Speichern vergeben Sie einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählen Sie zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner Ihres Browsers.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -277,67 +273,60 @@ export const translations = {
     language: 'Language',
     theme: 'Theme',
 
-    // Hero Section
-    hero_title: 'Professional Audio Processing in Your Browser',
-    hero_subtitle:
-      'Discover the power of the 19-band equalizer and dynamics processor - all directly in your browser, without installation.',
-    hero_cta_start: 'Get Started',
-    hero_cta_learn: 'Learn More',
-
-    // Hero Cards
-    card_eq_title: '19-Band Equalizer',
-    card_eq_desc: 'Precise frequency adjustment with 19 bands from 20 Hz to 20 kHz',
-    card_eq_feature1: 'Lowshelf, Peaking & Highshelf filters',
-    card_eq_feature2: '-12 to +12 dB per band',
-    card_eq_feature3: '8 professional genre presets',
-    card_comp_title: 'Dynamics Processor',
-    card_comp_desc: 'Professional compression with full control',
-    card_comp_feature1: 'Adjustable Threshold, Ratio, Knee',
-    card_comp_feature2: 'Attack & Release control',
-    card_comp_feature3: '14+ application presets',
-    card_rec_title: 'Recording & Export',
-    card_rec_desc: 'Record your audio with all effects applied',
-    card_rec_feature1: 'WebM & WAV export',
-    card_rec_feature2: 'All effects are recorded',
-    card_rec_feature3: 'Instant download',
-    card_badge_popular: 'Popular',
-
-    // Features Section
-    features_title: 'Powerful Features',
-    features_subtitle: 'Everything you need for professional audio editing',
-    feature_webaudio_title: 'Web Audio API',
-    feature_webaudio_desc:
-      'Real-time audio processing with native browser performance, no plugins required.',
-    feature_viz_title: 'Real-time Visualization',
-    feature_viz_desc: 'FFT spectrum analyzer at 60 FPS for visual feedback.',
-    feature_presets_title: 'Preset System',
-    feature_presets_desc: 'Ready-to-use presets for various music genres and applications.',
-    feature_export_title: 'Flexible Export',
-    feature_export_desc: 'Export your recordings in WebM or WAV format.',
-    feature_responsive_title: 'Responsive Design',
-    feature_responsive_desc: 'Optimized for desktop, tablet, and mobile devices.',
-    feature_privacy_title: '100% Privacy',
-    feature_privacy_desc: 'All processing happens locally - no data is sent to any server.',
-
-    // Tech Stack
-    tech_title: 'Modern Technology',
-    tech_subtitle: 'Built with the best web technologies',
-    tech_vue_desc: 'Composition API for reactive and modular architecture',
-    tech_webaudio_desc: 'Native browser API for real-time audio processing',
-    tech_vite_desc: 'Lightning-fast development and optimized builds',
-    tech_css_desc: 'Seamless Dark/Light theme with CSS Custom Properties',
-
-    // Stats
-    stat_bands: 'Frequency Bands',
-    stat_presets: 'Presets',
-    stat_fps: 'FPS Visualization',
-    stat_server: 'Server Required',
-
-    // CTA Section
-    cta_title: 'Ready to Get Started?',
-    cta_subtitle:
-      'Start now and experience professional audio processing directly in your browser.',
-    cta_button: 'Start App',
+    // Landing page
+    lp_eyebrow: 'Free · In your browser · No installation',
+    lp_title: 'Professional sound, right in your browser',
+    lp_subtitle:
+      '19-band equalizer, compressor and lossless recording – all processing happens on your device. No uploads, no sign-up.',
+    lp_cta_start: 'Launch app',
+    lp_cta_learn: 'See features',
+    lp_visual_label: 'Example curve: “V-Shape” preset',
+    lp_fact_bands: 'EQ bands from 20 Hz to 20 kHz',
+    lp_fact_presets: 'Presets for equalizer and compressor',
+    lp_fact_bits_value: '32-bit',
+    lp_fact_bits: 'Float WAV, recorded losslessly',
+    lp_fact_uploads: 'Uploads – everything stays local',
+    lp_modules_title: 'Three tools, one signal chain',
+    lp_modules_subtitle:
+      'Equalizer, compressor and recorder work together in real time – you hear every change instantly.',
+    lp_mod_eq_title: 'Equalizer',
+    lp_mod_eq_desc: 'Shape your sound with 19 finely spaced bands.',
+    lp_mod_eq_1: '±12 dB per band',
+    lp_mod_eq_2: '10 presets plus your own',
+    lp_mod_eq_3: 'Bypass for instant A/B comparison',
+    lp_mod_comp_title: 'Compressor',
+    lp_mod_comp_desc: 'Tames peaks for a dense, even sound.',
+    lp_mod_comp_1: 'Threshold, ratio, knee, attack, release',
+    lp_mod_comp_2: '15 presets from podcast to limiter',
+    lp_mod_comp_3: 'Input and output level meters',
+    lp_mod_rec_title: 'Recording & export',
+    lp_mod_rec_desc: 'Records the processed signal – with every effect applied.',
+    lp_mod_rec_1: 'WAV at 16, 24 or 32 bit',
+    lp_mod_rec_2: 'WebM (Opus) for small files',
+    lp_mod_rec_3: 'Choose your own file name',
+    lp_steps_title: 'Three steps to the result',
+    lp_step1_title: 'Load audio',
+    lp_step1_desc: 'Add files or whole folders by click or drag & drop.',
+    lp_step2_title: 'Shape the sound',
+    lp_step2_desc: 'Adjust equalizer and compressor or pick a preset.',
+    lp_step3_title: 'Record & save',
+    lp_step3_desc: 'Record the result and save it as WAV or WebM.',
+    lp_details_title: 'Thought through to the details',
+    lp_det_privacy_title: 'Private',
+    lp_det_privacy_desc: 'Your files never leave your device – there is no server processing them.',
+    lp_det_realtime_title: 'Real time',
+    lp_det_realtime_desc:
+      'Web Audio API and AudioWorklet process the sound right in the browser, no plugins.',
+    lp_det_viz_title: 'Visualization',
+    lp_det_viz_desc: 'Spectrum analyzer and level meters show what happens in the signal.',
+    lp_det_playlist_title: 'Playlist',
+    lp_det_playlist_desc: 'Multiple tracks, shuffle, repeat and drag & drop reordering.',
+    lp_det_keys_title: 'Keyboard shortcuts',
+    lp_det_keys_desc: 'Play, seek, volume and track changes straight from the keyboard.',
+    lp_det_devices_title: 'Works everywhere',
+    lp_det_devices_desc: 'Desktop, tablet and phone – with light and dark themes.',
+    lp_final_title: 'Ready to start?',
+    lp_final_desc: 'Start now – free and without sign-up.',
 
     // FAQ Page
     faq_title: 'Frequently Asked Questions',
@@ -365,7 +354,7 @@ export const translations = {
       'The 19 bands are spaced logarithmically in roughly half-octave steps and cover the full audible range from 20 Hz to 20 kHz. Each band can be adjusted from -12 to +12 dB to precisely shape the sound character.',
     faq_eq_q2: 'What do the different presets do?',
     faq_eq_a2:
-      "Presets are pre-configured EQ curves for different music genres. 'Rock' emphasizes mids and highs, 'Bass Boost' amplifies low frequencies, 'V-Shape' raises bass and treble while lowering mids, and more.",
+      "The presets are preconfigured EQ curves for different music genres. 'Rock' emphasizes mids and highs, 'Bass Boost' enhances low frequencies, 'V-Shape' boosts bass and treble while cutting mids. You can save your own settings as a preset via the save icon; they are kept in your browser.",
     faq_eq_q3: 'What does the Bypass button do?',
     faq_eq_a3:
       'The Bypass button temporarily bypasses the equalizer, allowing you to hear the difference between processed and unprocessed audio. This is useful for checking your settings.',
@@ -384,13 +373,16 @@ export const translations = {
     // Recording FAQ
     faq_rec_q1: 'What formats can I record in?',
     faq_rec_a1:
-      'Recordings are saved in WebM format (with Opus codec), which offers excellent quality with compact file size. You can use external converters to convert to other formats like MP3 or WAV.',
+      'You can choose: WAV is lossless and available at 16-bit (CD quality), 24-bit (studio quality) or 32-bit float (no clipping). WebM with the Opus codec produces much smaller files at very good quality. For MP3 and other formats you can use our Audio Converter.',
     faq_rec_q2: 'Are all my EQ settings recorded?',
     faq_rec_a2:
       'Yes! Recording happens after the complete audio processing chain - all your EQ adjustments and compressor settings will be included in the recorded audio.',
     faq_rec_q3: "Why don't I hear anything during recording?",
     faq_rec_a3:
       'Make sure an audio file is loaded and playing. The recording captures the audio output - if nothing is playing, nothing will be recorded.',
+    faq_rec_q4: 'Where is my recording saved?',
+    faq_rec_a4:
+      'When saving, you choose a file name. In browsers that support it (e.g. Chrome and Edge on desktop) you can also pick the target folder; otherwise the file goes to your browser’s default download folder.',
 
     // Technical FAQ
     faq_tech_q1: 'Which browsers are supported?',

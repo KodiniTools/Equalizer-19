@@ -1,215 +1,144 @@
 <template>
   <div class="landing-page">
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="hero-container">
-        <div class="hero-content">
-          <h1 class="hero-title">{{ t.hero_title }}</h1>
-          <p class="hero-subtitle">{{ t.hero_subtitle }}</p>
-          <div class="hero-cta">
-            <router-link to="/app" class="cta-btn cta-btn-primary">
-              <i class="fas fa-rocket"></i>
-              {{ t.hero_cta_start }}
+    <!-- Hero -->
+    <section class="lp-hero">
+      <div class="lp-wrap lp-hero-grid">
+        <div class="lp-hero-text">
+          <p class="lp-eyebrow">{{ t.lp_eyebrow }}</p>
+          <h1 class="lp-title">{{ t.lp_title }}</h1>
+          <p class="lp-lead">{{ t.lp_subtitle }}</p>
+          <div class="lp-actions">
+            <router-link to="/app" class="lp-btn lp-btn-primary">
+              {{ t.lp_cta_start }} <span aria-hidden="true">→</span>
             </router-link>
-            <a href="#features" class="cta-btn cta-btn-secondary">
-              <i class="fas fa-info-circle"></i>
-              {{ t.hero_cta_learn }}
-            </a>
+            <a href="#features" class="lp-btn lp-btn-ghost">{{ t.lp_cta_learn }}</a>
           </div>
         </div>
 
-        <!-- Hero Feature Cards Grid -->
-        <div class="hero-cards">
-          <div class="hero-card">
-            <div class="hero-card-icon">
-              <i class="fas fa-sliders-h"></i>
-            </div>
-            <h3>{{ t.card_eq_title }}</h3>
-            <p>{{ t.card_eq_desc }}</p>
-            <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t.card_eq_feature1 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_eq_feature2 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_eq_feature3 }}</li>
+        <!-- Product visual: the real "V-Shape" preset curve -->
+        <figure class="lp-visual">
+          <svg
+            class="lp-curve"
+            :viewBox="`0 0 ${CHART.w} ${CHART.h}`"
+            role="img"
+            :aria-label="t.lp_visual_label"
+          >
+            <line
+              v-for="y in curve.grid"
+              :key="y"
+              class="lp-grid"
+              x1="0"
+              :y1="y"
+              :x2="CHART.w"
+              :y2="y"
+            />
+            <line class="lp-zero" x1="0" :y1="CHART.mid" :x2="CHART.w" :y2="CHART.mid" />
+            <rect
+              v-for="bar in curve.bars"
+              :key="bar.x"
+              class="lp-bar"
+              :class="{ cut: bar.gain < 0 }"
+              :x="bar.x"
+              :y="bar.y"
+              :width="CHART.barW"
+              :height="bar.h"
+              rx="3"
+            />
+            <polyline class="lp-line" :points="curve.points" />
+          </svg>
+          <figcaption class="lp-visual-caption">
+            <span>20 Hz</span>
+            <span>{{ t.lp_visual_label }}</span>
+            <span>20 kHz</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Key facts -->
+    <section class="lp-facts">
+      <dl class="lp-wrap lp-facts-grid">
+        <div class="lp-fact">
+          <dt>{{ bandCount }}</dt>
+          <dd>{{ t.lp_fact_bands }}</dd>
+        </div>
+        <div class="lp-fact">
+          <dt>{{ presetCount }}</dt>
+          <dd>{{ t.lp_fact_presets }}</dd>
+        </div>
+        <div class="lp-fact">
+          <dt>{{ t.lp_fact_bits_value }}</dt>
+          <dd>{{ t.lp_fact_bits }}</dd>
+        </div>
+        <div class="lp-fact">
+          <dt>0</dt>
+          <dd>{{ t.lp_fact_uploads }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Modules -->
+    <section id="features" class="lp-section">
+      <div class="lp-wrap">
+        <header class="lp-section-head">
+          <h2>{{ t.lp_modules_title }}</h2>
+          <p>{{ t.lp_modules_subtitle }}</p>
+        </header>
+
+        <div class="lp-modules">
+          <article v-for="(mod, i) in modules" :key="mod.key" class="lp-module">
+            <span class="lp-index" aria-hidden="true">{{ String(i + 1).padStart(2, '0') }}</span>
+            <h3>{{ t[`lp_mod_${mod.key}_title`] }}</h3>
+            <p>{{ t[`lp_mod_${mod.key}_desc`] }}</p>
+            <ul>
+              <li v-for="n in 3" :key="n">{{ t[`lp_mod_${mod.key}_${n}`] }}</li>
             </ul>
-          </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-          <div class="hero-card hero-card-featured">
-            <div class="hero-card-badge">{{ t.card_badge_popular }}</div>
-            <div class="hero-card-icon">
-              <i class="fas fa-compress-alt"></i>
-            </div>
-            <h3>{{ t.card_comp_title }}</h3>
-            <p>{{ t.card_comp_desc }}</p>
-            <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t.card_comp_feature1 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_comp_feature2 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_comp_feature3 }}</li>
-            </ul>
-          </div>
+    <!-- Steps -->
+    <section class="lp-section lp-section-alt">
+      <div class="lp-wrap">
+        <header class="lp-section-head">
+          <h2>{{ t.lp_steps_title }}</h2>
+        </header>
+        <ol class="lp-steps">
+          <li v-for="n in 3" :key="n" class="lp-step">
+            <span class="lp-step-num" aria-hidden="true">{{ n }}</span>
+            <h3>{{ t[`lp_step${n}_title`] }}</h3>
+            <p>{{ t[`lp_step${n}_desc`] }}</p>
+          </li>
+        </ol>
+      </div>
+    </section>
 
-          <div class="hero-card">
-            <div class="hero-card-icon">
-              <i class="fas fa-microphone-alt"></i>
-            </div>
-            <h3>{{ t.card_rec_title }}</h3>
-            <p>{{ t.card_rec_desc }}</p>
-            <ul class="hero-card-list">
-              <li><i class="fas fa-check"></i> {{ t.card_rec_feature1 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_rec_feature2 }}</li>
-              <li><i class="fas fa-check"></i> {{ t.card_rec_feature3 }}</li>
-            </ul>
+    <!-- Details -->
+    <section class="lp-section">
+      <div class="lp-wrap">
+        <header class="lp-section-head">
+          <h2>{{ t.lp_details_title }}</h2>
+        </header>
+        <div class="lp-details">
+          <div v-for="key in details" :key="key" class="lp-detail">
+            <h3>{{ t[`lp_det_${key}_title`] }}</h3>
+            <p>{{ t[`lp_det_${key}_desc`] }}</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-      <div class="features-container">
-        <div class="section-header">
-          <h2>{{ t.features_title }}</h2>
-          <p>{{ t.features_subtitle }}</p>
+    <!-- Final call to action -->
+    <section class="lp-section lp-final-wrap">
+      <div class="lp-wrap">
+        <div class="lp-final">
+          <h2>{{ t.lp_final_title }}</h2>
+          <p>{{ t.lp_final_desc }}</p>
+          <router-link to="/app" class="lp-btn lp-btn-primary">
+            {{ t.lp_cta_start }} <span aria-hidden="true">→</span>
+          </router-link>
         </div>
-
-        <div class="features-grid">
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-wave-square"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_webaudio_title }}</h3>
-              <p>{{ t.feature_webaudio_desc }}</p>
-            </div>
-          </div>
-
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-chart-bar"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_viz_title }}</h3>
-              <p>{{ t.feature_viz_desc }}</p>
-            </div>
-          </div>
-
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-cogs"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_presets_title }}</h3>
-              <p>{{ t.feature_presets_desc }}</p>
-            </div>
-          </div>
-
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-download"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_export_title }}</h3>
-              <p>{{ t.feature_export_desc }}</p>
-            </div>
-          </div>
-
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_responsive_title }}</h3>
-              <p>{{ t.feature_responsive_desc }}</p>
-            </div>
-          </div>
-
-          <div class="feature-item">
-            <div class="feature-icon">
-              <i class="fas fa-lock"></i>
-            </div>
-            <div class="feature-content">
-              <h3>{{ t.feature_privacy_title }}</h3>
-              <p>{{ t.feature_privacy_desc }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Tech Stack Section -->
-    <section class="tech-section">
-      <div class="tech-container">
-        <div class="section-header">
-          <h2>{{ t.tech_title }}</h2>
-          <p>{{ t.tech_subtitle }}</p>
-        </div>
-
-        <div class="tech-grid">
-          <div class="tech-item">
-            <div class="tech-icon">
-              <i class="fab fa-vuejs"></i>
-            </div>
-            <h4>Vue.js 3</h4>
-            <p>{{ t.tech_vue_desc }}</p>
-          </div>
-
-          <div class="tech-item">
-            <div class="tech-icon">
-              <i class="fas fa-music"></i>
-            </div>
-            <h4>Web Audio API</h4>
-            <p>{{ t.tech_webaudio_desc }}</p>
-          </div>
-
-          <div class="tech-item">
-            <div class="tech-icon">
-              <i class="fas fa-bolt"></i>
-            </div>
-            <h4>Vite</h4>
-            <p>{{ t.tech_vite_desc }}</p>
-          </div>
-
-          <div class="tech-item">
-            <div class="tech-icon">
-              <i class="fas fa-palette"></i>
-            </div>
-            <h4>CSS Variables</h4>
-            <p>{{ t.tech_css_desc }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="stats-section">
-      <div class="stats-container">
-        <div class="stat-box">
-          <span class="stat-number">19</span>
-          <span class="stat-label">{{ t.stat_bands }}</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">14+</span>
-          <span class="stat-label">{{ t.stat_presets }}</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">60</span>
-          <span class="stat-label">{{ t.stat_fps }}</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">0</span>
-          <span class="stat-label">{{ t.stat_server }}</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-      <div class="cta-container">
-        <h2>{{ t.cta_title }}</h2>
-        <p>{{ t.cta_subtitle }}</p>
-        <router-link to="/app" class="cta-btn cta-btn-large">
-          <i class="fas fa-play"></i>
-          {{ t.cta_button }}
-        </router-link>
       </div>
     </section>
   </div>
@@ -217,603 +146,514 @@
 
 <script setup>
   import { inject } from 'vue'
+  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../utils/presets.js'
 
   const { t } = inject('i18n')
+
+  // Facts derived from the actual configuration, so they never go stale
+  const bandCount = EQ_BAND_FREQUENCIES.length
+  const presetCount = Object.keys(EQ_PRESETS).length + Object.keys(COMP_PRESETS).length
+
+  const modules = [{ key: 'eq' }, { key: 'comp' }, { key: 'rec' }]
+  const details = ['privacy', 'realtime', 'viz', 'playlist', 'keys', 'devices']
+
+  // Hero chart geometry (SVG user units). The curve is scaled to its own peak
+  // (plus headroom) so it fills the card instead of using the full ±12 dB range.
+  const CHART = { w: 380, h: 170, mid: 85, range: 72, barW: 12 }
+
+  function buildCurve(gains) {
+    const MAX_GAIN = Math.max(...gains.map(Math.abs), 1) * 1.15
+    const step = CHART.w / gains.length
+    const bars = gains.map((gain, i) => {
+      const x = i * step + (step - CHART.barW) / 2
+      const offset = (Math.abs(gain) / MAX_GAIN) * CHART.range
+      const h = Math.max(offset, 2)
+      const y = gain >= 0 ? CHART.mid - h : CHART.mid
+      return { x, y, h, gain }
+    })
+    const points = gains
+      .map((gain, i) => {
+        const x = i * step + step / 2
+        const y = CHART.mid - (gain / MAX_GAIN) * CHART.range
+        return `${x.toFixed(1)},${y.toFixed(1)}`
+      })
+      .join(' ')
+    // Faint helper lines at half and full scale above/below the 0 dB line
+    const grid = [-1, -0.5, 0.5, 1].map((f) => CHART.mid - f * CHART.range)
+    return { bars, points, grid }
+  }
+
+  const curve = buildCurve(EQ_PRESETS['V-Shape'])
 </script>
 
 <style scoped>
-  /* Hero Section */
-  .hero-section {
-    padding: 60px 24px 80px;
-    background: var(--gradient-primary);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+  .landing-page {
+    color: var(--text-primary);
   }
 
-  .hero-container {
-    max-width: 1400px;
+  .lp-wrap {
+    max-width: 1160px;
     margin: 0 auto;
-    width: 100%;
+    padding: 0 24px;
   }
 
-  .hero-content {
-    text-align: center;
-    margin-bottom: 60px;
-  }
-
-  .hero-title {
-    font-size: clamp(32px, 5vw, 56px);
-    font-weight: 800;
-    margin: 0 0 20px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1.2;
-  }
-
-  .hero-subtitle {
-    font-size: clamp(16px, 2vw, 20px);
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto 32px;
-    line-height: 1.6;
-  }
-
-  .hero-cta {
+  /* ---- Buttons ---- */
+  .lp-actions {
     display: flex;
-    gap: 16px;
-    justify-content: center;
     flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .cta-btn {
+  .lp-btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 16px;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
   }
 
-  .cta-btn-primary {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    color: #fff;
-    box-shadow: 0 4px 20px var(--shadow-medium);
+  .lp-btn-primary {
+    background: var(--accent-primary);
+    color: var(--on-accent);
   }
 
-  .cta-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px var(--shadow-medium);
+  .lp-btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
   }
 
-  .cta-btn-secondary {
-    background: var(--secondary-bg);
+  .lp-btn-ghost {
     color: var(--text-primary);
-    border: 1px solid var(--border-color);
+    border-color: var(--border-color);
   }
 
-  .cta-btn-secondary:hover {
+  .lp-btn-ghost:hover {
     border-color: var(--accent-primary);
-    background: var(--hover-bg);
   }
 
-  /* Hero Cards */
-  .hero-cards {
+  .lp-btn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+  }
+
+  /* ---- Hero ---- */
+  .lp-hero {
+    background: var(--gradient-primary);
+    padding: 88px 0 72px;
+  }
+
+  .lp-hero-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-card {
-    background: var(--gradient-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 32px 24px;
-    text-align: center;
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  .hero-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px var(--shadow-medium);
-    border-color: var(--accent-primary);
-  }
-
-  .hero-card-featured {
-    border-color: var(--accent-primary);
-    transform: scale(1.02);
-  }
-
-  .hero-card-featured:hover {
-    transform: scale(1.02) translateY(-8px);
-  }
-
-  .hero-card-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .hero-card-icon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 20px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    border-radius: 16px;
-    display: flex;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
     align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: #fff;
-    transition: all 0.3s ease;
   }
 
-  .hero-card:hover .hero-card-icon {
-    transform: scale(1.1) rotate(5deg);
-  }
-
-  .hero-card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0 0 12px;
-    color: var(--text-primary);
-  }
-
-  .hero-card > p {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin: 0 0 20px;
-    line-height: 1.5;
-  }
-
-  .hero-card-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-  }
-
-  .hero-card-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    font-size: 13px;
-    color: var(--text-secondary);
-    border-top: 1px solid var(--border-color);
-  }
-
-  .hero-card-list li:first-child {
-    border-top: none;
-  }
-
-  .hero-card-list li i {
-    color: var(--success);
-    font-size: 12px;
-  }
-
-  /* Features Section */
-  .features-section {
-    padding: 100px 24px;
-    background: var(--secondary-bg);
-  }
-
-  .features-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 60px;
-  }
-
-  .section-header h2 {
-    font-size: clamp(28px, 4vw, 40px);
-    font-weight: 700;
+  .lp-eyebrow {
     margin: 0 0 16px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: var(--accent-primary);
   }
 
-  .section-header p {
-    font-size: 16px;
+  .lp-title {
+    margin: 0 0 20px;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+  }
+
+  .lp-lead {
+    margin: 0 0 32px;
+    max-width: 560px;
+    font-size: 18px;
+    line-height: 1.6;
     color: var(--text-secondary);
-    max-width: 500px;
-    margin: 0 auto;
   }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .feature-item {
-    display: flex;
-    gap: 20px;
-    padding: 24px;
+  .lp-visual {
+    margin: 0;
+    padding: 24px 24px 16px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px var(--shadow-light);
   }
 
-  .feature-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px var(--shadow-light);
-    border-color: var(--accent-primary);
-  }
-
-  .feature-icon {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: #fff;
-  }
-
-  .feature-content h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 8px;
-    color: var(--text-primary);
-  }
-
-  .feature-content p {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  /* Tech Section */
-  .tech-section {
-    padding: 100px 24px;
-    background: var(--primary-bg);
-  }
-
-  .tech-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .tech-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-  }
-
-  .tech-item {
-    text-align: center;
-    padding: 32px 24px;
-    background: var(--gradient-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    transition: all 0.3s ease;
-  }
-
-  .tech-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent-primary);
-    box-shadow: 0 10px 30px var(--shadow-light);
-  }
-
-  .tech-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 16px;
-    background: var(--secondary-bg);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: var(--accent-primary);
-    transition: all 0.3s ease;
-  }
-
-  .tech-item:hover .tech-icon {
-    background: var(--accent-primary);
-    color: #fff;
-  }
-
-  .tech-item h4 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 8px;
-    color: var(--text-primary);
-  }
-
-  .tech-item p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  /* Stats Section */
-  .stats-section {
-    padding: 60px 24px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  }
-
-  .stats-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-  }
-
-  .stat-box {
-    text-align: center;
-    color: #fff;
-  }
-
-  .stat-number {
+  .lp-curve {
     display: block;
-    font-size: 48px;
+    width: 100%;
+    height: auto;
+  }
+
+  .lp-grid {
+    stroke: var(--border-color);
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+
+  .lp-zero {
+    stroke: var(--border-color);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+  }
+
+  .lp-bar {
+    fill: var(--accent-primary);
+    opacity: 0.85;
+  }
+
+  .lp-bar.cut {
+    opacity: 0.35;
+  }
+
+  .lp-line {
+    fill: none;
+    stroke: var(--text-primary);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: 0.55;
+  }
+
+  .lp-visual-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .lp-visual-caption span:nth-child(2) {
+    text-align: center;
+  }
+
+  /* ---- Facts ---- */
+  .lp-facts {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--card-bg);
+  }
+
+  .lp-facts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 auto;
+  }
+
+  .lp-fact {
+    padding: 28px 16px;
+  }
+
+  .lp-fact + .lp-fact {
+    border-left: 1px solid var(--border-color);
+  }
+
+  .lp-fact dt {
+    font-size: 34px;
     font-weight: 800;
     line-height: 1;
+    color: var(--accent-primary);
     margin-bottom: 8px;
   }
 
-  .stat-label {
+  .lp-fact dd {
+    margin: 0;
     font-size: 14px;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    line-height: 1.4;
+    color: var(--text-secondary);
   }
 
-  /* CTA Section */
-  .cta-section {
-    padding: 100px 24px;
-    background: var(--secondary-bg);
-    text-align: center;
+  /* ---- Sections ---- */
+  .lp-section {
+    padding: 88px 0;
   }
 
-  .cta-container {
-    max-width: 600px;
-    margin: 0 auto;
+  /* Keep the anchored heading clear of the fixed site navigation */
+  #features {
+    scroll-margin-top: 80px;
   }
 
-  .cta-section h2 {
-    font-size: clamp(28px, 4vw, 36px);
-    font-weight: 700;
-    margin: 0 0 16px;
+  .lp-section-alt {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .lp-section-head {
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .lp-section-head h2 {
+    margin: 0 0 12px;
+    font-size: clamp(26px, 3.2vw, 36px);
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.3px;
     color: var(--text-primary);
   }
 
-  .cta-section p {
-    font-size: 16px;
+  .lp-section-head p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.6;
     color: var(--text-secondary);
-    margin: 0 0 32px;
   }
 
-  .cta-btn-large {
-    padding: 18px 40px;
-    font-size: 18px;
+  /* ---- Modules ---- */
+  .lp-modules {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
   }
 
-  /* Responsive */
-  @media (max-width: 1024px) {
-    .hero-cards {
+  .lp-module {
+    padding: 28px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+  }
+
+  .lp-index {
+    display: block;
+    margin-bottom: 18px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-primary);
+  }
+
+  .lp-module h3 {
+    margin: 0 0 8px;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .lp-module p {
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .lp-module ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lp-module li {
+    position: relative;
+    padding: 10px 0 10px 18px;
+    border-top: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+
+  .lp-module li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent-primary);
+  }
+
+  /* ---- Steps ---- */
+  .lp-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    counter-reset: none;
+  }
+
+  .lp-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-primary);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-primary);
+  }
+
+  .lp-step h3 {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .lp-step p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  /* ---- Details ---- */
+  .lp-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px 40px;
+  }
+
+  .lp-detail {
+    padding-left: 16px;
+    border-left: 2px solid var(--accent-primary);
+  }
+
+  .lp-detail h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .lp-detail p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  /* ---- Final CTA ---- */
+  .lp-final-wrap {
+    padding-top: 0;
+  }
+
+  .lp-final {
+    padding: 56px 32px;
+    text-align: center;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--accent-primary) 10%, var(--card-bg));
+  }
+
+  .lp-final h2 {
+    margin: 0 0 10px;
+    font-size: clamp(26px, 3.2vw, 36px);
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .lp-final p {
+    margin: 0 0 28px;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 960px) {
+    .lp-hero {
+      padding: 56px 0 48px;
+    }
+
+    .lp-hero-grid {
       grid-template-columns: 1fr;
-      max-width: 500px;
+      gap: 40px;
     }
 
-    .hero-card-featured {
-      transform: none;
-      order: -1;
-    }
-
-    .features-grid {
+    .lp-facts-grid {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .tech-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .lp-fact:nth-child(3) {
+      border-left: none;
     }
 
-    .stats-container {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .hero-section {
-      padding: 40px 16px 60px;
-      min-height: auto;
+    .lp-fact:nth-child(n + 3) {
+      border-top: 1px solid var(--border-color);
     }
 
-    .hero-content {
-      margin-bottom: 40px;
-    }
-
-    .features-section {
-      padding: 60px 16px;
-    }
-
-    .tech-section {
-      padding: 60px 16px;
-    }
-
-    .cta-section {
-      padding: 60px 16px;
-    }
-
-    .section-header {
-      margin-bottom: 36px;
-    }
-
-    .features-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .feature-item {
-      padding: 20px;
-      gap: 16px;
-    }
-
-    .tech-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .tech-item {
-      padding: 24px 16px;
-    }
-
-    .stats-container {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
-    .stats-section {
-      padding: 40px 16px;
-    }
-
-    .stat-number {
-      font-size: 36px;
-    }
-
-    .stat-label {
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-section {
-      padding: 30px 12px 40px;
-    }
-
-    .hero-content {
-      margin-bottom: 30px;
-    }
-
-    .hero-subtitle {
-      margin-bottom: 24px;
-    }
-
-    .hero-cta {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .hero-cards {
-      gap: 16px;
-    }
-
-    .hero-card {
-      padding: 24px 20px;
-    }
-
-    .hero-card-icon {
-      width: 52px;
-      height: 52px;
-      font-size: 22px;
-    }
-
-    .hero-card h3 {
-      font-size: 17px;
-    }
-
-    .features-section {
-      padding: 40px 12px;
-    }
-
-    .tech-section {
-      padding: 40px 12px;
-    }
-
-    .tech-grid {
+    .lp-modules,
+    .lp-steps {
       grid-template-columns: 1fr;
     }
 
-    .tech-item {
-      padding: 20px 16px;
+    .lp-details {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .stats-container {
-      grid-template-columns: 1fr 1fr;
+    .lp-section {
+      padding: 64px 0;
     }
 
-    .stats-section {
-      padding: 30px 12px;
+    .lp-final-wrap {
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .lp-wrap {
+      padding: 0 16px;
     }
 
-    .stat-number {
-      font-size: 30px;
+    .lp-lead {
+      font-size: 16px;
     }
 
-    .cta-section {
-      padding: 40px 12px;
-    }
-
-    .cta-btn {
-      width: 100%;
+    .lp-btn {
+      flex: 1 1 auto;
       justify-content: center;
     }
 
-    .cta-btn-large {
-      padding: 14px 28px;
-      font-size: 16px;
+    .lp-visual {
+      padding: 16px 16px 12px;
     }
 
-    .section-header {
-      margin-bottom: 28px;
+    .lp-visual-caption {
+      font-size: 11px;
     }
 
-    .section-header p {
-      font-size: 14px;
+    .lp-fact {
+      padding: 20px 12px;
     }
 
-    .feature-item {
-      padding: 16px;
-      gap: 12px;
+    .lp-fact dt {
+      font-size: 28px;
     }
 
-    .feature-icon {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      font-size: 16px;
+    .lp-details {
+      grid-template-columns: 1fr;
+      gap: 24px;
     }
 
-    .feature-content h3 {
-      font-size: 14px;
+    .lp-module {
+      padding: 22px;
     }
 
-    .feature-content p {
-      font-size: 13px;
+    .lp-final {
+      padding: 40px 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-btn-primary:hover {
+      transform: none;
     }
   }
 </style>

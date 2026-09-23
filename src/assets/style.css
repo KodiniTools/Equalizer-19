@@ -89,22 +89,6 @@ body {
   padding: 16px;
 }
 
-.stat-number {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent-primary);
-  display: block;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 10px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-top: 4px;
-}
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -619,14 +603,6 @@ select:focus {
 @media (max-width: 600px) {
   .container {
     padding: 10px;
-  }
-
-  .stat-number {
-    font-size: 18px;
-  }
-
-  .stat-label {
-    font-size: 9px;
   }
 
   .controls {
