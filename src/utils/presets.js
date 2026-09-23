@@ -65,3 +65,41 @@ export const COMP_PRESETS = {
   Master:    { th: -16, kn: 10, ra: 2.5, at: 3,  re: 40  },
   Limiter:   { th: -6,  kn: 0,  ra: 20,  at: 0.5, re: 10 },
 }
+
+/**
+ * Compressor preset groups (label = translation key) in display order.
+ */
+export const COMP_PRESET_GROUPS = [
+  { labelKey: 'comp_cat_basic', presets: ['Gentle', 'Medium', 'Heavy'] },
+  { labelKey: 'comp_cat_genre', presets: ['Rock', 'Pop', 'Electro', 'Jazz', 'Hip-Hop', 'Classical'] },
+  { labelKey: 'comp_cat_instrument', presets: ['Vocal', 'Drums', 'Bass', 'Podcast'] },
+  { labelKey: 'comp_cat_mastering', presets: ['Master', 'Limiter'] },
+]
+
+/**
+ * Convert a COMP_PRESETS entry (attack / release in ms) to engine dynamics
+ * settings (attack / release in seconds).
+ */
+export function compPresetToDynamics(preset) {
+  return {
+    threshold: preset.th,
+    ratio: preset.ra,
+    knee: preset.kn,
+    attack: preset.at / 1000,
+    release: preset.re / 1000,
+  }
+}
+
+/**
+ * Name of the compressor preset whose values equal the given dynamics
+ * settings, or '' when they match none (e.g. after manual adjustments).
+ */
+export function findCompPreset(dynamics) {
+  if (!dynamics) return ''
+  const same = (a, b) => Math.abs(a - b) < 1e-9
+  for (const [name, preset] of Object.entries(COMP_PRESETS)) {
+    const target = compPresetToDynamics(preset)
+    if (Object.keys(target).every((key) => same(target[key], dynamics[key]))) return name
+  }
+  return ''
+}
