@@ -308,19 +308,6 @@ export function useOutputRecorder() {
     }, 100)
   }
 
-  async function downloadRecording(filename = 'audio-export') {
-    const built = await buildBlob()
-    if (!built) return false
-
-    try {
-      anchorDownload(built.blob, built.ext, sanitizeFilename(filename) || 'audio-export')
-      return true
-    } catch (error) {
-      console.error('Download failed:', error)
-      return false
-    }
-  }
-
   /**
    * Save the recording with a user-chosen file name. When the browser supports
    * the File System Access API, a native dialog lets the user pick the target
@@ -430,7 +417,6 @@ export function useOutputRecorder() {
     setAudioEngine,
     startRecording,
     stopRecording,
-    downloadRecording,
     saveRecordingAs,
     supportsFolderPicker,
     setFormat,

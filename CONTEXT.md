@@ -59,26 +59,22 @@ Equalizer-19/
 │   │
 │   ├── components/         # Vue-Komponenten
 │   │   ├── AudioConverter.vue         # Audio-Konverter Promo
+│   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Auswahl
+│   │   ├── DownloadDialog.vue         # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
 │   │   ├── Equalizer.vue              # 19-Band EQ-Interface
-│   │   ├── LanguageThemeSwitcher.vue  # Sprach-/Theme-Toggle
 │   │   ├── Notification.vue           # Toast-Benachrichtigungen
-│   │   ├── OutputRecordingControls.vue# Output-Recording-Steuerung
-│   │   ├── PlayerControls.vue         # Playback-Steuerung
 │   │   ├── Playlist.vue               # Track-Playlist
-│   │   ├── ProFeatures.vue            # Pro-Feature-Toggles
-│   │   ├── PromoSection.vue           # Header/Promo-Bereich
-│   │   ├── RecordingControls.vue      # Mikrofon-Recording
+│   │   ├── StickyPlayerBar.vue        # Player, Aufnahme & Download
 │   │   └── Visualization.vue          # Spektrum-Analyzer
 │   │
 │   ├── composables/        # Vue Composition API Logik
 │   │   ├── useAudioEngine.js          # Audio-Verarbeitungskette
 │   │   ├── useAudioPlayer.js          # Playback-Steuerung
-│   │   ├── useAudioPlayer_updated.js  # (Backup/Alternative)
 │   │   ├── useI18n.js                 # Internationalisierung
+│   │   ├── useKeyboardShortcuts.js    # Tastaturkürzel
 │   │   ├── useOutputRecorder.js       # Output-Stream-Recording
-│   │   ├── useRecorder.js             # Mikrofon-Recording
 │   │   └── useTheme.js                # Dark/Light Mode
 │   │
 │   └── utils/              # Hilfsfunktionen & Konstanten

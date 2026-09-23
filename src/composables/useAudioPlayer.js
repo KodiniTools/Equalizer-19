@@ -66,14 +66,9 @@ export function useAudioPlayer() {
       audioElement.value = new Audio()
       audioElement.value.crossOrigin = 'anonymous'
 
-      // Event listeners
-      audioElement.value.addEventListener('loadedmetadata', handleLoadedMetadata)
-      audioElement.value.addEventListener('timeupdate', handleTimeUpdate)
-      audioElement.value.addEventListener('ended', handleEnded)
-      audioElement.value.addEventListener('error', handleError)
-      audioElement.value.addEventListener('canplay', handleCanPlay)
-      audioElement.value.addEventListener('waiting', handleWaiting)
-      audioElement.value.addEventListener('playing', handlePlaying)
+      for (const [event, handler] of mediaEventHandlers) {
+        audioElement.value.addEventListener(event, handler)
+      }
 
       console.log('✅ Audio element initialized')
     }
@@ -150,7 +145,7 @@ export function useAudioPlayer() {
     const nextIndex = getNextIndex()
     if (nextIndex >= 0) {
       if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
-      goToIndex(nextIndex)
+      playTrack(nextIndex)
     }
   }
 
@@ -174,6 +169,17 @@ export function useAudioPlayer() {
     isPlaying.value = true
   }
 
+  // Media element events handled by the player (added in initAudio, removed in cleanup)
+  const mediaEventHandlers = [
+    ['loadedmetadata', handleLoadedMetadata],
+    ['timeupdate', handleTimeUpdate],
+    ['ended', handleEnded],
+    ['error', handleError],
+    ['canplay', handleCanPlay],
+    ['waiting', handleWaiting],
+    ['playing', handlePlaying],
+  ]
+
   // Watch volume changes
   watch(volume, (newVolume) => {
     if (audioElement.value) {
@@ -188,16 +194,22 @@ export function useAudioPlayer() {
   })
 
   // Playlist management
-  function addFiles(files) {
-    const newTracks = Array.from(files).map((file, index) => ({
-      id: Date.now() + index,
-      name: file.name,
-      file: file,
-      url: URL.createObjectURL(file),
-      size: file.size,
-      type: file.type,
+  function createTrack(id, name, blob, file, type) {
+    return {
+      id,
+      name,
+      file,
+      url: URL.createObjectURL(blob),
+      size: blob.size,
+      type,
       duration: 0,
-    }))
+    }
+  }
+
+  function addFiles(files) {
+    const newTracks = Array.from(files).map((file, index) =>
+      createTrack(Date.now() + index, file.name, file, file, file.type)
+    )
 
     playlist.value.push(...newTracks)
 
@@ -389,17 +401,11 @@ export function useAudioPlayer() {
     return -1
   }
 
-  async function goToIndex(index) {
-    if (index < 0) return
-    const success = await loadTrack(index)
-    if (success) await play()
-  }
-
   async function playNext() {
     const nextIndex = getNextIndex()
     if (nextIndex < 0) return
     if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
-    await goToIndex(nextIndex)
+    await playTrack(nextIndex)
   }
 
   async function playPrevious() {
@@ -415,7 +421,7 @@ export function useAudioPlayer() {
     } else {
       prevIndex = getPrevIndex()
     }
-    await goToIndex(prevIndex)
+    await playTrack(prevIndex)
   }
 
   // Playback mode toggles
@@ -434,9 +440,7 @@ export function useAudioPlayer() {
 
   async function playTrack(index) {
     const success = await loadTrack(index)
-    if (success) {
-      await play()
-    }
+    if (success) await play()
   }
 
   // Seek
@@ -506,16 +510,13 @@ export function useAudioPlayer() {
       try {
         await analyzeBlob(blob, record.name)
 
-        const url = URL.createObjectURL(blob)
-        const track = {
-          id: Date.now() + processed,
-          name: record.name,
-          file: null,
-          url: url,
-          size: blob.size,
-          type: record.mimeType || blob.type || 'audio/wav',
-          duration: 0,
-        }
+        const track = createTrack(
+          Date.now() + processed,
+          record.name,
+          blob,
+          null,
+          record.mimeType || blob.type || 'audio/wav'
+        )
 
         playlist.value.push(track)
         processed++
@@ -543,13 +544,9 @@ export function useAudioPlayer() {
   function cleanup() {
     if (audioElement.value) {
       audioElement.value.pause()
-      audioElement.value.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      audioElement.value.removeEventListener('timeupdate', handleTimeUpdate)
-      audioElement.value.removeEventListener('ended', handleEnded)
-      audioElement.value.removeEventListener('error', handleError)
-      audioElement.value.removeEventListener('canplay', handleCanPlay)
-      audioElement.value.removeEventListener('waiting', handleWaiting)
-      audioElement.value.removeEventListener('playing', handlePlaying)
+      for (const [event, handler] of mediaEventHandlers) {
+        audioElement.value.removeEventListener(event, handler)
+      }
       audioElement.value.src = ''
       audioElement.value = null
     }

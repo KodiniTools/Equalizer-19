@@ -47,32 +47,37 @@ function initSSILanguageSync(lang) {
 export function useI18n() {
   const t = computed(() => translations[currentLanguage.value])
 
+  // Apply a language: state, storage, <html lang>, meta tags
+  function applyLanguage(lang) {
+    currentLanguage.value = lang
+    localStorage.setItem('equalizer-language', lang)
+    localStorage.setItem('locale', lang)
+    document.documentElement.lang = lang
+
+    // Update meta tags
+    const title = t.value.main_title
+    document.title = title
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', t.value.promo_subtitle)
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute('content', t.value.promo_subtitle)
+
+    // Update data-lang-* elements in SSI partials
+    updateDataLangElements(lang)
+  }
+
   const setLanguage = (lang) => {
     if (lang !== currentLanguage.value && (lang === 'de' || lang === 'en')) {
-      currentLanguage.value = lang
-      localStorage.setItem('equalizer-language', lang)
-      localStorage.setItem('locale', lang)
-      document.documentElement.lang = lang
-
-      // Update meta tags
-      const title = t.value.main_title
-      document.title = title
-      document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-      document
-        .querySelector('meta[name="description"]')
-        ?.setAttribute('content', t.value.promo_subtitle)
-      document
-        .querySelector('meta[property="og:description"]')
-        ?.setAttribute('content', t.value.promo_subtitle)
+      applyLanguage(lang)
 
       // Dispatch language-changed event for SSI partials (cookie banner, etc.)
       window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang } }))
 
       // Dispatch locale-changed event for SSI global nav
       window.dispatchEvent(new CustomEvent('locale-changed', { detail: { locale: lang } }))
-
-      // Update data-lang-* elements in SSI partials
-      updateDataLangElements(lang)
     }
   }
 
@@ -82,24 +87,7 @@ export function useI18n() {
   // Handle language change from any source (internal or SSI nav)
   function handleExternalLanguageChange(lang) {
     if (lang && (lang === 'de' || lang === 'en') && lang !== currentLanguage.value) {
-      currentLanguage.value = lang
-      localStorage.setItem('equalizer-language', lang)
-      localStorage.setItem('locale', lang)
-      document.documentElement.lang = lang
-
-      // Update meta tags
-      const title = t.value.main_title
-      document.title = title
-      document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-      document
-        .querySelector('meta[name="description"]')
-        ?.setAttribute('content', t.value.promo_subtitle)
-      document
-        .querySelector('meta[property="og:description"]')
-        ?.setAttribute('content', t.value.promo_subtitle)
-
-      // Update data-lang-* elements in SSI partials
-      updateDataLangElements(lang)
+      applyLanguage(lang)
     }
   }
 

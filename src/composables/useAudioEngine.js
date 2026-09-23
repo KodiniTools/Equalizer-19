@@ -1,5 +1,5 @@
 import { ref, reactive, watch } from 'vue'
-import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q } from '../utils/presets.js'
+import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets.js'
 
 export function useAudioEngine() {
   // Audio Context
@@ -22,13 +22,7 @@ export function useAudioEngine() {
   )
 
   // Dynamics Settings (moderate defaults to prevent clipping)
-  const dynamics = reactive({
-    threshold: -30, // dB (higher = less compression)
-    knee: 20, // dB (smoother transition)
-    ratio: 4, // ratio (gentler compression)
-    attack: 0.003, // seconds
-    release: 0.25, // seconds
-  })
+  const dynamics = reactive({ ...DEFAULT_DYNAMICS })
 
   // Master Gain (reduced to prevent clipping)
   const masterGain = ref(0.7)
@@ -59,11 +53,7 @@ export function useAudioEngine() {
 
       // Create Dynamics Compressor
       dynamicsNode.value = audioContext.value.createDynamicsCompressor()
-      dynamicsNode.value.threshold.value = dynamics.threshold
-      dynamicsNode.value.knee.value = dynamics.knee
-      dynamicsNode.value.ratio.value = dynamics.ratio
-      dynamicsNode.value.attack.value = dynamics.attack
-      dynamicsNode.value.release.value = dynamics.release
+      applyDynamicsToNode(dynamics)
 
       // Create Equalizer Filters (19 bands)
       createEqFilters()
@@ -223,6 +213,17 @@ export function useAudioEngine() {
   }
 
   /**
+   * Rebuild the processing chain for the current source (after routing changes)
+   */
+  function reconnectSource() {
+    if (sourceNode.value) {
+      const source = sourceNode.value
+      disconnectAudioSource()
+      connectAudioSource(source)
+    }
+  }
+
+  /**
    * Update a specific EQ band
    */
   function updateEqBand(index, gain) {
@@ -259,13 +260,7 @@ export function useAudioEngine() {
    */
   function toggleEqBypass() {
     eqBypass.value = !eqBypass.value
-
-    // Reconnect audio source to update routing
-    if (sourceNode.value) {
-      const source = sourceNode.value
-      disconnectAudioSource()
-      connectAudioSource(source)
-    }
+    reconnectSource()
   }
 
   /**
@@ -273,22 +268,17 @@ export function useAudioEngine() {
    */
   function updateDynamics(settings) {
     Object.assign(dynamics, settings)
+    applyDynamicsToNode(settings)
+  }
 
-    if (dynamicsNode.value) {
-      if (settings.threshold !== undefined) {
-        dynamicsNode.value.threshold.value = settings.threshold
-      }
-      if (settings.knee !== undefined) {
-        dynamicsNode.value.knee.value = settings.knee
-      }
-      if (settings.ratio !== undefined) {
-        dynamicsNode.value.ratio.value = settings.ratio
-      }
-      if (settings.attack !== undefined) {
-        dynamicsNode.value.attack.value = settings.attack
-      }
-      if (settings.release !== undefined) {
-        dynamicsNode.value.release.value = settings.release
+  /**
+   * Write the given (partial) dynamics settings to the compressor node
+   */
+  function applyDynamicsToNode(settings) {
+    if (!dynamicsNode.value) return
+    for (const key of Object.keys(DEFAULT_DYNAMICS)) {
+      if (settings[key] !== undefined) {
+        dynamicsNode.value[key].value = settings[key]
       }
     }
   }
@@ -298,24 +288,15 @@ export function useAudioEngine() {
    */
   function toggleDynamics() {
     dynamicsEnabled.value = !dynamicsEnabled.value
-
-    // Reconnect audio source to update routing
-    if (sourceNode.value) {
-      const source = sourceNode.value
-      disconnectAudioSource()
-      connectAudioSource(source)
-    }
+    reconnectSource()
   }
 
   /**
    * Update master gain
    */
   function updateMasterGain(value) {
+    // The masterGain watcher below forwards the value to the gain node
     masterGain.value = Math.max(0, Math.min(2, value))
-
-    if (gainNode.value) {
-      gainNode.value.gain.value = masterGain.value
-    }
   }
 
   /**

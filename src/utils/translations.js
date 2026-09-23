@@ -1,15 +1,9 @@
 export const translations = {
   de: {
     // Brand & Navigation
-    brand: 'EQUALIZER 19',
-    nav_home: 'Start',
     nav_start_app: 'App starten',
-    nav_faq: 'FAQ',
-    settings_controls: 'Einstellungen & Steuerung',
     language: 'Sprache',
     theme: 'Design',
-    dark_theme: 'Dunkel',
-    light_theme: 'Hell',
 
     // Hero Section
     hero_title: 'Professionelle Audio-Verarbeitung im Browser',
@@ -65,8 +59,6 @@ export const translations = {
 
     // Stats
     stat_bands: 'Frequenzbander',
-    stat_quality: 'Qualitat',
-    stat_latency: 'Latenz',
     stat_presets: 'Presets',
     stat_fps: 'FPS Visualisierung',
     stat_server: 'Server benotigt',
@@ -76,9 +68,6 @@ export const translations = {
     cta_subtitle:
       'Starten Sie jetzt und erleben Sie professionelle Audio-Verarbeitung direkt im Browser.',
     cta_button: 'App starten',
-
-    // Footer
-    footer_desc: 'Professionelle Audio-Verarbeitung im Browser - kostenlos und ohne Installation.',
 
     // FAQ Page
     faq_title: 'Haufig gestellte Fragen',
@@ -149,14 +138,7 @@ export const translations = {
     faq_cta_desc: 'Probieren Sie Equalizer 19 einfach selbst aus - es ist kostenlos!',
 
     // App UI translations
-    promo_title: 'Professional Audio Processing',
     promo_subtitle: 'Erleben Sie professionelle Audiobearbeitung direkt in Ihrem Browser',
-    feature_eq_title: '19-Band Equalizer',
-    feature_eq_desc: 'Prazise Frequenzanpassung mit professionellen Filtern',
-    feature_comp_title: 'Dynamics Processor',
-    feature_comp_desc: 'Professionelle Kompression mit Echtzeit-Feedback',
-    feature_rec_title: 'High-Quality Recording',
-    feature_rec_desc: 'Aufnahme in WebM und WAV mit allen Effekten',
     main_title: 'EQUALIZER 19 – Vue 3 Edition',
     rec: 'Aufn.',
     stop: 'Stop',
@@ -257,11 +239,6 @@ export const translations = {
     playlist_removed: 'Track entfernt',
     playlist_drag_hint: 'Ziehen zum Sortieren',
 
-    // Pro Features
-    pro_title: 'Pro Features',
-    pro_description: 'Upgrade für erweiterte Funktionen',
-    pro_badge: 'Pro Version',
-
     // Level Meter
     meter_title: 'Pegel-Meter',
 
@@ -283,15 +260,9 @@ export const translations = {
   },
   en: {
     // Brand & Navigation
-    brand: 'EQUALIZER 19',
-    nav_home: 'Home',
     nav_start_app: 'Start App',
-    nav_faq: 'FAQ',
-    settings_controls: 'Settings & Controls',
     language: 'Language',
     theme: 'Theme',
-    dark_theme: 'Dark',
-    light_theme: 'Light',
 
     // Hero Section
     hero_title: 'Professional Audio Processing in Your Browser',
@@ -345,8 +316,6 @@ export const translations = {
 
     // Stats
     stat_bands: 'Frequency Bands',
-    stat_quality: 'Quality',
-    stat_latency: 'Latency',
     stat_presets: 'Presets',
     stat_fps: 'FPS Visualization',
     stat_server: 'Server Required',
@@ -356,9 +325,6 @@ export const translations = {
     cta_subtitle:
       'Start now and experience professional audio processing directly in your browser.',
     cta_button: 'Start App',
-
-    // Footer
-    footer_desc: 'Professional audio processing in the browser - free and without installation.',
 
     // FAQ Page
     faq_title: 'Frequently Asked Questions',
@@ -429,14 +395,7 @@ export const translations = {
     faq_cta_desc: "Just try Equalizer 19 for yourself - it's free!",
 
     // App UI translations
-    promo_title: 'Professional Audio Processing',
     promo_subtitle: 'Experience professional audio processing directly in your browser',
-    feature_eq_title: '19-Band Equalizer',
-    feature_eq_desc: 'Precise frequency adjustment with professional filters',
-    feature_comp_title: 'Dynamics Processor',
-    feature_comp_desc: 'Professional compression with real-time feedback',
-    feature_rec_title: 'High-Quality Recording',
-    feature_rec_desc: 'Recording in WebM and WAV with all effects applied',
     main_title: 'EQUALIZER 19 – Vue 3 Edition',
     rec: 'Rec',
     stop: 'Stop',
@@ -535,11 +494,6 @@ export const translations = {
     playlist_remove: 'Remove',
     playlist_removed: 'Track removed',
     playlist_drag_hint: 'Drag to reorder',
-
-    // Pro Features
-    pro_title: 'Pro Features',
-    pro_description: 'Upgrade for advanced features',
-    pro_badge: 'Pro Version',
 
     // Level Meter
     meter_title: 'Level Meter',
