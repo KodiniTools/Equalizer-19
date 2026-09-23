@@ -82,6 +82,10 @@
                 <summary>{{ t.faq_rec_q3 }}</summary>
                 <div class="faq-answer">{{ t.faq_rec_a3 }}</div>
               </details>
+              <details class="faq-item">
+                <summary>{{ t.faq_rec_q4 }}</summary>
+                <div class="faq-answer">{{ t.faq_rec_a4 }}</div>
+              </details>
             </div>
           </section>
 
