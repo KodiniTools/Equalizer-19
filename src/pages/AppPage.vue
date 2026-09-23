@@ -38,8 +38,8 @@
         </div>
       </div>
 
-      <!-- Audio Converter Promo -->
-      <AudioConverter />
+      <!-- Links to the other KodiniTools audio tools -->
+      <RelatedTools />
     </main>
 
     <!-- Persistent sticky player bar (playback + recording + download) -->
@@ -59,7 +59,7 @@
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
   import Visualization from '../components/Visualization.vue'
   import Playlist from '../components/Playlist.vue'
-  import AudioConverter from '../components/AudioConverter.vue'
+  import RelatedTools from '../components/RelatedTools.vue'
 
   const route = useRoute()
   const router = useRouter()
