@@ -31,13 +31,9 @@
             <Visualization />
           </div>
 
-          <!-- Right Column: Dynamics Processor -->
+          <!-- Right Column: Dynamics Processor (incl. presets) -->
           <div class="column-right">
-            <!-- Dynamics Processor -->
             <DynamicsProcessor />
-
-            <!-- Compressor Presets -->
-            <CompressorPresets />
           </div>
         </div>
       </div>
@@ -61,7 +57,6 @@
   import Equalizer from '../components/Equalizer.vue'
   import AudioMeter from '../components/AudioMeter.vue'
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
-  import CompressorPresets from '../components/CompressorPresets.vue'
   import Visualization from '../components/Visualization.vue'
   import Playlist from '../components/Playlist.vue'
   import AudioConverter from '../components/AudioConverter.vue'

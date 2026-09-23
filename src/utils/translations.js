@@ -226,11 +226,14 @@ export const translations = {
     // Dynamics Processor
     comp_toggle_off: 'Deaktivieren',
     comp_toggle_on: 'Aktivieren',
-    comp_presets_title: 'Compressor Presets',
     comp_cat_basic: 'Basis',
     comp_cat_genre: 'Genre',
     comp_cat_instrument: 'Instrument',
     comp_cat_mastering: 'Mastering',
+    comp_preset_label: 'Preset',
+    comp_preset_custom: 'Benutzerdefiniert',
+    comp_params: 'Parameter',
+    a11y_comp_preset: 'Kompressor-Preset wählen',
 
     // Playlist
     playlist_title: 'Playlist',
@@ -238,6 +241,10 @@ export const translations = {
     playlist_remove: 'Entfernen',
     playlist_removed: 'Track entfernt',
     playlist_drag_hint: 'Ziehen zum Sortieren',
+    shortcuts_title: 'Tastenkürzel',
+    shortcut_seek: '5 s vor/zurück',
+    shortcut_track: 'Nächster/vorheriger Track',
+    playlist_now_playing: 'Wird abgespielt',
 
     // Level Meter
     meter_title: 'Pegel-Meter',
@@ -482,11 +489,14 @@ export const translations = {
     // Dynamics Processor
     comp_toggle_off: 'Disable',
     comp_toggle_on: 'Enable',
-    comp_presets_title: 'Compressor Presets',
     comp_cat_basic: 'Basic',
     comp_cat_genre: 'Genre',
     comp_cat_instrument: 'Instrument',
     comp_cat_mastering: 'Mastering',
+    comp_preset_label: 'Preset',
+    comp_preset_custom: 'Custom',
+    comp_params: 'Parameters',
+    a11y_comp_preset: 'Choose compressor preset',
 
     // Playlist
     playlist_title: 'Playlist',
@@ -494,6 +504,10 @@ export const translations = {
     playlist_remove: 'Remove',
     playlist_removed: 'Track removed',
     playlist_drag_hint: 'Drag to reorder',
+    shortcuts_title: 'Keyboard shortcuts',
+    shortcut_seek: 'Seek ±5 s',
+    shortcut_track: 'Next/previous track',
+    playlist_now_playing: 'Now playing',
 
     // Level Meter
     meter_title: 'Level Meter',

@@ -1,16 +1,12 @@
 <template>
-  <div class="playlist">
-    <div class="playlist-header">
-      <h3>
-        <i class="fas fa-list" aria-hidden="true"></i>
-        {{ t.playlist_title }}
-      </h3>
-      <span v-if="playlist && playlist.length > 0" class="track-count">
+  <BasePanel icon="fas fa-list" :title="t.playlist_title">
+    <template v-if="playlist.length > 0" #actions>
+      <span class="panel-badge">
         {{ playlist.length }} {{ playlist.length === 1 ? 'Track' : 'Tracks' }}
       </span>
-    </div>
+    </template>
 
-    <div v-if="!playlist || playlist.length === 0" class="empty-state">
+    <div v-if="playlist.length === 0" class="empty-state">
       <i class="fas fa-music" aria-hidden="true"></i>
       <p>{{ t.playlist_empty }}</p>
     </div>
@@ -44,11 +40,23 @@
         :aria-label="track.name"
       >
         <!-- Drag handle -->
-        <span class="drag-handle" :title="t.playlist_drag_hint" :aria-label="t.playlist_drag_hint" @click.stop>
+        <span
+          class="drag-handle"
+          :title="t.playlist_drag_hint"
+          :aria-label="t.playlist_drag_hint"
+          @click.stop
+        >
           <i class="fas fa-grip-vertical" aria-hidden="true"></i>
         </span>
 
-        <div class="track-number" aria-hidden="true">{{ index + 1 }}</div>
+        <div class="track-number" aria-hidden="true">
+          <i
+            v-if="currentTrackIndex === index && isPlaying"
+            class="fas fa-volume-up"
+            :title="t.playlist_now_playing"
+          ></i>
+          <template v-else>{{ index + 1 }}</template>
+        </div>
         <div class="track-info">
           <div class="track-name">{{ track.name }}</div>
           <div class="track-meta">{{ formatFileSize(track.size) }}</div>
@@ -64,19 +72,34 @@
       </li>
     </ol>
 
-    <!-- Keyboard shortcuts hint -->
-    <div class="shortcuts-hint" aria-hidden="true">
-      <span><kbd>Space</kbd> {{ t.play }}/{{ t.pause }}</span>
-      <span><kbd>←</kbd><kbd>→</kbd> ±5s</span>
-      <span><kbd>↑</kbd><kbd>↓</kbd> {{ t.volume }}</span>
-      <span><kbd>N</kbd> / <kbd>P</kbd> Track</span>
-      <span><kbd>M</kbd> {{ t.player_mute }}</span>
-    </div>
-  </div>
+    <!-- Keyboard shortcuts (collapsed by default) -->
+    <template #footer>
+      <details class="shortcuts">
+        <summary>
+          <i class="fas fa-keyboard" aria-hidden="true"></i>
+          <span>{{ t.shortcuts_title }}</span>
+          <i class="fas fa-chevron-down chevron" aria-hidden="true"></i>
+        </summary>
+        <dl class="shortcut-list">
+          <dt><kbd>Space</kbd></dt>
+          <dd>{{ t.play }} / {{ t.pause }}</dd>
+          <dt><kbd>←</kbd><kbd>→</kbd></dt>
+          <dd>{{ t.shortcut_seek }}</dd>
+          <dt><kbd>↑</kbd><kbd>↓</kbd></dt>
+          <dd>{{ t.volume }}</dd>
+          <dt><kbd>N</kbd><kbd>P</kbd></dt>
+          <dd>{{ t.shortcut_track }}</dd>
+          <dt><kbd>M</kbd></dt>
+          <dd>{{ t.player_mute }}</dd>
+        </dl>
+      </details>
+    </template>
+  </BasePanel>
 </template>
 
 <script setup>
   import { ref, inject, computed } from 'vue'
+  import BasePanel from './BasePanel.vue'
 
   const { t } = inject('i18n')
   const audioPlayer = inject('audioPlayer', {
@@ -90,6 +113,7 @@
 
   const playlist = computed(() => audioPlayer.playlist?.value || [])
   const currentTrackIndex = computed(() => audioPlayer.currentTrackIndex?.value ?? -1)
+  const isPlaying = computed(() => audioPlayer.isPlaying?.value ?? false)
 
   // Drag state
   const dragIndex = ref(null)
@@ -139,90 +163,73 @@
 </script>
 
 <style scoped>
-  .playlist {
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
-    border-radius: 12px;
-    padding: 12px;
-  }
-
-  .playlist-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .playlist-header h3 {
-    margin: 0;
-    font-size: 0.8em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-primary, #fff);
-  }
-
-  .track-count {
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.7em;
-    font-weight: 600;
-  }
-
   .empty-state {
     text-align: center;
-    padding: 20px 10px;
+    padding: 22px 12px;
+    border: 1px dashed var(--border-color, #3a3a48);
+    border-radius: 10px;
     color: var(--text-muted, #8b8b9a);
   }
 
   .empty-state i {
-    font-size: 1.5em;
+    font-size: 1.4em;
     margin-bottom: 8px;
     display: block;
-    opacity: 0.5;
+    opacity: 0.6;
   }
 
   .empty-state p {
     margin: 0;
-    font-size: 0.75em;
+    font-size: 0.72em;
   }
 
   .playlist-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    max-height: 200px;
+    gap: 2px;
+    max-height: 320px;
     overflow-y: auto;
   }
 
   .playlist-item {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
-    background: var(--secondary-bg, #1a1a22);
+    padding: 7px 8px;
     border-radius: 8px;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: all 0.15s ease;
-    border: 2px solid transparent;
     user-select: none;
+    transition: background 0.15s ease;
   }
 
   .playlist-item:hover {
-    background: var(--hover-bg, #323240);
+    background: var(--secondary-bg, #1a1a22);
   }
 
+  /* Active track: tinted row with an accent bar on the left */
   .playlist-item.active {
+    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 14%, transparent);
+  }
+
+  .playlist-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: 2px;
     background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
   }
 
   .playlist-item.dragging {
     opacity: 0.4;
-    border-color: var(--accent-primary, #00d9ff);
   }
 
   .playlist-item.drop-before {
@@ -238,41 +245,33 @@
     font-size: 0.65em;
     cursor: grab;
     padding: 2px 1px;
-    opacity: 0.4;
+    opacity: 0;
     transition: opacity 0.15s;
     flex-shrink: 0;
   }
 
-  .playlist-item:hover .drag-handle {
-    opacity: 1;
+  .playlist-item:hover .drag-handle,
+  .playlist-item:focus-within .drag-handle {
+    opacity: 0.8;
   }
 
   .drag-handle:active {
     cursor: grabbing;
   }
 
-  .playlist-item.active .drag-handle {
-    color: var(--on-accent, #000);
-    opacity: 0.6;
-  }
-
   .track-number {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 217, 255, 0.2);
-    border-radius: 50%;
-    font-weight: 600;
+    width: 18px;
+    text-align: center;
     font-size: 0.65em;
-    color: var(--text-secondary, #c8c8d5);
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted, #8b8b9a);
     flex-shrink: 0;
   }
 
   .playlist-item.active .track-number {
-    background: rgba(128, 128, 128, 0.25);
-    color: var(--on-accent, #000);
+    color: var(--accent-primary, #00d9ff);
+    font-weight: 600;
   }
 
   .track-info {
@@ -282,7 +281,7 @@
 
   .track-name {
     font-weight: 500;
-    font-size: 0.7em;
+    font-size: 0.72em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -290,7 +289,7 @@
   }
 
   .playlist-item.active .track-name {
-    color: var(--on-accent, #000);
+    font-weight: 600;
   }
 
   .track-meta {
@@ -298,71 +297,105 @@
     color: var(--text-muted, #8b8b9a);
   }
 
-  .playlist-item.active .track-meta {
-    color: var(--on-accent, #000);
-    opacity: 0.75;
-  }
-
   .btn-remove {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border: none;
-    border-radius: 50%;
-    background: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted, #8b8b9a);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 0.6em;
+    font-size: 0.65em;
     flex-shrink: 0;
+    opacity: 0.6;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      opacity 0.15s;
+  }
+
+  .playlist-item:hover .btn-remove,
+  .btn-remove:focus-visible {
+    opacity: 1;
   }
 
   .btn-remove:hover {
-    background: #ef4444;
-    color: white;
+    background: color-mix(in srgb, var(--error, #ef4444) 15%, transparent);
+    color: var(--error, #ef4444);
   }
 
-  .playlist-item.active .btn-remove {
-    background: rgba(128, 128, 128, 0.25);
-    color: var(--on-accent, #000);
-  }
-
-  .playlist-item.active .btn-remove:hover {
-    background: rgba(128, 128, 128, 0.4);
-  }
-
-  /* Keyboard shortcuts hint */
-  .shortcuts-hint {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 12px;
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border-color, #3a3a48);
-  }
-
-  .shortcuts-hint span {
+  /* ---- Keyboard shortcuts ---- */
+  .shortcuts summary {
     display: flex;
     align-items: center;
-    gap: 3px;
-    font-size: 0.6em;
+    gap: 8px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.68em;
+    font-weight: 500;
     color: var(--text-muted, #8b8b9a);
-    white-space: nowrap;
+    border-radius: 6px;
+    transition: color 0.15s;
+  }
+
+  .shortcuts summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .shortcuts summary:hover {
+    color: var(--text-primary, #fff);
+  }
+
+  .shortcuts summary:focus-visible {
+    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline-offset: 2px;
+  }
+
+  .shortcuts .chevron {
+    margin-left: auto;
+    font-size: 0.85em;
+    transition: transform 0.2s;
+  }
+
+  .shortcuts[open] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .shortcut-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 10px 0 0;
+  }
+
+  .shortcut-list dt {
+    display: flex;
+    gap: 3px;
+  }
+
+  .shortcut-list dd {
+    margin: 0;
+    font-size: 0.65em;
+    color: var(--text-secondary, #c8c8d5);
   }
 
   kbd {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 20px;
     background: var(--secondary-bg, #1a1a22);
     border: 1px solid var(--border-color, #3a3a48);
+    border-bottom-width: 2px;
     border-radius: 4px;
     padding: 1px 5px;
     font-family: 'SF Mono', 'Courier New', monospace;
-    font-size: 0.95em;
-    color: var(--accent-primary, #00d9ff);
+    font-size: 0.6em;
+    color: var(--text-primary, #fff);
     line-height: 1.4;
   }
 
@@ -372,77 +405,37 @@
   }
 
   .playlist-items::-webkit-scrollbar-track {
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 4px;
+    background: transparent;
   }
 
   .playlist-items::-webkit-scrollbar-thumb {
-    background: var(--accent-primary, #00d9ff);
+    background: var(--border-color, #3a3a48);
     border-radius: 4px;
   }
 
   .playlist-items::-webkit-scrollbar-thumb:hover {
-    background: #00c4e6;
+    background: var(--accent-primary, #00d9ff);
   }
 
-  @media (max-width: 600px) {
-    .playlist {
-      padding: 10px;
-    }
-
-    .playlist-header h3 {
-      font-size: 0.75em;
-    }
-
-    .playlist-item {
-      padding: 6px;
-      gap: 6px;
-    }
-
-    .track-name {
-      font-size: 0.65em;
-    }
-
-    .track-meta {
-      font-size: 0.55em;
+  @media (hover: none) {
+    /* Touch devices: no hover, keep handle and remove button visible */
+    .drag-handle {
+      opacity: 0.6;
     }
 
     .btn-remove {
-      width: 24px;
-      height: 24px;
-      font-size: 0.65em;
-    }
-
-    .playlist-items {
-      max-height: 160px;
-    }
-
-    .shortcuts-hint {
-      gap: 4px 8px;
+      opacity: 1;
     }
   }
 
-  @media (max-width: 400px) {
-    .playlist {
-      padding: 8px;
-    }
-
-    .playlist-item {
-      padding: 5px;
-    }
-
-    .track-number {
-      width: 18px;
-      height: 18px;
-      font-size: 0.6em;
-    }
-
+  @media (max-width: 600px) {
     .playlist-items {
-      max-height: 140px;
+      max-height: 220px;
     }
 
-    .shortcuts-hint {
-      display: none;
+    .btn-remove {
+      width: 32px;
+      height: 32px;
     }
   }
 </style>

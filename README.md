@@ -58,7 +58,8 @@ equalizer19-vue/
 │   ├── components/
 │   │   ├── AudioConverter.vue  # Audio-Konverter Promo
 │   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
-│   │   ├── CompressorPresets.vue # Kompressor-Presets
+│   │   ├── BasePanel.vue       # Karten-Rahmen der Sidebars (Kopfzeile, Aktionen, Footer)
+│   │   ├── CompressorPresets.vue # Kompressor-Preset-Dropdown (in DynamicsProcessor)
 │   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI

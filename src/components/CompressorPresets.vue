@@ -1,216 +1,101 @@
 <template>
-  <div class="comp-presets">
-    <!-- Header -->
-    <div class="presets-header">
-      <span class="presets-title">{{ t.comp_presets_title }}</span>
-    </div>
-
-    <!-- Preset Categories -->
-    <div class="preset-categories">
-      <!-- Basic -->
-      <div class="preset-category">
-        <span class="category-label">{{ t.comp_cat_basic }}</span>
-        <div class="preset-buttons">
-          <button
-            v-for="preset in basicPresets"
-            :key="preset"
-            :class="['preset-btn', { active: activePreset === preset }]"
-            @click="applyPreset(preset)"
-          >
-            {{ preset }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Genre -->
-      <div class="preset-category">
-        <span class="category-label">{{ t.comp_cat_genre }}</span>
-        <div class="preset-buttons">
-          <button
-            v-for="preset in genrePresets"
-            :key="preset"
-            :class="['preset-btn', { active: activePreset === preset }]"
-            @click="applyPreset(preset)"
-          >
-            {{ preset }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Instrument / Voice -->
-      <div class="preset-category">
-        <span class="category-label">{{ t.comp_cat_instrument }}</span>
-        <div class="preset-buttons">
-          <button
-            v-for="preset in instrumentPresets"
-            :key="preset"
-            :class="['preset-btn', { active: activePreset === preset }]"
-            @click="applyPreset(preset)"
-          >
-            {{ preset }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Mastering -->
-      <div class="preset-category">
-        <span class="category-label">{{ t.comp_cat_mastering }}</span>
-        <div class="preset-buttons">
-          <button
-            v-for="preset in masteringPresets"
-            :key="preset"
-            :class="['preset-btn', { active: activePreset === preset }]"
-            @click="applyPreset(preset)"
-          >
-            {{ preset }}
-          </button>
-        </div>
-      </div>
-    </div>
+  <div class="select-wrap">
+    <select
+      :id="id"
+      class="preset-select"
+      :value="activePreset"
+      @change="applyPreset($event.target.value)"
+      :aria-label="t.a11y_comp_preset"
+    >
+      <!-- Shown when the current settings match no preset -->
+      <option value="" disabled>{{ t.comp_preset_custom }}</option>
+      <optgroup
+        v-for="group in COMP_PRESET_GROUPS"
+        :key="group.labelKey"
+        :label="t[group.labelKey]"
+      >
+        <option v-for="name in group.presets" :key="name" :value="name">{{ name }}</option>
+      </optgroup>
+    </select>
+    <i class="fas fa-chevron-down select-chevron" aria-hidden="true"></i>
   </div>
 </template>
 
 <script setup>
-  import { ref, inject } from 'vue'
-  import { COMP_PRESETS } from '../utils/presets'
+  import { inject, computed } from 'vue'
+  import {
+    COMP_PRESETS,
+    COMP_PRESET_GROUPS,
+    compPresetToDynamics,
+    findCompPreset,
+  } from '../utils/presets'
+
+  defineProps({
+    id: { type: String, default: undefined },
+  })
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
 
-  const activePreset = ref(null)
-
-  // Preset categories
-  const basicPresets = ['Gentle', 'Medium', 'Heavy']
-  const genrePresets = ['Rock', 'Pop', 'Electro', 'Jazz', 'Hip-Hop', 'Classical']
-  const instrumentPresets = ['Vocal', 'Drums', 'Bass', 'Podcast']
-  const masteringPresets = ['Master', 'Limiter']
+  // Derived from the engine: shows "Custom" as soon as a parameter is changed manually
+  const activePreset = computed(() => findCompPreset(audioEngine?.dynamics))
 
   function applyPreset(presetName) {
     const preset = COMP_PRESETS[presetName]
-    if (!preset) return
-
-    activePreset.value = presetName
-
-    if (audioEngine && audioEngine.updateDynamics) {
-      // Convert ms to seconds for attack and release
-      audioEngine.updateDynamics({
-        threshold: preset.th,
-        ratio: preset.ra,
-        knee: preset.kn,
-        attack: preset.at / 1000,
-        release: preset.re / 1000,
-      })
-    }
+    if (!preset || !audioEngine?.updateDynamics) return
+    audioEngine.updateDynamics(compPresetToDynamics(preset))
   }
 </script>
 
 <style scoped>
-  .comp-presets {
-    background: var(--card-bg, #252530);
+  .select-wrap {
+    position: relative;
+  }
+
+  .preset-select {
+    width: 100%;
+    height: 32px;
+    padding: 0 30px 0 10px;
     border: 1px solid var(--border-color, #3a3a48);
-    border-radius: 12px;
-    padding: 12px;
-  }
-
-  .presets-header {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
-  }
-
-  .presets-title {
-    font-size: 0.75em;
-    font-weight: 600;
-    color: var(--text-secondary, #c8c8d5);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .preset-categories {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .preset-category {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .category-label {
-    font-size: 0.65em;
-    font-weight: 500;
-    color: var(--text-muted, #8b8b9a);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-  }
-
-  .preset-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .preset-btn {
-    padding: 6px 10px;
-    border: 1px solid var(--border-color, #3a3a48);
+    border-radius: 8px;
     background: var(--secondary-bg, #1a1a22);
-    border-radius: 6px;
-    color: var(--text-secondary, #c8c8d5);
-    font-size: 0.65em;
+    color: var(--text-primary, #fff);
+    font-size: 0.72em;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
   }
 
-  .preset-btn:hover {
-    background: var(--hover-bg, #323240);
+  .preset-select:hover {
+    border-color: var(--accent-primary, #00d9ff);
+  }
+
+  .preset-select:focus-visible {
+    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline-offset: 1px;
+  }
+
+  .preset-select option,
+  .preset-select optgroup {
+    background: var(--card-bg, #252530);
     color: var(--text-primary, #fff);
-    border-color: var(--accent-primary, #00d9ff);
   }
 
-  .preset-btn.active {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+  .select-chevron {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.6em;
+    color: var(--text-muted, #8b8b9a);
+    pointer-events: none;
   }
 
   @media (max-width: 600px) {
-    .comp-presets {
-      padding: 10px;
-    }
-
-    .preset-btn {
-      padding: 5px 8px;
-      font-size: 0.6em;
-    }
-
-    .category-label {
-      font-size: 0.6em;
-    }
-
-    .preset-categories {
-      gap: 8px;
-    }
-
-    .preset-buttons {
-      gap: 4px;
-    }
-  }
-
-  @media (max-width: 400px) {
-    .comp-presets {
-      padding: 8px;
-    }
-
-    .preset-btn {
-      padding: 4px 7px;
-      font-size: 0.55em;
-    }
-
-    .presets-title {
-      font-size: 0.7em;
+    .preset-select {
+      height: 36px;
     }
   }
 </style>
