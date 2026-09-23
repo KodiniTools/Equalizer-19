@@ -32,36 +32,36 @@ export const translations = {
 
     // Features Section
     features_title: 'Leistungsstarke Funktionen',
-    features_subtitle: 'Alles was Sie fur professionelle Audio-Bearbeitung brauchen',
+    features_subtitle: 'Alles, was Sie für professionelle Audio-Bearbeitung brauchen',
     feature_webaudio_title: 'Web Audio API',
     feature_webaudio_desc:
       'Echtzeit-Audio-Verarbeitung mit nativer Browser-Performance, ohne Plugins.',
     feature_viz_title: 'Echtzeit-Visualisierung',
-    feature_viz_desc: 'FFT-Spektrum-Analyzer mit 60 FPS fur visuelles Feedback.',
+    feature_viz_desc: 'FFT-Spektrum-Analyzer mit 60 FPS für visuelles Feedback.',
     feature_presets_title: 'Preset-System',
     feature_presets_desc:
-      'Sofort einsatzbereite Presets fur verschiedene Musikgenres und Anwendungen.',
+      'Sofort einsatzbereite Presets für verschiedene Musikgenres und Anwendungen.',
     feature_export_title: 'Flexibler Export',
     feature_export_desc: 'Exportieren Sie Ihre Aufnahmen in WebM oder WAV Format.',
     feature_responsive_title: 'Responsive Design',
-    feature_responsive_desc: 'Optimiert fur Desktop, Tablet und mobile Gerate.',
-    feature_privacy_title: '100% Privatsphare',
+    feature_responsive_desc: 'Optimiert für Desktop, Tablet und mobile Geräte.',
+    feature_privacy_title: '100% Privatsphäre',
     feature_privacy_desc:
       'Alle Verarbeitung erfolgt lokal - keine Daten werden an Server gesendet.',
 
     // Tech Stack
     tech_title: 'Moderne Technologie',
     tech_subtitle: 'Gebaut mit den besten Web-Technologien',
-    tech_vue_desc: 'Composition API fur reaktive und modulare Architektur',
-    tech_webaudio_desc: 'Native Browser-API fur Audio-Verarbeitung in Echtzeit',
+    tech_vue_desc: 'Composition API für reaktive und modulare Architektur',
+    tech_webaudio_desc: 'Native Browser-API für Audio-Verarbeitung in Echtzeit',
     tech_vite_desc: 'Blitzschnelle Entwicklung und optimierte Builds',
     tech_css_desc: 'Nahtloses Dark/Light Theme mit CSS Custom Properties',
 
     // Stats
-    stat_bands: 'Frequenzbander',
+    stat_bands: 'Frequenzbänder',
     stat_presets: 'Presets',
     stat_fps: 'FPS Visualisierung',
-    stat_server: 'Server benotigt',
+    stat_server: 'Server benötigt',
 
     // CTA Section
     cta_title: 'Bereit zum Loslegen?',
@@ -70,8 +70,8 @@ export const translations = {
     cta_button: 'App starten',
 
     // FAQ Page
-    faq_title: 'Haufig gestellte Fragen',
-    faq_subtitle: 'Alles was Sie uber Equalizer 19 wissen mussen',
+    faq_title: 'Häufig gestellte Fragen',
+    faq_subtitle: 'Alles, was Sie über Equalizer 19 wissen müssen',
     faq_cat_general: 'Allgemeine Fragen',
     faq_cat_equalizer: 'Equalizer',
     faq_cat_compressor: 'Kompressor',
@@ -81,57 +81,57 @@ export const translations = {
     // General FAQ
     faq_q1: 'Was ist Equalizer 19?',
     faq_a1:
-      'Equalizer 19 ist eine professionelle Audio-Processing-Anwendung, die vollstandig im Browser lauft. Sie bietet einen 19-Band parametrischen Equalizer, einen Dynamics Processor und Aufnahmefunktionen - alles ohne Installation oder Plugins.',
+      'Equalizer 19 ist eine professionelle Audio-Processing-Anwendung, die vollständig im Browser läuft. Sie bietet einen 19-Band parametrischen Equalizer, einen Dynamics Processor und Aufnahmefunktionen - alles ohne Installation oder Plugins.',
     faq_q2: 'Ist die Nutzung kostenlos?',
     faq_a2:
       'Ja, Equalizer 19 ist vollkommen kostenlos nutzbar. Es gibt keine versteckten Kosten, keine Registrierung erforderlich und keine Werbung.',
     faq_q3: 'Werden meine Audiodateien auf einen Server hochgeladen?',
     faq_a3:
-      'Nein! Alle Audio-Verarbeitung erfolgt vollstandig lokal in Ihrem Browser. Keine Daten werden an externe Server gesendet. Ihre Privatsphare ist garantiert.',
+      'Nein! Alle Audio-Verarbeitung erfolgt vollständig lokal in Ihrem Browser. Keine Daten werden an externe Server gesendet. Ihre Privatsphäre ist garantiert.',
 
     // Equalizer FAQ
-    faq_eq_q1: 'Was bedeuten die 19 Bander?',
+    faq_eq_q1: 'Was bedeuten die 19 Bänder?',
     faq_eq_a1:
-      'Die 19 Bander sind logarithmisch in etwa Halboktav-Schritten verteilt und decken den gesamten Horbereich von 20 Hz bis 20 kHz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik prazise zu formen.',
+      'Die 19 Bänder sind logarithmisch in etwa Halboktav-Schritten verteilt und decken den gesamten Hörbereich von 20 Hz bis 20 kHz ab. Jedes Band kann um -12 bis +12 dB angepasst werden, um die Klangcharakteristik präzise zu formen.',
     faq_eq_q2: 'Was bewirken die verschiedenen Presets?',
     faq_eq_a2:
-      "Die Presets sind vorkonfigurierte EQ-Kurven fur verschiedene Musikgenres. 'Rock' betont Mitten und Hohen, 'Bass Boost' verstarkt tiefe Frequenzen, 'V-Shape' hebt Basse und Hohen an wahrend Mitten abgesenkt werden, und weitere.",
+      "Die Presets sind vorkonfigurierte EQ-Kurven für verschiedene Musikgenres. 'Rock' betont Mitten und Höhen, 'Bass Boost' verstärkt tiefe Frequenzen, 'V-Shape' hebt Bässe und Höhen an während Mitten abgesenkt werden, und weitere.",
     faq_eq_q3: 'Was macht der Bypass-Button?',
     faq_eq_a3:
-      'Der Bypass-Button umgeht den Equalizer temporar, sodass Sie den Unterschied zwischen bearbeitetem und unbearbeitetem Audio horen konnen. Das ist nutzlich um Ihre Einstellungen zu uberprufen.',
+      'Der Bypass-Button umgeht den Equalizer temporär, sodass Sie den Unterschied zwischen bearbeitetem und unbearbeitetem Audio hören können. Das ist nützlich um Ihre Einstellungen zu überprüfen.',
 
     // Compressor FAQ
-    faq_comp_q1: 'Wofur brauche ich einen Kompressor?',
+    faq_comp_q1: 'Wofür brauche ich einen Kompressor?',
     faq_comp_a1:
-      'Ein Kompressor reduziert den Dynamikumfang von Audio, indem er laute Signale abschwacht. Das macht den Gesamtklang gleichmaßiger und kann Musik druckvoller klingen lassen.',
+      'Ein Kompressor reduziert den Dynamikumfang von Audio, indem er laute Signale abschwächt. Das macht den Gesamtklang gleichmäßiger und kann Musik druckvoller klingen lassen.',
     faq_comp_q2: 'Was bedeuten Threshold und Ratio?',
     faq_comp_a2:
-      'Threshold bestimmt, ab welchem Lautstarke-Pegel die Kompression einsetzt. Ratio gibt an, wie stark komprimiert wird - bei 4:1 werden 4 dB uber dem Threshold zu 1 dB am Ausgang.',
+      'Threshold bestimmt, ab welchem Lautstärke-Pegel die Kompression einsetzt. Ratio gibt an, wie stark komprimiert wird - bei 4:1 werden 4 dB über dem Threshold zu 1 dB am Ausgang.',
     faq_comp_q3: 'Welches Preset sollte ich verwenden?',
     faq_comp_a3:
-      "Das hangt von Ihrem Material ab: 'Gentle' fur subtile Kompression, 'Vocal' fur Sprachaufnahmen, 'Drums' fur punchigen Sound, 'Master' fur sanfte Gesamtkompression, oder 'Limiter' um Ubersteuerung zu verhindern.",
+      "Das hängt von Ihrem Material ab: 'Gentle' für subtile Kompression, 'Vocal' für Sprachaufnahmen, 'Drums' für punchigen Sound, 'Master' für sanfte Gesamtkompression, oder 'Limiter' um Übersteuerung zu verhindern.",
 
     // Recording FAQ
     faq_rec_q1: 'In welchen Formaten kann ich aufnehmen?',
     faq_rec_a1:
-      'Aufnahmen werden im WebM-Format (mit Opus-Codec) gespeichert, das eine hervorragende Qualitat bei kompakter Dateigro.e bietet. Sie konnen externe Konverter nutzen, um in andere Formate wie MP3 oder WAV zu konvertieren.',
+      'Aufnahmen werden im WebM-Format (mit Opus-Codec) gespeichert, das eine hervorragende Qualität bei kompakter Dateigröße bietet. Sie können externe Konverter nutzen, um in andere Formate wie MP3 oder WAV zu konvertieren.',
     faq_rec_q2: 'Werden alle meine EQ-Einstellungen mit aufgenommen?',
     faq_rec_a2:
       'Ja! Die Aufnahme erfolgt nach der kompletten Audio-Verarbeitungskette - alle Ihre EQ-Anpassungen und Kompressor-Einstellungen werden im aufgenommenen Audio enthalten sein.',
-    faq_rec_q3: 'Warum hore ich nichts wahrend der Aufnahme?',
+    faq_rec_q3: 'Warum höre ich nichts während der Aufnahme?',
     faq_rec_a3:
       'Stellen Sie sicher, dass eine Audiodatei geladen und abgespielt wird. Die Aufnahme nimmt den Audio-Output auf - wenn nichts abgespielt wird, wird auch nichts aufgenommen.',
 
     // Technical FAQ
-    faq_tech_q1: 'Welche Browser werden unterstutzt?',
+    faq_tech_q1: 'Welche Browser werden unterstützt?',
     faq_tech_a1:
-      'Equalizer 19 funktioniert in allen modernen Browsern: Chrome 90+, Firefox 88+, Safari 14.1+, Edge 90+ und Opera 76+. Fur beste Performance empfehlen wir Chrome oder Firefox.',
+      'Equalizer 19 funktioniert in allen modernen Browsern: Chrome 90+, Firefox 88+, Safari 14.1+, Edge 90+ und Opera 76+. Für beste Performance empfehlen wir Chrome oder Firefox.',
     faq_tech_q2: 'Warum muss ich erst klicken, bevor Audio funktioniert?',
     faq_tech_a2:
-      'Das ist eine Sicherheitsmaßnahme moderner Browser (Autoplay-Policy). Audio kann erst nach einer Benutzerinteraktion abgespielt werden, um ungewollte Gerausche zu verhindern.',
+      'Das ist eine Sicherheitsmaßnahme moderner Browser (Autoplay-Policy). Audio kann erst nach einer Benutzerinteraktion abgespielt werden, um ungewollte Geräusche zu verhindern.',
     faq_tech_q3: 'Kann ich Equalizer 19 offline nutzen?',
     faq_tech_a3:
-      'Derzeit wird eine Internetverbindung zum Laden der Anwendung benotigt. Sobald geladen, erfolgt alle Verarbeitung jedoch lokal und benotigt keine weitere Serververbindung.',
+      'Derzeit wird eine Internetverbindung zum Laden der Anwendung benötigt. Sobald geladen, erfolgt alle Verarbeitung jedoch lokal und benötigt keine weitere Serververbindung.',
 
     // FAQ CTA
     faq_cta_title: 'Noch Fragen?',
@@ -144,16 +144,16 @@ export const translations = {
     stop: 'Stop',
     download: 'Download',
     equalizer: 'Equalizer',
-    reset: 'Zurucksetzen',
+    reset: 'Zurücksetzen',
     dynamics: 'Dynamics Processor',
     threshold: 'Schwelle',
     knee: 'Knee',
-    ratio: 'Verhaltnis',
+    ratio: 'Verhältnis',
     attack: 'Attack',
     release: 'Release',
     target: 'Ziel',
     playlist: 'Playlist',
-    clear: 'Loschen',
+    clear: 'Löschen',
     tools_title: 'Weitere Audio-Tools',
     tools_subtitle:
       'Bearbeite deine Aufnahmen direkt weiter – kostenlos im Browser. Die Tools öffnen sich in einem neuen Tab.',
