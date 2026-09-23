@@ -2,6 +2,8 @@ export const translations = {
   de: {
     // Brand & Navigation
     nav_start_app: 'App starten',
+    app_back_home: 'Zur Startseite',
+    app_help: 'Hilfe & FAQ',
     language: 'Sprache',
     theme: 'Design',
 
@@ -65,6 +67,8 @@ export const translations = {
     // FAQ Page
     faq_title: 'Häufig gestellte Fragen',
     faq_subtitle: 'Alles, was Sie über Equalizer 19 wissen müssen',
+    faq_eyebrow: 'Hilfe & Antworten',
+    faq_nav_label: 'Themen',
     faq_cat_general: 'Allgemeine Fragen',
     faq_cat_equalizer: 'Equalizer',
     faq_cat_compressor: 'Kompressor',
@@ -131,7 +135,7 @@ export const translations = {
 
     // FAQ CTA
     faq_cta_title: 'Noch Fragen?',
-    faq_cta_desc: 'Probieren Sie Equalizer 19 einfach selbst aus - es ist kostenlos!',
+    faq_cta_desc: 'Probieren Sie Equalizer 19 einfach selbst aus – kostenlos und ohne Anmeldung.',
 
     // App UI translations
     promo_subtitle: 'Erleben Sie professionelle Audiobearbeitung direkt in Ihrem Browser',
@@ -270,6 +274,8 @@ export const translations = {
   en: {
     // Brand & Navigation
     nav_start_app: 'Start App',
+    app_back_home: 'Back to home',
+    app_help: 'Help & FAQ',
     language: 'Language',
     theme: 'Theme',
 
@@ -331,6 +337,8 @@ export const translations = {
     // FAQ Page
     faq_title: 'Frequently Asked Questions',
     faq_subtitle: 'Everything you need to know about Equalizer 19',
+    faq_eyebrow: 'Help & answers',
+    faq_nav_label: 'Topics',
     faq_cat_general: 'General Questions',
     faq_cat_equalizer: 'Equalizer',
     faq_cat_compressor: 'Compressor',
@@ -397,7 +405,7 @@ export const translations = {
 
     // FAQ CTA
     faq_cta_title: 'Still have questions?',
-    faq_cta_desc: "Just try Equalizer 19 for yourself - it's free!",
+    faq_cta_desc: 'Just try Equalizer 19 yourself – free and without sign-up.',
 
     // App UI translations
     promo_subtitle: 'Experience professional audio processing directly in your browser',
