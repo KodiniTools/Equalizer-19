@@ -20,7 +20,7 @@
 |-------------|-------|
 | **Web Audio API** | Echtzeit-Audio-Processing (BiquadFilter, DynamicsCompressor, AnalyserNode) |
 | **MediaRecorder API** | Audio-Aufnahme in WebM (Opus) |
-| **AudioWorklet** | Verlustfreie WAV-Aufnahme: PCM-Mitschnitt hinter dem Master-Gain (`src/worklets/pcm-recorder.worklet.js`), Encoder in `src/utils/wavEncoder.js` (16/24 Bit PCM, 32 Bit Float) |
+| **AudioWorklet** | Verlustfreie WAV-Aufnahme: PCM-Mitschnitt hinter dem Master-Gain (`src/worklets/pcm-recorder.worklet.js`), Encoder in `src/utils/wavEncoder.js` (16/24 Bit PCM, 32 Bit Float). Lädt das Worklet-Modul nicht innerhalb von 2 s, nutzt die Aufnahme den ScriptProcessor-Fallback (`src/utils/workletLoader.js`) |
 
 ### Styling & Icons
 | Technologie | Version | Zweck |
@@ -75,6 +75,7 @@ Equalizer-19/
 │   ├── composables/        # Vue Composition API Logik
 │   │   ├── useAudioEngine.js          # Audio-Verarbeitungskette
 │   │   ├── useAudioPlayer.js          # Playback-Steuerung
+│   │   ├── useCustomPresets.js        # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js             # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useI18n.js                 # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js    # Tastaturkürzel
@@ -87,7 +88,8 @@ Equalizer-19/
 │       ├── presets.js              # EQ- und Kompressor-Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
 │       ├── translations.js         # DE/EN Übersetzungen
-│       └── wavEncoder.js           # WAV-Export (16/24/32 Bit)
+│       ├── wavEncoder.js           # WAV-Export (16/24/32 Bit)
+│       └── workletLoader.js        # AudioWorklet laden (mit Timeout/Fallback)
 │
 ├── tests/                  # Unit-Tests (npm test, node:test)
 │

@@ -72,6 +72,7 @@ equalizer19-vue/
 │   ├── composables/
 │   │   ├── useAudioEngine.js   # Audio-Engine-Management
 │   │   ├── useAudioPlayer.js   # Player-Logik
+│   │   ├── useCustomPresets.js # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useI18n.js          # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
@@ -86,7 +87,8 @@ equalizer19-vue/
 │       ├── presets.js          # EQ/Comp Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
 │       ├── translations.js     # Übersetzungen
-│       └── wavEncoder.js       # WAV-Export (16/24/32 Bit)
+│       ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
+│       └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
 └── tests/                      # Unit-Tests (npm test)
 ```
 

@@ -13,19 +13,23 @@ export function recordToBlob(record) {
 
 /**
  * Decode a Blob via the Web Audio API to validate it and read its properties.
- * Rejects when the data is not decodable audio.
+ * Rejects when the data is not decodable audio; the temporary context is
+ * closed in either case.
  */
 export async function analyzeBlob(blob, name) {
   const arrayBuffer = await blob.arrayBuffer()
   const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-  audioContext.close()
-
-  return {
-    name: name,
-    duration: audioBuffer.duration,
-    sampleRate: audioBuffer.sampleRate,
-    numberOfChannels: audioBuffer.numberOfChannels,
-    length: audioBuffer.length,
+  try {
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+    return {
+      name: name,
+      duration: audioBuffer.duration,
+      sampleRate: audioBuffer.sampleRate,
+      numberOfChannels: audioBuffer.numberOfChannels,
+      length: audioBuffer.length,
+    }
+  } finally {
+    // Also release the context when decoding fails (browsers limit open contexts)
+    audioContext.close()
   }
 }

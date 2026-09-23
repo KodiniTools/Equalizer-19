@@ -39,3 +39,51 @@ test('handleDrop resets the drag state and forwards dropped files', async () => 
   assert.equal(isDragOver.value, false)
   assert.equal(received[0][0].name, 'a.m4a')
 })
+
+// Minimal FileSystemEntry mocks (webkitGetAsEntry API)
+const fileEntry = (f) => ({ isFile: true, isDirectory: false, file: (ok) => ok(f) })
+function dirEntry(children, batchSize = 2) {
+  return {
+    isFile: false,
+    isDirectory: true,
+    createReader() {
+      let pos = 0
+      // readEntries returns batches until an empty array signals the end
+      return {
+        readEntries(ok) {
+          const batch = children.slice(pos, pos + batchSize)
+          pos += batch.length
+          ok(batch)
+        },
+      }
+    },
+  }
+}
+
+test('handleDrop descends into dropped folders and keeps only audio files', async () => {
+  const received = []
+  const { handleDrop } = useFileDrop((files) => received.push(files))
+  const tree = dirEntry([
+    fileEntry(file('1.mp3')),
+    fileEntry(file('cover.jpg', 'image/jpeg')),
+    dirEntry([fileEntry(file('2.flac')), fileEntry(file('notes.txt'))]),
+    fileEntry(file('3.wav')),
+  ])
+  await handleDrop({
+    dataTransfer: { files: [], items: [{ webkitGetAsEntry: () => tree }] },
+  })
+  assert.equal(received.length, 1)
+  assert.deepEqual(received[0].map((f) => f.name).sort(), ['1.mp3', '2.flac', '3.wav'])
+})
+
+test('handleDrop ignores drops without audio files', async () => {
+  const received = []
+  const { handleDrop } = useFileDrop((files) => received.push(files))
+  await handleDrop({
+    dataTransfer: {
+      files: [],
+      items: [{ webkitGetAsEntry: () => dirEntry([fileEntry(file('a.txt'))]) }],
+    },
+  })
+  assert.equal(received.length, 0)
+})
