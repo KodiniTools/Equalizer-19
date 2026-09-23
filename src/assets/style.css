@@ -850,6 +850,37 @@ body.has-sticky-player {
   outline-offset: 3px;
 }
 
+/* ===== PAGE LINKS (app top bar, FAQ back link) ===== */
+.page-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.page-link:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.page-link:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.page-link-strong {
+  color: var(--text-primary);
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   * {
