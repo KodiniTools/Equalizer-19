@@ -12,6 +12,14 @@
     <!-- Main Content -->
     <main class="app-main">
       <div class="container main-layout">
+        <!-- Way back to the landing page + help -->
+        <nav class="app-topbar" :aria-label="t.app_back_home">
+          <router-link to="/" class="app-link app-back">
+            <span aria-hidden="true">←</span> {{ t.app_back_home }}
+          </router-link>
+          <router-link to="/faq" class="app-link">{{ t.app_help }}</router-link>
+        </nav>
+
         <div class="grid-three-column">
           <!-- Left Column: Playlist -->
           <div class="column-left">
@@ -171,20 +179,47 @@
   .app-main {
     flex: 1;
     padding-top: 16px;
-    /* Reserve space so the fixed sticky player bar never overlaps content */
-    padding-bottom: 110px;
+    /* Space below the fixed player bar is reserved on <body> (has-sticky-player) */
+    padding-bottom: 32px;
   }
 
-  @media (max-width: 900px) {
-    .app-main {
-      padding-bottom: 150px;
-    }
+  /* Top bar: back to landing page / help */
+  .app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
-  @media (max-width: 600px) {
-    .app-main {
-      padding-bottom: 190px;
-    }
+  .app-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .app-link:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+  }
+
+  .app-link:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .app-back {
+    color: var(--text-primary);
   }
 
   /* Shared Files Banner */

@@ -197,53 +197,6 @@
     padding: 0 24px;
   }
 
-  /* ---- Buttons ---- */
-  .lp-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .lp-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 22px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid transparent;
-    transition:
-      background 0.2s,
-      border-color 0.2s,
-      transform 0.2s;
-  }
-
-  .lp-btn-primary {
-    background: var(--accent-primary);
-    color: var(--on-accent);
-  }
-
-  .lp-btn-primary:hover {
-    background: var(--accent-hover);
-    transform: translateY(-1px);
-  }
-
-  .lp-btn-ghost {
-    color: var(--text-primary);
-    border-color: var(--border-color);
-  }
-
-  .lp-btn-ghost:hover {
-    border-color: var(--accent-primary);
-  }
-
-  .lp-btn:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 3px;
-  }
-
   /* ---- Hero ---- */
   .lp-hero {
     background: var(--gradient-primary);

@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="barRef"
     class="sticky-player"
     :class="{ 'drop-active': isDragOver }"
     @dragover.prevent="onDragOver"
@@ -96,7 +97,7 @@
 </template>
 
 <script setup>
-  import { ref, inject } from 'vue'
+  import { ref, inject, onMounted, onBeforeUnmount } from 'vue'
   import { useFileDrop } from '../composables/useFileDrop'
   import PlayerTransport from './PlayerTransport.vue'
   import VolumeControl from './VolumeControl.vue'
@@ -110,6 +111,34 @@
 
   const fileInput = ref(null)
   const folderInput = ref(null)
+  const barRef = ref(null)
+
+  // ---- Reserve space for the fixed bar ----
+  // The bar overlays the bottom of the viewport. Publishing its real height
+  // (it wraps to 2–3 rows on small screens) lets the page add exactly that much
+  // bottom padding, so page content and the global footer stay visible.
+  let resizeObserver = null
+
+  function publishBarHeight() {
+    const height = barRef.value?.offsetHeight ?? 0
+    document.documentElement.style.setProperty('--sticky-player-h', `${height}px`)
+  }
+
+  onMounted(() => {
+    document.body.classList.add('has-sticky-player')
+    publishBarHeight()
+    if (typeof ResizeObserver !== 'undefined' && barRef.value) {
+      resizeObserver = new ResizeObserver(publishBarHeight)
+      resizeObserver.observe(barRef.value)
+    }
+  })
+
+  onBeforeUnmount(() => {
+    resizeObserver?.disconnect()
+    resizeObserver = null
+    document.body.classList.remove('has-sticky-player')
+    document.documentElement.style.removeProperty('--sticky-player-h')
+  })
 
   const {
     playlist,
