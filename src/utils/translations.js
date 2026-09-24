@@ -273,7 +273,7 @@ export const translations = {
     input_record_hint: 'Aufnahme und Pegel-Meter funktionieren auch ohne Mithören.',
     input_help_title: 'So nimmst du den Ton deines PCs auf',
     input_help_1:
-      'Windows: In den Soundeinstellungen unter „Aufnahme“ den Eingang „Stereomix“ aktivieren (bei vielen Realtek-Soundkarten vorhanden) und hier auswählen.',
+      'Windows: Systemsteuerung → Sound → Registerkarte „Aufnahme“ → Rechtsklick in die Liste → „Deaktivierte Geräte anzeigen“ → „Stereomix“ per Rechtsklick aktivieren und hier auswählen (bei vielen Realtek-Soundkarten vorhanden).',
     input_help_2:
       'Ohne Stereomix: ein virtuelles Audiokabel installieren (z. B. VB-CABLE für Windows oder BlackHole für macOS), die Wiedergabe des PCs darauf ausgeben und das Kabel hier als Eingang wählen.',
     input_help_3:
@@ -282,7 +282,11 @@ export const translations = {
     input_err_unsupported: 'Dein Browser unterstützt keine Audio-Eingänge.',
     input_err_denied:
       'Der Zugriff auf den Audio-Eingang wurde verweigert. Erlaube ihn in den Browser-Einstellungen für diese Seite.',
+    input_err_denied_system:
+      'Dein Betriebssystem blockiert den Zugriff. Windows: Einstellungen → Datenschutz und Sicherheit → Mikrofon → „Mikrofonzugriff“ und den Zugriff für Desktop-Apps einschalten. macOS: Systemeinstellungen → Datenschutz & Sicherheit → Mikrofon → Browser erlauben.',
     input_err_not_found: 'Der gewählte Eingang wurde nicht gefunden. Wähle ein anderes Gerät.',
+    input_err_no_devices:
+      'Dein System stellt kein Aufnahmegerät bereit. Windows: Systemsteuerung → Sound → „Aufnahme“ → Rechtsklick → „Deaktivierte Geräte anzeigen“ → „Stereomix“ aktivieren – oder ein virtuelles Audiokabel (z. B. VB-CABLE) installieren. Danach erneut auf „Eingang starten“ klicken.',
     input_err_busy:
       'Der Eingang ist nicht verfügbar – eventuell wird er gerade von einem anderen Programm verwendet.',
     input_err_samplerate:
@@ -580,7 +584,7 @@ export const translations = {
     input_record_hint: 'Recording and level meters work without monitoring, too.',
     input_help_title: 'How to capture your PC’s audio',
     input_help_1:
-      'Windows: enable the “Stereo Mix” input under “Recording” in the sound settings (available on many Realtek sound cards) and select it here.',
+      'Windows: Control Panel → Sound → “Recording” tab → right-click the list → “Show Disabled Devices” → right-click “Stereo Mix” → Enable, then select it here (available on many Realtek sound cards).',
     input_help_2:
       'No Stereo Mix: install a virtual audio cable (e.g. VB-CABLE for Windows or BlackHole for macOS), send your PC’s playback to it and select the cable here as input.',
     input_help_3: 'Line-in, microphone or audio interface work directly – select and start.',
@@ -588,7 +592,11 @@ export const translations = {
     input_err_unsupported: 'Your browser does not support audio inputs.',
     input_err_denied:
       'Access to the audio input was denied. Allow it in the browser settings for this site.',
+    input_err_denied_system:
+      'Your operating system blocks access. Windows: Settings → Privacy & security → Microphone → turn on “Microphone access” and access for desktop apps. macOS: System Settings → Privacy & Security → Microphone → allow your browser.',
     input_err_not_found: 'The selected input was not found. Choose another device.',
+    input_err_no_devices:
+      'Your system offers no recording device. Windows: Control Panel → Sound → “Recording” → right-click → “Show Disabled Devices” → enable “Stereo Mix” – or install a virtual audio cable (e.g. VB-CABLE). Then click “Start input” again.',
     input_err_busy: 'The input is not available – it may be in use by another program.',
     input_err_samplerate:
       'The input’s sample rate does not match the audio output. Set both to the same value in your sound settings (e.g. 48 kHz).',

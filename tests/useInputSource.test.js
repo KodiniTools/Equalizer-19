@@ -34,9 +34,14 @@ function fakeMediaDevices({ fail = null, devices } = {}) {
     get listener() {
       return listener
     },
+    missing: new Set(),
     async getUserMedia(constraints) {
       calls.push(constraints)
       if (this.fail) throw Object.assign(new Error(this.fail), { name: this.fail })
+      const id = constraints.audio.deviceId?.exact
+      if (id && this.missing.has(id)) {
+        throw Object.assign(new Error('Requested device not found'), { name: 'NotFoundError' })
+      }
       return fakeStream(constraints.audio.deviceId ? 'Line-In' : 'Stereomix (Realtek)')
     },
     async enumerateDevices() {
@@ -136,7 +141,15 @@ test('buildInputConstraints disables voice processing and pins the device', () =
 
 test('inputErrorKey maps browser errors to messages', () => {
   assert.equal(inputErrorKey({ name: 'NotAllowedError' }), 'input_err_denied')
-  assert.equal(inputErrorKey({ name: 'NotFoundError' }), 'input_err_not_found')
+  assert.equal(inputErrorKey({ name: 'NotFoundError' }), 'input_err_no_devices')
+  assert.equal(
+    inputErrorKey({ name: 'NotFoundError' }, { specificDevice: true }),
+    'input_err_not_found'
+  )
+  assert.equal(
+    inputErrorKey({ name: 'NotAllowedError', message: 'Permission denied by system' }),
+    'input_err_denied_system'
+  )
   assert.equal(inputErrorKey({ name: 'NotReadableError' }), 'input_err_busy')
   assert.equal(inputErrorKey({ name: 'NotSupportedError' }), 'input_err_samplerate')
   assert.equal(inputErrorKey(new Error('x')), 'input_err_failed')
@@ -249,4 +262,30 @@ test('setMode(playlist) stops a live input; unsupported browsers get a message',
   assert.equal(none.isSupported, false)
   assert.equal(await none.start(), false)
   assert.equal(none.errorKey.value, 'input_err_unsupported')
+})
+
+test('no recording device at all → dedicated message', async () => {
+  const { input } = setup({ fail: 'NotFoundError' })
+  assert.equal(await input.start(), false)
+  assert.equal(input.errorKey.value, 'input_err_no_devices')
+})
+
+test('a remembered device that is gone falls back to the default input', async () => {
+  const { input, md, storage } = setup()
+  md.missing.add('old')
+  input.selectDevice('old')
+  assert.equal(await input.start(), true)
+  assert.equal(input.selectedDeviceId.value, '')
+  assert.equal(storage.data.get('eq19_input_device'), '')
+  assert.deepEqual(md.calls.at(-2).audio.deviceId, { exact: 'old' })
+  assert.equal('deviceId' in md.calls.at(-1).audio, false)
+})
+
+test('OS privacy block is reported separately', async () => {
+  const { input, md } = setup()
+  md.getUserMedia = async () => {
+    throw Object.assign(new Error('Permission denied by system'), { name: 'NotAllowedError' })
+  }
+  assert.equal(await input.start(), false)
+  assert.equal(input.errorKey.value, 'input_err_denied_system')
 })
