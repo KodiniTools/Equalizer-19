@@ -122,6 +122,9 @@ export const translations = {
     faq_rec_q4: 'Wo wird meine Aufnahme gespeichert?',
     faq_rec_a4:
       'Beim Speichern vergibst du einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählst du zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner deines Browsers.',
+    faq_rec_q5: 'Kann ich die Aufnahme verzögert starten?',
+    faq_rec_a5:
+      'Ja. Neben WAV/WebM in der Player-Leiste wählst du die Startverzögerung: sofort, 3, 5 oder 10 Sekunden. Nach einem Klick auf den Aufnahme-Knopf läuft ein gut sichtbarer Countdown in der Mitte des Bildschirms; die App bleibt dabei bedienbar, sodass du zum Beispiel noch die Wiedergabe starten kannst. Mit „Countdown abbrechen“, einem Klick auf die Sekundenanzeige in der Leiste oder der Esc-Taste brichst du ab. Deine Wahl bleibt gespeichert.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -211,6 +214,12 @@ export const translations = {
     rec_bit_32: '32 Bit Float (verlustfrei, kein Clipping)',
     rec_start: 'Aufnahme starten',
     rec_new: 'Neue Aufnahme',
+    rec_delay: 'Startverzögerung der Aufnahme',
+    rec_delay_none: 'Sofort',
+    rec_delay_s: '{n} s',
+    rec_countdown_title: 'Aufnahme startet in',
+    rec_countdown_cancel: 'Countdown abbrechen',
+    rec_countdown_hint: 'Esc bricht ab',
     rec_error_engine: 'AudioEngine nicht verfügbar',
     rec_error_start: 'Fehler beim Starten',
     rec_error_start_long: 'Fehler beim Starten der Aufnahme',
@@ -447,6 +456,9 @@ export const translations = {
     faq_rec_q4: 'Where is my recording saved?',
     faq_rec_a4:
       'When saving, you choose a file name. In browsers that support it (e.g. Chrome and Edge on desktop) you can also pick the target folder; otherwise the file goes to your browser’s default download folder.',
+    faq_rec_q5: 'Can I start recording with a delay?',
+    faq_rec_a5:
+      'Yes. Next to WAV/WebM in the player bar you choose the start delay: instant, 3, 5 or 10 seconds. After clicking the record button a clearly visible countdown runs in the middle of the screen; the app stays usable, so you can still start playback, for example. Cancel with “Cancel countdown”, a click on the seconds display in the bar or the Esc key. Your choice is remembered.',
 
     // Technical FAQ
     faq_tech_q1: 'Which browsers are supported?',
@@ -535,6 +547,12 @@ export const translations = {
     rec_bit_32: '32-bit float (lossless, no clipping)',
     rec_start: 'Start recording',
     rec_new: 'New recording',
+    rec_delay: 'Recording start delay',
+    rec_delay_none: 'Instant',
+    rec_delay_s: '{n} s',
+    rec_countdown_title: 'Recording starts in',
+    rec_countdown_cancel: 'Cancel countdown',
+    rec_countdown_hint: 'Press Esc to cancel',
     rec_error_engine: 'Audio engine unavailable',
     rec_error_start: 'Failed to start',
     rec_error_start_long: 'Failed to start recording',
