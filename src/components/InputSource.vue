@@ -59,14 +59,6 @@
           </div>
         </div>
 
-        <!-- System audio: how the share dialog works -->
-        <p v-if="input.isSystemSelected.value" class="hint system-hint">
-          {{ t.input_system_hint }}
-          <template v-if="defaultOutput">
-            {{ t.input_system_output.replace('{name}', defaultOutput) }}
-          </template>
-        </p>
-
         <!-- Start / stop -->
         <button
           v-if="!input.isActive.value"
@@ -87,7 +79,11 @@
 
         <!-- Monitoring -->
         <div class="monitor">
-          <label class="switch" :class="{ disabled: !input.monitorAllowed.value }">
+          <label
+            class="switch"
+            :class="{ disabled: !input.monitorAllowed.value }"
+            :title="input.monitorAllowed.value ? undefined : t.input_monitor_locked"
+          >
             <input
               type="checkbox"
               :checked="input.monitor.value && input.monitorAllowed.value"
@@ -97,13 +93,6 @@
             <span class="switch-track" aria-hidden="true"></span>
             <span class="switch-label">{{ t.input_monitor }}</span>
           </label>
-          <p v-if="input.isSystemSelected.value && input.monitorAllowed.value" class="hint">
-            {{ t.input_system_monitor_note }} {{ t.input_record_hint }}
-          </p>
-          <p v-else-if="input.monitorAllowed.value" class="hint">
-            {{ t.input_monitor_hint }} {{ t.input_record_hint }}
-          </p>
-          <p v-else class="hint">{{ t.input_system_monitor_off }} {{ t.input_record_hint }}</p>
         </div>
 
         <p v-if="input.errorKey.value" class="msg error" role="alert">
@@ -112,23 +101,14 @@
       </template>
     </template>
 
+    <!-- Explanations live in the FAQ (section "Eingangsquelle") -->
     <template
       v-if="input.mode.value === 'input' && (input.isSupported || input.systemAudioSupported)"
       #footer
     >
-      <details class="help">
-        <summary>
-          <span>{{ t.input_help_title }}</span>
-          <i class="fas fa-chevron-down chevron" aria-hidden="true"></i>
-        </summary>
-        <ol>
-          <li v-if="input.systemAudioSupported">{{ t.input_help_system }}</li>
-          <li>{{ t.input_help_1 }}</li>
-          <li>{{ t.input_help_2 }}</li>
-          <li>{{ t.input_help_3 }}</li>
-        </ol>
-        <p class="hint">{{ t.input_help_note }}</p>
-      </details>
+      <router-link :to="{ path: '/faq', hash: '#eingang' }" class="help-link">
+        {{ t.input_help_link }} <span aria-hidden="true">→</span>
+      </router-link>
     </template>
   </BasePanel>
 </template>
@@ -148,13 +128,6 @@
   const activeName = computed(() =>
     input.activeIsSystem.value ? t.value.input_system_option : input.activeLabel.value
   )
-
-  // Default output device (only known once the browser revealed device names)
-  const defaultOutput = computed(() => {
-    const outputs = input.outputs.value
-    const def = outputs.find((o) => o.deviceId === 'default') || outputs[0]
-    return def?.label || ''
-  })
 </script>
 
 <style scoped>
@@ -373,12 +346,6 @@
     opacity: 0.5;
   }
 
-  .system-hint {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px dashed var(--border-color, #3a3a48);
-  }
-
   .switch-label {
     font-size: 0.72em;
     font-weight: 600;
@@ -386,13 +353,6 @@
   }
 
   /* ---- Messages ---- */
-  .hint {
-    margin: 0;
-    font-size: 0.62em;
-    line-height: 1.5;
-    color: var(--text-muted, #8b8b9a);
-  }
-
   .msg {
     margin: 0;
     font-size: 0.66em;
@@ -414,50 +374,22 @@
     border: 1px solid color-mix(in srgb, var(--error, #ef4444) 35%, transparent);
   }
 
-  /* ---- Help ---- */
-  .help summary {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    list-style: none;
+  /* ---- Link to the FAQ ---- */
+  .help-link {
     font-size: 0.68em;
-    font-weight: 500;
-    color: var(--text-muted, #8b8b9a);
+    font-weight: 600;
+    color: var(--accent-primary, #00d9ff);
+    text-decoration: none;
   }
 
-  .help summary::-webkit-details-marker {
-    display: none;
+  .help-link:hover {
+    text-decoration: underline;
   }
 
-  .help summary:hover {
-    color: var(--text-primary, #fff);
-  }
-
-  .help summary:focus-visible {
+  .help-link:focus-visible {
     outline: 2px solid var(--accent-primary, #00d9ff);
     outline-offset: 2px;
-  }
-
-  .help .chevron {
-    margin-left: auto;
-    font-size: 0.85em;
-    transition: transform 0.2s;
-  }
-
-  .help[open] .chevron {
-    transform: rotate(180deg);
-  }
-
-  .help ol {
-    margin: 10px 0 8px;
-    padding-left: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.64em;
-    line-height: 1.5;
-    color: var(--text-secondary, #c8c8d5);
+    border-radius: 4px;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -74,6 +74,7 @@ export const translations = {
     faq_cat_compressor: 'Kompressor',
     faq_cat_recording: 'Aufnahme',
     faq_cat_technical: 'Technisches',
+    faq_cat_input: 'Eingangsquelle',
 
     // General FAQ
     faq_q1: 'Was ist Equalizer 19?',
@@ -121,9 +122,6 @@ export const translations = {
     faq_rec_q4: 'Wo wird meine Aufnahme gespeichert?',
     faq_rec_a4:
       'Beim Speichern vergibst du einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählst du zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner deines Browsers.',
-    faq_rec_q5: 'Kann ich den Ton meines PCs oder einen Line-In bearbeiten?',
-    faq_rec_a5:
-      'Ja. Wähle in der Karte „Eingangsquelle“ die Option „Audio-Eingang“ und dann die Quelle: Line-In, Mikrofon oder Audio-Interface – oder „PC-Ton (Systemaudio)“ für alles, was auf deinem PC läuft. Beim PC-Ton öffnet sich der Freigabe-Dialog des Browsers: „Gesamter Bildschirm“ wählen und „Systemaudio teilen“ anhaken (Chrome und Edge unter Windows). Der Ton läuft live durch Equalizer und Kompressor und lässt sich wie gewohnt aufnehmen. Wer nur die bearbeitete Version hören möchte, braucht ein virtuelles Audiokabel wie VB-CABLE.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -135,6 +133,18 @@ export const translations = {
     faq_tech_q3: 'Kann ich Equalizer 19 offline nutzen?',
     faq_tech_a3:
       'Derzeit wird eine Internetverbindung zum Laden der Anwendung benötigt. Sobald geladen, erfolgt alle Verarbeitung jedoch lokal und benötigt keine weitere Serververbindung.',
+    faq_in_q1: 'Wie bearbeite und nehme ich den Ton meines PCs auf?',
+    faq_in_a1:
+      'Wähle in der Karte „Eingangsquelle“ die Option „Audio-Eingang“ und als Gerät „PC-Ton (Systemaudio)“. Nach einem Klick auf „Eingang starten“ öffnet sich der Freigabe-Dialog des Browsers: „Gesamter Bildschirm“ wählen und den Haken „Systemaudio teilen“ setzen. Die App verwendet nur den Ton, nicht das Bild. Alles, was über dein Standard-Ausgabegerät läuft (z. B. YouTube oder Spotify), geht dann live durch Equalizer und Kompressor und lässt sich wie gewohnt als WAV oder WebM aufnehmen. Das funktioniert in Chrome und Edge unter Windows; unter macOS und Linux kann der Browser meist nur den Ton eines einzelnen Tabs teilen. Beenden kannst du mit „Eingang stoppen“ oder „Freigabe beenden“ in der Browser-Leiste.',
+    faq_in_q2: 'Welche Eingänge kann ich verwenden?',
+    faq_in_a2:
+      'Alle Aufnahmegeräte, die dein System dem Browser bereitstellt: Line-In, Mikrofon, Audio-Interface oder „Stereomix“. Stereomix ist unter Windows oft ausgeblendet: Systemsteuerung → Sound → Registerkarte „Aufnahme“ → Rechtsklick in die Liste → „Deaktivierte Geräte anzeigen“ → „Stereomix“ per Rechtsklick aktivieren. Alternativ leitet ein virtuelles Audiokabel (z. B. VB-CABLE für Windows oder BlackHole für macOS) die Wiedergabe des PCs als Eingang weiter. Die Gerätenamen erscheinen, sobald du den Zugriff einmal erlaubt hast. Die Sprachfilter des Browsers (Echo- und Rauschunterdrückung, automatische Lautstärke) schaltet die App ab, damit Musik unverfälscht bleibt.',
+    faq_in_q3: 'Was bewirkt „Mithören“?',
+    faq_in_a3:
+      'Mit „Mithören“ hörst du den bearbeiteten Ton über deine Lautsprecher. Der Schalter ist standardmäßig aus: Bei Mikrofon oder Stereomix über Lautsprecher würde der Ton erneut aufgenommen und es entsteht eine Rückkopplung – schalte ihn dort nur mit Kopfhörern oder einem virtuellen Kabel ein. Beim PC-Ton läuft das Original weiter über deine Lautsprecher; mit Mithören hörst du Original und bearbeitete Version gleichzeitig. Nur die bearbeitete Version zu hören, geht mit einem virtuellen Audiokabel. Kann der Browser seinen eigenen Ton nicht aus der Freigabe ausschließen, ist Mithören beim PC-Ton gesperrt. Aufnahme und Pegel-Meter funktionieren immer, auch ohne Mithören.',
+    faq_in_q4: 'Warum wird kein Gerät gefunden?',
+    faq_in_a4:
+      'Browser können nur Aufnahmegeräte öffnen – Lautsprecher und andere Ausgabegeräte (z. B. „High Definition Audio Device“) nicht. Stellt dein System kein Aufnahmegerät bereit, wählt die App automatisch „PC-Ton (Systemaudio)“ vor; damit nutzt du den Ton deines PCs über die Freigabe. Möchtest du Stereomix verwenden, aktiviere es wie unter „Welche Eingänge kann ich verwenden?“ beschrieben. Meldet die App, dass dein Betriebssystem den Zugriff blockiert, gib ihn frei: Windows unter Einstellungen → Datenschutz und Sicherheit → Mikrofon (auch für Desktop-Apps), macOS unter Systemeinstellungen → Datenschutz & Sicherheit → Mikrofon.',
 
     // FAQ CTA
     faq_cta_title: 'Noch Fragen?',
@@ -265,32 +275,14 @@ export const translations = {
     input_group_inputs: 'Eingänge',
     input_group_playback: 'Wiedergabe des PCs',
     input_system_option: 'PC-Ton (Systemaudio)',
-    input_system_hint:
-      'Nach dem Start öffnet sich der Freigabe-Dialog des Browsers: „Gesamter Bildschirm“ wählen und den Haken „Systemaudio teilen“ setzen. Verwendet wird nur der Ton, nicht das Bild. Funktioniert in Chrome und Edge unter Windows.',
-    input_system_output: 'Aufgenommen wird, was über „{name}“ läuft.',
-    input_system_monitor_off:
-      'Beim PC-Ton hörst du das Original schon über deine Lautsprecher. Mithören würde den bearbeiteten Ton erneut aufnehmen (Endlosschleife) und ist deshalb gesperrt.',
-    input_system_monitor_note:
-      'Beim PC-Ton läuft das Original weiter über deine Lautsprecher – mit Mithören hörst du Original und bearbeitete Version gleichzeitig. Nur die bearbeitete Version zu hören, geht mit einem virtuellen Audiokabel.',
-    input_help_system:
-      'Ohne Aufnahmegerät: „PC-Ton (Systemaudio)“ wählen. Die App nimmt dann auf, was über dein Standard-Ausgabegerät läuft (Chrome und Edge unter Windows).',
     input_start: 'Eingang starten',
     input_stop: 'Eingang stoppen',
     input_starting: 'Wird gestartet …',
     input_live_badge: 'Live',
     input_active: 'Aktiv: {name}',
     input_monitor: 'Mithören',
-    input_monitor_hint:
-      'Nur mit Kopfhörern oder einem virtuellen Kabel einschalten – über Lautsprecher entsteht sonst eine Rückkopplung.',
-    input_record_hint: 'Aufnahme und Pegel-Meter funktionieren auch ohne Mithören.',
-    input_help_title: 'So nimmst du den Ton deines PCs auf',
-    input_help_1:
-      'Windows: Systemsteuerung → Sound → Registerkarte „Aufnahme“ → Rechtsklick in die Liste → „Deaktivierte Geräte anzeigen“ → „Stereomix“ per Rechtsklick aktivieren und hier auswählen (bei vielen Realtek-Soundkarten vorhanden).',
-    input_help_2:
-      'Ohne Stereomix: ein virtuelles Audiokabel installieren (z. B. VB-CABLE für Windows oder BlackHole für macOS), die Wiedergabe des PCs darauf ausgeben und das Kabel hier als Eingang wählen.',
-    input_help_3:
-      'Line-In, Mikrofon oder Audio-Interface funktionieren direkt – auswählen und starten.',
-    input_help_note: 'Die Gerätenamen erscheinen, sobald du den Zugriff einmal erlaubt hast.',
+    input_monitor_locked: 'Beim PC-Ton in diesem Browser nicht verfügbar (Endlosschleife)',
+    input_help_link: 'Anleitung & Hilfe',
     input_err_unsupported: 'Dein Browser unterstützt keine Audio-Eingänge.',
     input_err_denied:
       'Der Zugriff auf den Audio-Eingang wurde verweigert. Erlaube ihn in den Browser-Einstellungen für diese Seite.',
@@ -407,6 +399,7 @@ export const translations = {
     faq_cat_compressor: 'Compressor',
     faq_cat_recording: 'Recording',
     faq_cat_technical: 'Technical',
+    faq_cat_input: 'Input source',
 
     // General FAQ
     faq_q1: 'What is Equalizer 19?',
@@ -454,9 +447,6 @@ export const translations = {
     faq_rec_q4: 'Where is my recording saved?',
     faq_rec_a4:
       'When saving, you choose a file name. In browsers that support it (e.g. Chrome and Edge on desktop) you can also pick the target folder; otherwise the file goes to your browser’s default download folder.',
-    faq_rec_q5: 'Can I process my PC’s audio or a line-in?',
-    faq_rec_a5:
-      'Yes. In the “Input source” card choose “Audio input” and then the source: line-in, microphone or audio interface – or “PC audio (system audio)” for everything playing on your PC. For PC audio the browser’s share dialog opens: choose “Entire screen” and tick “Share system audio” (Chrome and Edge on Windows). The sound runs live through equalizer and compressor and can be recorded as usual. To hear only the processed version you need a virtual audio cable such as VB-CABLE.',
 
     // Technical FAQ
     faq_tech_q1: 'Which browsers are supported?',
@@ -468,6 +458,18 @@ export const translations = {
     faq_tech_q3: 'Can I use Equalizer 19 offline?',
     faq_tech_a3:
       'Currently, an internet connection is required to load the application. Once loaded, however, all processing happens locally and requires no further server connection.',
+    faq_in_q1: 'How do I process and record my PC’s audio?',
+    faq_in_a1:
+      'In the “Input source” card choose “Audio input” and select “PC audio (system audio)” as device. After clicking “Start input” the browser’s share dialog opens: choose “Entire screen” and tick “Share system audio”. The app only uses the sound, not the picture. Everything playing through your default output device (e.g. YouTube or Spotify) then runs live through equalizer and compressor and can be recorded as WAV or WebM as usual. This works in Chrome and Edge on Windows; on macOS and Linux the browser can usually only share a single tab’s sound. Stop it with “Stop input” or “Stop sharing” in the browser bar.',
+    faq_in_q2: 'Which inputs can I use?',
+    faq_in_a2:
+      'All recording devices your system offers to the browser: line-in, microphone, audio interface or “Stereo Mix”. On Windows Stereo Mix is often hidden: Control Panel → Sound → “Recording” tab → right-click the list → “Show Disabled Devices” → right-click “Stereo Mix” → Enable. Alternatively a virtual audio cable (e.g. VB-CABLE for Windows or BlackHole for macOS) passes your PC’s playback on as an input. Device names appear once you have allowed access. The app switches off the browser’s voice filters (echo and noise suppression, automatic gain) so music stays unaltered.',
+    faq_in_q3: 'What does “Monitor” do?',
+    faq_in_a3:
+      'With “Monitor” you hear the processed sound through your speakers. It is off by default: with a microphone or Stereo Mix over speakers the sound would be captured again and cause feedback – only enable it with headphones or a virtual cable there. With PC audio the original keeps playing through your speakers; with monitoring you hear original and processed sound at the same time. Hearing only the processed version requires a virtual audio cable. If the browser cannot exclude its own sound from the capture, monitoring is locked for PC audio. Recording and level meters always work, even without monitoring.',
+    faq_in_q4: 'Why is no device found?',
+    faq_in_a4:
+      'Browsers can only open recording devices – not speakers or other output devices (e.g. “High Definition Audio Device”). If your system offers no recording device, the app preselects “PC audio (system audio)”, which uses your PC’s sound via sharing. To use Stereo Mix, enable it as described under “Which inputs can I use?”. If the app reports that your operating system blocks access, allow it: on Windows under Settings → Privacy & security → Microphone (including desktop apps), on macOS under System Settings → Privacy & Security → Microphone.',
 
     // FAQ CTA
     faq_cta_title: 'Still have questions?',
@@ -596,31 +598,14 @@ export const translations = {
     input_group_inputs: 'Inputs',
     input_group_playback: 'PC playback',
     input_system_option: 'PC audio (system audio)',
-    input_system_hint:
-      'After starting, the browser’s share dialog opens: choose “Entire screen” and tick “Share system audio”. Only the sound is used, not the picture. Works in Chrome and Edge on Windows.',
-    input_system_output: 'Captures what plays through “{name}”.',
-    input_system_monitor_off:
-      'With PC audio you already hear the original through your speakers. Monitoring would capture the processed sound again (endless loop) and is therefore disabled.',
-    input_system_monitor_note:
-      'With PC audio the original keeps playing through your speakers – with monitoring you hear original and processed sound at the same time. Hearing only the processed version requires a virtual audio cable.',
-    input_help_system:
-      'No recording device: choose “PC audio (system audio)”. The app then captures what plays through your default output device (Chrome and Edge on Windows).',
     input_start: 'Start input',
     input_stop: 'Stop input',
     input_starting: 'Starting …',
     input_live_badge: 'Live',
     input_active: 'Active: {name}',
     input_monitor: 'Monitor',
-    input_monitor_hint:
-      'Only enable with headphones or a virtual cable – with speakers this causes feedback.',
-    input_record_hint: 'Recording and level meters work without monitoring, too.',
-    input_help_title: 'How to capture your PC’s audio',
-    input_help_1:
-      'Windows: Control Panel → Sound → “Recording” tab → right-click the list → “Show Disabled Devices” → right-click “Stereo Mix” → Enable, then select it here (available on many Realtek sound cards).',
-    input_help_2:
-      'No Stereo Mix: install a virtual audio cable (e.g. VB-CABLE for Windows or BlackHole for macOS), send your PC’s playback to it and select the cable here as input.',
-    input_help_3: 'Line-in, microphone or audio interface work directly – select and start.',
-    input_help_note: 'Device names appear once you have allowed access.',
+    input_monitor_locked: 'Not available for PC audio in this browser (endless loop)',
+    input_help_link: 'Guide & help',
     input_err_unsupported: 'Your browser does not support audio inputs.',
     input_err_denied:
       'Access to the audio input was denied. Allow it in the browser settings for this site.',
