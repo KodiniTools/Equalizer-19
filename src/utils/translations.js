@@ -121,6 +121,9 @@ export const translations = {
     faq_rec_q4: 'Wo wird meine Aufnahme gespeichert?',
     faq_rec_a4:
       'Beim Speichern vergibst du einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählst du zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner deines Browsers.',
+    faq_rec_q5: 'Kann ich den Ton meines PCs oder einen Line-In bearbeiten?',
+    faq_rec_a5:
+      'Ja. Wähle in der Karte „Eingangsquelle“ die Option „Audio-Eingang“ und dann das Gerät: Line-In, Mikrofon, Audio-Interface oder „Stereomix“ für den Ton deines PCs. Hat deine Soundkarte keinen Stereomix, hilft ein virtuelles Audiokabel wie VB-CABLE (Windows) oder BlackHole (macOS). Der Ton läuft live durch Equalizer und Kompressor und lässt sich wie gewohnt aufnehmen. „Mithören“ schaltest du nur mit Kopfhörern oder virtuellem Kabel ein, sonst entsteht eine Rückkopplung.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -251,6 +254,42 @@ export const translations = {
     shortcut_seek: '5 s vor/zurück',
     shortcut_track: 'Nächster/vorheriger Track',
     playlist_now_playing: 'Wird abgespielt',
+
+    // Input source
+    input_title: 'Eingangsquelle',
+    input_mode_playlist: 'Playlist',
+    input_mode_live: 'Audio-Eingang',
+    input_device_label: 'Gerät',
+    input_default: 'Standardeingang des Systems',
+    input_device_n: 'Eingang {n}',
+    input_start: 'Eingang starten',
+    input_stop: 'Eingang stoppen',
+    input_starting: 'Wird gestartet …',
+    input_live_badge: 'Live',
+    input_active: 'Aktiv: {name}',
+    input_monitor: 'Mithören',
+    input_monitor_hint:
+      'Nur mit Kopfhörern oder einem virtuellen Kabel einschalten – über Lautsprecher entsteht sonst eine Rückkopplung.',
+    input_record_hint: 'Aufnahme und Pegel-Meter funktionieren auch ohne Mithören.',
+    input_help_title: 'So nimmst du den Ton deines PCs auf',
+    input_help_1:
+      'Windows: In den Soundeinstellungen unter „Aufnahme“ den Eingang „Stereomix“ aktivieren (bei vielen Realtek-Soundkarten vorhanden) und hier auswählen.',
+    input_help_2:
+      'Ohne Stereomix: ein virtuelles Audiokabel installieren (z. B. VB-CABLE für Windows oder BlackHole für macOS), die Wiedergabe des PCs darauf ausgeben und das Kabel hier als Eingang wählen.',
+    input_help_3:
+      'Line-In, Mikrofon oder Audio-Interface funktionieren direkt – auswählen und starten.',
+    input_help_note: 'Die Gerätenamen erscheinen, sobald du den Zugriff einmal erlaubt hast.',
+    input_err_unsupported: 'Dein Browser unterstützt keine Audio-Eingänge.',
+    input_err_denied:
+      'Der Zugriff auf den Audio-Eingang wurde verweigert. Erlaube ihn in den Browser-Einstellungen für diese Seite.',
+    input_err_not_found: 'Der gewählte Eingang wurde nicht gefunden. Wähle ein anderes Gerät.',
+    input_err_busy:
+      'Der Eingang ist nicht verfügbar – eventuell wird er gerade von einem anderen Programm verwendet.',
+    input_err_samplerate:
+      'Die Abtastrate des Eingangs passt nicht zur Audio-Ausgabe. Stelle beide in den Soundeinstellungen auf denselben Wert (z. B. 48 kHz).',
+    input_err_failed: 'Der Eingang konnte nicht gestartet werden.',
+    input_err_ended: 'Die Verbindung zum Eingang wurde getrennt.',
+    player_live_input: 'Live-Eingang',
 
     // Level Meter
     meter_title: 'Pegel-Meter',
@@ -391,6 +430,9 @@ export const translations = {
     faq_rec_q4: 'Where is my recording saved?',
     faq_rec_a4:
       'When saving, you choose a file name. In browsers that support it (e.g. Chrome and Edge on desktop) you can also pick the target folder; otherwise the file goes to your browser’s default download folder.',
+    faq_rec_q5: 'Can I process my PC’s audio or a line-in?',
+    faq_rec_a5:
+      'Yes. In the “Input source” card choose “Audio input” and then the device: line-in, microphone, audio interface or “Stereo Mix” for your PC’s audio. If your sound card has no Stereo Mix, a virtual audio cable such as VB-CABLE (Windows) or BlackHole (macOS) helps. The sound runs live through equalizer and compressor and can be recorded as usual. Only enable “Monitor” with headphones or a virtual cable, otherwise you get feedback.',
 
     // Technical FAQ
     faq_tech_q1: 'Which browsers are supported?',
@@ -519,6 +561,40 @@ export const translations = {
     shortcut_seek: 'Seek ±5 s',
     shortcut_track: 'Next/previous track',
     playlist_now_playing: 'Now playing',
+
+    // Input source
+    input_title: 'Input source',
+    input_mode_playlist: 'Playlist',
+    input_mode_live: 'Audio input',
+    input_device_label: 'Device',
+    input_default: 'System default input',
+    input_device_n: 'Input {n}',
+    input_start: 'Start input',
+    input_stop: 'Stop input',
+    input_starting: 'Starting …',
+    input_live_badge: 'Live',
+    input_active: 'Active: {name}',
+    input_monitor: 'Monitor',
+    input_monitor_hint:
+      'Only enable with headphones or a virtual cable – with speakers this causes feedback.',
+    input_record_hint: 'Recording and level meters work without monitoring, too.',
+    input_help_title: 'How to capture your PC’s audio',
+    input_help_1:
+      'Windows: enable the “Stereo Mix” input under “Recording” in the sound settings (available on many Realtek sound cards) and select it here.',
+    input_help_2:
+      'No Stereo Mix: install a virtual audio cable (e.g. VB-CABLE for Windows or BlackHole for macOS), send your PC’s playback to it and select the cable here as input.',
+    input_help_3: 'Line-in, microphone or audio interface work directly – select and start.',
+    input_help_note: 'Device names appear once you have allowed access.',
+    input_err_unsupported: 'Your browser does not support audio inputs.',
+    input_err_denied:
+      'Access to the audio input was denied. Allow it in the browser settings for this site.',
+    input_err_not_found: 'The selected input was not found. Choose another device.',
+    input_err_busy: 'The input is not available – it may be in use by another program.',
+    input_err_samplerate:
+      'The input’s sample rate does not match the audio output. Set both to the same value in your sound settings (e.g. 48 kHz).',
+    input_err_failed: 'The input could not be started.',
+    input_err_ended: 'The connection to the input was lost.',
+    player_live_input: 'Live input',
 
     // Level Meter
     meter_title: 'Level Meter',

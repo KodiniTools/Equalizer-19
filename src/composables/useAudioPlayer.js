@@ -32,6 +32,9 @@ export function useAudioPlayer() {
   let audioEngineRef = null
   let mediaElementSource = null
   let isSourceConnected = false
+  // Set while an external source (live audio input) owns the processing chain:
+  // the function that releases it again. Playback never steals the chain then.
+  let externalSourceRelease = null
 
   // Computed
   const currentTrack = computed(() => {
@@ -83,8 +86,28 @@ export function useAudioPlayer() {
     }
   }
 
+  /**
+   * Hand the processing chain to an external source (e.g. a live audio input).
+   * Playback pauses; `release` is called when the user starts playback again.
+   */
+  function setExternalSource(release) {
+    pause()
+    externalSourceRelease = release
+    isSourceConnected = false
+  }
+
+  /**
+   * Called after the external source disconnected itself: reattach playback.
+   */
+  function clearExternalSource() {
+    externalSourceRelease = null
+    if (audioElement.value) connectToAudioEngine()
+  }
+
   // Connect audio to processing chain
   function connectToAudioEngine() {
+    if (externalSourceRelease) return false
+
     if (!audioEngineRef || !audioElement.value) {
       console.warn('⚠️ AudioEngine or Audio Element not available')
       console.log('   AudioEngine:', !!audioEngineRef)
@@ -306,6 +329,13 @@ export function useAudioPlayer() {
   }
 
   async function play() {
+    // Starting playback switches back from a live input to the playlist
+    if (externalSourceRelease) {
+      const release = externalSourceRelease
+      externalSourceRelease = null
+      release()
+    }
+
     if (!audioElement.value || !hasTrack.value) {
       // If no track loaded, try to load first track
       if (playlist.value.length > 0) {
@@ -544,6 +574,8 @@ export function useAudioPlayer() {
 
     // Methods
     setAudioEngine,
+    setExternalSource,
+    clearExternalSource,
     initAudio,
     connectToAudioEngine,
     addFiles,

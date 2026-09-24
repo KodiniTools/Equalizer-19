@@ -70,7 +70,7 @@
     { id: 'allgemein', titleKey: 'faq_cat_general', prefix: 'faq_', count: 3 },
     { id: 'equalizer', titleKey: 'faq_cat_equalizer', prefix: 'faq_eq_', count: 3 },
     { id: 'kompressor', titleKey: 'faq_cat_compressor', prefix: 'faq_comp_', count: 3 },
-    { id: 'aufnahme', titleKey: 'faq_cat_recording', prefix: 'faq_rec_', count: 4 },
+    { id: 'aufnahme', titleKey: 'faq_cat_recording', prefix: 'faq_rec_', count: 5 },
     { id: 'technik', titleKey: 'faq_cat_technical', prefix: 'faq_tech_', count: 3 },
   ]
 </script>

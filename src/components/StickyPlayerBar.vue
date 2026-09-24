@@ -62,7 +62,13 @@
           </button>
         </div>
 
-        <div class="track-info" v-if="currentTrack">
+        <div class="track-info" v-if="inputSource?.isActive.value">
+          <span class="track-name">
+            <span class="live-dot" aria-hidden="true"></span>{{ t.player_live_input }}
+          </span>
+          <span class="track-time">{{ inputSource.activeLabel.value }}</span>
+        </div>
+        <div class="track-info" v-else-if="currentTrack">
           <span class="track-name">{{ currentTrack.name }}</span>
           <span class="track-time">{{ formattedCurrentTime }} / {{ formattedDuration }}</span>
         </div>
@@ -108,6 +114,8 @@
   const { t, currentLanguage } = inject('i18n')
   const audioPlayer = inject('audioPlayer')
   const notify = inject('notify', () => {})
+  // Live input state (provided by AppPage); optional so the bar also works standalone
+  const inputSource = inject('inputSource', null)
 
   const fileInput = ref(null)
   const folderInput = ref(null)
@@ -307,6 +315,16 @@
     font-size: 0.68em;
     color: var(--text-muted, #8b8b9a);
     font-family: 'SF Mono', 'Courier New', monospace;
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: var(--error, #ef4444);
+    vertical-align: middle;
   }
 
   .track-info.empty .track-name {

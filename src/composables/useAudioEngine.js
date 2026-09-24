@@ -11,6 +11,8 @@ export function useAudioEngine() {
   const analyserNode = ref(null)
   const inputAnalyserNode = ref(null)
   const gainNode = ref(null)
+  // Between the end of the chain and the speakers; recording/meters tap before it
+  const monitorNode = ref(null)
   const dynamicsNode = ref(null)
 
   // Equalizer Filters (19 Bands)
@@ -32,6 +34,9 @@ export function useAudioEngine() {
 
   // Dynamics Bypass
   const dynamicsEnabled = ref(true)
+
+  // Speaker monitoring (playback is always monitored; live inputs may mute it)
+  const monitorEnabled = ref(true)
 
   /**
    * Initialize Audio Context and create audio nodes
@@ -61,6 +66,11 @@ export function useAudioEngine() {
       // Create Master Gain Node
       gainNode.value = audioContext.value.createGain()
       gainNode.value.gain.value = masterGain.value
+
+      // Monitor (speaker output) gain – muted for live inputs to avoid feedback
+      monitorNode.value = audioContext.value.createGain()
+      monitorNode.value.gain.value = monitorEnabled.value ? 1 : 0
+      monitorNode.value.connect(audioContext.value.destination)
 
       isInitialized.value = true
 
@@ -188,9 +198,9 @@ export function useAudioEngine() {
       }
     }
 
-    // CRITICAL: Connect to Destination (speakers)
+    // CRITICAL: Connect to Destination (speakers) via the monitor gain
     try {
-      currentNode.connect(audioContext.value.destination)
+      currentNode.connect(monitorNode.value || audioContext.value.destination)
       console.log('   → Connected to DESTINATION (Speakers)')
       console.log('✅ Audio chain complete!')
     } catch (e) {
@@ -300,6 +310,20 @@ export function useAudioEngine() {
   }
 
   /**
+   * Mute / unmute the speaker output without affecting recording and meters
+   */
+  function setMonitorEnabled(enabled) {
+    monitorEnabled.value = !!enabled
+    if (monitorNode.value && audioContext.value) {
+      monitorNode.value.gain.setTargetAtTime(
+        monitorEnabled.value ? 1 : 0,
+        audioContext.value.currentTime,
+        0.015
+      )
+    }
+  }
+
+  /**
    * Get frequency data for visualization
    */
   function getFrequencyData() {
@@ -344,8 +368,12 @@ export function useAudioEngine() {
     return rms > 0 ? 20 * Math.log10(rms) : -Infinity
   }
 
-  function getInputLevel() { return _rmsDb(inputAnalyserNode.value) }
-  function getOutputLevel() { return _rmsDb(analyserNode.value) }
+  function getInputLevel() {
+    return _rmsDb(inputAnalyserNode.value)
+  }
+  function getOutputLevel() {
+    return _rmsDb(analyserNode.value)
+  }
 
   /**
    * Get all audio nodes for external use
@@ -390,6 +418,7 @@ export function useAudioEngine() {
     analyserNode,
     inputAnalyserNode,
     gainNode,
+    monitorNode,
     dynamicsNode,
     eqFilters,
     eqBands,
@@ -397,6 +426,7 @@ export function useAudioEngine() {
     masterGain,
     eqBypass,
     dynamicsEnabled,
+    monitorEnabled,
 
     // Methods
     initAudioContext,
@@ -409,6 +439,7 @@ export function useAudioEngine() {
     updateDynamics,
     toggleDynamics,
     updateMasterGain,
+    setMonitorEnabled,
     getFrequencyData,
     getTimeDomainData,
     getInputLevel,
