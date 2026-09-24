@@ -20,17 +20,25 @@ export function buildInputConstraints(deviceId) {
   }
 }
 
+// getUserMedia errors meaning "this device does not exist (any more)"
+const DEVICE_MISSING = new Set(['NotFoundError', 'OverconstrainedError'])
+
 /**
  * Map a getUserMedia / Web Audio error to a translation key.
+ *
+ * @param {Error} error
+ * @param {{ specificDevice?: boolean }} [ctx] whether a particular device was requested
+ *   (otherwise "not found" means the system offers no recording device at all)
  */
-export function inputErrorKey(error) {
+export function inputErrorKey(error, { specificDevice = false } = {}) {
   switch (error?.name) {
     case 'NotAllowedError':
     case 'SecurityError':
-      return 'input_err_denied'
+      // Chrome reports an OS-level block (privacy settings) as "Permission denied by system"
+      return /system/i.test(error?.message || '') ? 'input_err_denied_system' : 'input_err_denied'
     case 'NotFoundError':
     case 'OverconstrainedError':
-      return 'input_err_not_found'
+      return specificDevice ? 'input_err_not_found' : 'input_err_no_devices'
     case 'NotReadableError':
     case 'AbortError':
       return 'input_err_busy'
@@ -150,9 +158,16 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     errorKey.value = ''
     isStarting.value = true
     try {
-      const newStream = await mediaDevices.getUserMedia(
-        buildInputConstraints(selectedDeviceId.value)
-      )
+      let newStream
+      try {
+        newStream = await mediaDevices.getUserMedia(buildInputConstraints(selectedDeviceId.value))
+      } catch (error) {
+        // The remembered device is gone (unplugged, disabled): fall back to the default input
+        if (!selectedDeviceId.value || !DEVICE_MISSING.has(error?.name)) throw error
+        selectedDeviceId.value = ''
+        saveDevice('')
+        newStream = await mediaDevices.getUserMedia(buildInputConstraints(''))
+      }
 
       if (!audioEngine.isInitialized.value) audioEngine.initAudioContext()
       const ctx = audioEngine.audioContext.value
@@ -197,7 +212,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       // A running input is only replaced after success, so on a failed device
       // switch the previous input simply keeps running.
       console.error('Audio input could not be started:', error)
-      errorKey.value = inputErrorKey(error)
+      errorKey.value = inputErrorKey(error, { specificDevice: !!selectedDeviceId.value })
+      refreshDevices()
       return false
     } finally {
       isStarting.value = false
