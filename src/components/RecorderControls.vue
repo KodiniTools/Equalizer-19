@@ -7,7 +7,7 @@
     </div>
 
     <!-- Format toggle (only when idle) -->
-    <div class="format-toggle" v-if="!isRecording && !hasRecording" role="group">
+    <div class="format-toggle" v-if="!isRecording && !hasRecording && !isCounting" role="group">
       <button
         @click="selectFormat('wav')"
         :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
@@ -31,7 +31,7 @@
     <!-- WAV bit depth (only for WAV, changeable while idle) -->
     <div
       class="format-toggle"
-      v-if="recordingFormat === 'wav' && !isRecording"
+      v-if="recordingFormat === 'wav' && !isRecording && !isCounting"
       role="group"
       :aria-label="t.rec_bit_depth"
     >
@@ -48,10 +48,36 @@
       </button>
     </div>
 
+    <!-- Start delay (countdown before recording starts) -->
+    <label v-if="!isRecording && !hasRecording && !isCounting" class="delay" :title="t.rec_delay">
+      <i class="fas fa-stopwatch" aria-hidden="true"></i>
+      <select
+        class="delay-select"
+        :value="startDelay"
+        :aria-label="t.rec_delay"
+        @change="setStartDelay($event.target.value)"
+      >
+        <option v-for="d in START_DELAYS" :key="d" :value="d">
+          {{ d === 0 ? t.rec_delay_none : t.rec_delay_s.replace('{n}', d) }}
+        </option>
+      </select>
+    </label>
+
     <div class="rec-controls">
+      <!-- Countdown running: shows the seconds left, click cancels -->
+      <button
+        v-if="isCounting"
+        @click="cancelCountdown"
+        class="rec-btn countdown"
+        :title="t.rec_countdown_cancel"
+        :aria-label="t.rec_countdown_cancel"
+      >
+        {{ countdownRemaining }}
+      </button>
+
       <!-- Record button -->
       <button
-        v-if="!isRecording && !hasRecording"
+        v-if="!isRecording && !hasRecording && !isCounting"
         @click="handleStartRecording"
         class="rec-btn rec"
         :title="t.rec_start"
@@ -99,6 +125,13 @@
       <i class="fas fa-exclamation" aria-hidden="true"></i>
     </div>
 
+    <!-- Large, centred countdown -->
+    <CountdownOverlay
+      :remaining="countdownRemaining"
+      :total="countdownTotal"
+      @cancel="cancelCountdown"
+    />
+
     <!-- Download dialog: custom file name + (where supported) target folder -->
     <DownloadDialog
       :show="showDownloadDialog"
@@ -115,7 +148,9 @@
 <script setup>
   import { ref, inject, computed } from 'vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
+  import { useCountdown, START_DELAYS } from '../composables/useCountdown'
   import DownloadDialog from './DownloadDialog.vue'
+  import CountdownOverlay from './CountdownOverlay.vue'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
@@ -143,6 +178,38 @@
     setAudioEngine(audioEngine)
   }
 
+  // ---- Start delay / countdown ----
+  const DELAY_STORAGE_KEY = 'eq19_rec_start_delay'
+  const startDelay = ref(loadStartDelay())
+  const {
+    remaining: countdownRemaining,
+    total: countdownTotal,
+    isCounting,
+    start: startCountdown,
+    cancel: cancelCountdown,
+  } = useCountdown()
+
+  function loadStartDelay() {
+    try {
+      const stored = parseInt(localStorage.getItem(DELAY_STORAGE_KEY), 10)
+      if (START_DELAYS.includes(stored)) return stored
+    } catch (_e) {
+      // storage unavailable
+    }
+    return 0
+  }
+
+  function setStartDelay(value) {
+    const delay = parseInt(value, 10)
+    if (!START_DELAYS.includes(delay)) return
+    startDelay.value = delay
+    try {
+      localStorage.setItem(DELAY_STORAGE_KEY, String(delay))
+    } catch (_e) {
+      // storage unavailable
+    }
+  }
+
   const errorMessage = ref('')
   const showDownloadDialog = ref(false)
   const isSaving = ref(false)
@@ -161,12 +228,17 @@
     return t.value[`rec_bit_${depth}`] || `${depth} Bit`
   }
 
-  async function handleStartRecording() {
+  // Record button: start right away or after the chosen countdown
+  function handleStartRecording() {
     errorMessage.value = ''
     if (!audioEngine) {
       errorMessage.value = t.value.rec_error_engine
       return
     }
+    startCountdown(startDelay.value, beginRecording)
+  }
+
+  async function beginRecording() {
     const success = await startRecording()
     if (!success) {
       errorMessage.value = t.value.rec_error_start
@@ -308,6 +380,56 @@
   .rec-btn.rec:hover {
     background: #dc2626;
     transform: scale(1.05);
+  }
+
+  /* Countdown in the bar: seconds left, click cancels */
+  .rec-btn.countdown {
+    background: #ef4444;
+    color: white;
+    font-size: 0.95em;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    animation: rec-countdown-pulse 1s infinite;
+  }
+
+  @keyframes rec-countdown-pulse {
+    50% {
+      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.25);
+    }
+  }
+
+  /* Start delay select */
+  .delay {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 4px 0 8px;
+    border-radius: 6px;
+    background: var(--secondary-bg, #1a1a22);
+    color: var(--text-muted, #8b8b9a);
+    font-size: 0.7em;
+  }
+
+  .delay-select {
+    border: none;
+    background: transparent;
+    color: var(--text-primary, #fff);
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 2px;
+  }
+
+  .delay-select:focus-visible {
+    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline-offset: 1px;
+    border-radius: 4px;
+  }
+
+  .delay-select option {
+    background: var(--card-bg, #252530);
+    color: var(--text-primary, #fff);
   }
 
   .rec-btn.stop {
