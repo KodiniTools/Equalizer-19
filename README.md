@@ -63,6 +63,7 @@ equalizer19-vue/
 │   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI
+│   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
 │   │   ├── Notification.vue    # Toast-Notifications
 │   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
@@ -75,6 +76,7 @@ equalizer19-vue/
 │   │   ├── useAudioPlayer.js   # Player-Logik
 │   │   ├── useCustomPresets.js # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
+│   │   ├── useInputSource.js   # Live-Eingang (Line-In, Stereomix, virtuelles Kabel)
 │   │   ├── useI18n.js          # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals

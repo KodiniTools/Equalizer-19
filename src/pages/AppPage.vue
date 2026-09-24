@@ -23,6 +23,9 @@
         <div class="grid-three-column">
           <!-- Left Column: Playlist -->
           <div class="column-left">
+            <!-- Input source: playlist or live audio input -->
+            <InputSource />
+
             <!-- Playlist -->
             <Playlist />
           </div>
@@ -56,7 +59,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, watch, inject, onMounted } from 'vue'
+  import { ref, computed, watch, inject, provide, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getSharedFiles, clearSharedFiles } from '../utils/sharedFileRepository'
 
@@ -67,6 +70,8 @@
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
   import Visualization from '../components/Visualization.vue'
   import Playlist from '../components/Playlist.vue'
+  import InputSource from '../components/InputSource.vue'
+  import { useInputSource } from '../composables/useInputSource'
   import RelatedTools from '../components/RelatedTools.vue'
 
   const route = useRoute()
@@ -75,6 +80,10 @@
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
   const audioPlayer = inject('audioPlayer')
+
+  // Live audio input as alternative source; stopped automatically when leaving the app
+  const inputSource = useInputSource(audioEngine, audioPlayer)
+  provide('inputSource', inputSource)
 
   const notificationRef = ref(null)
   const sharedBanner = ref(null)
