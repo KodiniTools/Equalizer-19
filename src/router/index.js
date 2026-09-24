@@ -31,7 +31,8 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition
     } else if (to.hash) {
-      return { el: to.hash, behavior: 'smooth' }
+      // Offset keeps the target clear of the fixed site navigation
+      return { el: to.hash, top: 96, behavior: 'smooth' }
     } else {
       return { top: 0, behavior: 'smooth' }
     }
