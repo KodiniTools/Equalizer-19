@@ -27,7 +27,7 @@
     </div>
 
     <template v-if="input.mode.value === 'input'">
-      <p v-if="!input.isSupported" class="msg error" role="alert">
+      <p v-if="!input.isSupported && !input.systemAudioSupported" class="msg error" role="alert">
         {{ t.input_err_unsupported }}
       </p>
 
@@ -45,14 +45,27 @@
               :disabled="input.isStarting.value"
               @change="input.selectDevice($event.target.value)"
             >
-              <option value="">{{ t.input_default }}</option>
-              <option v-for="(d, i) in input.devices.value" :key="d.deviceId" :value="d.deviceId">
-                {{ d.label || t.input_device_n.replace('{n}', i + 1) }}
-              </option>
+              <optgroup :label="t.input_group_inputs">
+                <option value="">{{ t.input_default }}</option>
+                <option v-for="(d, i) in input.devices.value" :key="d.deviceId" :value="d.deviceId">
+                  {{ d.label || t.input_device_n.replace('{n}', i + 1) }}
+                </option>
+              </optgroup>
+              <optgroup v-if="input.systemAudioSupported" :label="t.input_group_playback">
+                <option :value="SYSTEM_AUDIO">{{ t.input_system_option }}</option>
+              </optgroup>
             </select>
             <i class="fas fa-chevron-down select-chevron" aria-hidden="true"></i>
           </div>
         </div>
+
+        <!-- System audio: how the share dialog works -->
+        <p v-if="input.isSystemSelected.value" class="hint system-hint">
+          {{ t.input_system_hint }}
+          <template v-if="defaultOutput">
+            {{ t.input_system_output.replace('{name}', defaultOutput) }}
+          </template>
+        </p>
 
         <!-- Start / stop -->
         <button
@@ -68,26 +81,29 @@
           {{ t.input_stop }}
         </button>
 
-        <p
-          v-if="input.isActive.value && input.activeLabel.value"
-          class="msg status"
-          aria-live="polite"
-        >
-          {{ t.input_active.replace('{name}', input.activeLabel.value) }}
+        <p v-if="input.isActive.value && activeName" class="msg status" aria-live="polite">
+          {{ t.input_active.replace('{name}', activeName) }}
         </p>
 
         <!-- Monitoring -->
         <div class="monitor">
-          <label class="switch">
+          <label class="switch" :class="{ disabled: !input.monitorAllowed.value }">
             <input
               type="checkbox"
-              :checked="input.monitor.value"
+              :checked="input.monitor.value && input.monitorAllowed.value"
+              :disabled="!input.monitorAllowed.value"
               @change="input.setMonitor($event.target.checked)"
             />
             <span class="switch-track" aria-hidden="true"></span>
             <span class="switch-label">{{ t.input_monitor }}</span>
           </label>
-          <p class="hint">{{ t.input_monitor_hint }} {{ t.input_record_hint }}</p>
+          <p v-if="input.isSystemSelected.value && input.monitorAllowed.value" class="hint">
+            {{ t.input_system_monitor_note }} {{ t.input_record_hint }}
+          </p>
+          <p v-else-if="input.monitorAllowed.value" class="hint">
+            {{ t.input_monitor_hint }} {{ t.input_record_hint }}
+          </p>
+          <p v-else class="hint">{{ t.input_system_monitor_off }} {{ t.input_record_hint }}</p>
         </div>
 
         <p v-if="input.errorKey.value" class="msg error" role="alert">
@@ -96,13 +112,17 @@
       </template>
     </template>
 
-    <template v-if="input.mode.value === 'input' && input.isSupported" #footer>
+    <template
+      v-if="input.mode.value === 'input' && (input.isSupported || input.systemAudioSupported)"
+      #footer
+    >
       <details class="help">
         <summary>
           <span>{{ t.input_help_title }}</span>
           <i class="fas fa-chevron-down chevron" aria-hidden="true"></i>
         </summary>
         <ol>
+          <li v-if="input.systemAudioSupported">{{ t.input_help_system }}</li>
           <li>{{ t.input_help_1 }}</li>
           <li>{{ t.input_help_2 }}</li>
           <li>{{ t.input_help_3 }}</li>
@@ -114,14 +134,27 @@
 </template>
 
 <script setup>
-  import { inject, useId } from 'vue'
+  import { inject, useId, computed } from 'vue'
   import BasePanel from './BasePanel.vue'
+  import { SYSTEM_AUDIO } from '../composables/useInputSource'
 
   const { t } = inject('i18n')
   // Provided by AppPage (useInputSource)
   const input = inject('inputSource')
 
   const deviceSelectId = useId()
+
+  // Name shown while live: device label, or "PC audio" for system audio
+  const activeName = computed(() =>
+    input.activeIsSystem.value ? t.value.input_system_option : input.activeLabel.value
+  )
+
+  // Default output device (only known once the browser revealed device names)
+  const defaultOutput = computed(() => {
+    const outputs = input.outputs.value
+    const def = outputs.find((o) => o.deviceId === 'default') || outputs[0]
+    return def?.label || ''
+  })
 </script>
 
 <style scoped>
@@ -333,6 +366,17 @@
   .switch input:focus-visible + .switch-track {
     outline: 2px solid var(--accent-primary, #00d9ff);
     outline-offset: 2px;
+  }
+
+  .switch.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .system-hint {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px dashed var(--border-color, #3a3a48);
   }
 
   .switch-label {

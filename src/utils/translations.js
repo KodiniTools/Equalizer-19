@@ -123,7 +123,7 @@ export const translations = {
       'Beim Speichern vergibst du einen Dateinamen. In Browsern, die es unterstützen (z. B. Chrome und Edge am Desktop), wählst du zusätzlich den Zielordner; sonst landet die Datei im Standard-Download-Ordner deines Browsers.',
     faq_rec_q5: 'Kann ich den Ton meines PCs oder einen Line-In bearbeiten?',
     faq_rec_a5:
-      'Ja. Wähle in der Karte „Eingangsquelle“ die Option „Audio-Eingang“ und dann das Gerät: Line-In, Mikrofon, Audio-Interface oder „Stereomix“ für den Ton deines PCs. Hat deine Soundkarte keinen Stereomix, hilft ein virtuelles Audiokabel wie VB-CABLE (Windows) oder BlackHole (macOS). Der Ton läuft live durch Equalizer und Kompressor und lässt sich wie gewohnt aufnehmen. „Mithören“ schaltest du nur mit Kopfhörern oder virtuellem Kabel ein, sonst entsteht eine Rückkopplung.',
+      'Ja. Wähle in der Karte „Eingangsquelle“ die Option „Audio-Eingang“ und dann die Quelle: Line-In, Mikrofon oder Audio-Interface – oder „PC-Ton (Systemaudio)“ für alles, was auf deinem PC läuft. Beim PC-Ton öffnet sich der Freigabe-Dialog des Browsers: „Gesamter Bildschirm“ wählen und „Systemaudio teilen“ anhaken (Chrome und Edge unter Windows). Der Ton läuft live durch Equalizer und Kompressor und lässt sich wie gewohnt aufnehmen. Wer nur die bearbeitete Version hören möchte, braucht ein virtuelles Audiokabel wie VB-CABLE.',
 
     // Technical FAQ
     faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -262,6 +262,18 @@ export const translations = {
     input_device_label: 'Gerät',
     input_default: 'Standardeingang des Systems',
     input_device_n: 'Eingang {n}',
+    input_group_inputs: 'Eingänge',
+    input_group_playback: 'Wiedergabe des PCs',
+    input_system_option: 'PC-Ton (Systemaudio)',
+    input_system_hint:
+      'Nach dem Start öffnet sich der Freigabe-Dialog des Browsers: „Gesamter Bildschirm“ wählen und den Haken „Systemaudio teilen“ setzen. Verwendet wird nur der Ton, nicht das Bild. Funktioniert in Chrome und Edge unter Windows.',
+    input_system_output: 'Aufgenommen wird, was über „{name}“ läuft.',
+    input_system_monitor_off:
+      'Beim PC-Ton hörst du das Original schon über deine Lautsprecher. Mithören würde den bearbeiteten Ton erneut aufnehmen (Endlosschleife) und ist deshalb gesperrt.',
+    input_system_monitor_note:
+      'Beim PC-Ton läuft das Original weiter über deine Lautsprecher – mit Mithören hörst du Original und bearbeitete Version gleichzeitig. Nur die bearbeitete Version zu hören, geht mit einem virtuellen Audiokabel.',
+    input_help_system:
+      'Ohne Aufnahmegerät: „PC-Ton (Systemaudio)“ wählen. Die App nimmt dann auf, was über dein Standard-Ausgabegerät läuft (Chrome und Edge unter Windows).',
     input_start: 'Eingang starten',
     input_stop: 'Eingang stoppen',
     input_starting: 'Wird gestartet …',
@@ -293,6 +305,14 @@ export const translations = {
       'Die Abtastrate des Eingangs passt nicht zur Audio-Ausgabe. Stelle beide in den Soundeinstellungen auf denselben Wert (z. B. 48 kHz).',
     input_err_failed: 'Der Eingang konnte nicht gestartet werden.',
     input_err_ended: 'Die Verbindung zum Eingang wurde getrennt.',
+    input_err_share_cancelled:
+      'Die Freigabe wurde abgebrochen. Klicke erneut auf „Eingang starten“, wähle „Gesamter Bildschirm“ und setze den Haken „Systemaudio teilen“.',
+    input_err_no_system_audio:
+      'Es wurde kein Ton geteilt. Wähle im Freigabe-Dialog „Gesamter Bildschirm“ und setze den Haken „Systemaudio teilen“. Unter macOS und Linux kann der Browser meist nur den Ton eines einzelnen Tabs teilen.',
+    input_err_system_unsupported:
+      'Dein Browser kann den Ton des PCs nicht teilen. Nutze Chrome oder Edge unter Windows.',
+    input_err_no_devices_system:
+      'Dein System stellt kein Aufnahmegerät (Mikrofon, Line-In) bereit. Den Ton deines PCs kannst du trotzdem nutzen: „PC-Ton (Systemaudio)“ ist jetzt ausgewählt. Klicke erneut auf „Eingang starten“, wähle „Gesamter Bildschirm“ und setze den Haken „Systemaudio teilen“.',
     player_live_input: 'Live-Eingang',
 
     // Level Meter
@@ -436,7 +456,7 @@ export const translations = {
       'When saving, you choose a file name. In browsers that support it (e.g. Chrome and Edge on desktop) you can also pick the target folder; otherwise the file goes to your browser’s default download folder.',
     faq_rec_q5: 'Can I process my PC’s audio or a line-in?',
     faq_rec_a5:
-      'Yes. In the “Input source” card choose “Audio input” and then the device: line-in, microphone, audio interface or “Stereo Mix” for your PC’s audio. If your sound card has no Stereo Mix, a virtual audio cable such as VB-CABLE (Windows) or BlackHole (macOS) helps. The sound runs live through equalizer and compressor and can be recorded as usual. Only enable “Monitor” with headphones or a virtual cable, otherwise you get feedback.',
+      'Yes. In the “Input source” card choose “Audio input” and then the source: line-in, microphone or audio interface – or “PC audio (system audio)” for everything playing on your PC. For PC audio the browser’s share dialog opens: choose “Entire screen” and tick “Share system audio” (Chrome and Edge on Windows). The sound runs live through equalizer and compressor and can be recorded as usual. To hear only the processed version you need a virtual audio cable such as VB-CABLE.',
 
     // Technical FAQ
     faq_tech_q1: 'Which browsers are supported?',
@@ -573,6 +593,18 @@ export const translations = {
     input_device_label: 'Device',
     input_default: 'System default input',
     input_device_n: 'Input {n}',
+    input_group_inputs: 'Inputs',
+    input_group_playback: 'PC playback',
+    input_system_option: 'PC audio (system audio)',
+    input_system_hint:
+      'After starting, the browser’s share dialog opens: choose “Entire screen” and tick “Share system audio”. Only the sound is used, not the picture. Works in Chrome and Edge on Windows.',
+    input_system_output: 'Captures what plays through “{name}”.',
+    input_system_monitor_off:
+      'With PC audio you already hear the original through your speakers. Monitoring would capture the processed sound again (endless loop) and is therefore disabled.',
+    input_system_monitor_note:
+      'With PC audio the original keeps playing through your speakers – with monitoring you hear original and processed sound at the same time. Hearing only the processed version requires a virtual audio cable.',
+    input_help_system:
+      'No recording device: choose “PC audio (system audio)”. The app then captures what plays through your default output device (Chrome and Edge on Windows).',
     input_start: 'Start input',
     input_stop: 'Stop input',
     input_starting: 'Starting …',
@@ -602,6 +634,14 @@ export const translations = {
       'The input’s sample rate does not match the audio output. Set both to the same value in your sound settings (e.g. 48 kHz).',
     input_err_failed: 'The input could not be started.',
     input_err_ended: 'The connection to the input was lost.',
+    input_err_share_cancelled:
+      'Sharing was cancelled. Click “Start input” again, choose “Entire screen” and tick “Share system audio”.',
+    input_err_no_system_audio:
+      'No sound was shared. In the share dialog choose “Entire screen” and tick “Share system audio”. On macOS and Linux the browser can usually only share a single tab’s sound.',
+    input_err_system_unsupported:
+      'Your browser cannot share the PC’s sound. Use Chrome or Edge on Windows.',
+    input_err_no_devices_system:
+      'Your system offers no recording device (microphone, line-in). You can still use your PC’s audio: “PC audio (system audio)” is now selected. Click “Start input” again, choose “Entire screen” and tick “Share system audio”.',
     player_live_input: 'Live input',
 
     // Level Meter
