@@ -66,7 +66,9 @@
           <span class="track-name">
             <span class="live-dot" aria-hidden="true"></span>{{ t.player_live_input }}
           </span>
-          <span class="track-time">{{ inputSource.activeLabel.value }}</span>
+          <span class="track-time">{{
+            inputSource.activeIsSystem.value ? t.input_system_option : inputSource.activeLabel.value
+          }}</span>
         </div>
         <div class="track-info" v-else-if="currentTrack">
           <span class="track-name">{{ currentTrack.name }}</span>

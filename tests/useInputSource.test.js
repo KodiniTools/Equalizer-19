@@ -4,6 +4,7 @@ import {
   useInputSource,
   buildInputConstraints,
   inputErrorKey,
+  SYSTEM_AUDIO,
 } from '../src/composables/useInputSource.js'
 
 mock.method(console, 'error', () => {})
@@ -288,4 +289,136 @@ test('OS privacy block is reported separately', async () => {
   }
   assert.equal(await input.start(), false)
   assert.equal(input.errorKey.value, 'input_err_denied_system')
+})
+
+// ---- System audio (screen share) ------------------------------------------------
+function withDisplayMedia(md, { audio = true, fail = null, restrictOwnAudio = false } = {}) {
+  md.displayCalls = []
+  md.getDisplayMedia = async (options) => {
+    md.displayCalls.push(options)
+    if (fail) throw Object.assign(new Error(fail.message || fail.name), { name: fail.name })
+    const video = {
+      kind: 'video',
+      stopped: false,
+      stop() {
+        this.stopped = true
+      },
+    }
+    const audioTrack = {
+      kind: 'audio',
+      label: 'System Audio',
+      stopped: false,
+      onended: null,
+      stop() {
+        this.stopped = true
+      },
+    }
+    md.lastVideo = video
+    md.lastAudio = audioTrack
+    const tracks = audio ? [video, audioTrack] : [video]
+    return {
+      getTracks: () => tracks,
+      getVideoTracks: () => [video],
+      getAudioTracks: () => (audio ? [audioTrack] : []),
+    }
+  }
+  md.getSupportedConstraints = () => ({ restrictOwnAudio })
+  return md
+}
+
+function setupSystem(opts = {}, mdOpts = {}) {
+  const md = withDisplayMedia(fakeMediaDevices(mdOpts), opts)
+  const engine = fakeEngine()
+  const player = fakePlayer()
+  const storage = memoryStorage()
+  const input = useInputSource(engine, player, { mediaDevices: md, storage })
+  return { md, engine, player, storage, input }
+}
+
+test('system audio: shares the PC playback, drops the picture', async () => {
+  const { input, md, engine } = setupSystem()
+  assert.equal(input.systemAudioSupported, true)
+  input.selectDevice(SYSTEM_AUDIO)
+  assert.equal(await input.start(), true)
+  assert.equal(md.displayCalls[0].systemAudio, 'include')
+  assert.equal(md.displayCalls[0].audio.echoCancellation, false)
+  assert.equal(md.lastVideo.stopped, true)
+  assert.equal(md.lastAudio.stopped, false)
+  assert.equal(input.activeIsSystem.value, true)
+  assert.equal(engine.connected.length, 1)
+  assert.equal(md.calls.length, 0) // getUserMedia not used
+})
+
+test('system audio without "share system audio" ticked → hint', async () => {
+  const { input, md } = setupSystem({ audio: false })
+  input.selectDevice(SYSTEM_AUDIO)
+  assert.equal(await input.start(), false)
+  assert.equal(input.errorKey.value, 'input_err_no_system_audio')
+  assert.equal(md.lastVideo.stopped, true)
+})
+
+test('cancelling the share dialog is not reported as "access denied"', async () => {
+  const { input } = setupSystem({ fail: { name: 'NotAllowedError', message: 'Permission denied' } })
+  input.selectDevice(SYSTEM_AUDIO)
+  assert.equal(await input.start(), false)
+  assert.equal(input.errorKey.value, 'input_err_share_cancelled')
+})
+
+test('system audio: monitoring stays off unless own audio can be excluded', async () => {
+  const blocked = setupSystem()
+  blocked.input.selectDevice(SYSTEM_AUDIO)
+  blocked.input.setMonitor(true)
+  await blocked.input.start()
+  assert.equal(blocked.input.monitorAllowed.value, false)
+  assert.equal(blocked.engine.monitor.at(-1), false)
+
+  const safe = setupSystem({ restrictOwnAudio: true })
+  safe.input.selectDevice(SYSTEM_AUDIO)
+  safe.input.setMonitor(true)
+  await safe.input.start()
+  assert.equal(safe.input.monitorAllowed.value, true)
+  assert.equal(safe.engine.monitor.at(-1), true)
+})
+
+test('no recording device at all → PC audio is preselected', async () => {
+  const { input, storage } = setupSystem({}, { fail: 'NotFoundError' })
+  assert.equal(await input.start(), false)
+  assert.equal(input.errorKey.value, 'input_err_no_devices_system')
+  assert.equal(input.selectedDeviceId.value, SYSTEM_AUDIO)
+  assert.equal(storage.data.get('eq19_input_device'), SYSTEM_AUDIO)
+  assert.equal(await input.start(), true)
+  assert.equal(input.activeIsSystem.value, true)
+})
+
+test('"Stop sharing" in the browser stops quietly', async () => {
+  const { input, md, player } = setupSystem()
+  input.selectDevice(SYSTEM_AUDIO)
+  await input.start()
+  md.lastAudio.onended()
+  assert.equal(input.isActive.value, false)
+  assert.equal(input.errorKey.value, '')
+  assert.equal(player.cleared, 1)
+})
+
+test('output devices are listed for information, placeholder inputs are ignored', async () => {
+  const md = fakeMediaDevices({
+    devices: [
+      { kind: 'audioinput', deviceId: '', label: '' },
+      {
+        kind: 'audiooutput',
+        deviceId: 'default',
+        label: 'Standard - Lautsprecher (High Definition Audio Device)',
+      },
+    ],
+  })
+  const input = useInputSource(fakeEngine(), fakePlayer(), {
+    mediaDevices: md,
+    storage: memoryStorage(),
+  })
+  await tick()
+  assert.equal(input.devices.value.length, 0)
+  assert.deepEqual(
+    input.outputs.value.map((o) => o.label),
+    ['Standard - Lautsprecher (High Definition Audio Device)']
+  )
 })
