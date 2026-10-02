@@ -13,14 +13,19 @@ export const SYSTEM_AUDIO = '__system__'
 /**
  * getDisplayMedia options for capturing system audio. Chrome requires video to
  * be requested; the video track is stopped right away.
+ *
+ * @param {CaptureController|null} [controller] lets the app stay in front
+ *   instead of Chrome switching to the shared tab/window
  */
-export function buildSystemAudioOptions() {
+export function buildSystemAudioOptions(controller = null) {
   return {
     video: true,
     audio: {
       echoCancellation: false,
       noiseSuppression: false,
       autoGainControl: false,
+      // The shared tab keeps playing locally at first; while monitoring a tab
+      // share, the processed sound replaces it (see syncTabPlayback)
       suppressLocalAudioPlayback: false,
       // Where supported: leave this tab's own output out of the capture (no loop)
       restrictOwnAudio: true,
@@ -29,6 +34,7 @@ export function buildSystemAudioOptions() {
     selfBrowserSurface: 'exclude',
     surfaceSwitching: 'exclude',
     monitorTypeSurfaces: 'include',
+    ...(controller ? { controller } : {}),
   }
 }
 
@@ -123,13 +129,21 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   const errorKey = ref('')
   const activeLabel = ref('')
   const activeIsSystem = ref(false)
+  // What the system-audio share covers: 'browser' (a tab), 'window', 'monitor' or ''
+  const activeSurface = ref('')
   const outputs = ref([]) // detected output devices (information only)
 
   const isSystemSelected = computed(() => selectedDeviceId.value === SYSTEM_AUDIO)
-  const monitorAllowed = computed(() => !isSystemSelected.value || ownAudioExcludable)
+  // A shared tab is never this one (selfBrowserSurface: 'exclude'), so its
+  // capture cannot contain the app's own output – monitoring is safe there.
+  const isTabShare = computed(() => activeIsSystem.value && activeSurface.value === 'browser')
+  const monitorAllowed = computed(
+    () => !isSystemSelected.value || ownAudioExcludable || isTabShare.value
+  )
 
   let stream = null
   let sourceNode = null
+  let monitorTouched = false // the user set the monitor switch themselves
 
   function loadDevice() {
     try {
@@ -189,10 +203,15 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     isActive.value = false
     activeLabel.value = ''
     activeIsSystem.value = false
+    activeSurface.value = ''
     audioEngine.setMonitorEnabled(true)
   }
 
-  /** Open the stream for a device id (real input or SYSTEM_AUDIO). */
+  /**
+   * Open the stream for a device id (real input or SYSTEM_AUDIO).
+   * Resolves { stream, surface }; surface is the shared display surface
+   * ('browser' | 'window' | 'monitor') for system audio, '' otherwise.
+   */
   async function acquireStream(deviceId) {
     if (deviceId === SYSTEM_AUDIO) {
       if (!systemAudioSupported) {
@@ -200,25 +219,54 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
           name: 'SystemAudioUnsupportedError',
         })
       }
-      const display = await mediaDevices.getDisplayMedia(buildSystemAudioOptions())
+      const controller =
+        typeof globalThis.CaptureController === 'function'
+          ? new globalThis.CaptureController()
+          : null
+      const display = await mediaDevices.getDisplayMedia(buildSystemAudioOptions(controller))
+      // Keep this page in front: Chrome would otherwise switch to the shared tab/window
+      try {
+        controller?.setFocusBehavior('no-focus-change')
+      } catch (_e) {
+        // too late or unsupported – only the focus is affected
+      }
+      const video = display.getVideoTracks()[0]
+      const surface = video?.getSettings?.()?.displaySurface || ''
       // Only the sound is used; ending the picture also removes the capture overhead
       display.getVideoTracks().forEach((track) => track.stop())
       if (display.getAudioTracks().length === 0) {
         display.getTracks().forEach((track) => track.stop())
         throw Object.assign(new Error('No audio was shared'), { name: 'NoAudioTrackError' })
       }
-      return display
+      return { stream: display, surface }
     }
 
     try {
-      return await mediaDevices.getUserMedia(buildInputConstraints(deviceId))
+      return {
+        stream: await mediaDevices.getUserMedia(buildInputConstraints(deviceId)),
+        surface: '',
+      }
     } catch (error) {
       // The remembered device is gone (unplugged, disabled): fall back to the default input
       if (!deviceId || !DEVICE_MISSING.has(error?.name)) throw error
       selectedDeviceId.value = ''
       saveDevice('')
-      return mediaDevices.getUserMedia(buildInputConstraints(''))
+      return { stream: await mediaDevices.getUserMedia(buildInputConstraints('')), surface: '' }
     }
+  }
+
+  /**
+   * Tab share: while monitoring, the processed sound replaces the tab's own
+   * (the browser mutes the tab locally); without monitoring the tab plays as
+   * usual. Best effort – older browsers ignore the constraint.
+   */
+  function syncTabPlayback() {
+    const track = stream?.getAudioTracks?.()[0]
+    if (!track || !isTabShare.value || typeof track.applyConstraints !== 'function') return
+    const suppress = monitorAllowed.value && monitor.value
+    Promise.resolve(track.applyConstraints({ suppressLocalAudioPlayback: suppress })).catch(
+      () => {}
+    )
   }
 
   /** Create/resume the AudioContext synchronously (no await: keeps user activation). */
@@ -262,7 +310,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       wakeEngine()
 
       // No await before this call: the share dialog needs the click's user activation
-      const newStream = await acquireStream(selectedDeviceId.value)
+      const { stream: newStream, surface } = await acquireStream(selectedDeviceId.value)
 
       if (!audioEngine.isInitialized.value) audioEngine.initAudioContext()
       const ctx = audioEngine.audioContext.value
@@ -285,12 +333,17 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
 
       stream = newStream
       sourceNode = node
+      activeIsSystem.value = system
+      activeSurface.value = surface
+      // A shared tab is muted by the browser while monitoring, so the user hears
+      // the processed version instead of the original – unless they opted out.
+      if (isTabShare.value && !monitorTouched) monitor.value = true
       audioPlayer.setExternalSource(releaseToPlaylist)
       audioEngine.setMonitorEnabled(monitorAllowed.value && monitor.value)
       audioEngine.connectAudioSource(node)
+      syncTabPlayback()
 
       const track = newStream.getAudioTracks()[0]
-      activeIsSystem.value = system
       activeLabel.value = system ? '' : track?.label || ''
       if (track) {
         // Device unplugged / access revoked – or "Stop sharing" clicked for system audio
@@ -350,7 +403,11 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   /** Speaker monitoring for the live input (recording is unaffected). */
   function setMonitor(enabled) {
     monitor.value = !!enabled
-    if (isActive.value) audioEngine.setMonitorEnabled(monitorAllowed.value && monitor.value)
+    monitorTouched = true
+    if (isActive.value) {
+      audioEngine.setMonitorEnabled(monitorAllowed.value && monitor.value)
+      syncTabPlayback()
+    }
   }
 
   mediaDevices?.addEventListener?.('devicechange', refreshDevices)
@@ -376,6 +433,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     errorKey,
     activeLabel,
     activeIsSystem,
+    activeSurface,
+    isTabShare,
     outputs,
     isSystemSelected,
     monitorAllowed,

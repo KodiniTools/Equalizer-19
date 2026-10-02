@@ -292,7 +292,10 @@ test('OS privacy block is reported separately', async () => {
 })
 
 // ---- System audio (screen share) ------------------------------------------------
-function withDisplayMedia(md, { audio = true, fail = null, restrictOwnAudio = false } = {}) {
+function withDisplayMedia(
+  md,
+  { audio = true, fail = null, restrictOwnAudio = false, surface = 'monitor' } = {}
+) {
   md.displayCalls = []
   md.getDisplayMedia = async (options) => {
     md.displayCalls.push(options)
@@ -300,6 +303,7 @@ function withDisplayMedia(md, { audio = true, fail = null, restrictOwnAudio = fa
     const video = {
       kind: 'video',
       stopped: false,
+      getSettings: () => ({ displaySurface: surface }),
       stop() {
         this.stopped = true
       },
@@ -309,6 +313,11 @@ function withDisplayMedia(md, { audio = true, fail = null, restrictOwnAudio = fa
       label: 'System Audio',
       stopped: false,
       onended: null,
+      constraints: [], // applyConstraints() calls
+      applyConstraints(c) {
+        this.constraints.push(c)
+        return Promise.resolve()
+      },
       stop() {
         this.stopped = true
       },
@@ -378,6 +387,69 @@ test('system audio: monitoring stays off unless own audio can be excluded', asyn
   await safe.input.start()
   assert.equal(safe.input.monitorAllowed.value, true)
   assert.equal(safe.engine.monitor.at(-1), true)
+})
+
+test('tab share: monitoring is on and the tab is muted – only the processed sound is heard', async () => {
+  const { input, md, engine } = setupSystem({ surface: 'browser' })
+  input.selectDevice(SYSTEM_AUDIO)
+  assert.equal(input.monitorAllowed.value, false) // own audio not excludable, nothing shared yet
+  assert.equal(await input.start(), true)
+
+  assert.equal(input.activeSurface.value, 'browser')
+  assert.equal(input.isTabShare.value, true)
+  assert.equal(input.monitorAllowed.value, true, 'a shared tab cannot contain the app itself')
+  assert.equal(input.monitor.value, true, 'monitoring switched on automatically')
+  assert.equal(engine.monitor.at(-1), true)
+  await tick()
+  assert.deepEqual(md.lastAudio.constraints.at(-1), { suppressLocalAudioPlayback: true })
+
+  // Monitoring off → the tab plays its original sound again
+  input.setMonitor(false)
+  assert.equal(engine.monitor.at(-1), false)
+  assert.deepEqual(md.lastAudio.constraints.at(-1), { suppressLocalAudioPlayback: false })
+
+  input.stop()
+  assert.equal(input.activeSurface.value, '')
+  assert.equal(input.isTabShare.value, false)
+})
+
+test('tab share respects a monitor switch the user turned off before starting', async () => {
+  const { input, md, engine } = setupSystem({ surface: 'browser' })
+  input.selectDevice(SYSTEM_AUDIO)
+  input.setMonitor(false)
+  await input.start()
+  assert.equal(input.monitor.value, false)
+  assert.equal(engine.monitor.at(-1), false)
+  assert.ok(!md.lastAudio.constraints.some((c) => c.suppressLocalAudioPlayback === true))
+})
+
+test('screen share: the tab is never muted and monitoring stays as configured', async () => {
+  const { input, md, engine } = setupSystem({ surface: 'monitor' })
+  input.selectDevice(SYSTEM_AUDIO)
+  await input.start()
+  assert.equal(input.isTabShare.value, false)
+  assert.equal(input.monitor.value, false)
+  assert.equal(engine.monitor.at(-1), false)
+  assert.equal(md.lastAudio.constraints.length, 0)
+})
+
+test('system audio keeps this page in front (CaptureController focus behaviour)', async () => {
+  class FakeCaptureController {
+    setFocusBehavior(behavior) {
+      this.focus = behavior
+    }
+  }
+  globalThis.CaptureController = FakeCaptureController
+  try {
+    const { input, md } = setupSystem()
+    input.selectDevice(SYSTEM_AUDIO)
+    await input.start()
+    const controller = md.displayCalls[0].controller
+    assert.ok(controller instanceof FakeCaptureController)
+    assert.equal(controller.focus, 'no-focus-change')
+  } finally {
+    delete globalThis.CaptureController
+  }
 })
 
 test('no recording device at all → PC audio is preselected', async () => {
