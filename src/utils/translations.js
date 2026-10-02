@@ -295,6 +295,8 @@ export const translations = {
       'Der geteilte Tab ist stummgeschaltet – du hörst nur die bearbeitete Version.',
     input_hint_tab_original:
       'Mithören ist aus: Du hörst den Originalton des Tabs, nicht die bearbeitete Version.',
+    input_hint_tab_echo:
+      'Dein Browser schaltet den geteilten Tab nicht stumm: Du hörst Original und bearbeitete Version gleichzeitig (Echo). Schalte Mithören aus oder nutze ein virtuelles Audiokabel.',
     input_hint_screen:
       'Beim ganzen Bildschirm läuft das Original weiter über die Lautsprecher. Nur die bearbeitete Version hörst du, wenn du stattdessen einen Browser-Tab teilst oder ein virtuelles Audiokabel nutzt.',
     input_help_link: 'Anleitung & Hilfe',
@@ -632,6 +634,8 @@ export const translations = {
     input_hint_tab_monitor: 'The shared tab is muted – you hear only the processed version.',
     input_hint_tab_original:
       'Monitoring is off: you hear the tab’s original sound, not the processed version.',
+    input_hint_tab_echo:
+      'Your browser does not mute the shared tab: you hear the original and the processed version at the same time (echo). Turn monitoring off or use a virtual audio cable.',
     input_hint_screen:
       'With the entire screen the original keeps playing through your speakers. To hear only the processed version, share a browser tab instead or use a virtual audio cable.',
     input_help_link: 'Guide & help',
