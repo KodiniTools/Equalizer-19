@@ -221,6 +221,19 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     }
   }
 
+  /** Create/resume the AudioContext synchronously (no await: keeps user activation). */
+  function wakeEngine() {
+    try {
+      if (!audioEngine.isInitialized.value) audioEngine.initAudioContext()
+      const ctx = audioEngine.audioContext.value
+      if (ctx?.state === 'suspended' && typeof ctx.resume === 'function') {
+        ctx.resume().catch(() => {})
+      }
+    } catch (_e) {
+      // engine unavailable – start() reports it after the stream was acquired
+    }
+  }
+
   // Called by the player when the user starts playback while the input is live
   function releaseToPlaylist() {
     stopStream()
@@ -243,6 +256,11 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     errorKey.value = ''
     isStarting.value = true
     try {
+      // Wake the engine while the click's user activation is fresh: the permission
+      // or share dialog can outlive it, and a context that stays suspended would
+      // feed silence to EQ, meters and recorder.
+      wakeEngine()
+
       // No await before this call: the share dialog needs the click's user activation
       const newStream = await acquireStream(selectedDeviceId.value)
 

@@ -86,6 +86,7 @@ equalizer19-vue/
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   └── utils/
 │       ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
+│       ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
 │       ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js          # EQ/Comp Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter

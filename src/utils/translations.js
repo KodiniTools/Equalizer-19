@@ -115,7 +115,7 @@ export const translations = {
       'Du hast die Wahl: WAV ist verlustfrei und wahlweise mit 16 Bit (CD-Qualität), 24 Bit (Studio-Qualität) oder 32 Bit Float (ohne Clipping) verfügbar. WebM mit Opus-Codec erzeugt deutlich kleinere Dateien bei sehr guter Qualität. Für MP3 und weitere Formate kannst du unseren Audio-Konverter nutzen.',
     faq_rec_q2: 'Werden alle meine EQ-Einstellungen mit aufgenommen?',
     faq_rec_a2:
-      'Ja! Die Aufnahme erfolgt am Ende der kompletten Verarbeitungskette – alle deine EQ-Anpassungen und Kompressor-Einstellungen sind im aufgenommenen Audio enthalten.',
+      'Ja! Die Aufnahme erfolgt am Ende der kompletten Verarbeitungskette – alle deine EQ-Anpassungen und Kompressor-Einstellungen sind im aufgenommenen Audio enthalten. Das gilt für die Playlist genauso wie für den Audio-Eingang (Line-In, Mikrofon, PC-Ton): Was du während der Aufnahme am Equalizer änderst, wird ab diesem Moment mit aufgenommen.',
     faq_rec_q3: 'Warum höre ich nichts während der Aufnahme?',
     faq_rec_a3:
       'Stell sicher, dass eine Audiodatei geladen ist und abgespielt wird. Die Aufnahme nimmt den Audio-Ausgang auf – wenn nichts abgespielt wird, wird auch nichts aufgenommen.',
@@ -449,7 +449,7 @@ export const translations = {
       'You can choose: WAV is lossless and available at 16-bit (CD quality), 24-bit (studio quality) or 32-bit float (no clipping). WebM with the Opus codec produces much smaller files at very good quality. For MP3 and other formats you can use our Audio Converter.',
     faq_rec_q2: 'Are all my EQ settings recorded?',
     faq_rec_a2:
-      'Yes! Recording happens after the complete audio processing chain - all your EQ adjustments and compressor settings will be included in the recorded audio.',
+      'Yes! Recording happens after the complete audio processing chain - all your EQ adjustments and compressor settings will be included in the recorded audio. This applies to the playlist as well as to the audio input (line-in, microphone, PC audio): whatever you change on the equalizer while recording is captured from that moment on.',
     faq_rec_q3: "Why don't I hear anything during recording?",
     faq_rec_a3:
       'Make sure an audio file is loaded and playing. The recording captures the audio output - if nothing is playing, nothing will be recorded.',

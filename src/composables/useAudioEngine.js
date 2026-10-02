@@ -1,5 +1,6 @@
 import { ref, reactive, watch } from 'vue'
 import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets.js'
+import { processingChainOrder, connectProcessingChain } from '../utils/audioChain.js'
 
 export function useAudioEngine() {
   // Audio Context
@@ -104,6 +105,12 @@ export function useAudioEngine() {
   /**
    * Connect audio source to the audio processing chain
    * Chain: Source → EQ Filters → Dynamics → Gain → Analyser → Destination
+   *
+   * The same chain serves file playback and live inputs (line-in, microphone,
+   * system audio): EQ and compressor sit in front of the master gain, where
+   * the recorder taps the signal, so recordings always contain the processed
+   * sound. Rebuilding the chain never touches the gain node's outputs, so a
+   * running recording survives routing changes.
    */
   function connectAudioSource(source) {
     if (!audioContext.value || !isInitialized.value) {
@@ -116,7 +123,7 @@ export function useAudioEngine() {
     }
 
     // Disconnect previous source if exists
-    if (sourceNode.value) {
+    if (sourceNode.value && sourceNode.value !== source) {
       try {
         sourceNode.value.disconnect()
       } catch (e) {
@@ -126,72 +133,42 @@ export function useAudioEngine() {
 
     sourceNode.value = source
 
-    // Side tap for input metering (before EQ chain)
-    if (inputAnalyserNode.value) {
-      try {
-        source.connect(inputAnalyserNode.value)
-      } catch (_e) {
-        // Node already connected — safe to ignore
-      }
-    }
-
     console.log('🔌 Connecting audio source...')
-    console.log('   Source Node:', sourceNode.value)
     console.log('   EQ Bypass:', eqBypass.value)
     console.log('   Dynamics Enabled:', dynamicsEnabled.value)
 
-    // Build the audio chain
-    let currentNode = sourceNode.value
-
-    // Connect through all EQ filters sequentially
-    if (!eqBypass.value && eqFilters.value.length > 0) {
-      console.log('   → Connecting through', eqFilters.value.length, 'EQ filters')
-      eqFilters.value.forEach((filter, index) => {
-        try {
-          currentNode.connect(filter)
-          currentNode = filter
-          if (index === 0 || index === eqFilters.value.length - 1) {
-            console.log('      Filter', index, ':', filter.type, filter.frequency.value + 'Hz')
-          }
-        } catch (e) {
-          console.error('      Error connecting filter', index, ':', e)
-        }
-      })
-    } else if (eqBypass.value) {
-      console.log('   ⊘ EQ bypassed')
+    // Build the chain: source → [EQ] → [dynamics] → gain. Bypassed parts are
+    // detached as well so no edge of an earlier routing keeps feeding the output.
+    const order = processingChainOrder({
+      source,
+      eqFilters: eqFilters.value,
+      dynamicsNode: dynamicsNode.value,
+      gainNode: gainNode.value,
+      eqBypass: eqBypass.value,
+      dynamicsEnabled: dynamicsEnabled.value,
+    })
+    try {
+      connectProcessingChain(order, [...eqFilters.value, dynamicsNode.value])
+    } catch (e) {
+      console.error('❌ Error building the processing chain:', e)
     }
+    console.log('   → Chain:', order.length - 1, 'stages behind the source')
 
-    // Connect to Dynamics Compressor if enabled
-    if (dynamicsEnabled.value && dynamicsNode.value) {
-      console.log('   → Connecting to Dynamics Compressor')
+    // Side tap for input metering (after the rebuild, which detaches the source)
+    if (inputAnalyserNode.value) {
       try {
-        currentNode.connect(dynamicsNode.value)
-        currentNode = dynamicsNode.value
-        console.log('      Threshold:', dynamicsNode.value.threshold.value + 'dB')
-        console.log('      Ratio:', dynamicsNode.value.ratio.value + ':1')
+        source.connect(inputAnalyserNode.value)
       } catch (e) {
-        console.error('      Error connecting dynamics:', e)
-      }
-    } else {
-      console.log('   ⊘ Dynamics bypassed')
-    }
-
-    // Connect to Master Gain
-    if (gainNode.value) {
-      console.log('   → Connecting to Gain Node')
-      try {
-        currentNode.connect(gainNode.value)
-        currentNode = gainNode.value
-        console.log('      Gain:', gainNode.value.gain.value)
-      } catch (e) {
-        console.error('      Error connecting gain:', e)
+        console.error('      Error connecting input analyser:', e)
       }
     }
+
+    const tail = order[order.length - 1]
 
     // Connect to Analyser (for visualization)
     if (analyserNode.value) {
       try {
-        currentNode.connect(analyserNode.value)
+        tail.connect(analyserNode.value)
         console.log('   → Connected to Analyser')
       } catch (e) {
         console.error('      Error connecting analyser:', e)
@@ -200,7 +177,7 @@ export function useAudioEngine() {
 
     // CRITICAL: Connect to Destination (speakers) via the monitor gain
     try {
-      currentNode.connect(monitorNode.value || audioContext.value.destination)
+      tail.connect(monitorNode.value || audioContext.value.destination)
       console.log('   → Connected to DESTINATION (Speakers)')
       console.log('✅ Audio chain complete!')
     } catch (e) {

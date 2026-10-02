@@ -85,6 +85,7 @@ Equalizer-19/
 │   │
 │   └── utils/              # Hilfsfunktionen & Konstanten
 │       ├── audioBlob.js            # Blob-Prüfung für übergebene Dateien
+│       ├── audioChain.js           # Routing der Verarbeitungskette (reine Funktionen)
 │       ├── playbackOrder.js        # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js              # EQ- und Kompressor-Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
@@ -220,7 +221,7 @@ translations = {
 
 ```
 ┌──────────────┐
-│ Audio Source │ (File oder Mikrofon)
+│ Audio Source │ (Datei oder Audio-Eingang: Line-In, Mikrofon, PC-Ton)
 └──────┬───────┘
        │
        ▼
@@ -248,6 +249,8 @@ translations = {
     │ (FFT)      │  │ (Speakers) │  │ (Optional) │
     └────────────┘  └────────────┘  └────────────┘
 ```
+
+Die Kette ist für Playlist und Audio-Eingang identisch. Der Recorder greift hinter dem Master-Gain ab, also immer das bearbeitete Signal – auch Änderungen an EQ und Kompressor während einer laufenden Aufnahme. `src/utils/audioChain.js` baut die Kette bei jedem Routing-Wechsel (Bypass, Gerätewechsel, Playlist ↔ Eingang) komplett neu auf: Alle Knoten vor dem Master-Gain werden erst getrennt und dann in Reihenfolge verbunden, damit keine Kante einer früheren Verschaltung (z. B. EQ → Kompressor bei umgangenem Kompressor) eine zweite Signalkopie in Ausgang und Aufnahme mischt. Die Ausgänge des Master-Gain (Analyser, Monitor, Recorder) bleiben dabei unangetastet.
 
 ---
 
