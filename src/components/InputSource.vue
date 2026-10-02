@@ -95,6 +95,9 @@
           </label>
         </div>
 
+        <!-- What the user hears while PC audio is live -->
+        <p v-if="systemHint" class="msg status wrap" aria-live="polite">{{ systemHint }}</p>
+
         <p v-if="input.errorKey.value" class="msg error" role="alert">
           {{ t[input.errorKey.value] }}
         </p>
@@ -128,6 +131,17 @@
   const activeName = computed(() =>
     input.activeIsSystem.value ? t.value.input_system_option : input.activeLabel.value
   )
+
+  // PC audio: tells the user whether they hear the original or the processed sound
+  const systemHint = computed(() => {
+    if (!input.isActive.value || !input.activeIsSystem.value) return ''
+    if (input.isTabShare.value) {
+      return input.monitor.value && input.monitorAllowed.value
+        ? t.value.input_hint_tab_monitor
+        : t.value.input_hint_tab_original
+    }
+    return t.value.input_hint_screen
+  })
 </script>
 
 <style scoped>
@@ -364,6 +378,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .msg.status.wrap {
+    white-space: normal;
   }
 
   .msg.error {
