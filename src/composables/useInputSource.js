@@ -24,9 +24,10 @@ export function buildSystemAudioOptions(controller = null) {
       echoCancellation: false,
       noiseSuppression: false,
       autoGainControl: false,
-      // The shared tab keeps playing locally at first; while monitoring a tab
-      // share, the processed sound replaces it (see syncTabPlayback)
-      suppressLocalAudioPlayback: false,
+      // Tab share: the browser mutes the shared tab locally, so only the
+      // processed sound is heard (no echo). Ignored for screen/window shares.
+      // Requested up front – changing it later is not reliable everywhere.
+      suppressLocalAudioPlayback: true,
       // Where supported: leave this tab's own output out of the capture (no loop)
       restrictOwnAudio: true,
     },
@@ -131,6 +132,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   const activeIsSystem = ref(false)
   // What the system-audio share covers: 'browser' (a tab), 'window', 'monitor' or ''
   const activeSurface = ref('')
+  // Tab share: is the shared tab muted locally by the browser right now?
+  const tabMuted = ref(false)
   const outputs = ref([]) // detected output devices (information only)
 
   const isSystemSelected = computed(() => selectedDeviceId.value === SYSTEM_AUDIO)
@@ -204,6 +207,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     activeLabel.value = ''
     activeIsSystem.value = false
     activeSurface.value = ''
+    tabMuted.value = false
     audioEngine.setMonitorEnabled(true)
   }
 
@@ -257,16 +261,31 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
 
   /**
    * Tab share: while monitoring, the processed sound replaces the tab's own
-   * (the browser mutes the tab locally); without monitoring the tab plays as
-   * usual. Best effort – older browsers ignore the constraint.
+   * (the browser mutes the tab locally); without monitoring the tab should
+   * play as usual. The browser may ignore the request (older versions, or no
+   * runtime change) – tabMuted always reflects what it actually does, and the
+   * user is never left with silence: a muted tab keeps monitoring on.
    */
-  function syncTabPlayback() {
+  async function syncTabPlayback() {
     const track = stream?.getAudioTracks?.()[0]
-    if (!track || !isTabShare.value || typeof track.applyConstraints !== 'function') return
-    const suppress = monitorAllowed.value && monitor.value
-    Promise.resolve(track.applyConstraints({ suppressLocalAudioPlayback: suppress })).catch(
-      () => {}
-    )
+    if (!track || !isTabShare.value) {
+      tabMuted.value = false
+      return
+    }
+    const isMuted = () => track.getSettings?.()?.suppressLocalAudioPlayback === true
+    const wantMuted = monitorAllowed.value && monitor.value
+    if (isMuted() !== wantMuted && typeof track.applyConstraints === 'function') {
+      try {
+        await track.applyConstraints({ suppressLocalAudioPlayback: wantMuted })
+      } catch (_e) {
+        // not supported – fall through and report the real state
+      }
+    }
+    tabMuted.value = isMuted()
+    if (tabMuted.value && !wantMuted) {
+      monitor.value = true
+      audioEngine.setMonitorEnabled(monitorAllowed.value)
+    }
   }
 
   /** Create/resume the AudioContext synchronously (no await: keeps user activation). */
@@ -341,7 +360,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       audioPlayer.setExternalSource(releaseToPlaylist)
       audioEngine.setMonitorEnabled(monitorAllowed.value && monitor.value)
       audioEngine.connectAudioSource(node)
-      syncTabPlayback()
+      await syncTabPlayback()
 
       const track = newStream.getAudioTracks()[0]
       activeLabel.value = system ? '' : track?.label || ''
@@ -435,6 +454,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     activeIsSystem,
     activeSurface,
     isTabShare,
+    tabMuted,
     outputs,
     isSystemSelected,
     monitorAllowed,

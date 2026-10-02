@@ -136,8 +136,9 @@
   const systemHint = computed(() => {
     if (!input.isActive.value || !input.activeIsSystem.value) return ''
     if (input.isTabShare.value) {
+      if (input.tabMuted.value) return t.value.input_hint_tab_monitor
       return input.monitor.value && input.monitorAllowed.value
-        ? t.value.input_hint_tab_monitor
+        ? t.value.input_hint_tab_echo
         : t.value.input_hint_tab_original
     }
     return t.value.input_hint_screen

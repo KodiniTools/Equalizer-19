@@ -292,9 +292,13 @@ test('OS privacy block is reported separately', async () => {
 })
 
 // ---- System audio (screen share) ------------------------------------------------
+// mute: how the browser handles suppressLocalAudioPlayback for a tab share –
+//   'full'    honoured at capture time and via applyConstraints()
+//   'initial' honoured at capture time only (applyConstraints is ignored)
+//   'none'    not supported at all (older browsers)
 function withDisplayMedia(
   md,
-  { audio = true, fail = null, restrictOwnAudio = false, surface = 'monitor' } = {}
+  { audio = true, fail = null, restrictOwnAudio = false, surface = 'monitor', mute = 'full' } = {}
 ) {
   md.displayCalls = []
   md.getDisplayMedia = async (options) => {
@@ -308,14 +312,22 @@ function withDisplayMedia(
         this.stopped = true
       },
     }
+    const tabCapture = surface === 'browser'
     const audioTrack = {
       kind: 'audio',
       label: 'System Audio',
       stopped: false,
       onended: null,
+      muted: tabCapture && mute !== 'none' && options.audio.suppressLocalAudioPlayback === true,
       constraints: [], // applyConstraints() calls
+      getSettings() {
+        return { suppressLocalAudioPlayback: this.muted }
+      },
       applyConstraints(c) {
         this.constraints.push(c)
+        if (tabCapture && mute === 'full' && 'suppressLocalAudioPlayback' in c) {
+          this.muted = c.suppressLocalAudioPlayback === true
+        }
         return Promise.resolve()
       },
       stop() {
@@ -400,17 +412,26 @@ test('tab share: monitoring is on and the tab is muted – only the processed so
   assert.equal(input.monitorAllowed.value, true, 'a shared tab cannot contain the app itself')
   assert.equal(input.monitor.value, true, 'monitoring switched on automatically')
   assert.equal(engine.monitor.at(-1), true)
-  await tick()
-  assert.deepEqual(md.lastAudio.constraints.at(-1), { suppressLocalAudioPlayback: true })
+  // Muting is requested with the share itself, not applied afterwards
+  assert.equal(md.displayCalls[0].audio.suppressLocalAudioPlayback, true)
+  assert.equal(md.lastAudio.constraints.length, 0)
+  assert.equal(input.tabMuted.value, true)
 
   // Monitoring off → the tab plays its original sound again
   input.setMonitor(false)
+  await tick()
   assert.equal(engine.monitor.at(-1), false)
   assert.deepEqual(md.lastAudio.constraints.at(-1), { suppressLocalAudioPlayback: false })
+  assert.equal(input.tabMuted.value, false)
+
+  input.setMonitor(true)
+  await tick()
+  assert.equal(input.tabMuted.value, true)
 
   input.stop()
   assert.equal(input.activeSurface.value, '')
   assert.equal(input.isTabShare.value, false)
+  assert.equal(input.tabMuted.value, false)
 })
 
 test('tab share respects a monitor switch the user turned off before starting', async () => {
@@ -420,7 +441,35 @@ test('tab share respects a monitor switch the user turned off before starting', 
   await input.start()
   assert.equal(input.monitor.value, false)
   assert.equal(engine.monitor.at(-1), false)
-  assert.ok(!md.lastAudio.constraints.some((c) => c.suppressLocalAudioPlayback === true))
+  // The tab was muted with the share and is unmuted again so the user hears it
+  assert.deepEqual(md.lastAudio.constraints.at(-1), { suppressLocalAudioPlayback: false })
+  assert.equal(input.tabMuted.value, false)
+})
+
+test('tab share: a tab the browser keeps muted never leaves the user in silence', async () => {
+  const { input, engine } = setupSystem({ surface: 'browser', mute: 'initial' })
+  input.selectDevice(SYSTEM_AUDIO)
+  input.setMonitor(false)
+  await input.start()
+  assert.equal(input.tabMuted.value, true)
+  assert.equal(input.monitor.value, true, 'monitoring forced on')
+  assert.equal(engine.monitor.at(-1), true)
+
+  input.setMonitor(false)
+  await tick()
+  assert.equal(input.tabMuted.value, true)
+  assert.equal(input.monitor.value, true)
+  assert.equal(engine.monitor.at(-1), true)
+})
+
+test('tab share without browser support reports an unmuted tab (echo warning in the UI)', async () => {
+  const { input, engine } = setupSystem({ surface: 'browser', mute: 'none' })
+  input.selectDevice(SYSTEM_AUDIO)
+  await input.start()
+  assert.equal(input.isTabShare.value, true)
+  assert.equal(input.monitor.value, true)
+  assert.equal(engine.monitor.at(-1), true)
+  assert.equal(input.tabMuted.value, false)
 })
 
 test('screen share: the tab is never muted and monitoring stays as configured', async () => {
@@ -428,6 +477,7 @@ test('screen share: the tab is never muted and monitoring stays as configured', 
   input.selectDevice(SYSTEM_AUDIO)
   await input.start()
   assert.equal(input.isTabShare.value, false)
+  assert.equal(input.tabMuted.value, false)
   assert.equal(input.monitor.value, false)
   assert.equal(engine.monitor.at(-1), false)
   assert.equal(md.lastAudio.constraints.length, 0)
