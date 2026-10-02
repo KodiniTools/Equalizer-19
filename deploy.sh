@@ -90,7 +90,11 @@ fetch_source() {
     log "Aktualisiere Repository in $SRC_DIR (Branch: $BRANCH)"
     git -C "$SRC_DIR" remote set-url origin "$REPO_URL"
     git -C "$SRC_DIR" fetch --prune origin "$BRANCH"
-    git -C "$SRC_DIR" checkout -q -B "$BRANCH" "origin/$BRANCH"
+    # Das Checkout ist ein reines Build-Verzeichnis: lokale Änderungen an
+    # getrackten Dateien (z. B. durch npm ci) werden verworfen, sonst bricht
+    # der Checkout mit "Your local changes ... would be overwritten" ab.
+    git -C "$SRC_DIR" reset -q --hard
+    git -C "$SRC_DIR" checkout -q -f -B "$BRANCH" "origin/$BRANCH"
     git -C "$SRC_DIR" reset -q --hard "origin/$BRANCH"
   else
     log "Klone $REPO_URL (Branch: $BRANCH) nach $SRC_DIR"
