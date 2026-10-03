@@ -12,6 +12,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 - **Sättigungseffekte** mit Oversampling
 - **Linear-Phase-Processing**
 - **Preset-Management** für EQ und Kompressor
+- **Undo/Redo** für alle Klangeinstellungen (EQ-Bänder, Bypass, Kompressor) – per Buttons oder Strg+Z / Strg+Y
 - **Internationalisierung** (Deutsch/Englisch)
 - **Theme-Switching** (Dark/Light)
 - **Playlist-Management**
@@ -63,6 +64,7 @@ equalizer19-vue/
 │   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI
+│   │   ├── HistoryControls.vue # Undo/Redo-Buttons (Kopfzeile der App)
 │   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
 │   │   ├── Notification.vue    # Toast-Notifications
 │   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
@@ -80,15 +82,18 @@ equalizer19-vue/
 │   │   ├── useI18n.js          # Internationalisierung
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
-│   │   └── useTheme.js         # Theme-Management
+│   │   ├── useTheme.js         # Theme-Management
+│   │   └── useUndoRedo.js      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
 │   ├── pages/                  # Landing (ohne Icon-Font, Kennzahlen aus presets.js), App, FAQ
 │   ├── router/                 # Vue Router
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   └── utils/
 │       ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
 │       ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
+│       ├── history.js          # Generischer Undo/Redo-Stack (reine Funktionen)
 │       ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js          # EQ/Comp Presets
+│       ├── processingState.js  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
 │       ├── translations.js     # Übersetzungen
 │       ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
@@ -108,10 +113,16 @@ equalizer19-vue/
 ## Tastenkombinationen
 
 - **Leertaste**: Play/Pause
-- **←/→**: ±10 Sekunden springen
+- **←/→**: ±5 Sekunden springen
+- **↑/↓**: Lautstärke
+- **N / P**: Nächster / vorheriger Track
 - **M**: Mute/Unmute
-- **Strg+L**: Sprache wechseln
-- **Strg+D**: Theme wechseln
+- **Strg+Z** (Mac: Cmd+Z): Rückgängig
+- **Strg+Y** oder **Strg+Shift+Z**: Wiederholen
+
+## Undo/Redo
+
+Jede Änderung an den Klangeinstellungen ist ein Schritt im Verlauf: EQ-Bänder, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus sowie Presets und Reset. Ein Slider-Zug zählt als ein Schritt, ein Preset mit 19 Bändern ebenfalls. Bis zu 100 Schritte lassen sich über die Buttons in der Kopfzeile oder per Tastatur zurücknehmen und wiederholen; Tooltips und Hinweise nennen den jeweiligen Schritt. Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) gehören bewusst nicht zum Verlauf.
 
 ## Browser-Kompatibilität
 

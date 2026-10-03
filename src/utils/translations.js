@@ -58,7 +58,8 @@ export const translations = {
     lp_det_playlist_desc:
       'Mehrere Titel, Zufallswiedergabe, Wiederholung und Sortieren per Drag & Drop.',
     lp_det_keys_title: 'Tastenkürzel',
-    lp_det_keys_desc: 'Wiedergabe, Spulen, Lautstärke und Titelwechsel direkt über die Tastatur.',
+    lp_det_keys_desc:
+      'Wiedergabe, Spulen, Lautstärke, Titelwechsel und Rückgängig/Wiederholen direkt über die Tastatur.',
     lp_det_devices_title: 'Überall nutzbar',
     lp_det_devices_desc: 'Für Desktop, Tablet und Smartphone – mit hellem und dunklem Design.',
     lp_final_title: 'Bereit zum Loslegen?',
@@ -327,6 +328,25 @@ export const translations = {
     // Level Meter
     meter_title: 'Pegel-Meter',
 
+    // Undo / redo (processing history)
+    history_title: 'Verlauf',
+    history_undo: 'Rückgängig',
+    history_redo: 'Wiederholen',
+    history_undo_hint: 'Rückgängig: {action}',
+    history_redo_hint: 'Wiederholen: {action}',
+    history_nothing_undo: 'Nichts rückgängig zu machen',
+    history_nothing_redo: 'Nichts zu wiederholen',
+    history_undone: 'Rückgängig gemacht: {action}',
+    history_redone: 'Wiederholt: {action}',
+    history_eq_band: 'EQ-Band {freq} Hz',
+    history_eq_curve: 'EQ-Kurve',
+    history_dyn_param: 'Kompressor: {param}',
+    history_dyn_params: 'Kompressor-Einstellungen',
+    history_dyn_on: 'Kompressor aktiviert',
+    history_dyn_off: 'Kompressor deaktiviert',
+    history_mixed: 'Mehrere Einstellungen',
+    key_ctrl: 'Strg',
+
     // Accessibility labels
     a11y_eq_bypass: 'Equalizer umschalten',
     a11y_eq_band: '{freq} Hz Band, {gain} dB',
@@ -400,7 +420,7 @@ export const translations = {
     lp_det_playlist_title: 'Playlist',
     lp_det_playlist_desc: 'Multiple tracks, shuffle, repeat and drag & drop reordering.',
     lp_det_keys_title: 'Keyboard shortcuts',
-    lp_det_keys_desc: 'Play, seek, volume and track changes straight from the keyboard.',
+    lp_det_keys_desc: 'Play, seek, volume, track changes and undo/redo straight from the keyboard.',
     lp_det_devices_title: 'Works everywhere',
     lp_det_devices_desc: 'Desktop, tablet and phone – with light and dark themes.',
     lp_final_title: 'Ready to start?',
@@ -664,6 +684,25 @@ export const translations = {
 
     // Level Meter
     meter_title: 'Level Meter',
+
+    // Undo / redo (processing history)
+    history_title: 'History',
+    history_undo: 'Undo',
+    history_redo: 'Redo',
+    history_undo_hint: 'Undo: {action}',
+    history_redo_hint: 'Redo: {action}',
+    history_nothing_undo: 'Nothing to undo',
+    history_nothing_redo: 'Nothing to redo',
+    history_undone: 'Undone: {action}',
+    history_redone: 'Redone: {action}',
+    history_eq_band: 'EQ band {freq} Hz',
+    history_eq_curve: 'EQ curve',
+    history_dyn_param: 'Compressor: {param}',
+    history_dyn_params: 'Compressor settings',
+    history_dyn_on: 'Compressor enabled',
+    history_dyn_off: 'Compressor disabled',
+    history_mixed: 'Several settings',
+    key_ctrl: 'Ctrl',
 
     // Accessibility labels
     a11y_eq_bypass: 'Toggle equalizer',

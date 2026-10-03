@@ -266,12 +266,17 @@ provide('i18n', { t, currentLanguage, setLanguage })
 provide('theme', { currentTheme, setTheme })
 provide('audioEngine', audioEngine)
 provide('audioPlayer', audioPlayer)
-provide('notify', notifyFunction)
+provide('history', history) // useUndoRedo(audioEngine)
+provide('notify', notifyFunction) // AppPage.vue ersetzt den Stub durch echte Toasts
 
 // In Komponenten (inject)
 const { t } = inject('i18n')
 const audioEngine = inject('audioEngine')
 ```
+
+### Undo/Redo
+
+`useUndoRedo(audioEngine)` (in `App.vue`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.js`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
 
 ### Browser-Kompatibilität
 

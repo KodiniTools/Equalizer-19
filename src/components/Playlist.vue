@@ -91,6 +91,16 @@
           <dd>{{ t.shortcut_track }}</dd>
           <dt><kbd>M</kbd></dt>
           <dd>{{ t.player_mute }}</dd>
+          <dt>
+            <kbd>{{ t.key_ctrl }}</kbd>
+            <kbd>Z</kbd>
+          </dt>
+          <dd>{{ t.history_undo }}</dd>
+          <dt>
+            <kbd>{{ t.key_ctrl }}</kbd>
+            <kbd>Y</kbd>
+          </dt>
+          <dd>{{ t.history_redo }}</dd>
         </dl>
       </details>
     </template>

@@ -168,7 +168,7 @@
     dynamicsEnabled.value = audioEngine.dynamicsEnabled?.value ?? true
   }
 
-  // Watch for external changes (e.g., from presets)
+  // Watch for external changes (e.g., from presets or undo/redo)
   if (audioEngine && audioEngine.dynamics) {
     watch(
       () => ({ ...audioEngine.dynamics }),
@@ -181,6 +181,11 @@
       },
       { deep: true }
     )
+  }
+  if (audioEngine && audioEngine.dynamicsEnabled) {
+    watch(audioEngine.dynamicsEnabled, (enabled) => {
+      dynamicsEnabled.value = enabled
+    })
   }
 
   function applySettings() {

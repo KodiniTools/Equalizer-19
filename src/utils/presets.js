@@ -15,6 +15,17 @@ export const EQ_BAND_FREQUENCIES = [
 export const EQ_BAND_Q = 2.5
 
 /**
+ * Human-readable band frequency: 630 → "630", 1350 → "1.4k", 2000 → "2k".
+ */
+export function formatFrequency(freq) {
+  if (freq >= 1000) {
+    const k = freq / 1000
+    return (Number.isInteger(k) ? k.toString() : k.toFixed(1)) + 'k'
+  }
+  return freq.toString()
+}
+
+/**
  * Default dynamics compressor settings (moderate, to prevent clipping).
  * attack / release in seconds.
  */

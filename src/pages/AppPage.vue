@@ -12,13 +12,18 @@
     <!-- Main Content -->
     <main class="app-main">
       <div class="container main-layout">
-        <!-- Way back to the landing page + help -->
-        <nav class="app-topbar" :aria-label="t.app_back_home">
-          <router-link to="/" class="page-link page-link-strong">
-            <span aria-hidden="true">←</span> {{ t.app_back_home }}
-          </router-link>
-          <router-link to="/faq" class="page-link">{{ t.app_help }}</router-link>
-        </nav>
+        <!-- Way back to the landing page, undo/redo, help -->
+        <div class="app-topbar">
+          <nav :aria-label="t.app_back_home">
+            <router-link to="/" class="page-link page-link-strong">
+              <span aria-hidden="true">←</span> {{ t.app_back_home }}
+            </router-link>
+          </nav>
+          <div class="app-topbar-tools">
+            <HistoryControls />
+            <router-link to="/faq" class="page-link">{{ t.app_help }}</router-link>
+          </div>
+        </div>
 
         <div class="grid-three-column">
           <!-- Left Column: Playlist -->
@@ -71,6 +76,7 @@
   import Visualization from '../components/Visualization.vue'
   import Playlist from '../components/Playlist.vue'
   import InputSource from '../components/InputSource.vue'
+  import HistoryControls from '../components/HistoryControls.vue'
   import { useInputSource } from '../composables/useInputSource'
   import RelatedTools from '../components/RelatedTools.vue'
 
@@ -88,6 +94,12 @@
   const notificationRef = ref(null)
   const sharedBanner = ref(null)
   let sharedFilesHandled = false
+
+  // Toasts for the components on this page (presets, bypass, undo/redo, …).
+  // Overrides the console-only fallback provided by App.vue.
+  provide('notify', (message, type = 'info') => {
+    notificationRef.value?.show(message, type)
+  })
 
   const bannerIcon = computed(() => {
     const icons = {
@@ -192,13 +204,19 @@
     padding-bottom: 32px;
   }
 
-  /* Top bar: back to landing page / help */
+  /* Top bar: back to landing page / undo-redo / help */
   .app-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 12px;
+  }
+
+  .app-topbar-tools {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   /* Shared Files Banner */
