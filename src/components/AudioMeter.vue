@@ -1,7 +1,9 @@
 <template>
   <div class="audio-meter-wrap">
     <div class="meter-header">
-      <span class="meter-title"><i class="fas fa-signal" aria-hidden="true"></i> {{ t.meter_title }}</span>
+      <span class="meter-title"
+        ><i class="fas fa-signal" aria-hidden="true"></i> {{ t.meter_title }}</span
+      >
       <span class="meter-hint" aria-hidden="true">dBFS</span>
     </div>
 
@@ -21,13 +23,9 @@
         <div class="meter-track" ref="tracks" aria-hidden="true">
           <!-- Gradient background: green → yellow → red -->
           <!-- Dark mask covers the empty (top) part of the bar -->
-          <div class="meter-mask" :style="{ height: (100 - m.fillPct) + '%' }"></div>
+          <div class="meter-mask" :style="{ height: 100 - m.fillPct + '%' }"></div>
           <!-- Peak hold marker -->
-          <div
-            v-if="m.peakPct > 0"
-            class="meter-peak"
-            :style="{ bottom: m.peakPct + '%' }"
-          ></div>
+          <div v-if="m.peakPct > 0" class="meter-peak" :style="{ bottom: m.peakPct + '%' }"></div>
         </div>
 
         <span class="meter-db" :class="{ clipping: m.db >= -0.5 }" aria-hidden="true">
@@ -119,8 +117,12 @@
     rafId = requestAnimationFrame(tick)
   }
 
-  onMounted(() => { rafId = requestAnimationFrame(tick) })
-  onUnmounted(() => { if (rafId) cancelAnimationFrame(rafId) })
+  onMounted(() => {
+    rafId = requestAnimationFrame(tick)
+  })
+  onUnmounted(() => {
+    if (rafId) cancelAnimationFrame(rafId)
+  })
 </script>
 
 <style scoped>
@@ -139,7 +141,7 @@
   }
 
   .meter-title {
-    font-size: 0.75em;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-primary, #fff);
     display: flex;
@@ -152,9 +154,10 @@
   }
 
   .meter-hint {
-    font-size: 0.6em;
+    font-size: 10.5px;
     color: var(--text-muted, #8b8b9a);
-    font-family: 'SF Mono', monospace;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
   }
 
   .meters-row {
@@ -174,7 +177,7 @@
   }
 
   .meter-label {
-    font-size: 0.6em;
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--text-muted, #8b8b9a);
     letter-spacing: 0.05em;
@@ -223,8 +226,9 @@
   }
 
   .meter-db {
-    font-size: 0.58em;
-    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
     color: var(--text-muted, #8b8b9a);
     min-width: 28px;
     text-align: center;
@@ -244,9 +248,10 @@
   }
 
   .meter-scale span {
-    font-size: 0.5em;
+    font-size: 10.5px;
     color: var(--text-muted, #8b8b9a);
-    font-family: 'SF Mono', monospace;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
     opacity: 0.6;
   }
 

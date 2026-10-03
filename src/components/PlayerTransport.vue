@@ -98,7 +98,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.72em;
+    font-size: 12px;
     transition: all 0.2s;
   }
 
@@ -117,7 +117,7 @@
     height: 40px;
     background: var(--accent-primary, #00d9ff);
     color: var(--on-accent, #000);
-    font-size: 0.9em;
+    font-size: 14px;
   }
 
   .ctrl-btn.play:hover {
@@ -153,7 +153,7 @@
     position: absolute;
     top: 0;
     right: 1px;
-    font-size: 0.68em;
+    font-size: 11px;
     font-weight: 700;
     line-height: 1;
     color: var(--accent-primary, #00d9ff);

@@ -163,7 +163,7 @@
     border-radius: 6px;
     background: transparent;
     color: var(--text-muted, #8b8b9a);
-    font-size: 0.7em;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     transition:
@@ -204,7 +204,7 @@
     border-radius: 8px;
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-primary, #fff);
-    font-size: 0.72em;
+    font-size: 12px;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -230,7 +230,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.6em;
+    font-size: 10.5px;
     color: var(--text-muted, #8b8b9a);
     pointer-events: none;
   }
@@ -242,7 +242,7 @@
     border: 1px solid var(--border-color, #3a3a48);
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-primary, #fff);
-    font-size: 0.72em;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition:
@@ -362,7 +362,7 @@
   }
 
   .switch-label {
-    font-size: 0.72em;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-primary, #fff);
   }
@@ -370,7 +370,7 @@
   /* ---- Messages ---- */
   .msg {
     margin: 0;
-    font-size: 0.66em;
+    font-size: 11px;
     line-height: 1.5;
   }
 
@@ -395,7 +395,7 @@
 
   /* ---- Link to the FAQ ---- */
   .help-link {
-    font-size: 0.68em;
+    font-size: 11px;
     font-weight: 600;
     color: var(--accent-primary, #00d9ff);
     text-decoration: none;

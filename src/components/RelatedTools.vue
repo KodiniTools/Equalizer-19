@@ -76,7 +76,7 @@
 
   .rt-subtitle {
     margin: 0;
-    font-size: 0.75em;
+    font-size: 12px;
     color: var(--text-muted, #8b8b9a);
   }
 
@@ -140,13 +140,13 @@
   }
 
   .rt-name {
-    font-size: 0.9em;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-primary, #fff);
   }
 
   .rt-desc {
-    font-size: 0.75em;
+    font-size: 12px;
     line-height: 1.5;
     color: var(--text-secondary, #c8c8d5);
   }
@@ -160,7 +160,7 @@
     gap: 6px;
     padding: 6px 12px;
     border-radius: 8px;
-    font-size: 0.72em;
+    font-size: 12px;
     font-weight: 600;
     color: var(--accent-primary, #00d9ff);
     border: 1px solid var(--border-color, #3a3a48);
@@ -172,7 +172,7 @@
   }
 
   .rt-cta i {
-    font-size: 0.85em;
+    font-size: 14px;
   }
 
   .rt-card:hover .rt-cta {

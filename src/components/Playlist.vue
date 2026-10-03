@@ -190,7 +190,7 @@
 
   .empty-state p {
     margin: 0;
-    font-size: 0.72em;
+    font-size: 12px;
   }
 
   .playlist-items {
@@ -252,7 +252,7 @@
 
   .drag-handle {
     color: var(--text-muted, #8b8b9a);
-    font-size: 0.65em;
+    font-size: 11px;
     cursor: grab;
     padding: 2px 1px;
     opacity: 0;
@@ -272,8 +272,9 @@
   .track-number {
     width: 18px;
     text-align: center;
-    font-size: 0.65em;
-    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
     font-variant-numeric: tabular-nums;
     color: var(--text-muted, #8b8b9a);
     flex-shrink: 0;
@@ -291,7 +292,7 @@
 
   .track-name {
     font-weight: 500;
-    font-size: 0.72em;
+    font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -303,7 +304,7 @@
   }
 
   .track-meta {
-    font-size: 0.6em;
+    font-size: 10.5px;
     color: var(--text-muted, #8b8b9a);
   }
 
@@ -318,7 +319,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65em;
+    font-size: 11px;
     flex-shrink: 0;
     opacity: 0.6;
     transition:
@@ -344,7 +345,7 @@
     gap: 8px;
     cursor: pointer;
     list-style: none;
-    font-size: 0.68em;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-muted, #8b8b9a);
     border-radius: 6px;
@@ -366,7 +367,7 @@
 
   .shortcuts .chevron {
     margin-left: auto;
-    font-size: 0.85em;
+    font-size: 14px;
     transition: transform 0.2s;
   }
 
@@ -389,7 +390,7 @@
 
   .shortcut-list dd {
     margin: 0;
-    font-size: 0.65em;
+    font-size: 11px;
     color: var(--text-secondary, #c8c8d5);
   }
 
@@ -403,8 +404,9 @@
     border-bottom-width: 2px;
     border-radius: 4px;
     padding: 1px 5px;
-    font-family: 'SF Mono', 'Courier New', monospace;
-    font-size: 0.6em;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 10.5px;
     color: var(--text-primary, #fff);
     line-height: 1.4;
   }

@@ -285,7 +285,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85em;
+    font-size: 14px;
     transition: all 0.2s;
   }
 
@@ -305,7 +305,7 @@
   }
 
   .track-name {
-    font-size: 0.78em;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-primary, #fff);
     white-space: nowrap;
@@ -314,9 +314,10 @@
   }
 
   .track-time {
-    font-size: 0.68em;
+    font-size: 11px;
     color: var(--text-muted, #8b8b9a);
-    font-family: 'SF Mono', 'Courier New', monospace;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
   }
 
   .live-dot {
@@ -351,7 +352,7 @@
     justify-content: center;
     gap: 10px;
     color: var(--accent-primary, #00d9ff);
-    font-size: 0.9em;
+    font-size: 14px;
     font-weight: 600;
     pointer-events: none;
     z-index: 5;

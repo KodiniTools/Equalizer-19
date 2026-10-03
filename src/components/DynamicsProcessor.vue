@@ -253,14 +253,15 @@
   }
 
   .param-label {
-    font-size: 0.7em;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-secondary, #c8c8d5);
   }
 
   .param-val {
-    font-size: 0.65em;
-    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
     font-variant-numeric: tabular-nums;
     color: var(--accent-primary, #00d9ff);
   }
