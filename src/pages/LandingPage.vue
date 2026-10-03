@@ -57,12 +57,21 @@
         </header>
 
         <div class="lp-chain">
-          <span class="lp-chain-end lp-chain-start mono">{{ t.lp_chain_in }}</span>
           <article v-for="mod in modules" :key="mod.key" class="lp-module">
             <div class="lp-module-art" aria-hidden="true">
+              <!-- Audio input: live waveform -->
+              <svg
+                v-if="mod.key === 'input'"
+                :viewBox="`0 0 ${ART.w} ${ART.h}`"
+                preserveAspectRatio="none"
+              >
+                <line class="art-zero" x1="0" :y1="ART.h / 2" :x2="ART.w" :y2="ART.h / 2" />
+                <path class="art-line" :d="inputWave" />
+                <circle class="art-rec" :cx="ART.w - 10" cy="10" r="5" />
+              </svg>
               <!-- Equalizer: real "Rock" preset curve -->
               <svg
-                v-if="mod.key === 'eq'"
+                v-else-if="mod.key === 'eq'"
                 :viewBox="`0 0 ${ART.w} ${ART.h}`"
                 preserveAspectRatio="none"
               >
@@ -125,7 +134,6 @@
               <li v-for="n in 3" :key="n">{{ t[`lp_mod_${mod.key}_${n}`] }}</li>
             </ul>
           </article>
-          <span class="lp-chain-end lp-chain-finish mono">{{ t.lp_chain_out }}</span>
         </div>
       </div>
     </section>
@@ -190,12 +198,22 @@
   const presetCount = Object.keys(EQ_PRESETS).length + Object.keys(COMP_PRESETS).length
 
   const trust = ['uploads', 'account', 'browsers']
-  const modules = [{ key: 'eq' }, { key: 'comp' }, { key: 'rec' }]
+  const modules = [{ key: 'input' }, { key: 'eq' }, { key: 'comp' }, { key: 'rec' }]
   const details = ['privacy', 'realtime', 'viz', 'playlist', 'keys', 'devices']
 
   // Small illustrations in the signal-chain cards (SVG user units)
   const ART = { w: 160, h: 56 }
   const artCurve = buildEqCurve(EQ_PRESETS.Rock, { w: ART.w, h: ART.h, range: ART.h * 0.4 })
+
+  // Live input: a waveform whose envelope swells and fades across the card.
+  const inputWave = smoothPath(
+    Array.from({ length: 33 }, (_, i) => {
+      const x = (i / 32) * ART.w
+      const env = Math.sin((i / 32) * Math.PI)
+      const y = ART.h / 2 - Math.sin(i * 1.9) * env * (ART.h * 0.42)
+      return [x, y]
+    })
+  )
 
   // Compressor transfer curve: unity below the threshold, 4:1 above, soft knee.
   const compPoints = [
@@ -376,22 +394,9 @@
 
   .lp-chain {
     display: grid;
-    grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     align-items: start;
-  }
-
-  .lp-chain-end {
-    align-self: center;
-    padding: 6px 10px;
-    border: 1px dashed var(--border-strong);
-    border-radius: 999px;
-    font-size: 11px;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
   }
 
   .lp-module {
@@ -642,12 +647,6 @@
     .lp-chain {
       grid-template-columns: 1fr;
       gap: 12px;
-    }
-
-    .lp-chain-end {
-      justify-self: start;
-      writing-mode: horizontal-tb;
-      transform: none;
     }
 
     /* Stacked: connector points down instead of right */
