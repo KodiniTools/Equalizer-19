@@ -10,6 +10,7 @@
   import { useTheme } from './composables/useTheme'
   import { useAudioEngine } from './composables/useAudioEngine'
   import { useAudioPlayer } from './composables/useAudioPlayer'
+  import { useUndoRedo } from './composables/useUndoRedo'
   import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts'
 
   // Initialize composables
@@ -23,7 +24,10 @@
   audioPlayer.setAudioEngine(audioEngine)
   console.log('AudioEngine connected to AudioPlayer')
 
-  useKeyboardShortcuts(audioPlayer)
+  // Undo/redo history of the processing settings (EQ + compressor)
+  const history = useUndoRedo(audioEngine)
+
+  useKeyboardShortcuts(audioPlayer, { history })
 
   // Make available globally for debugging
   if (typeof window !== 'undefined') {
@@ -37,8 +41,9 @@
   provide('theme', { currentTheme, setTheme })
   provide('audioEngine', audioEngine)
   provide('audioPlayer', audioPlayer)
+  provide('history', history)
   provide('notify', (message, type = 'info') => {
-    // Will be implemented by individual pages that need it
+    // Fallback; AppPage provides the toast implementation
     console.log(`[${type}] ${message}`)
   })
 

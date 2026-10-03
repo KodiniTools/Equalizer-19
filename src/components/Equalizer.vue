@@ -106,7 +106,7 @@
 
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
-  import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
+  import { EQ_PRESETS, EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
 
   const { t } = inject('i18n')
@@ -117,7 +117,8 @@
   const localBands = ref(EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0 })))
 
   const selectedPreset = ref('')
-  const isEqBypassed = ref(false)
+  // Mirrors the engine so external changes (undo/redo) are reflected as well
+  const isEqBypassed = computed(() => audioEngine?.eqBypass?.value ?? false)
 
   // Custom presets
   const { customPresets, loadCustomPresets, findPreset, addPreset, removePreset } =
@@ -156,7 +157,14 @@
     if (v) nextTick(() => presetNameInput.value?.focus())
   })
 
-  // Sync with audioEngine
+  // Gains of the preset currently shown in the dropdown (built-in or custom)
+  function selectedPresetGains() {
+    if (!selectedPreset.value) return null
+    if (isCustomSelected.value) return findPreset(selectedPreset.value)?.gains ?? null
+    return EQ_PRESETS[selectedPreset.value] ?? null
+  }
+
+  // Sync with audioEngine (sliders, presets, undo/redo all end up here)
   if (audioEngine && audioEngine.eqBands) {
     watch(
       () => audioEngine.eqBands,
@@ -166,14 +174,15 @@
             frequency: band.frequency,
             gain: band.gain,
           }))
+          // Drop the preset name once the curve no longer matches it
+          const presetGains = selectedPresetGains()
+          if (presetGains && !presetGains.every((gain, i) => gain === newBands[i].gain)) {
+            selectedPreset.value = ''
+          }
         }
       },
       { deep: true, immediate: true }
     )
-
-    if (audioEngine.eqBypass) {
-      isEqBypassed.value = audioEngine.eqBypass.value
-    }
   }
 
   function handleGainChange(event, index) {
@@ -221,7 +230,6 @@
   function toggleBypass() {
     if (audioEngine && audioEngine.toggleEqBypass) {
       audioEngine.toggleEqBypass()
-      isEqBypassed.value = audioEngine.eqBypass?.value ?? false
       notify(isEqBypassed.value ? t.value.eq_bypassed : t.value.eq_active, 'info')
     }
   }
@@ -233,14 +241,6 @@
       selectedPreset.value = ''
       notify(t.value.eq_reset_done, 'info')
     }
-  }
-
-  function formatFrequency(freq) {
-    if (freq >= 1000) {
-      const k = freq / 1000
-      return (Number.isInteger(k) ? k.toString() : k.toFixed(1)) + 'k'
-    }
-    return freq.toString()
   }
 
   onMounted(() => {

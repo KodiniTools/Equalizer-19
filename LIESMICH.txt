@@ -59,10 +59,12 @@ TASTENKOMBINATIONEN
 ═══════════════════════════════════════════════════════════════════════
 
 Leertaste    - Play/Pause
-←/→          - ±10 Sekunden springen
+←/→          - ±5 Sekunden springen
+↑/↓          - Lautstärke
+N / P        - Nächster / vorheriger Track
 M            - Mute/Unmute
-Strg+L       - Sprache wechseln
-Strg+D       - Theme wechseln
+Strg+Z       - Rückgängig (Klangeinstellungen: EQ, Bypass, Kompressor)
+Strg+Y       - Wiederholen (auch Strg+Shift+Z)
 
 SYSTEM-ANFORDERUNGEN
 ═══════════════════════════════════════════════════════════════════════
