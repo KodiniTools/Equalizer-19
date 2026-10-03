@@ -5,7 +5,7 @@
 
     <!-- Shared Files Banner -->
     <div v-if="sharedBanner" class="shared-banner" :class="'shared-banner-' + sharedBanner.type">
-      <i :class="bannerIcon"></i>
+      <AppIcon :name="bannerIcon" size="18" />
       <span>{{ sharedBanner.message }}</span>
     </div>
 
@@ -65,6 +65,7 @@
 
 <script setup>
   import { ref, computed, watch, inject, provide, onMounted } from 'vue'
+  import AppIcon from '../components/AppIcon.vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getSharedFiles, clearSharedFiles } from '../utils/sharedFileRepository'
 
@@ -102,13 +103,8 @@
   })
 
   const bannerIcon = computed(() => {
-    const icons = {
-      success: 'fas fa-check-circle',
-      error: 'fas fa-exclamation-circle',
-      warning: 'fas fa-exclamation-triangle',
-      info: 'fas fa-info-circle',
-    }
-    return icons[sharedBanner.value?.type] || 'fas fa-info-circle'
+    const icons = { success: 'success', error: 'error', warning: 'warning', info: 'info' }
+    return icons[sharedBanner.value?.type] || 'info'
   })
 
   const handleFilesSelected = (files) => {
@@ -232,8 +228,7 @@
     animation: slideIn 0.3s ease-out;
   }
 
-  .shared-banner i {
-    font-size: 18px;
+  .shared-banner .icon {
     flex-shrink: 0;
   }
 

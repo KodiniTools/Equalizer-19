@@ -46,19 +46,19 @@
         <div class="upload-group">
           <button
             @click="triggerFileSelect"
-            class="btn-upload"
+            class="btn btn-icon btn-sm"
             :title="t.player_select_files"
             :aria-label="t.player_select_files"
           >
-            <i class="fas fa-file-audio" aria-hidden="true"></i>
+            <AppIcon name="file-audio" />
           </button>
           <button
             @click="triggerFolderSelect"
-            class="btn-upload"
+            class="btn btn-icon btn-sm"
             :title="t.player_select_folder"
             :aria-label="t.player_select_folder"
           >
-            <i class="fas fa-folder-open" aria-hidden="true"></i>
+            <AppIcon name="folder" />
           </button>
         </div>
 
@@ -98,7 +98,7 @@
 
     <!-- Drop overlay hint -->
     <div v-if="isDragOver" class="drop-hint" aria-live="polite">
-      <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+      <AppIcon name="upload" />
       <span>{{ t.player_drop_hint }}</span>
     </div>
   </div>
@@ -106,6 +106,7 @@
 
 <script setup>
   import { ref, inject, onMounted, onBeforeUnmount } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import { useFileDrop } from '../composables/useFileDrop'
   import PlayerTransport from './PlayerTransport.vue'
   import VolumeControl from './VolumeControl.vue'
@@ -267,32 +268,11 @@
     justify-content: flex-end;
   }
 
-  /* ---- Upload buttons ---- */
+  /* ---- Upload buttons (global .btn system) ---- */
   .upload-group {
     display: flex;
     gap: 4px;
     flex-shrink: 0;
-  }
-
-  .btn-upload {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 8px;
-    color: var(--text-secondary, #c8c8d5);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-
-  .btn-upload:hover {
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-    border-color: var(--accent-primary, #00d9ff);
   }
 
   /* ---- Track info ---- */
@@ -358,8 +338,9 @@
     z-index: 5;
   }
 
-  .drop-hint i {
-    font-size: 1.4em;
+  .drop-hint .icon {
+    width: 20px;
+    height: 20px;
   }
 
   /* ===== Responsive ===== */
@@ -398,11 +379,6 @@
 
     .sp-divider {
       display: none;
-    }
-
-    .btn-upload {
-      width: 34px;
-      height: 34px;
     }
   }
 

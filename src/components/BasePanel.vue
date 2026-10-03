@@ -2,7 +2,7 @@
   <section class="panel" :aria-labelledby="titleId">
     <header class="panel-header">
       <h3 :id="titleId" class="panel-title">
-        <i v-if="icon" :class="icon" aria-hidden="true"></i>
+        <AppIcon v-if="icon" :name="icon" />
         <span>{{ title }}</span>
       </h3>
       <div v-if="$slots.actions" class="panel-actions">
@@ -22,13 +22,15 @@
 
 <script setup>
   import { useId } from 'vue'
+  import AppIcon from './AppIcon.vue'
 
   /**
    * Card shell shared by the sidebar panels: consistent header (icon, title,
    * right-aligned actions), body and optional footer.
    *
-   * Slotted helpers styled here: .panel-btn (square icon button, .active = on),
-   * .panel-badge (small pill), .panel-section-label (small caps label).
+   * `icon` is a name from utils/icons.js. Header buttons use the global
+   * .btn system (.btn.btn-icon.btn-sm, .is-on = on). Slotted helpers styled
+   * here: .panel-badge (small pill), .panel-section-label (small caps label).
    */
   defineProps({
     title: { type: String, required: true },
@@ -75,10 +77,10 @@
     text-overflow: ellipsis;
   }
 
-  .panel-title i {
+  .panel-title .icon {
     color: var(--accent-primary, #00d9ff);
     width: 14px;
-    text-align: center;
+    height: 14px;
   }
 
   .panel-actions {
@@ -101,40 +103,6 @@
   }
 
   /* ---- Slotted helpers ---- */
-  :slotted(.panel-btn) {
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 6px;
-    color: var(--text-muted, #8b8b9a);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    transition:
-      background 0.2s,
-      color 0.2s,
-      border-color 0.2s;
-  }
-
-  :slotted(.panel-btn:hover) {
-    color: var(--text-primary, #fff);
-    border-color: var(--accent-primary, #00d9ff);
-  }
-
-  :slotted(.panel-btn:focus-visible) {
-    outline: 2px solid var(--accent-primary, #00d9ff);
-    outline-offset: 2px;
-  }
-
-  :slotted(.panel-btn.active) {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-  }
-
   :slotted(.panel-badge) {
     padding: 2px 8px;
     border-radius: 999px;
@@ -158,11 +126,6 @@
   @media (max-width: 600px) {
     .panel {
       padding: 10px;
-    }
-
-    :slotted(.panel-btn) {
-      width: 34px;
-      height: 34px;
     }
   }
 </style>

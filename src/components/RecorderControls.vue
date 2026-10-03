@@ -50,7 +50,7 @@
 
     <!-- Start delay (countdown before recording starts) -->
     <label v-if="!isRecording && !hasRecording && !isCounting" class="delay" :title="t.rec_delay">
-      <i class="fas fa-stopwatch" aria-hidden="true"></i>
+      <AppIcon name="timer" />
       <select
         class="delay-select"
         :value="startDelay"
@@ -68,7 +68,7 @@
       <button
         v-if="isCounting"
         @click="cancelCountdown"
-        class="rec-btn countdown"
+        class="btn btn-icon btn-sm rec-btn countdown"
         :title="t.rec_countdown_cancel"
         :aria-label="t.rec_countdown_cancel"
       >
@@ -79,50 +79,50 @@
       <button
         v-if="!isRecording && !hasRecording && !isCounting"
         @click="handleStartRecording"
-        class="rec-btn rec"
+        class="btn btn-icon btn-sm rec-btn rec"
         :title="t.rec_start"
         :aria-label="t.rec_start"
       >
-        <i class="fas fa-circle" aria-hidden="true"></i>
+        <AppIcon name="record" />
       </button>
 
       <!-- Stop recording button -->
       <button
         v-if="isRecording"
         @click="handleStopRecording"
-        class="rec-btn stop"
+        class="btn btn-icon btn-sm rec-btn stop"
         :title="t.stop"
         :aria-label="t.stop"
       >
-        <i class="fas fa-stop" aria-hidden="true"></i>
+        <AppIcon name="stop" />
       </button>
 
       <!-- Download button -->
       <button
         v-if="hasRecording && !isRecording"
         @click="handleDownload"
-        class="rec-btn download"
+        class="btn btn-icon btn-sm rec-btn download"
         :title="t.download"
         :aria-label="t.download"
       >
-        <i class="fas fa-download" aria-hidden="true"></i>
+        <AppIcon name="download" />
       </button>
 
       <!-- New recording button -->
       <button
         v-if="hasRecording && !isRecording"
         @click="handleNewRecording"
-        class="rec-btn new"
+        class="btn btn-icon btn-sm rec-btn new"
         :title="t.rec_new"
         :aria-label="t.rec_new"
       >
-        <i class="fas fa-redo" aria-hidden="true"></i>
+        <AppIcon name="redo" />
       </button>
     </div>
 
     <!-- Error indicator -->
     <div v-if="errorMessage" class="error-dot" :title="errorMessage" role="alert">
-      <i class="fas fa-exclamation" aria-hidden="true"></i>
+      <AppIcon name="alert" />
     </div>
 
     <!-- Large, centred countdown -->
@@ -147,6 +147,7 @@
 
 <script setup>
   import { ref, inject, computed } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
   import { useCountdown, START_DELAYS } from '../composables/useCountdown'
   import DownloadDialog from './DownloadDialog.vue'
@@ -360,33 +361,21 @@
     gap: 6px;
   }
 
-  .rec-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s;
+  /* Record / stop / download: global .btn system with a status colour */
+  .btn.rec-btn.rec,
+  .btn.rec-btn.countdown {
+    background: var(--error, #ef4444);
+    border-color: var(--error, #ef4444);
+    color: #ffffff;
   }
 
-  .rec-btn.rec {
-    background: #ef4444;
-    color: white;
-  }
-
-  .rec-btn.rec:hover {
-    background: #dc2626;
-    transform: scale(1.05);
+  .btn.rec-btn.rec:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--error, #ef4444) 85%, #000);
+    border-color: color-mix(in srgb, var(--error, #ef4444) 85%, #000);
   }
 
   /* Countdown in the bar: seconds left, click cancels */
-  .rec-btn.countdown {
-    background: #ef4444;
-    color: white;
+  .btn.rec-btn.countdown {
     font-size: 15px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
@@ -433,35 +422,26 @@
     color: var(--text-primary, #fff);
   }
 
-  .rec-btn.stop {
-    background: #f59e0b;
-    color: white;
+  .btn.rec-btn.stop {
+    background: var(--warning, #f59e0b);
+    border-color: var(--warning, #f59e0b);
+    color: #ffffff;
   }
 
-  .rec-btn.stop:hover {
-    background: #d97706;
-    transform: scale(1.05);
+  .btn.rec-btn.stop:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--warning, #f59e0b) 85%, #000);
+    border-color: color-mix(in srgb, var(--warning, #f59e0b) 85%, #000);
   }
 
-  .rec-btn.download {
-    background: #10b981;
-    color: white;
+  .btn.rec-btn.download {
+    background: var(--success, #10b981);
+    border-color: var(--success, #10b981);
+    color: #ffffff;
   }
 
-  .rec-btn.download:hover {
-    background: #059669;
-    transform: scale(1.05);
-  }
-
-  .rec-btn.new {
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-secondary, #c8c8d5);
-    border: 1px solid var(--border-color, #3a3a48);
-  }
-
-  .rec-btn.new:hover {
-    background: var(--hover-bg, #323240);
-    transform: scale(1.05);
+  .btn.rec-btn.download:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--success, #10b981) 85%, #000);
+    border-color: color-mix(in srgb, var(--success, #10b981) 85%, #000);
   }
 
   .error-dot {
@@ -475,12 +455,5 @@
     color: #ef4444;
     font-size: 11px;
     flex-shrink: 0;
-  }
-
-  @media (max-width: 600px) {
-    .rec-btn {
-      width: 34px;
-      height: 34px;
-    }
   }
 </style>
