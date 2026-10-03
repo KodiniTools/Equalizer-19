@@ -1,5 +1,5 @@
 <template>
-  <BasePanel icon="fas fa-list" :title="t.playlist_title">
+  <BasePanel icon="list" :title="t.playlist_title">
     <template v-if="playlist.length > 0" #actions>
       <span class="panel-badge">
         {{ playlist.length }} {{ playlist.length === 1 ? 'Track' : 'Tracks' }}
@@ -7,7 +7,7 @@
     </template>
 
     <div v-if="playlist.length === 0" class="empty-state">
-      <i class="fas fa-music" aria-hidden="true"></i>
+      <AppIcon name="music" />
       <p>{{ t.playlist_empty }}</p>
     </div>
 
@@ -46,15 +46,15 @@
           :aria-label="t.playlist_drag_hint"
           @click.stop
         >
-          <i class="fas fa-grip-vertical" aria-hidden="true"></i>
+          <AppIcon name="grip" />
         </span>
 
         <div class="track-number" aria-hidden="true">
-          <i
+          <AppIcon
             v-if="currentTrackIndex === index && isPlaying"
-            class="fas fa-volume-up"
+            name="volume-high"
             :title="t.playlist_now_playing"
-          ></i>
+          />
           <template v-else>{{ index + 1 }}</template>
         </div>
         <div class="track-info">
@@ -63,11 +63,11 @@
         </div>
         <button
           @click.stop="handleRemoveTrack(index)"
-          class="btn-remove"
+          class="btn btn-icon btn-ghost btn-sm btn-remove"
           :title="t.playlist_remove"
           :aria-label="t.playlist_remove + ' ' + track.name"
         >
-          <i class="fas fa-times" aria-hidden="true"></i>
+          <AppIcon name="close" />
         </button>
       </li>
     </ol>
@@ -76,9 +76,9 @@
     <template #footer>
       <details class="shortcuts">
         <summary>
-          <i class="fas fa-keyboard" aria-hidden="true"></i>
+          <AppIcon name="keyboard" />
           <span>{{ t.shortcuts_title }}</span>
-          <i class="fas fa-chevron-down chevron" aria-hidden="true"></i>
+          <AppIcon name="chevron-down" class="chevron" />
         </summary>
         <dl class="shortcut-list">
           <dt><kbd>Space</kbd></dt>
@@ -109,6 +109,7 @@
 
 <script setup>
   import { ref, inject, computed } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
 
   const { t } = inject('i18n')
@@ -181,10 +182,12 @@
     color: var(--text-muted, #8b8b9a);
   }
 
-  .empty-state i {
-    font-size: 1.4em;
+  .empty-state .icon {
+    width: 22px;
+    height: 22px;
     margin-bottom: 8px;
     display: block;
+    margin-inline: auto;
     opacity: 0.6;
   }
 
@@ -308,22 +311,12 @@
     color: var(--text-muted, #8b8b9a);
   }
 
+  /* Remove button: global .btn-ghost, faded until the row is hovered */
   .btn-remove {
-    width: 24px;
-    height: 24px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
     color: var(--text-muted, #8b8b9a);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    flex-shrink: 0;
     opacity: 0.6;
     transition:
-      background 0.15s,
+      background-color 0.15s,
       color 0.15s,
       opacity 0.15s;
   }
@@ -333,7 +326,7 @@
     opacity: 1;
   }
 
-  .btn-remove:hover {
+  .btn.btn-remove:hover:not(:disabled) {
     background: color-mix(in srgb, var(--error, #ef4444) 15%, transparent);
     color: var(--error, #ef4444);
   }
@@ -443,11 +436,6 @@
   @media (max-width: 600px) {
     .playlist-items {
       max-height: 220px;
-    }
-
-    .btn-remove {
-      width: 32px;
-      height: 32px;
     }
   }
 </style>

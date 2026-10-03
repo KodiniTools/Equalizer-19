@@ -1,20 +1,22 @@
 <template>
-  <BasePanel icon="fas fa-sliders" :title="t.dynamics">
+  <BasePanel icon="sliders" :title="t.dynamics">
     <template #actions>
-      <button @click="resetDynamics" class="panel-btn" :title="t.reset" :aria-label="t.reset">
-        <i class="fas fa-undo" aria-hidden="true"></i>
+      <button
+        @click="resetDynamics"
+        class="btn btn-icon btn-sm"
+        :title="t.reset"
+        :aria-label="t.reset"
+      >
+        <AppIcon name="undo" />
       </button>
       <button
         @click="toggleDynamics"
-        :class="['panel-btn', { active: dynamicsEnabled }]"
+        :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': dynamicsEnabled }]"
         :title="dynamicsEnabled ? t.comp_toggle_off : t.comp_toggle_on"
         :aria-label="t.a11y_dynamics_toggle"
         :aria-pressed="dynamicsEnabled"
       >
-        <i
-          :class="dynamicsEnabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"
-          aria-hidden="true"
-        ></i>
+        <AppIcon name="power" />
       </button>
     </template>
 
@@ -139,6 +141,7 @@
 
 <script setup>
   import { ref, inject, onMounted, watch, useId } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import { DEFAULT_DYNAMICS } from '../utils/presets.js'
   import BasePanel from './BasePanel.vue'
   import CompressorPresets from './CompressorPresets.vue'

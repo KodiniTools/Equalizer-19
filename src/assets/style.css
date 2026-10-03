@@ -160,24 +160,6 @@ body {
   gap: 16px;
 }
 
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 16px;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-  position: relative;
-}
-
-.card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--shadow-light);
-}
-
 /* ===== BUTTONS & CONTROLS - KOMPAKTER ===== */
 .upload {
   margin-bottom: 14px;
@@ -187,128 +169,170 @@ body {
   display: none;
 }
 
+/* ===== BUTTON SYSTEM =====
+   One family for every button in the app:
+   .btn                 default (bordered surface)
+   .btn-primary         accent fill
+   .btn-ghost           no border, no fill (toolbar / transport)
+   .btn-danger          error outline
+   .btn-sm / .btn-lg    30px / 44px (default 36px)
+   .btn-icon            square, icon only (pair with a size)
+   .btn-round           circular (play button)
+   .is-on               toggle state (EQ/compressor on, shuffle/repeat on) */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 9px 14px;
+  height: 36px;
+  padding: 0 14px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background: var(--secondary-bg);
   color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
   text-decoration: none;
-  font-size: 12px;
-  font-weight: 500;
-  min-height: 38px;
-  justify-content: center;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--hover-bg);
-  border-color: var(--accent-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--shadow-light);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn i {
-  font-size: 14px;
+  border-color: var(--border-strong);
   color: var(--text-primary);
 }
 
-.btn-primary {
-  background: var(--accent-primary);
-  color: var(--accent-text);
-  border-color: var(--accent-primary);
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  background: var(--accent-tertiary);
-  border-color: var(--accent-tertiary);
-  box-shadow: 0 4px 15px var(--shadow-medium);
-}
-
-.btn-primary i {
-  color: var(--accent-text);
-}
-
-.btn-secondary {
-  background: transparent;
-  border-color: var(--border-color);
-}
-
-.btn-danger {
-  background: var(--error);
-  color: #ffffff;
-  border-color: var(--error);
-}
-
-.btn-danger:hover {
-  background: #dc2626;
-  border-color: #dc2626;
+.btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* ===== PLAYER CONTROLS - KOMPAKTER ===== */
-.controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 14px 0;
+.btn .icon {
+  width: 14px;
+  height: 14px;
 }
 
-.ctrl {
-  width: 40px;
-  height: 40px;
+.btn-primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--on-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--hover-bg);
+  border-color: transparent;
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--error) 50%, transparent);
+  color: var(--error);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--error);
+  border-color: var(--error);
+  color: #ffffff;
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.btn-sm .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-lg {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.btn-lg .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-icon {
+  width: 36px;
+  padding: 0;
+}
+
+.btn-icon.btn-sm {
+  width: 30px;
+}
+
+.btn-icon.btn-lg {
+  width: 44px;
+}
+
+.btn-round {
   border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--secondary-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 16px;
-  color: var(--text-primary);
 }
 
-.ctrl:hover {
+/* Toggle state: solid accent for on/off switches … */
+.btn.is-on {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
-  color: var(--accent-text);
-  transform: scale(1.08);
-  box-shadow: 0 4px 12px var(--shadow-medium);
+  color: var(--on-accent);
 }
 
-.ctrl:active {
-  transform: scale(0.95);
+.btn.is-on:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
 }
 
-.ctrl.play {
-  width: 50px;
-  height: 50px;
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: var(--accent-text);
-  font-size: 20px;
+/* … and a tinted ghost for mode buttons (shuffle, repeat) */
+.btn-ghost.is-on {
+  background: color-mix(in srgb, var(--accent-primary) 20%, transparent);
+  border-color: transparent;
+  color: var(--accent-primary);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-primary) 55%, transparent);
 }
 
-.ctrl.play:hover {
-  background: var(--accent-tertiary);
-  border-color: var(--accent-tertiary);
+.btn-ghost.is-on:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-primary) 30%, transparent);
+  color: var(--accent-primary);
+}
+
+/* Touch targets: small icon buttons grow to 34px on phones */
+@media (max-width: 600px) {
+  .btn-icon.btn-sm {
+    width: 34px;
+    height: 34px;
+  }
 }
 
 /* ===== SLIDERS - KOMPAKTER ===== */
@@ -486,43 +510,6 @@ canvas {
   transform: translateX(0);
 }
 
-/* ===== PRESET BUTTONS - KOMPAKTER ===== */
-.eq-presets,
-.comp-presets {
-  margin-top: 12px !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-.eq-preset-btn,
-.comp-preset-btn {
-  padding: 5px 10px !important;
-  font-size: 10px !important;
-  min-width: auto !important;
-  display: inline-flex !important;
-  transition: all 0.2s ease !important;
-  border-radius: 6px !important;
-  font-weight: 500 !important;
-}
-
-.eq-preset-btn.active,
-.comp-preset-btn.active {
-  background: var(--accent-primary) !important;
-  color: var(--accent-text) !important;
-  border-color: var(--accent-primary) !important;
-  transform: scale(1.04);
-  font-weight: 600 !important;
-}
-
-.eq-preset-btn:hover,
-.comp-preset-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px var(--shadow-light);
-}
-
 /* ===== ACCESSIBILITY ===== */
 .sr-only {
   position: absolute;
@@ -625,25 +612,6 @@ select:focus {
     gap: 8px;
   }
 
-  .ctrl {
-    width: 38px;
-    height: 38px;
-  }
-
-  .ctrl.play {
-    width: 46px;
-    height: 46px;
-  }
-
-  .btn {
-    padding: 8px 12px;
-    font-size: 11px;
-  }
-
-  .card {
-    padding: 12px;
-  }
-
   .header {
     flex-direction: column;
     align-items: flex-start;
@@ -686,12 +654,6 @@ select:focus {
     font-size: 8px;
   }
 
-  .eq-preset-btn,
-  .comp-preset-btn {
-    padding: 4px 8px !important;
-    font-size: 9px !important;
-  }
-
   #notification {
     left: 10px;
     right: 10px;
@@ -719,21 +681,6 @@ select:focus {
     justify-content: space-between;
   }
 
-  .ctrl {
-    width: 36px;
-    height: 36px;
-  }
-
-  .ctrl.play {
-    width: 44px;
-    height: 44px;
-  }
-
-  .card {
-    padding: 10px;
-    border-radius: 8px;
-  }
-
   .eq {
     gap: 3px;
     padding: 8px 4px;
@@ -751,52 +698,18 @@ select:focus {
   .eq .col label {
     font-size: 7px;
   }
-
-  .eq-preset-btn,
-  .comp-preset-btn {
-    padding: 3px 6px !important;
-    font-size: 8px !important;
-  }
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.card {
-  animation: fadeInUp 0.4s ease-out forwards;
-}
-
-.card:nth-child(even) {
-  animation-delay: 0.08s;
-}
-
-/* ===== THEME TRANSITIONS ===== */
-* {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease,
-    box-shadow 0.3s ease !important;
+/* ===== THEME TRANSITIONS =====
+   Only colours fade on a theme switch. The previous `* { transition … !important }`
+   overrode every component transition (meter mask, sliders, dialogs). */
+body,
+.panel,
+input,
+select {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }
 
 /* High contrast mode support */

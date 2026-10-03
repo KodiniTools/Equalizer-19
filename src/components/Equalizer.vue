@@ -3,11 +3,11 @@
     <div class="eq-header">
       <button
         @click="toggleBypass"
-        :class="['toggle-btn', { active: !isEqBypassed }]"
+        :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': !isEqBypassed }]"
         :aria-label="t.a11y_eq_bypass"
         :aria-pressed="!isEqBypassed"
       >
-        <i :class="!isEqBypassed ? 'fas fa-toggle-on' : 'fas fa-toggle-off'" aria-hidden="true"></i>
+        <AppIcon name="power" />
       </button>
 
       <select
@@ -29,26 +29,26 @@
       <button
         v-if="isCustomSelected"
         @click="deleteSelectedCustomPreset"
-        class="icon-btn delete-btn"
+        class="btn btn-icon btn-sm delete-btn"
         :title="t.eq_preset_delete"
         :aria-label="t.eq_preset_delete"
       >
-        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+        <AppIcon name="trash" />
       </button>
 
       <!-- Save preset button -->
       <button
         v-if="!showSaveForm"
         @click="showSaveForm = true"
-        class="icon-btn save-btn"
+        class="btn btn-icon btn-sm save-btn"
         :title="t.eq_preset_save_title"
         :aria-label="t.eq_preset_save_title"
       >
-        <i class="fas fa-floppy-disk" aria-hidden="true"></i>
+        <AppIcon name="save" />
       </button>
 
-      <button @click="resetEqualizer" class="icon-btn reset-btn" :title="t.reset" :aria-label="t.reset">
-        <i class="fas fa-undo" aria-hidden="true"></i>
+      <button @click="resetEqualizer" class="btn btn-icon btn-sm reset-btn" :title="t.reset" :aria-label="t.reset">
+        <AppIcon name="undo" />
       </button>
     </div>
 
@@ -66,15 +66,15 @@
       />
       <button
         @click="confirmSavePreset"
-        class="icon-btn save-confirm-btn"
+        class="btn btn-icon btn-sm save-confirm-btn"
         :disabled="!newPresetName.trim()"
         :title="t.eq_save"
         :aria-label="t.eq_save"
       >
-        <i class="fas fa-check" aria-hidden="true"></i>
+        <AppIcon name="check" />
       </button>
-      <button @click="cancelSavePreset" class="icon-btn cancel-btn" :title="t.eq_cancel" :aria-label="t.eq_cancel">
-        <i class="fas fa-times" aria-hidden="true"></i>
+      <button @click="cancelSavePreset" class="btn btn-icon btn-sm cancel-btn" :title="t.eq_cancel" :aria-label="t.eq_cancel">
+        <AppIcon name="close" />
       </button>
     </div>
 
@@ -106,6 +106,7 @@
 
 <script setup>
   import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import { EQ_PRESETS, EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
 
@@ -263,34 +264,6 @@
     margin-bottom: 8px;
   }
 
-  .toggle-btn {
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 6px;
-    color: var(--text-secondary, #8a8a9a);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .toggle-btn:hover {
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--text-primary, #fff);
-  }
-
-  /* Same look as the dynamics on/off switch in the sidebar */
-  .toggle-btn.active {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-  }
-
   .preset-select {
     flex: 1;
     padding: 5px 8px;
@@ -310,55 +283,25 @@
     outline: none;
   }
 
-  .icon-btn {
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 6px;
-    color: var(--text-secondary, #8a8a9a);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .icon-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  .save-btn:hover {
+  /* Header buttons use the global .btn system; hover colours hint at the action */
+  .btn.save-btn:hover:not(:disabled),
+  .btn.reset-btn:hover:not(:disabled) {
     background: var(--accent-primary, #00d9ff);
-    border-color: transparent;
+    border-color: var(--accent-primary, #00d9ff);
     color: var(--on-accent, #000);
   }
 
-  .save-confirm-btn:not(:disabled):hover {
-    background: #1db954;
-    border-color: transparent;
-    color: white;
+  .btn.save-confirm-btn:hover:not(:disabled) {
+    background: var(--success, #1db954);
+    border-color: var(--success, #1db954);
+    color: #ffffff;
   }
 
-  .cancel-btn:hover {
-    background: #ef4444;
-    border-color: transparent;
-    color: white;
-  }
-
-  .delete-btn:hover {
-    background: #ef4444;
-    border-color: transparent;
-    color: white;
-  }
-
-  .reset-btn:hover {
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-    border-color: transparent;
+  .btn.cancel-btn:hover:not(:disabled),
+  .btn.delete-btn:hover:not(:disabled) {
+    background: var(--error, #ef4444);
+    border-color: var(--error, #ef4444);
+    color: #ffffff;
   }
 
   /* Inline save form */
@@ -599,12 +542,6 @@
 
     .eq-header {
       gap: 5px;
-    }
-
-    .toggle-btn,
-    .icon-btn {
-      width: 32px;
-      height: 32px;
     }
 
     .preset-select {

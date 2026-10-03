@@ -1,9 +1,7 @@
 <template>
   <div class="audio-meter-wrap">
     <div class="meter-header">
-      <span class="meter-title"
-        ><i class="fas fa-signal" aria-hidden="true"></i> {{ t.meter_title }}</span
-      >
+      <span class="meter-title"><AppIcon name="meter" /> {{ t.meter_title }}</span>
       <span class="meter-hint" aria-hidden="true">dBFS</span>
     </div>
 
@@ -48,6 +46,7 @@
 
 <script setup>
   import { reactive, inject, onMounted, onUnmounted } from 'vue'
+  import AppIcon from './AppIcon.vue'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
@@ -149,7 +148,9 @@
     gap: 6px;
   }
 
-  .meter-title i {
+  .meter-title .icon {
+    width: 14px;
+    height: 14px;
     color: var(--accent-primary, #00d9ff);
   }
 

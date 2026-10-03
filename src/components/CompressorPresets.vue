@@ -17,12 +17,13 @@
         <option v-for="name in group.presets" :key="name" :value="name">{{ name }}</option>
       </optgroup>
     </select>
-    <i class="fas fa-chevron-down select-chevron" aria-hidden="true"></i>
+    <AppIcon name="chevron-down" class="select-chevron" />
   </div>
 </template>
 
 <script setup>
   import { inject, computed } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import {
     COMP_PRESETS,
     COMP_PRESET_GROUPS,
@@ -88,7 +89,8 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 10.5px;
+    width: 12px;
+    height: 12px;
     color: var(--text-muted, #8b8b9a);
     pointer-events: none;
   }

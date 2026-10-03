@@ -2,26 +2,26 @@
   <div class="history-controls" role="group" :aria-label="t.history_title">
     <button
       type="button"
-      class="history-btn"
+      class="btn btn-icon btn-sm history-btn"
       :disabled="!canUndo"
       :title="undoTitle"
       :aria-label="undoTitle"
       :aria-keyshortcuts="'Control+Z Meta+Z'"
       @click="history.undo()"
     >
-      <i class="fas fa-rotate-left" aria-hidden="true"></i>
+      <AppIcon name="undo" />
       <span v-if="undoDepth > 0" class="history-count" aria-hidden="true">{{ undoDepth }}</span>
     </button>
     <button
       type="button"
-      class="history-btn"
+      class="btn btn-icon btn-sm history-btn"
       :disabled="!canRedo"
       :title="redoTitle"
       :aria-label="redoTitle"
       :aria-keyshortcuts="'Control+Shift+Z Control+Y Meta+Shift+Z'"
       @click="history.redo()"
     >
-      <i class="fas fa-rotate-right" aria-hidden="true"></i>
+      <AppIcon name="redo" />
       <span v-if="redoDepth > 0" class="history-count" aria-hidden="true">{{ redoDepth }}</span>
     </button>
   </div>
@@ -29,6 +29,7 @@
 
 <script setup>
   import { inject, computed, watch } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
 
   /**
@@ -96,38 +97,9 @@
     gap: 6px;
   }
 
+  /* Button look comes from the global .btn system; only the badge anchor is local */
   .history-btn {
     position: relative;
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    border-radius: 8px;
-    color: var(--text-secondary, #c8c8d5);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    transition:
-      color 0.2s,
-      border-color 0.2s,
-      background 0.2s;
-  }
-
-  .history-btn:not(:disabled):hover {
-    color: var(--text-primary, #fff);
-    border-color: var(--accent-primary, #00d9ff);
-  }
-
-  .history-btn:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
-    outline-offset: 2px;
-  }
-
-  .history-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
   }
 
   /* Number of available steps */

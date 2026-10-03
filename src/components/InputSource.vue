@@ -1,5 +1,5 @@
 <template>
-  <BasePanel icon="fas fa-microphone" :title="t.input_title">
+  <BasePanel icon="microphone" :title="t.input_title">
     <template v-if="input.isActive.value" #actions>
       <span class="panel-badge live-badge">
         <span class="live-dot" aria-hidden="true"></span>{{ t.input_live_badge }}
@@ -55,7 +55,7 @@
                 <option :value="SYSTEM_AUDIO">{{ t.input_system_option }}</option>
               </optgroup>
             </select>
-            <i class="fas fa-chevron-down select-chevron" aria-hidden="true"></i>
+            <AppIcon name="chevron-down" class="select-chevron" />
           </div>
         </div>
 
@@ -63,13 +63,13 @@
         <button
           v-if="!input.isActive.value"
           type="button"
-          class="action-btn primary"
+          class="btn btn-primary"
           :disabled="input.isStarting.value"
           @click="input.start()"
         >
           {{ input.isStarting.value ? t.input_starting : t.input_start }}
         </button>
-        <button v-else type="button" class="action-btn" @click="input.stop()">
+        <button v-else type="button" class="btn" @click="input.stop()">
           {{ t.input_stop }}
         </button>
 
@@ -118,6 +118,7 @@
 
 <script setup>
   import { inject, useId, computed } from 'vue'
+  import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
   import { SYSTEM_AUDIO } from '../composables/useInputSource'
 
@@ -230,48 +231,10 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 10.5px;
+    width: 12px;
+    height: 12px;
     color: var(--text-muted, #8b8b9a);
     pointer-events: none;
-  }
-
-  /* ---- Buttons ---- */
-  .action-btn {
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      border-color 0.2s;
-  }
-
-  .action-btn:hover:not(:disabled) {
-    border-color: var(--accent-primary, #00d9ff);
-  }
-
-  .action-btn.primary {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
-  }
-
-  .action-btn.primary:hover:not(:disabled) {
-    background: var(--accent-hover, #00c4e6);
-  }
-
-  .action-btn:disabled {
-    opacity: 0.6;
-    cursor: wait;
-  }
-
-  .action-btn:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
-    outline-offset: 2px;
   }
 
   /* ---- Live badge ---- */

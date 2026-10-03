@@ -3,10 +3,15 @@
     <div v-if="show" class="dl-overlay" @click.self="onCancel">
       <div class="dl-dialog" role="dialog" aria-modal="true" :aria-label="t.dl_title">
         <div class="dl-header">
-          <i class="fas fa-download" aria-hidden="true"></i>
+          <AppIcon name="download" />
           <h3>{{ t.dl_title }}</h3>
-          <button class="dl-close" @click="onCancel" :title="t.dl_cancel" :aria-label="t.dl_cancel">
-            <i class="fas fa-times" aria-hidden="true"></i>
+          <button
+            class="btn btn-icon btn-ghost btn-sm"
+            @click="onCancel"
+            :title="t.dl_cancel"
+            :aria-label="t.dl_cancel"
+          >
+            <AppIcon name="close" />
           </button>
         </div>
 
@@ -29,10 +34,7 @@
           </div>
 
           <p class="dl-hint">
-            <i
-              :class="folderSupported ? 'fas fa-folder-open' : 'fas fa-info-circle'"
-              aria-hidden="true"
-            ></i>
+            <AppIcon :name="folderSupported ? 'folder' : 'info'" />
             <span>{{
               folderSupported ? t.dl_folder_hint_supported : t.dl_folder_hint_unsupported
             }}</span>
@@ -40,10 +42,10 @@
         </div>
 
         <div class="dl-footer">
-          <button class="dl-btn cancel" @click="onCancel">{{ t.dl_cancel }}</button>
-          <button class="dl-btn save" :disabled="!trimmedName || saving" @click="onConfirm">
-            <i v-if="saving" class="fas fa-spinner fa-spin" aria-hidden="true"></i>
-            <i v-else class="fas fa-save" aria-hidden="true"></i>
+          <button class="btn" @click="onCancel">{{ t.dl_cancel }}</button>
+          <button class="btn btn-primary" :disabled="!trimmedName || saving" @click="onConfirm">
+            <AppIcon v-if="saving" name="spinner" spin />
+            <AppIcon v-else name="save" />
             {{ t.dl_save }}
           </button>
         </div>
@@ -54,6 +56,7 @@
 
 <script setup>
   import { ref, computed, watch, inject, nextTick } from 'vue'
+  import AppIcon from './AppIcon.vue'
 
   const props = defineProps({
     show: { type: Boolean, default: false },
@@ -151,9 +154,10 @@
     border-bottom: 1px solid var(--border-color, #3a3a48);
   }
 
-  .dl-header i {
+  .dl-header .icon {
     color: var(--accent-primary, #00d9ff);
-    font-size: 1em;
+    width: 16px;
+    height: 16px;
   }
 
   .dl-header h3 {
@@ -162,25 +166,6 @@
     font-weight: 600;
     color: var(--text-primary, #fff);
     flex: 1;
-  }
-
-  .dl-close {
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted, #8b8b9a);
-    cursor: pointer;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-
-  .dl-close:hover {
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
   }
 
   .dl-body {
@@ -239,10 +224,11 @@
     color: var(--text-muted, #8b8b9a);
   }
 
-  .dl-hint i {
+  .dl-hint .icon {
     margin-top: 1px;
+    width: 14px;
+    height: 14px;
     color: var(--accent-primary, #00d9ff);
-    flex-shrink: 0;
   }
 
   .dl-footer {
@@ -251,45 +237,6 @@
     gap: 8px;
     padding: 14px 16px;
     border-top: 1px solid var(--border-color, #3a3a48);
-  }
-
-  .dl-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .dl-btn.cancel {
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-secondary, #c8c8d5);
-  }
-
-  .dl-btn.cancel:hover {
-    background: var(--hover-bg, #323240);
-    color: var(--text-primary, #fff);
-  }
-
-  .dl-btn.save {
-    border: none;
-    background: #10b981;
-    color: #fff;
-  }
-
-  .dl-btn.save:hover:not(:disabled) {
-    background: #059669;
-    transform: translateY(-1px);
-  }
-
-  .dl-btn.save:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 
   @media (max-width: 480px) {

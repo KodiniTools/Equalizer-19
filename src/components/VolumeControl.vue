@@ -2,14 +2,14 @@
   <div class="volume">
     <button
       @click="toggleMute"
-      class="vol-btn"
+      class="btn btn-icon btn-ghost btn-sm"
       :title="t.player_mute"
       :aria-label="t.player_mute"
       :aria-pressed="isMuted"
     >
-      <i v-if="isMuted" class="fas fa-volume-mute" aria-hidden="true"></i>
-      <i v-else-if="volume > 0.5" class="fas fa-volume-up" aria-hidden="true"></i>
-      <i v-else class="fas fa-volume-down" aria-hidden="true"></i>
+      <AppIcon v-if="isMuted" name="volume-mute" />
+      <AppIcon v-else-if="volume > 0.5" name="volume-high" />
+      <AppIcon v-else name="volume-low" />
     </button>
     <input
       type="range"
@@ -29,6 +29,7 @@
 
 <script setup>
   import { inject } from 'vue'
+  import AppIcon from './AppIcon.vue'
 
   const { t } = inject('i18n')
   const { volume, isMuted, setVolume, toggleMute } = inject('audioPlayer')
@@ -46,24 +47,6 @@
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
-  }
-
-  .vol-btn {
-    width: 24px;
-    height: 24px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted, #8b8b9a);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    transition: color 0.2s;
-  }
-
-  .vol-btn:hover {
-    color: var(--text-primary, #fff);
   }
 
   .vol-slider {

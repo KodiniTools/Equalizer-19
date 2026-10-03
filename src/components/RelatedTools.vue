@@ -9,7 +9,7 @@
       <li v-for="tool in TOOLS" :key="tool.url">
         <a class="rt-card" :href="tool.url" target="_blank" rel="noopener">
           <span class="rt-icon" aria-hidden="true">
-            <i :class="tool.icon"></i>
+            <AppIcon :name="tool.icon" size="18" />
           </span>
           <span class="rt-body">
             <span class="rt-name">{{ t[tool.titleKey] }}</span>
@@ -17,7 +17,7 @@
           </span>
           <span class="rt-cta">
             {{ t.tools_open }}
-            <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            <AppIcon name="external" />
             <span class="visually-hidden">({{ t.tools_new_tab }})</span>
           </span>
         </a>
@@ -28,6 +28,7 @@
 
 <script setup>
   import { inject, useId } from 'vue'
+  import AppIcon from './AppIcon.vue'
 
   /**
    * Links to the other KodiniTools audio tools (open in a new tab).
@@ -36,19 +37,19 @@
   const TOOLS = [
     {
       url: 'https://kodinitools.com/audiokonverter/',
-      icon: 'fas fa-arrows-rotate',
+      icon: 'convert',
       titleKey: 'tool_converter_title',
       descKey: 'tool_converter_desc',
     },
     {
       url: 'https://kodinitools.com/audio-cutter/',
-      icon: 'fas fa-scissors',
+      icon: 'scissors',
       titleKey: 'tool_cutter_title',
       descKey: 'tool_cutter_desc',
     },
     {
       url: 'https://kodinitools.com/audionormalisierer/',
-      icon: 'fas fa-wave-square',
+      icon: 'wave',
       titleKey: 'tool_normalizer_title',
       descKey: 'tool_normalizer_desc',
     },
@@ -171,8 +172,9 @@
       border-color 0.2s;
   }
 
-  .rt-cta i {
-    font-size: 14px;
+  .rt-cta .icon {
+    width: 12px;
+    height: 12px;
   }
 
   .rt-card:hover .rt-cta {
