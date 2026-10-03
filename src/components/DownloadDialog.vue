@@ -189,7 +189,7 @@
 
   .dl-label {
     display: block;
-    font-size: 0.78em;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary, #c8c8d5);
     margin-bottom: 8px;
@@ -215,15 +215,16 @@
     border: none;
     background: transparent;
     color: var(--text-primary, #fff);
-    font-size: 0.9em;
+    font-size: 14px;
     padding: 10px 0;
     outline: none;
   }
 
   .dl-ext {
     color: var(--text-muted, #8b8b9a);
-    font-size: 0.85em;
-    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 14px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
     flex-shrink: 0;
     padding-left: 6px;
   }
@@ -233,7 +234,7 @@
     align-items: flex-start;
     gap: 8px;
     margin: 12px 0 0;
-    font-size: 0.75em;
+    font-size: 12px;
     line-height: 1.4;
     color: var(--text-muted, #8b8b9a);
   }
@@ -258,7 +259,7 @@
     gap: 6px;
     padding: 9px 16px;
     border-radius: 8px;
-    font-size: 0.85em;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;

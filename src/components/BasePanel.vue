@@ -63,7 +63,7 @@
     align-items: center;
     gap: 8px;
     min-width: 0;
-    font-size: 0.75em;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.2px;
     color: var(--text-primary, #fff);
@@ -112,7 +112,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.72em;
+    font-size: 12px;
     transition:
       background 0.2s,
       color 0.2s,
@@ -138,7 +138,7 @@
   :slotted(.panel-badge) {
     padding: 2px 8px;
     border-radius: 999px;
-    font-size: 0.62em;
+    font-size: 10.5px;
     font-weight: 600;
     white-space: nowrap;
     color: var(--accent-primary, #00d9ff);
@@ -148,7 +148,7 @@
 
   :slotted(.panel-section-label) {
     display: block;
-    font-size: 0.6em;
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.6px;

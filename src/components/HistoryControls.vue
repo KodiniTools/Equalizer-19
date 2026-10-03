@@ -108,7 +108,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8em;
+    font-size: 13px;
     transition:
       color 0.2s,
       border-color 0.2s,
@@ -141,7 +141,7 @@
     border-radius: 999px;
     background: var(--accent-primary, #00d9ff);
     color: var(--on-accent, #000);
-    font-size: 0.6em;
+    font-size: 10.5px;
     font-weight: 700;
     line-height: 16px;
     text-align: center;

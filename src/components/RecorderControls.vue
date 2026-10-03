@@ -295,8 +295,9 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-family: 'SF Mono', 'Courier New', monospace;
-    font-size: 0.8em;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
     color: var(--text-primary, #fff);
     background: rgba(239, 68, 68, 0.15);
     padding: 4px 8px;
@@ -335,7 +336,7 @@
 
   .fmt-btn {
     padding: 4px 8px;
-    font-size: 0.68em;
+    font-size: 11px;
     font-weight: 600;
     border: none;
     background: transparent;
@@ -368,7 +369,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85em;
+    font-size: 14px;
     transition: all 0.2s;
   }
 
@@ -386,7 +387,7 @@
   .rec-btn.countdown {
     background: #ef4444;
     color: white;
-    font-size: 0.95em;
+    font-size: 15px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     animation: rec-countdown-pulse 1s infinite;
@@ -408,7 +409,7 @@
     border-radius: 6px;
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-muted, #8b8b9a);
-    font-size: 0.7em;
+    font-size: 11px;
   }
 
   .delay-select {
@@ -472,7 +473,7 @@
     align-items: center;
     justify-content: center;
     color: #ef4444;
-    font-size: 0.7em;
+    font-size: 11px;
     flex-shrink: 0;
   }
 

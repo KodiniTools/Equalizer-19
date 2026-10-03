@@ -60,7 +60,7 @@
     border-radius: 8px;
     background: var(--secondary-bg, #1a1a22);
     color: var(--text-primary, #fff);
-    font-size: 0.72em;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     appearance: none;
@@ -88,7 +88,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.6em;
+    font-size: 10.5px;
     color: var(--text-muted, #8b8b9a);
     pointer-events: none;
   }
