@@ -150,7 +150,7 @@
   /* ---- Source switch ---- */
   .segmented {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2px;
     padding: 2px;
     border-radius: 8px;
@@ -160,6 +160,11 @@
 
   .segmented button {
     height: 28px;
+    min-width: 0;
+    padding: 0 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     border: none;
     border-radius: 6px;
     background: transparent;

@@ -79,6 +79,28 @@
     </div>
 
     <div class="eq-bands" :class="{ disabled: isEqBypassed }">
+      <!-- Frequency curve behind the sliders: boost above, cut below the 0 dB line -->
+      <svg
+        class="eq-curve"
+        :viewBox="`0 0 ${CURVE.w} ${CURVE.h}`"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <clipPath id="eq-curve-up">
+            <rect x="0" y="0" :width="CURVE.w" :height="curve.mid" />
+          </clipPath>
+          <clipPath id="eq-curve-dn">
+            <rect x="0" :y="curve.mid" :width="CURVE.w" :height="curve.mid" />
+          </clipPath>
+        </defs>
+        <line class="eq-curve-zero" x1="0" :x2="CURVE.w" :y1="curve.mid" :y2="curve.mid" />
+        <path class="eq-curve-fill boost" :d="curve.area" clip-path="url(#eq-curve-up)" />
+        <path class="eq-curve-fill cut" :d="curve.area" clip-path="url(#eq-curve-dn)" />
+        <path class="eq-curve-line boost" :d="curve.line" clip-path="url(#eq-curve-up)" />
+        <path class="eq-curve-line cut" :d="curve.line" clip-path="url(#eq-curve-dn)" />
+      </svg>
+
       <div v-for="(band, index) in localBands" :key="band.frequency" class="band">
         <div class="slider-wrapper" :class="{ active: band.gain !== 0, negative: band.gain < 0 }">
           <input
@@ -109,6 +131,7 @@
   import AppIcon from './AppIcon.vue'
   import { EQ_PRESETS, EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
+  import { buildEqCurve } from '../utils/eqCurve.js'
 
   const { t } = inject('i18n')
 
@@ -116,6 +139,16 @@
   const notify = inject('notify', () => {})
 
   const localBands = ref(EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0 })))
+
+  // Curve geometry (SVG user units, stretched to the slider area). The ±12 dB
+  // range maps to 43 % of the height, which is where the slider thumbs travel.
+  const CURVE = { w: 380, h: 100 }
+  const curve = computed(() =>
+    buildEqCurve(
+      localBands.value.map((b) => b.gain),
+      { w: CURVE.w, h: CURVE.h, range: CURVE.h * 0.43 }
+    )
+  )
 
   const selectedPreset = ref('')
   // Mirrors the engine so external changes (undo/redo) are reflected as well
@@ -333,17 +366,66 @@
     color: var(--text-muted, #8b8b9a);
   }
 
-  /* EQ bands */
+  /* EQ bands: one grid column per band so the curve's band centres line up
+     with the slider thumbs. The custom properties feed the curve overlay. */
   .eq-bands {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 2px;
-    padding: 12px 8px;
+    --eq-pad-x: 8px;
+    --eq-pad-y: 12px;
+    --eq-stage-h: 160px;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(19, minmax(0, 1fr));
+    justify-items: center;
+    align-items: end;
+    padding: var(--eq-pad-y) var(--eq-pad-x);
     background: var(--secondary-bg, #1a1a22);
     border: 1px solid var(--border-color, #3a3a48);
     border-radius: 8px;
     min-height: 220px;
+  }
+
+  .eq-curve {
+    position: absolute;
+    top: var(--eq-pad-y);
+    left: var(--eq-pad-x);
+    width: calc(100% - 2 * var(--eq-pad-x));
+    height: var(--eq-stage-h);
+    pointer-events: none;
+  }
+
+  .eq-curve-zero {
+    stroke: var(--text-muted, #7a8da0);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .eq-curve-fill {
+    opacity: 0.2;
+  }
+
+  .eq-curve-fill.boost {
+    fill: var(--eq-boost, #c9984d);
+  }
+
+  .eq-curve-fill.cut {
+    fill: var(--eq-cut, #4a90d9);
+  }
+
+  .eq-curve-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .eq-curve-line.boost {
+    stroke: var(--eq-boost, #c9984d);
+  }
+
+  .eq-curve-line.cut {
+    stroke: var(--eq-cut, #4a90d9);
   }
 
   .eq-bands.disabled {
@@ -352,12 +434,13 @@
   }
 
   .band {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    flex: 1;
-    min-width: 22px;
+    width: 100%;
     max-width: 36px;
   }
 
@@ -382,7 +465,7 @@
     appearance: none;
     writing-mode: vertical-lr;
     direction: rtl;
-    width: 5px;
+    width: 3px;
     height: 152px;
     padding: 0;
     margin: 0;
@@ -394,16 +477,6 @@
     transition:
       background 0.2s ease,
       box-shadow 0.2s ease;
-  }
-
-  .slider-v.active {
-    background: var(--eq-boost, #c9984d);
-    box-shadow: 0 0 5px color-mix(in srgb, var(--eq-boost, #c9984d) 35%, transparent);
-  }
-
-  .slider-v.active.negative {
-    background: var(--eq-cut, #4a90d9);
-    box-shadow: 0 0 5px color-mix(in srgb, var(--eq-cut, #4a90d9) 35%, transparent);
   }
 
   .slider-v::-webkit-slider-thumb {
@@ -437,18 +510,10 @@
   }
 
   .slider-v::-moz-range-track {
-    width: 5px;
+    width: 3px;
     background: var(--border-strong, #2f4a70);
     border-radius: 3px;
     border: none;
-  }
-
-  .slider-v.active::-moz-range-track {
-    background: var(--eq-boost, #c9984d);
-  }
-
-  .slider-v.active.negative::-moz-range-track {
-    background: var(--eq-cut, #4a90d9);
   }
 
   .slider-v::-moz-range-thumb {
@@ -509,8 +574,9 @@
 
   @media (max-width: 900px) {
     .eq-bands {
-      gap: 1px;
-      padding: 10px 4px;
+      --eq-pad-x: 4px;
+      --eq-pad-y: 10px;
+      --eq-stage-h: 130px;
     }
 
     .slider-wrapper {
@@ -520,10 +586,6 @@
 
     .slider-v {
       height: 120px;
-    }
-
-    .band {
-      min-width: 18px;
     }
 
     .val {
@@ -550,8 +612,9 @@
     }
 
     .eq-bands {
-      gap: 1px;
-      padding: 8px 2px;
+      --eq-pad-x: 2px;
+      --eq-pad-y: 8px;
+      --eq-stage-h: 110px;
       min-height: 180px;
     }
 
@@ -566,7 +629,6 @@
     }
 
     .band {
-      min-width: 15px;
       max-width: 28px;
     }
 
@@ -600,10 +662,9 @@
     }
 
     .eq-bands {
-      padding: 6px 2px;
+      --eq-pad-y: 6px;
+      --eq-stage-h: 95px;
       min-height: 160px;
-      overflow-x: auto;
-      justify-content: flex-start;
     }
 
     .slider-wrapper {
@@ -617,7 +678,6 @@
     }
 
     .band {
-      min-width: 14px;
       max-width: 24px;
     }
 
