@@ -25,9 +25,23 @@
           </div>
         </div>
 
+        <!-- Narrow screens: one section at a time instead of three stacked columns -->
+        <div class="app-tabs" role="group" :aria-label="t.app_tabs_label">
+          <button
+            v-for="tab in TABS"
+            :key="tab.key"
+            type="button"
+            :class="{ active: activeTab === tab.key }"
+            :aria-pressed="activeTab === tab.key"
+            @click="activeTab = tab.key"
+          >
+            {{ t[tab.label] }}
+          </button>
+        </div>
+
         <div class="grid-three-column">
           <!-- Left Column: Playlist -->
-          <div class="column-left">
+          <div class="column-left" :class="{ 'is-active': activeTab === 'source' }">
             <!-- Input source: playlist or live audio input -->
             <InputSource />
 
@@ -36,7 +50,7 @@
           </div>
 
           <!-- Center Column: Equalizer & Visualizer -->
-          <div class="column-center">
+          <div class="column-center" :class="{ 'is-active': activeTab === 'eq' }">
             <!-- Equalizer -->
             <Equalizer />
 
@@ -48,7 +62,7 @@
           </div>
 
           <!-- Right Column: Dynamics Processor (incl. presets) -->
-          <div class="column-right">
+          <div class="column-right" :class="{ 'is-active': activeTab === 'dynamics' }">
             <DynamicsProcessor />
           </div>
         </div>
@@ -94,6 +108,15 @@
 
   const notificationRef = ref(null)
   const sharedBanner = ref(null)
+
+  // Section shown on narrow screens (< 900px); all three are visible otherwise.
+  // Components stay mounted, so audio and keyboard shortcuts keep working.
+  const TABS = [
+    { key: 'source', label: 'app_tab_source' },
+    { key: 'eq', label: 'app_tab_eq' },
+    { key: 'dynamics', label: 'app_tab_dynamics' },
+  ]
+  const activeTab = ref('eq')
   let sharedFilesHandled = false
 
   // Toasts for the components on this page (presets, bypass, undo/redo, …).
@@ -213,6 +236,58 @@
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  /* Segment control: hidden on wide screens where all columns fit */
+  .app-tabs {
+    display: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px;
+    padding: 3px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--secondary-bg);
+  }
+
+  .app-tabs button {
+    height: 32px;
+    min-width: 0;
+    padding: 0 8px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .app-tabs button.active {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .app-tabs button:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 1px;
+  }
+
+  @media (max-width: 900px) {
+    .app-tabs {
+      display: grid;
+    }
+
+    .grid-three-column > :not(.is-active) {
+      display: none;
+    }
   }
 
   /* Shared Files Banner */

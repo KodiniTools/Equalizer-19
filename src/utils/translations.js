@@ -4,6 +4,10 @@ export const translations = {
     nav_start_app: 'App starten',
     app_back_home: 'Zur Startseite',
     app_help: 'Hilfe & FAQ',
+    app_tabs_label: 'Bereich',
+    app_tab_source: 'Quelle',
+    app_tab_eq: 'Equalizer',
+    app_tab_dynamics: 'Dynamik',
     language: 'Sprache',
     theme: 'Design',
 
@@ -375,6 +379,10 @@ export const translations = {
     nav_start_app: 'Start App',
     app_back_home: 'Back to home',
     app_help: 'Help & FAQ',
+    app_tabs_label: 'Section',
+    app_tab_source: 'Source',
+    app_tab_eq: 'Equalizer',
+    app_tab_dynamics: 'Dynamics',
     language: 'Language',
     theme: 'Theme',
 
