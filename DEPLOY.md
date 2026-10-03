@@ -80,8 +80,8 @@ sudo /opt/equaliser19/deploy.sh rollback 20260907-120000
 
 ## 5. Hinweise
 
-- `index.html` bindet `/fontawesome/...` und die SSI-Partials
-  (`/partials/nav.html` usw.) der Hauptseite ein. Der Snippet
+- `index.html` bindet die SSI-Partials (`/partials/nav.html` usw.) der
+  Hauptseite ein; Font Awesome wird nicht mehr geladen, die Icons sind Inline-SVG. Der Snippet
   `kodini-spa-static.conf` muss dafür wie bei den anderen KodiniTools-Apps
   `ssi on` gesetzt haben.
 - Das Skript bricht bei jedem Fehler ab. Tritt der Fehler vor dem Schritt
