@@ -13,45 +13,16 @@
             </router-link>
             <a href="#features" class="lp-btn lp-btn-ghost">{{ t.lp_cta_learn }}</a>
           </div>
+          <ul class="lp-trust">
+            <li v-for="key in trust" :key="key">
+              <AppIcon name="check" size="14" />
+              {{ t[`lp_trust_${key}`] }}
+            </li>
+          </ul>
         </div>
 
-        <!-- Product visual: the real "V-Shape" preset curve -->
-        <figure class="lp-visual">
-          <svg
-            class="lp-curve"
-            :viewBox="`0 0 ${CHART.w} ${CHART.h}`"
-            role="img"
-            :aria-label="t.lp_visual_label"
-          >
-            <line
-              v-for="y in curve.grid"
-              :key="y"
-              class="lp-grid"
-              x1="0"
-              :y1="y"
-              :x2="CHART.w"
-              :y2="y"
-            />
-            <line class="lp-zero" x1="0" :y1="CHART.mid" :x2="CHART.w" :y2="CHART.mid" />
-            <rect
-              v-for="bar in curve.bars"
-              :key="bar.x"
-              class="lp-bar"
-              :class="{ cut: bar.gain < 0 }"
-              :x="bar.x"
-              :y="bar.y"
-              :width="CHART.barW"
-              :height="bar.h"
-              rx="3"
-            />
-            <polyline class="lp-line" :points="curve.points" />
-          </svg>
-          <figcaption class="lp-visual-caption">
-            <span>20 Hz</span>
-            <span>{{ t.lp_visual_label }}</span>
-            <span>20 kHz</span>
-          </figcaption>
-        </figure>
+        <!-- Interactive product demo: the same presets the app ships with -->
+        <HeroEqualizer class="lp-demo" />
       </div>
     </section>
 
@@ -85,15 +56,76 @@
           <p>{{ t.lp_modules_subtitle }}</p>
         </header>
 
-        <div class="lp-modules">
-          <article v-for="(mod, i) in modules" :key="mod.key" class="lp-module">
-            <span class="lp-index" aria-hidden="true">{{ String(i + 1).padStart(2, '0') }}</span>
+        <div class="lp-chain">
+          <span class="lp-chain-end lp-chain-start mono">{{ t.lp_chain_in }}</span>
+          <article v-for="mod in modules" :key="mod.key" class="lp-module">
+            <div class="lp-module-art" aria-hidden="true">
+              <!-- Equalizer: real "Rock" preset curve -->
+              <svg
+                v-if="mod.key === 'eq'"
+                :viewBox="`0 0 ${ART.w} ${ART.h}`"
+                preserveAspectRatio="none"
+              >
+                <line class="art-zero" x1="0" :x2="ART.w" :y1="artCurve.mid" :y2="artCurve.mid" />
+                <path class="art-fill boost" :d="artCurve.area" clip-path="url(#lp-art-up)" />
+                <path class="art-fill cut" :d="artCurve.area" clip-path="url(#lp-art-dn)" />
+                <path class="art-line" :d="artCurve.line" />
+                <defs>
+                  <clipPath id="lp-art-up">
+                    <rect x="0" y="0" :width="ART.w" :height="artCurve.mid" />
+                  </clipPath>
+                  <clipPath id="lp-art-dn">
+                    <rect x="0" :y="artCurve.mid" :width="ART.w" :height="artCurve.mid" />
+                  </clipPath>
+                </defs>
+              </svg>
+              <!-- Compressor: input/output transfer curve with soft knee -->
+              <svg
+                v-else-if="mod.key === 'comp'"
+                :viewBox="`0 0 ${ART.w} ${ART.h}`"
+                preserveAspectRatio="none"
+              >
+                <line class="art-zero" x1="0" :y1="ART.h" :x2="ART.w" y2="0" />
+                <path class="art-fill boost" :d="compArea" />
+                <path class="art-line" :d="compLine" />
+              </svg>
+              <!-- Recorder: level meter with peak hold -->
+              <svg v-else :viewBox="`0 0 ${ART.w} ${ART.h}`" preserveAspectRatio="none">
+                <template v-for="(bar, i) in meterBars" :key="i">
+                  <rect
+                    class="art-meter-track"
+                    :x="bar.x"
+                    y="0"
+                    :width="bar.w"
+                    :height="ART.h"
+                    rx="2"
+                  />
+                  <rect
+                    class="art-meter"
+                    :x="bar.x"
+                    :y="ART.h - bar.h"
+                    :width="bar.w"
+                    :height="bar.h"
+                    rx="2"
+                  />
+                  <rect
+                    class="art-peak"
+                    :x="bar.x"
+                    :y="ART.h - bar.peak"
+                    :width="bar.w"
+                    height="2"
+                  />
+                </template>
+                <circle class="art-rec" :cx="ART.w - 10" cy="10" r="5" />
+              </svg>
+            </div>
             <h3>{{ t[`lp_mod_${mod.key}_title`] }}</h3>
             <p>{{ t[`lp_mod_${mod.key}_desc`] }}</p>
             <ul>
               <li v-for="n in 3" :key="n">{{ t[`lp_mod_${mod.key}_${n}`] }}</li>
             </ul>
           </article>
+          <span class="lp-chain-end lp-chain-finish mono">{{ t.lp_chain_out }}</span>
         </div>
       </div>
     </section>
@@ -146,7 +178,10 @@
 
 <script setup>
   import { inject } from 'vue'
+  import AppIcon from '../components/AppIcon.vue'
+  import HeroEqualizer from '../components/HeroEqualizer.vue'
   import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../utils/presets.js'
+  import { buildEqCurve, smoothPath } from '../utils/eqCurve.js'
 
   const { t } = inject('i18n')
 
@@ -154,36 +189,35 @@
   const bandCount = EQ_BAND_FREQUENCIES.length
   const presetCount = Object.keys(EQ_PRESETS).length + Object.keys(COMP_PRESETS).length
 
+  const trust = ['uploads', 'account', 'browsers']
   const modules = [{ key: 'eq' }, { key: 'comp' }, { key: 'rec' }]
   const details = ['privacy', 'realtime', 'viz', 'playlist', 'keys', 'devices']
 
-  // Hero chart geometry (SVG user units). The curve is scaled to its own peak
-  // (plus headroom) so it fills the card instead of using the full ±12 dB range.
-  const CHART = { w: 380, h: 170, mid: 85, range: 72, barW: 12 }
+  // Small illustrations in the signal-chain cards (SVG user units)
+  const ART = { w: 160, h: 56 }
+  const artCurve = buildEqCurve(EQ_PRESETS.Rock, { w: ART.w, h: ART.h, range: ART.h * 0.4 })
 
-  function buildCurve(gains) {
-    const MAX_GAIN = Math.max(...gains.map(Math.abs), 1) * 1.15
-    const step = CHART.w / gains.length
-    const bars = gains.map((gain, i) => {
-      const x = i * step + (step - CHART.barW) / 2
-      const offset = (Math.abs(gain) / MAX_GAIN) * CHART.range
-      const h = Math.max(offset, 2)
-      const y = gain >= 0 ? CHART.mid - h : CHART.mid
-      return { x, y, h, gain }
-    })
-    const points = gains
-      .map((gain, i) => {
-        const x = i * step + step / 2
-        const y = CHART.mid - (gain / MAX_GAIN) * CHART.range
-        return `${x.toFixed(1)},${y.toFixed(1)}`
-      })
-      .join(' ')
-    // Faint helper lines at half and full scale above/below the 0 dB line
-    const grid = [-1, -0.5, 0.5, 1].map((f) => CHART.mid - f * CHART.range)
-    return { bars, points, grid }
-  }
+  // Compressor transfer curve: unity below the threshold, 4:1 above, soft knee.
+  const compPoints = [
+    [0, ART.h],
+    [ART.w * 0.42, ART.h * 0.58],
+    [ART.w * 0.58, ART.h * 0.47],
+    [ART.w, ART.h * 0.36],
+  ]
+  const compLine = smoothPath(compPoints)
+  const compArea = `${compLine} L${ART.w},${ART.h} Z`
 
-  const curve = buildCurve(EQ_PRESETS['V-Shape'])
+  // Static level-meter bars (fraction of full scale) with a peak-hold mark.
+  const meterBars = [0.55, 0.72, 0.64, 0.86, 0.48].map((level, i, all) => {
+    const gap = 6
+    const w = (ART.w - 24 - gap * (all.length - 1)) / all.length
+    return {
+      x: i * (w + gap),
+      w,
+      h: level * ART.h,
+      peak: Math.min(ART.h, level * ART.h + 8),
+    }
+  })
 </script>
 
 <style scoped>
@@ -235,69 +269,36 @@
     color: var(--text-secondary);
   }
 
-  .lp-visual {
-    margin: 0;
-    padding: 24px 24px 16px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    box-shadow: 0 24px 60px var(--shadow-light);
-  }
-
-  .lp-curve {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .lp-grid {
-    stroke: var(--border-color);
-    stroke-width: 1;
-    opacity: 0.35;
-  }
-
-  .lp-zero {
-    stroke: var(--border-color);
-    stroke-width: 1;
-    stroke-dasharray: 4 4;
-  }
-
-  .lp-bar {
-    fill: var(--accent-primary);
-    opacity: 0.85;
-  }
-
-  .lp-bar.cut {
-    opacity: 0.35;
-  }
-
-  .lp-line {
-    fill: none;
-    stroke: var(--text-primary);
-    stroke-width: 2;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    opacity: 0.55;
-  }
-
-  .lp-visual-caption {
+  .lp-trust {
     display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: 12px;
-    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
     color: var(--text-muted);
   }
 
-  .lp-visual-caption span:nth-child(2) {
-    text-align: center;
+  .lp-trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
-  /* ---- Facts ---- */
+  .lp-trust .icon {
+    color: var(--success);
+  }
+
+  .lp-demo {
+    min-width: 0;
+  }
+
+  /* ---- Facts: a narrow strip under the hero ---- */
   .lp-facts {
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    background: var(--card-bg);
+    background: var(--secondary-bg);
   }
 
   .lp-facts-grid {
@@ -307,7 +308,9 @@
   }
 
   .lp-fact {
-    padding: 28px 16px;
+    display: grid;
+    gap: 2px;
+    padding: 18px 20px;
   }
 
   .lp-fact + .lp-fact {
@@ -315,18 +318,18 @@
   }
 
   .lp-fact dt {
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 1;
-    color: var(--accent-primary);
-    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text-primary);
   }
 
   .lp-fact dd {
     margin: 0;
-    font-size: 14px;
+    font-size: 12.5px;
     line-height: 1.4;
-    color: var(--text-secondary);
+    color: var(--text-muted);
   }
 
   /* ---- Sections ---- */
@@ -366,27 +369,117 @@
     color: var(--text-secondary);
   }
 
-  /* ---- Modules ---- */
-  .lp-modules {
+  /* ---- Modules as a signal chain ---- */
+  .mono {
+    font-family: var(--font-mono);
+  }
+
+  .lp-chain {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
+    grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .lp-chain-end {
+    align-self: center;
+    padding: 6px 10px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
   }
 
   .lp-module {
-    padding: 28px;
+    position: relative;
+    padding: 20px 24px 24px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 16px;
   }
 
-  .lp-index {
-    display: block;
+  /* Connector between consecutive stages */
+  .lp-module + .lp-module::before {
+    content: '';
+    position: absolute;
+    top: 48px;
+    left: -16px;
+    width: 16px;
+    height: 2px;
+    background: var(--border-strong);
+  }
+
+  .lp-module + .lp-module::after {
+    content: '';
+    position: absolute;
+    top: 45px;
+    left: -6px;
+    width: 6px;
+    height: 6px;
+    border-top: 2px solid var(--border-strong);
+    border-right: 2px solid var(--border-strong);
+    transform: rotate(45deg);
+  }
+
+  .lp-module-art {
+    height: 56px;
     margin-bottom: 18px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--accent-primary);
+  }
+
+  .lp-module-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .art-zero {
+    stroke: var(--text-muted);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .art-fill {
+    opacity: 0.2;
+  }
+
+  .art-fill.boost {
+    fill: var(--eq-boost);
+  }
+
+  .art-fill.cut {
+    fill: var(--eq-cut);
+  }
+
+  .art-line {
+    fill: none;
+    stroke: var(--accent-primary);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .art-meter-track {
+    fill: var(--border-color);
+    opacity: 0.6;
+  }
+
+  .art-meter {
+    fill: var(--eq-cut);
+  }
+
+  .art-peak {
+    fill: var(--accent-primary);
+  }
+
+  .art-rec {
+    fill: var(--error);
   }
 
   .lp-module h3 {
@@ -542,9 +635,33 @@
       border-top: 1px solid var(--border-color);
     }
 
-    .lp-modules,
     .lp-steps {
       grid-template-columns: 1fr;
+    }
+
+    .lp-chain {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .lp-chain-end {
+      justify-self: start;
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+
+    /* Stacked: connector points down instead of right */
+    .lp-module + .lp-module::before {
+      top: -12px;
+      left: 32px;
+      width: 2px;
+      height: 12px;
+    }
+
+    .lp-module + .lp-module::after {
+      top: -7px;
+      left: 29px;
+      transform: rotate(135deg);
     }
 
     .lp-details {
@@ -574,20 +691,12 @@
       justify-content: center;
     }
 
-    .lp-visual {
-      padding: 16px 16px 12px;
-    }
-
-    .lp-visual-caption {
-      font-size: 11px;
-    }
-
     .lp-fact {
-      padding: 20px 12px;
+      padding: 14px 12px;
     }
 
     .lp-fact dt {
-      font-size: 28px;
+      font-size: 20px;
     }
 
     .lp-details {
