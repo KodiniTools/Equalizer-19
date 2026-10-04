@@ -65,6 +65,7 @@ Equalizer-19/
 │   │   ├── DownloadDialog.vue         # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
 │   │   ├── Equalizer.vue              # 19-Band EQ-Interface
+│   │   ├── HeroNav.vue                # Lokale Navigation der Landing-Page (sticky unter der globalen Nav)
 │   │   ├── Notification.vue           # Toast-Benachrichtigungen
 │   │   ├── PlayerTransport.vue        # Wiedergabe-Buttons (in StickyPlayerBar)
 │   │   ├── Playlist.vue               # Track-Playlist
@@ -72,6 +73,9 @@ Equalizer-19/
 │   │   ├── StickyPlayerBar.vue        # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue          # Lautstärke (in StickyPlayerBar)
 │   │   └── Visualization.vue          # Spektrum-Analyzer
+│   │
+│   ├── data/
+│   │   └── blogArticles.js            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   │
 │   ├── composables/        # Vue Composition API Logik
 │   │   ├── useAudioEngine.js          # Audio-Verarbeitungskette
@@ -86,6 +90,7 @@ Equalizer-19/
 │   └── utils/              # Hilfsfunktionen & Konstanten
 │       ├── audioBlob.js            # Blob-Prüfung für übergebene Dateien
 │       ├── audioChain.js           # Routing der Verarbeitungskette (reine Funktionen)
+│       ├── blogCards.js            # Blog-Karten: Datum/Sprache (reine Funktionen)
 │       ├── playbackOrder.js        # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js              # EQ- und Kompressor-Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter

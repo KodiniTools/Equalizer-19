@@ -64,6 +64,7 @@ equalizer19-vue/
 │   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
 │   │   ├── Equalizer.vue       # Equalizer-UI
+│   │   ├── HeroNav.vue         # Lokale Navigation der Landing-Page (Start, Funktionen, Blog, FAQ)
 │   │   ├── HistoryControls.vue # Undo/Redo-Buttons (Kopfzeile der App)
 │   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
 │   │   ├── Notification.vue    # Toast-Notifications
@@ -73,6 +74,8 @@ equalizer19-vue/
 │   │   ├── StickyPlayerBar.vue # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
 │   │   └── Visualization.vue   # Spektrum-Analyzer
+│   ├── data/
+│   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   ├── composables/
 │   │   ├── useAudioEngine.js   # Audio-Engine-Management
 │   │   ├── useAudioPlayer.js   # Player-Logik
@@ -90,6 +93,7 @@ equalizer19-vue/
 │   └── utils/
 │       ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
 │       ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
+│       ├── blogCards.js        # Blog-Karten: Datum/Sprache (reine Funktionen)
 │       ├── history.js          # Generischer Undo/Redo-Stack (reine Funktionen)
 │       ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js          # EQ/Comp Presets
