@@ -80,6 +80,16 @@ export const translations = {
     lp_det_devices_desc: 'Für Desktop, Tablet und Smartphone – mit hellem und dunklem Design.',
     lp_final_title: 'Bereit zum Loslegen?',
     lp_final_desc: 'Starte jetzt – kostenlos und ohne Anmeldung.',
+    // Landing page: local navigation + blog cards
+    lp_nav_label: 'Seitennavigation',
+    lp_nav_home: 'Start',
+    lp_nav_features: 'Funktionen',
+    lp_nav_blog: 'Blog',
+    lp_nav_faq: 'FAQ',
+    lp_blog_title: 'Aus dem Blog',
+    lp_blog_subtitle: 'Anleitungen und Hintergründe zum Equalizer 19 auf kodinitools.com.',
+    lp_blog_read_more: 'Artikel lesen',
+    lp_blog_minutes: 'Min.',
 
     // FAQ Page
     faq_title: 'Häufig gestellte Fragen',
@@ -456,6 +466,16 @@ export const translations = {
     lp_det_devices_desc: 'Desktop, tablet and phone – with light and dark themes.',
     lp_final_title: 'Ready to start?',
     lp_final_desc: 'Start now – free and without sign-up.',
+    // Landing page: local navigation + blog cards
+    lp_nav_label: 'Page navigation',
+    lp_nav_home: 'Home',
+    lp_nav_features: 'Features',
+    lp_nav_blog: 'Blog',
+    lp_nav_faq: 'FAQ',
+    lp_blog_title: 'From the Blog',
+    lp_blog_subtitle: 'Guides and background articles about Equalizer 19 on kodinitools.com.',
+    lp_blog_read_more: 'Read article',
+    lp_blog_minutes: 'min',
 
     // FAQ Page
     faq_title: 'Frequently Asked Questions',
