@@ -731,6 +731,34 @@ body.has-sticky-player {
   padding-bottom: var(--sticky-player-h, 110px);
 }
 
+/* ===== GLOBAL SITE NAV (SSI partial /partials/nav.html) =====
+   The shared partial sets its own light palette on .global-nav, with a cream
+   yellow background (rgba(249, 242, 213, 0.9)). In the light theme it takes
+   this app's surface instead, the same as the HeroNav below it.
+   The partial's <style> comes later in the document, so the [data-theme]
+   prefix (specificity 0,2,0) is what lets these rules beat its .global-nav
+   defaults (0,1,0).
+   All of its light variables are restated on purpose: with a dark OS setting
+   the partial swaps them for its dark set (prefers-color-scheme), which would
+   put light text on this light background. Values other than the background
+   are the partial's own. The partial names its variable --nav-bg as well, so
+   the app's --nav-bg cannot be referenced here; color-mix() rebuilds it
+   (--primary-bg at 95 %). */
+[data-theme='light'] .global-nav {
+  --nav-bg: color-mix(in srgb, var(--primary-bg) 95%, transparent);
+  --nav-text: #003971;
+  --nav-text-hover: #001d3d;
+  --nav-bg-hover: rgba(1, 79, 153, 0.06);
+  --nav-border: rgba(1, 79, 153, 0.1);
+  --nav-shadow: rgba(0, 57, 113, 0.08);
+  --dropdown-bg: rgba(255, 255, 255, 0.97);
+  --dropdown-border: rgba(1, 79, 153, 0.08);
+  --dropdown-shadow: rgba(0, 57, 113, 0.12);
+  --accent-color: #014f99;
+  /* Also replaces the partial's fixed yellow for browsers without backdrop-filter */
+  background: var(--nav-bg);
+}
+
 /* ===== PAGE BUTTONS (landing, FAQ, app header) ===== */
 .lp-actions {
   display: flex;
