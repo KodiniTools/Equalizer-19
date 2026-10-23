@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../pages/LandingPage.vue'
 import AppPage from '../pages/AppPage.vue'
 import FaqPage from '../pages/FaqPage.vue'
+import { isReceivableSource } from '../utils/sharedFileRepository'
 
 // Offset for in-page anchors: each page sets `scroll-margin-top` on its targets
 // (FAQ: global nav; landing page: global nav + HeroNav), so the CSS stays the
@@ -50,10 +51,10 @@ const router = createRouter({
   },
 })
 
-// Redirect landing page with ?source=audiokonverter to the app
+// Redirect landing page with a hand-over (?source=<tool>) to the app
 router.beforeEach((to, from, next) => {
-  if (to.name === 'Landing' && to.query.source === 'audiokonverter') {
-    next({ name: 'App', query: { source: 'audiokonverter' } })
+  if (to.name === 'Landing' && isReceivableSource(to.query.source)) {
+    next({ name: 'App', query: { source: to.query.source } })
   } else {
     if (to.meta.title) {
       document.title = to.meta.title

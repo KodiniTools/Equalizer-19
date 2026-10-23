@@ -81,7 +81,11 @@
   import { ref, computed, watch, inject, provide, onMounted } from 'vue'
   import AppIcon from '../components/AppIcon.vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { getSharedFiles, clearSharedFiles } from '../utils/sharedFileRepository'
+  import {
+    getSharedFiles,
+    clearSharedFiles,
+    isReceivableSource,
+  } from '../utils/sharedFileRepository'
 
   import Notification from '../components/Notification.vue'
   import StickyPlayerBar from '../components/StickyPlayerBar.vue'
@@ -196,14 +200,14 @@
 
   // Primary: after router is ready
   router.isReady().then(() => {
-    if (route.query.source === 'audiokonverter') loadSharedFiles()
+    if (isReceivableSource(route.query.source)) loadSharedFiles()
   })
 
   // Fallback: route watcher
   watch(
     () => route.query.source,
     (s) => {
-      if (s === 'audiokonverter') loadSharedFiles()
+      if (isReceivableSource(s)) loadSharedFiles()
     }
   )
 </script>
