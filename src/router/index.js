@@ -3,6 +3,8 @@ import LandingPage from '../pages/LandingPage.vue'
 import AppPage from '../pages/AppPage.vue'
 import FaqPage from '../pages/FaqPage.vue'
 import { isReceivableSource } from '../utils/sharedFileRepository'
+import { applyPageMeta } from '../utils/seoMeta'
+import { getCurrentLanguage } from '../composables/useI18n'
 
 // Offset for in-page anchors: each page sets `scroll-margin-top` on its targets
 // (FAQ: global nav; landing page: global nav + HeroNav), so the CSS stays the
@@ -20,19 +22,16 @@ const routes = [
     path: '/',
     name: 'Landing',
     component: LandingPage,
-    meta: { title: 'Equalizer 19 - Professional Audio Processing' },
   },
   {
     path: '/app',
     name: 'App',
     component: AppPage,
-    meta: { title: 'Equalizer 19 - Audio Processor' },
   },
   {
     path: '/faq',
     name: 'FAQ',
     component: FaqPage,
-    meta: { title: 'Equalizer 19 - FAQ' },
   },
 ]
 
@@ -56,9 +55,7 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'Landing' && isReceivableSource(to.query.source)) {
     next({ name: 'App', query: { source: to.query.source } })
   } else {
-    if (to.meta.title) {
-      document.title = to.meta.title
-    }
+    applyPageMeta(to.path, getCurrentLanguage())
     next()
   }
 })
