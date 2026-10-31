@@ -1,11 +1,17 @@
 import { ref, computed } from 'vue'
 import { translations } from '../utils/translations'
+import { applyPageMeta, routePathFromLocation } from '../utils/seoMeta'
 
 const currentLanguage = ref(
   localStorage.getItem('equalizer-language') ||
     localStorage.getItem('locale') ||
     detectBrowserLanguage()
 )
+
+/** Current UI language ('de' | 'en'), readable outside components (router). */
+export function getCurrentLanguage() {
+  return currentLanguage.value
+}
 
 function detectBrowserLanguage() {
   const lang = navigator.language || navigator.userLanguage
@@ -54,16 +60,8 @@ export function useI18n() {
     localStorage.setItem('locale', lang)
     document.documentElement.lang = lang
 
-    // Update meta tags
-    const title = t.value.main_title
-    document.title = title
-    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute('content', t.value.promo_subtitle)
-    document
-      .querySelector('meta[property="og:description"]')
-      ?.setAttribute('content', t.value.promo_subtitle)
+    // Update meta tags for the current route
+    applyPageMeta(routePathFromLocation(window.location.pathname), lang)
 
     // Update data-lang-* elements in SSI partials
     updateDataLangElements(lang)
