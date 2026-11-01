@@ -1,21 +1,20 @@
 import { ref, computed } from 'vue'
 import { translations } from '../utils/translations'
-import { applyPageMeta, routePathFromLocation } from '../utils/seoMeta'
+import { applyPageMeta, resolveInitialLanguage, routePathFromLocation } from '../utils/seoMeta'
 
+// ?lang=en (hreflang-Ziel) hat Vorrang vor der gespeicherten Sprache, sonst Deutsch.
 const currentLanguage = ref(
-  localStorage.getItem('equalizer-language') ||
-    localStorage.getItem('locale') ||
-    detectBrowserLanguage()
+  resolveInitialLanguage(
+    window.location.search,
+    localStorage.getItem('equalizer-language'),
+    localStorage.getItem('locale')
+  )
 )
+localStorage.setItem('equalizer-language', currentLanguage.value)
 
 /** Current UI language ('de' | 'en'), readable outside components (router). */
 export function getCurrentLanguage() {
   return currentLanguage.value
-}
-
-function detectBrowserLanguage() {
-  const lang = navigator.language || navigator.userLanguage
-  return lang.startsWith('de') ? 'de' : 'en'
 }
 
 // Update all SSI elements that use the data-lang-de / data-lang-en pattern
