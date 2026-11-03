@@ -44,22 +44,12 @@
       <!-- LEFT: Upload + track info -->
       <div class="sp-section sp-left">
         <div class="upload-group">
-          <button
-            class="btn btn-icon btn-sm"
-            :title="t.player_select_files"
-            :aria-label="t.player_select_files"
-            @click="triggerFileSelect"
-          >
+          <UiIconButton :label="t.player_select_files" @click="triggerFileSelect">
             <AppIcon name="file-audio" />
-          </button>
-          <button
-            class="btn btn-icon btn-sm"
-            :title="t.player_select_folder"
-            :aria-label="t.player_select_folder"
-            @click="triggerFolderSelect"
-          >
+          </UiIconButton>
+          <UiIconButton :label="t.player_select_folder" @click="triggerFolderSelect">
             <AppIcon name="folder" />
-          </button>
+          </UiIconButton>
         </div>
 
         <div v-if="inputSource?.isActive.value" class="track-info">
@@ -111,6 +101,7 @@
   import PlayerTransport from './PlayerTransport.vue'
   import VolumeControl from './VolumeControl.vue'
   import RecorderControls from './RecorderControls.vue'
+  import { UiIconButton } from './ui'
 
   const emit = defineEmits(['files-selected'])
 
@@ -268,7 +259,7 @@
     justify-content: flex-end;
   }
 
-  /* ---- Upload buttons (global .btn system) ---- */
+  /* ---- Upload buttons (UiIconButton) ---- */
   .upload-group {
     display: flex;
     gap: 4px;

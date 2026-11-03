@@ -28,8 +28,8 @@
    * Card shell shared by the sidebar panels: consistent header (icon, title,
    * right-aligned actions), body and optional footer.
    *
-   * `icon` is a name from utils/icons.js. Header buttons use the global
-   * .btn system (.btn.btn-icon.btn-sm, .is-on = on). Slotted helpers styled
+   * `icon` is a name from utils/icons.js. Header buttons are UiIconButton
+   * (components/ui), `pressed` = on. Slotted helpers styled
    * here: .panel-badge (small pill), .panel-section-label (small caps label).
    */
   defineProps({

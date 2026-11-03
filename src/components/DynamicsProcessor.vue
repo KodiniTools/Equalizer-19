@@ -1,23 +1,17 @@
 <template>
   <BasePanel icon="sliders" :title="t.dynamics">
     <template #actions>
-      <button
-        class="btn btn-icon btn-sm"
-        :title="t.reset"
-        :aria-label="t.reset"
-        @click="resetDynamics"
-      >
+      <UiIconButton :label="t.reset" @click="resetDynamics">
         <AppIcon name="undo" />
-      </button>
-      <button
-        :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': dynamicsEnabled }]"
+      </UiIconButton>
+      <UiIconButton
+        :pressed="dynamicsEnabled"
+        :label="t.a11y_dynamics_toggle"
         :title="dynamicsEnabled ? t.comp_toggle_off : t.comp_toggle_on"
-        :aria-label="t.a11y_dynamics_toggle"
-        :aria-pressed="dynamicsEnabled"
         @click="toggleDynamics"
       >
         <AppIcon name="power" />
-      </button>
+      </UiIconButton>
     </template>
 
     <!-- Preset -->
@@ -145,6 +139,7 @@
   import { DEFAULT_DYNAMICS } from '../utils/presets.js'
   import BasePanel from './BasePanel.vue'
   import CompressorPresets from './CompressorPresets.vue'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')

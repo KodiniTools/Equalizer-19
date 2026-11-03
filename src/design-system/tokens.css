@@ -25,6 +25,7 @@
   --accent-tertiary: #f8e1a9;
   --accent-text: #091428;
   --on-accent: #091428;
+  --on-status: #ffffff; /* Text auf Erfolgs-, Warn- und Fehlerflächen */
   --accent-hover: #b8843a;
   --text-primary: #f9f2d5;
   --text-secondary: #b9c2d0;
@@ -62,6 +63,7 @@
   --accent-tertiary: #003971;
   --accent-text: #f5f4d6;
   --on-accent: #ffffff;
+  --on-status: #ffffff;
   --accent-hover: #013f7a;
   --text-primary: #003971;
   --text-secondary: #4a5a70;

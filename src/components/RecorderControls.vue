@@ -65,59 +65,54 @@
 
     <div class="rec-controls">
       <!-- Countdown running: shows the seconds left, click cancels -->
-      <button
+      <UiIconButton
         v-if="isCounting"
-        class="btn btn-icon btn-sm rec-btn countdown"
-        :title="t.rec_countdown_cancel"
-        :aria-label="t.rec_countdown_cancel"
+        class="rec-btn countdown"
+        :label="t.rec_countdown_cancel"
         @click="cancelCountdown"
       >
         {{ countdownRemaining }}
-      </button>
+      </UiIconButton>
 
       <!-- Record button -->
-      <button
+      <UiIconButton
         v-if="!isRecording && !hasRecording && !isCounting"
-        class="btn btn-icon btn-sm rec-btn rec"
-        :title="t.rec_start"
-        :aria-label="t.rec_start"
+        class="rec-btn rec"
+        :label="t.rec_start"
         @click="handleStartRecording"
       >
         <AppIcon name="record" />
-      </button>
+      </UiIconButton>
 
       <!-- Stop recording button -->
-      <button
+      <UiIconButton
         v-if="isRecording"
-        class="btn btn-icon btn-sm rec-btn stop"
-        :title="t.stop"
-        :aria-label="t.stop"
+        class="rec-btn stop"
+        :label="t.stop"
         @click="handleStopRecording"
       >
         <AppIcon name="stop" />
-      </button>
+      </UiIconButton>
 
       <!-- Download button -->
-      <button
+      <UiIconButton
         v-if="hasRecording && !isRecording"
-        class="btn btn-icon btn-sm rec-btn download"
-        :title="t.download"
-        :aria-label="t.download"
+        class="rec-btn download"
+        :label="t.download"
         @click="handleDownload"
       >
         <AppIcon name="download" />
-      </button>
+      </UiIconButton>
 
       <!-- New recording button -->
-      <button
+      <UiIconButton
         v-if="hasRecording && !isRecording"
-        class="btn btn-icon btn-sm rec-btn new"
-        :title="t.rec_new"
-        :aria-label="t.rec_new"
+        class="rec-btn new"
+        :label="t.rec_new"
         @click="handleNewRecording"
       >
         <AppIcon name="redo" />
-      </button>
+      </UiIconButton>
     </div>
 
     <!-- Error indicator -->
@@ -152,6 +147,7 @@
   import { useCountdown, START_DELAYS } from '../composables/useCountdown'
   import DownloadDialog from './DownloadDialog.vue'
   import CountdownOverlay from './CountdownOverlay.vue'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
@@ -361,21 +357,21 @@
     gap: 6px;
   }
 
-  /* Record / stop / download: global .btn system with a status colour */
-  .btn.rec-btn.rec,
-  .btn.rec-btn.countdown {
+  /* Record / stop / download: UiIconButton with a status colour */
+  .ui-button.rec-btn.rec,
+  .ui-button.rec-btn.countdown {
     background: var(--error);
     border-color: var(--error);
     color: #ffffff;
   }
 
-  .btn.rec-btn.rec:hover:not(:disabled) {
+  .ui-button.rec-btn.rec:hover:not(:disabled) {
     background: color-mix(in srgb, var(--error) 85%, #000);
     border-color: color-mix(in srgb, var(--error) 85%, #000);
   }
 
   /* Countdown in the bar: seconds left, click cancels */
-  .btn.rec-btn.countdown {
+  .ui-button.rec-btn.countdown {
     font-size: 15px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
@@ -422,24 +418,24 @@
     color: var(--text-primary);
   }
 
-  .btn.rec-btn.stop {
+  .ui-button.rec-btn.stop {
     background: var(--warning);
     border-color: var(--warning);
     color: #ffffff;
   }
 
-  .btn.rec-btn.stop:hover:not(:disabled) {
+  .ui-button.rec-btn.stop:hover:not(:disabled) {
     background: color-mix(in srgb, var(--warning) 85%, #000);
     border-color: color-mix(in srgb, var(--warning) 85%, #000);
   }
 
-  .btn.rec-btn.download {
+  .ui-button.rec-btn.download {
     background: var(--success);
     border-color: var(--success);
     color: #ffffff;
   }
 
-  .btn.rec-btn.download:hover:not(:disabled) {
+  .ui-button.rec-btn.download:hover:not(:disabled) {
     background: color-mix(in srgb, var(--success) 85%, #000);
     border-color: color-mix(in srgb, var(--success) 85%, #000);
   }

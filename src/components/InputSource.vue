@@ -60,18 +60,17 @@
         </div>
 
         <!-- Start / stop -->
-        <button
+        <UiButton
           v-if="!input.isActive.value"
-          type="button"
-          class="btn btn-primary"
+          variant="primary"
           :disabled="input.isStarting.value"
           @click="input.start()"
         >
           {{ input.isStarting.value ? t.input_starting : t.input_start }}
-        </button>
-        <button v-else type="button" class="btn" @click="input.stop()">
+        </UiButton>
+        <UiButton v-else @click="input.stop()">
           {{ t.input_stop }}
-        </button>
+        </UiButton>
 
         <p v-if="input.isActive.value && activeName" class="msg status" aria-live="polite">
           {{ t.input_active.replace('{name}', activeName) }}
@@ -121,6 +120,7 @@
   import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
   import { SYSTEM_AUDIO } from '../composables/useInputSource'
+  import { UiButton } from './ui'
 
   const { t } = inject('i18n')
   // Provided by AppPage (useInputSource)

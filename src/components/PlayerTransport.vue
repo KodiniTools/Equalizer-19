@@ -1,72 +1,63 @@
 <template>
   <div class="sp-section sp-center">
-    <button
-      :class="['btn', 'btn-icon', 'btn-ghost', 'btn-sm', 'mode', { 'is-on': isShuffle }]"
-      :title="t.player_shuffle"
-      :aria-label="t.player_shuffle"
-      :aria-pressed="isShuffle"
+    <UiIconButton
+      variant="ghost"
+      :pressed="isShuffle"
+      class="mode"
+      :label="t.player_shuffle"
       @click="toggleShuffle"
     >
       <AppIcon name="shuffle" />
-    </button>
+    </UiIconButton>
 
-    <button
+    <UiIconButton
+      variant="ghost"
+      :label="t.player_prev"
       :disabled="!canPlayPrevious"
-      class="btn btn-icon btn-ghost btn-sm"
-      :title="t.player_prev"
-      :aria-label="t.player_prev"
       @click="playPrevious"
     >
       <AppIcon name="prev" />
-    </button>
+    </UiIconButton>
 
-    <button
-      class="btn btn-icon btn-primary btn-round play"
-      :title="isPlaying ? t.pause : t.play"
-      :aria-label="isPlaying ? t.pause : t.play"
+    <UiIconButton
+      variant="primary"
+      size="md"
+      round
+      class="play"
+      :label="isPlaying ? t.pause : t.play"
       :aria-pressed="isPlaying"
       @click="togglePlayPause"
     >
       <AppIcon v-if="isLoading" name="spinner" spin />
       <AppIcon v-else-if="isPlaying" name="pause" />
       <AppIcon v-else name="play" />
-    </button>
+    </UiIconButton>
 
-    <button
-      class="btn btn-icon btn-ghost btn-sm"
-      :title="t.stop"
-      :aria-label="t.stop"
-      @click="stop"
-    >
+    <UiIconButton variant="ghost" :label="t.stop" @click="stop">
       <AppIcon name="stop" />
-    </button>
+    </UiIconButton>
 
-    <button
-      :disabled="!canPlayNext"
-      class="btn btn-icon btn-ghost btn-sm"
-      :title="t.player_next"
-      :aria-label="t.player_next"
-      @click="playNext"
-    >
+    <UiIconButton variant="ghost" :label="t.player_next" :disabled="!canPlayNext" @click="playNext">
       <AppIcon name="next" />
-    </button>
+    </UiIconButton>
 
-    <button
-      :class="['btn', 'btn-icon', 'btn-ghost', 'btn-sm', 'mode', { 'is-on': repeatMode !== 'off' }]"
-      :title="repeatTitle"
-      :aria-label="repeatTitle"
-      :aria-pressed="repeatMode !== 'off'"
+    <UiIconButton
+      variant="ghost"
+      :pressed="repeatMode !== 'off'"
+      class="mode"
+      :label="repeatTitle"
       @click="cycleRepeat"
     >
       <AppIcon name="repeat" />
       <span v-if="repeatMode === 'one'" class="repeat-one" aria-hidden="true">1</span>
-    </button>
+    </UiIconButton>
   </div>
 </template>
 
 <script setup>
   import { inject, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const {
@@ -92,8 +83,8 @@
 </script>
 
 <style scoped>
-  /* ---- Transport controls (buttons come from the global .btn system) ---- */
-  .play {
+  /* ---- Transport controls (UiIconButton) ---- */
+  .ui-button.play {
     width: 40px;
     height: 40px;
   }
@@ -126,7 +117,7 @@
   }
 
   @media (max-width: 600px) {
-    .play {
+    .ui-button.play {
       width: 42px;
       height: 42px;
     }

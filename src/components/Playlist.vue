@@ -61,14 +61,15 @@
           <div class="track-name">{{ track.name }}</div>
           <div class="track-meta">{{ formatFileSize(track.size) }}</div>
         </div>
-        <button
-          class="btn btn-icon btn-ghost btn-sm btn-remove"
+        <UiIconButton
+          variant="ghost"
+          class="btn-remove"
+          :label="t.playlist_remove + ' ' + track.name"
           :title="t.playlist_remove"
-          :aria-label="t.playlist_remove + ' ' + track.name"
           @click.stop="handleRemoveTrack(index)"
         >
           <AppIcon name="close" />
-        </button>
+        </UiIconButton>
       </li>
     </ol>
 
@@ -111,6 +112,7 @@
   import { ref, inject, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const audioPlayer = inject('audioPlayer', {
@@ -311,7 +313,7 @@
     color: var(--text-muted);
   }
 
-  /* Remove button: global .btn-ghost, faded until the row is hovered */
+  /* Remove button: UiIconButton ghost, faded until the row is hovered */
   .btn-remove {
     color: var(--text-muted);
     opacity: 0.6;
@@ -326,7 +328,7 @@
     opacity: 1;
   }
 
-  .btn.btn-remove:hover:not(:disabled) {
+  .ui-button.btn-remove:hover:not(:disabled) {
     background: color-mix(in srgb, var(--error) 15%, transparent);
     color: var(--error);
   }

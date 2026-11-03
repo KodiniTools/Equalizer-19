@@ -1,16 +1,15 @@
 <template>
   <div class="volume">
-    <button
-      class="btn btn-icon btn-ghost btn-sm"
-      :title="t.player_mute"
-      :aria-label="t.player_mute"
+    <UiIconButton
+      variant="ghost"
+      :label="t.player_mute"
       :aria-pressed="isMuted"
       @click="toggleMute"
     >
       <AppIcon v-if="isMuted" name="volume-mute" />
       <AppIcon v-else-if="volume > 0.5" name="volume-high" />
       <AppIcon v-else name="volume-low" />
-    </button>
+    </UiIconButton>
     <input
       type="range"
       min="0"
@@ -30,6 +29,7 @@
 <script setup>
   import { inject } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const { volume, isMuted, setVolume, toggleMute } = inject('audioPlayer')
