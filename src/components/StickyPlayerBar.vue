@@ -199,17 +199,17 @@
     right: 0;
     bottom: 0;
     z-index: 1000;
-    background: var(--card-bg, #252530);
-    border-top: 1px solid var(--border-color, #3a3a48);
-    box-shadow: 0 -6px 24px var(--shadow-light, rgba(0, 0, 0, 0.35));
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -6px 24px var(--shadow-light);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     transition: border-color 0.2s;
   }
 
   .sticky-player.drop-active {
-    border-top-color: var(--accent-primary, #00d9ff);
-    background: color-mix(in srgb, var(--card-bg, #252530) 85%, var(--accent-primary, #00d9ff));
+    border-top-color: var(--accent-primary);
+    background: color-mix(in srgb, var(--card-bg) 85%, var(--accent-primary));
   }
 
   /* Progress bar spans the full width along the top edge */
@@ -225,13 +225,13 @@
 
   .sp-progress-bar {
     height: 4px;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     overflow: hidden;
   }
 
   .sp-progress-fill {
     height: 100%;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
     border-radius: 0 2px 2px 0;
     transition: width 0.1s;
   }
@@ -287,7 +287,7 @@
   .track-name {
     font-size: 13px;
     font-weight: 500;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -295,7 +295,7 @@
 
   .track-time {
     font-size: 11px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
@@ -306,19 +306,19 @@
     height: 7px;
     margin-right: 6px;
     border-radius: 50%;
-    background: var(--error, #ef4444);
+    background: var(--error);
     vertical-align: middle;
   }
 
   .track-info.empty .track-name {
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   /* ---- Divider ---- */
   .sp-divider {
     width: 1px;
     height: 26px;
-    background: var(--border-color, #3a3a48);
+    background: var(--border-color);
     flex-shrink: 0;
   }
 
@@ -331,7 +331,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
     font-size: 14px;
     font-weight: 600;
     pointer-events: none;

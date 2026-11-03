@@ -116,8 +116,8 @@
 
 <style scoped>
   .visualization {
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 12px;
   }
@@ -126,7 +126,7 @@
     width: 100%;
     height: 180px;
     border-radius: 8px;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     display: block;
   }
 

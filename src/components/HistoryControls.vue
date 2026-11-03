@@ -111,8 +111,8 @@
     height: 16px;
     padding: 0 4px;
     border-radius: 999px;
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+    background: var(--accent-primary);
+    color: var(--on-accent);
     font-size: 10.5px;
     font-weight: 700;
     line-height: 16px;

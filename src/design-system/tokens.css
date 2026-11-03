@@ -1,0 +1,98 @@
+/* ==========================================================================
+   Equalizer 19 · Design Tokens
+   --------------------------------------------------------------------------
+   Laufzeit-Quelle der Design-Tokens als CSS Custom Properties. Die Namen sind
+   die Quellnamen der App (--accent-primary, --text-primary, --font-sans, …).
+   Maschinenlesbar: tokens.json · Zugriff aus JS: tokens.js · Doku: README.md
+
+   Theme-Mechanik: Dark auf :root (Standard), Light auf html[data-theme='light']
+   (gesetzt von useTheme.js, auch von den SSI-Partials gelesen). Jedes
+   theme-abhängige Token steht in beiden Blöcken, auch die Verweise
+   (--eq-boost, --eq-cut), damit tokens.json und CSS deckungsgleich bleiben.
+
+   Der Test src/design-system/__tests__/tokens.spec.js hält tokens.json und
+   diese Datei deckungsgleich. Wer einen Wert ändert, ändert beide.
+   ========================================================================== */
+
+:root {
+  /* Dark Theme - Gold & Blau Farbschema.
+     Gold is reserved for accents and values; secondary text is a cool neutral. */
+  --primary-bg: #0a1426;
+  --secondary-bg: #0e1c32;
+  --card-bg: #142640;
+  --accent-primary: #c9984d;
+  --accent-secondary: #4a90d9;
+  --accent-tertiary: #f8e1a9;
+  --accent-text: #091428;
+  --on-accent: #091428;
+  --accent-hover: #b8843a;
+  --text-primary: #f9f2d5;
+  --text-secondary: #b9c2d0;
+  --text-muted: #7a8da0;
+  --border-color: #22395a;
+  --border-strong: #2f4a70;
+  --hover-bg: #1a3050;
+  --success: #4ade80;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --vol-fill: #c9984d;
+  --seek-fill: #c9984d;
+  --neutral-fill: var(--secondary-bg);
+  --nav-bg: rgba(14, 28, 50, 0.95);
+  --gradient-primary: linear-gradient(135deg, var(--primary-bg), #0e1c32);
+  --shadow-light: rgba(201, 152, 77, 0.12);
+  --shadow-medium: rgba(201, 152, 77, 0.2);
+  /* EQ band colours: boost in the brand accent, cut in the secondary accent.
+     Traffic-light colours stay reserved for meters and status. */
+  --eq-boost: var(--accent-primary);
+  --eq-cut: var(--accent-secondary);
+  /* Type: numbers (dB, Hz, time) use the mono stack with tabular figures */
+  --font-sans:
+    'Supreme', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'SF Mono', Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Light Theme - Gold & Blau Farbschema */
+[data-theme='light'] {
+  --primary-bg: #f6f2e8;
+  --secondary-bg: #fdfbf5;
+  --card-bg: #fffdf7;
+  --accent-primary: #014f99;
+  --accent-secondary: #b8893f;
+  --accent-tertiary: #003971;
+  --accent-text: #f5f4d6;
+  --on-accent: #ffffff;
+  --accent-hover: #013f7a;
+  --text-primary: #003971;
+  --text-secondary: #4a5a70;
+  --text-muted: #5e5030;
+  --border-color: #e4dbc6;
+  --border-strong: #cfc3a4;
+  --hover-bg: #f1eadb;
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+  --vol-fill: #c9984d;
+  --seek-fill: #c9984d;
+  --neutral-fill: #f8e1a9;
+  --nav-bg: rgba(246, 242, 232, 0.95);
+  --gradient-primary: linear-gradient(135deg, #fbf8f0, #f1ecdf);
+  --shadow-light: rgba(1, 79, 153, 0.1);
+  --shadow-medium: rgba(1, 79, 153, 0.18);
+  /* EQ band colours follow the accents (explicit per theme, like tokens.json) */
+  --eq-boost: var(--accent-primary);
+  --eq-cut: var(--accent-secondary);
+}
+
+/* Kontrastmodus (prefers-contrast: high): kräftigere Rahmen und Sekundärtext */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #3a5a80;
+    --text-secondary: #dce3ec;
+  }
+
+  [data-theme='light'] {
+    --border-color: #8f8364;
+    --text-secondary: #1f2d44;
+  }
+}

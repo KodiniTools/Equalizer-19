@@ -258,7 +258,7 @@
   .param-label {
     font-size: 11px;
     font-weight: 500;
-    color: var(--text-secondary, #c8c8d5);
+    color: var(--text-secondary);
   }
 
   .param-val {
@@ -266,7 +266,7 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-variant-numeric: tabular-nums;
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
   }
 
   .param input[type='range'] {
@@ -275,14 +275,14 @@
     margin: 4px 0;
     -webkit-appearance: none;
     appearance: none;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
   }
 
   .param input[type='range']:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 4px;
   }
 
@@ -291,7 +291,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
     cursor: pointer;
     transition: transform 0.2s;
   }
@@ -304,7 +304,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
     cursor: pointer;
     border: none;
   }

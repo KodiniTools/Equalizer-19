@@ -127,8 +127,8 @@
   .dl-dialog {
     width: 100%;
     max-width: 420px;
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     overflow: hidden;
@@ -151,11 +151,11 @@
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
-    border-bottom: 1px solid var(--border-color, #3a3a48);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .dl-header .icon {
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
     width: 16px;
     height: 16px;
   }
@@ -164,7 +164,7 @@
     margin: 0;
     font-size: 1em;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     flex: 1;
   }
 
@@ -176,22 +176,22 @@
     display: block;
     font-size: 13px;
     font-weight: 600;
-    color: var(--text-secondary, #c8c8d5);
+    color: var(--text-secondary);
     margin-bottom: 8px;
   }
 
   .dl-input-wrap {
     display: flex;
     align-items: center;
-    background: var(--secondary-bg, #1a1a22);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0 12px;
     transition: border-color 0.2s;
   }
 
   .dl-input-wrap:focus-within {
-    border-color: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary);
   }
 
   .dl-input {
@@ -199,14 +199,14 @@
     min-width: 0;
     border: none;
     background: transparent;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     font-size: 14px;
     padding: 10px 0;
     outline: none;
   }
 
   .dl-ext {
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-size: 14px;
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -221,14 +221,14 @@
     margin: 12px 0 0;
     font-size: 12px;
     line-height: 1.4;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   .dl-hint .icon {
     margin-top: 1px;
     width: 14px;
     height: 14px;
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
   }
 
   .dl-footer {
@@ -236,7 +236,7 @@
     justify-content: flex-end;
     gap: 8px;
     padding: 14px 16px;
-    border-top: 1px solid var(--border-color, #3a3a48);
+    border-top: 1px solid var(--border-color);
   }
 
   @media (max-width: 480px) {

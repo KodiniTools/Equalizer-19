@@ -154,8 +154,8 @@
     gap: 2px;
     padding: 2px;
     border-radius: 8px;
-    background: var(--secondary-bg, #1a1a22);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
   }
 
   .segmented button {
@@ -168,7 +168,7 @@
     border: none;
     border-radius: 6px;
     background: transparent;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -178,16 +178,16 @@
   }
 
   .segmented button:hover {
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .segmented button.active {
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+    background: var(--accent-primary);
+    color: var(--on-accent);
   }
 
   .segmented button:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 1px;
   }
 
@@ -206,10 +206,10 @@
     width: 100%;
     height: 32px;
     padding: 0 30px 0 10px;
-    border: 1px solid var(--border-color, #3a3a48);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
+    background: var(--secondary-bg);
+    color: var(--text-primary);
     font-size: 12px;
     cursor: pointer;
     appearance: none;
@@ -218,17 +218,17 @@
   }
 
   .device-select:hover {
-    border-color: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary);
   }
 
   .device-select:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 1px;
   }
 
   .device-select option {
-    background: var(--card-bg, #252530);
-    color: var(--text-primary, #fff);
+    background: var(--card-bg);
+    color: var(--text-primary);
   }
 
   .select-chevron {
@@ -238,7 +238,7 @@
     transform: translateY(-50%);
     width: 12px;
     height: 12px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     pointer-events: none;
   }
 
@@ -253,7 +253,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--error, #ef4444);
+    background: var(--error);
     animation: live-pulse 1.2s infinite;
   }
 
@@ -290,8 +290,8 @@
     width: 32px;
     height: 18px;
     border-radius: 999px;
-    background: var(--secondary-bg, #1a1a22);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
     transition: background 0.2s;
   }
 
@@ -303,24 +303,24 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--text-muted, #8b8b9a);
+    background: var(--text-muted);
     transition:
       transform 0.2s,
       background 0.2s;
   }
 
   .switch input:checked + .switch-track {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
   }
 
   .switch input:checked + .switch-track::after {
     transform: translateX(14px);
-    background: var(--on-accent, #000);
+    background: var(--on-accent);
   }
 
   .switch input:focus-visible + .switch-track {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
   }
 
@@ -332,7 +332,7 @@
   .switch-label {
     font-size: 12px;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   /* ---- Messages ---- */
@@ -343,7 +343,7 @@
   }
 
   .msg.status {
-    color: var(--text-secondary, #c8c8d5);
+    color: var(--text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -356,16 +356,16 @@
   .msg.error {
     padding: 8px 10px;
     border-radius: 8px;
-    color: var(--error, #ef4444);
-    background: color-mix(in srgb, var(--error, #ef4444) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--error, #ef4444) 35%, transparent);
+    color: var(--error);
+    background: color-mix(in srgb, var(--error) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
   }
 
   /* ---- Link to the FAQ ---- */
   .help-link {
     font-size: 11px;
     font-weight: 600;
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
     text-decoration: none;
   }
 
@@ -374,7 +374,7 @@
   }
 
   .help-link:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
     border-radius: 4px;
   }

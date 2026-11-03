@@ -72,13 +72,13 @@
     margin: 0 0 4px;
     font-size: 1em;
     font-weight: 700;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .rt-subtitle {
     margin: 0;
     font-size: 12px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   .rt-grid {
@@ -100,8 +100,8 @@
     flex-direction: column;
     gap: 12px;
     padding: 16px;
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     color: inherit;
     text-decoration: none;
@@ -112,13 +112,13 @@
   }
 
   .rt-card:hover {
-    border-color: var(--accent-primary, #00d9ff);
-    box-shadow: 0 8px 24px var(--shadow-light, rgba(0, 0, 0, 0.2));
+    border-color: var(--accent-primary);
+    box-shadow: 0 8px 24px var(--shadow-light);
     transform: translateY(-2px);
   }
 
   .rt-card:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 3px;
   }
 
@@ -130,8 +130,8 @@
     align-items: center;
     justify-content: center;
     font-size: 1em;
-    color: var(--accent-primary, #00d9ff);
-    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 14%, transparent);
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
   }
 
   .rt-body {
@@ -143,13 +143,13 @@
   .rt-name {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .rt-desc {
     font-size: 12px;
     line-height: 1.5;
-    color: var(--text-secondary, #c8c8d5);
+    color: var(--text-secondary);
   }
 
   /* Pinned to the bottom so the buttons line up across cards */
@@ -163,9 +163,9 @@
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--accent-primary, #00d9ff);
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
+    color: var(--accent-primary);
+    border: 1px solid var(--border-color);
+    background: var(--secondary-bg);
     transition:
       background 0.2s,
       color 0.2s,
@@ -178,9 +178,9 @@
   }
 
   .rt-card:hover .rt-cta {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--on-accent);
   }
 
   .visually-hidden {

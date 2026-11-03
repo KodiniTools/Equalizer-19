@@ -54,7 +54,7 @@
     height: 4px;
     -webkit-appearance: none;
     appearance: none;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -65,7 +65,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
     cursor: pointer;
     transition: transform 0.2s;
   }
@@ -78,7 +78,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
     cursor: pointer;
     border: none;
   }
