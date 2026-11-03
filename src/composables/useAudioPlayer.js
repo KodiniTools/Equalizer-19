@@ -69,7 +69,6 @@ export function useAudioPlayer() {
   // Set audio engine reference
   function setAudioEngine(engine) {
     audioEngineRef = engine
-    console.log('✅ AudioEngine reference set in AudioPlayer')
   }
 
   // Initialize audio element
@@ -81,8 +80,6 @@ export function useAudioPlayer() {
       for (const [event, handler] of mediaEventHandlers) {
         audioElement.value.addEventListener(event, handler)
       }
-
-      console.log('✅ Audio element initialized')
     }
   }
 
@@ -110,25 +107,20 @@ export function useAudioPlayer() {
 
     if (!audioEngineRef || !audioElement.value) {
       console.warn('⚠️ AudioEngine or Audio Element not available')
-      console.log('   AudioEngine:', !!audioEngineRef)
-      console.log('   AudioElement:', !!audioElement.value)
       return false
     }
 
     // Initialize AudioEngine if needed
     if (!audioEngineRef.isInitialized.value) {
-      console.log('🎛️ Initializing AudioEngine...')
       audioEngineRef.initAudioContext()
     }
 
     // Create MediaElementSource only once
     if (!mediaElementSource && audioEngineRef.audioContext.value) {
       try {
-        console.log('🎵 Creating MediaElementSource from audio element...')
         mediaElementSource = audioEngineRef.audioContext.value.createMediaElementSource(
           audioElement.value
         )
-        console.log('✅ MediaElementSource created:', mediaElementSource)
       } catch (e) {
         console.error('❌ Failed to create MediaElementSource:', e)
         return false
@@ -137,13 +129,10 @@ export function useAudioPlayer() {
 
     // Connect source to processing chain
     if (mediaElementSource && !isSourceConnected) {
-      console.log('🔗 Connecting MediaElementSource to processing chain...')
       audioEngineRef.connectAudioSource(mediaElementSource)
       isSourceConnected = true
-      console.log('✅ Audio connected to processing chain (EQ + Dynamics active)')
       return true
     } else if (isSourceConnected) {
-      console.log('ℹ️ Audio already connected')
       return true
     }
 
@@ -154,7 +143,6 @@ export function useAudioPlayer() {
   function handleLoadedMetadata() {
     duration.value = audioElement.value.duration || 0
     isLoading.value = false
-    console.log('✅ Track loaded, duration:', duration.value)
   }
 
   function handleTimeUpdate() {
@@ -318,7 +306,6 @@ export function useAudioPlayer() {
       // Connect to AudioEngine
       connectToAudioEngine()
 
-      console.log('✅ Track loaded:', track.name)
       return true
     } catch (err) {
       console.error('Error loading track:', err)
@@ -355,7 +342,6 @@ export function useAudioPlayer() {
       if (audioEngineRef && audioEngineRef.audioContext.value) {
         if (audioEngineRef.audioContext.value.state === 'suspended') {
           await audioEngineRef.audioContext.value.resume()
-          console.log('✅ AudioContext resumed')
         }
       }
 
@@ -363,7 +349,6 @@ export function useAudioPlayer() {
       isPlaying.value = true
       isPaused.value = false
       error.value = null
-      console.log('✅ Playing:', currentTrack.value?.name)
     } catch (err) {
       console.error('Error playing audio:', err)
       error.value = 'Fehler beim Abspielen'
@@ -376,7 +361,6 @@ export function useAudioPlayer() {
       audioElement.value.pause()
       isPlaying.value = false
       isPaused.value = true
-      console.log('⏸️ Paused')
     }
   }
 
@@ -387,7 +371,6 @@ export function useAudioPlayer() {
       currentTime.value = 0
       isPlaying.value = false
       isPaused.value = false
-      console.log('⏹️ Stopped')
     }
   }
 
@@ -534,7 +517,7 @@ export function useAudioPlayer() {
     if (mediaElementSource) {
       try {
         mediaElementSource.disconnect()
-      } catch (e) {
+      } catch {
         // Ignore
       }
       mediaElementSource = null

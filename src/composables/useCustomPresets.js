@@ -22,7 +22,7 @@ export function useCustomPresets(storage = globalThis.localStorage) {
     try {
       const raw = storage.getItem(STORAGE_KEY)
       if (raw) customPresets.value = JSON.parse(raw)
-    } catch (_e) {
+    } catch {
       customPresets.value = []
     }
   }

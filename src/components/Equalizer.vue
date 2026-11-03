@@ -2,19 +2,19 @@
   <div class="equalizer">
     <div class="eq-header">
       <button
-        @click="toggleBypass"
         :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': !isEqBypassed }]"
         :aria-label="t.a11y_eq_bypass"
         :aria-pressed="!isEqBypassed"
+        @click="toggleBypass"
       >
         <AppIcon name="power" />
       </button>
 
       <select
-        @change="handlePresetChange"
         v-model="selectedPreset"
         class="preset-select"
         :aria-label="t.a11y_eq_select_preset"
+        @change="handlePresetChange"
       >
         <option value="">Custom</option>
         <optgroup :label="t.eq_builtin_group">
@@ -28,10 +28,10 @@
       <!-- Delete custom preset -->
       <button
         v-if="isCustomSelected"
-        @click="deleteSelectedCustomPreset"
         class="btn btn-icon btn-sm delete-btn"
         :title="t.eq_preset_delete"
         :aria-label="t.eq_preset_delete"
+        @click="deleteSelectedCustomPreset"
       >
         <AppIcon name="trash" />
       </button>
@@ -39,15 +39,20 @@
       <!-- Save preset button -->
       <button
         v-if="!showSaveForm"
-        @click="showSaveForm = true"
         class="btn btn-icon btn-sm save-btn"
         :title="t.eq_preset_save_title"
         :aria-label="t.eq_preset_save_title"
+        @click="showSaveForm = true"
       >
         <AppIcon name="save" />
       </button>
 
-      <button @click="resetEqualizer" class="btn btn-icon btn-sm reset-btn" :title="t.reset" :aria-label="t.reset">
+      <button
+        class="btn btn-icon btn-sm reset-btn"
+        :title="t.reset"
+        :aria-label="t.reset"
+        @click="resetEqualizer"
+      >
         <AppIcon name="undo" />
       </button>
     </div>
@@ -55,25 +60,30 @@
     <!-- Inline save form -->
     <div v-if="showSaveForm" class="save-form">
       <input
+        ref="presetNameInput"
         v-model="newPresetName"
-        @keydown.enter="confirmSavePreset"
-        @keydown.escape="cancelSavePreset"
         :placeholder="t.eq_preset_name_placeholder"
         :aria-label="t.a11y_eq_save_name"
         class="preset-name-input"
         maxlength="32"
-        ref="presetNameInput"
+        @keydown.enter="confirmSavePreset"
+        @keydown.escape="cancelSavePreset"
       />
       <button
-        @click="confirmSavePreset"
         class="btn btn-icon btn-sm save-confirm-btn"
         :disabled="!newPresetName.trim()"
         :title="t.eq_save"
         :aria-label="t.eq_save"
+        @click="confirmSavePreset"
       >
         <AppIcon name="check" />
       </button>
-      <button @click="cancelSavePreset" class="btn btn-icon btn-sm cancel-btn" :title="t.eq_cancel" :aria-label="t.eq_cancel">
+      <button
+        class="btn btn-icon btn-sm cancel-btn"
+        :title="t.eq_cancel"
+        :aria-label="t.eq_cancel"
+        @click="cancelSavePreset"
+      >
         <AppIcon name="close" />
       </button>
     </div>
@@ -109,14 +119,18 @@
             max="12"
             step="0.5"
             :value="band.gain"
-            @input="handleGainChange($event, index)"
             :disabled="isEqBypassed"
             class="slider-v"
             :class="{ active: band.gain !== 0, negative: band.gain < 0 }"
-            :aria-label="t.a11y_eq_band.replace('{freq}', formatFrequency(band.frequency)).replace('{gain}', band.gain)"
+            :aria-label="
+              t.a11y_eq_band
+                .replace('{freq}', formatFrequency(band.frequency))
+                .replace('{gain}', band.gain)
+            "
             :aria-valuenow="band.gain"
             aria-valuemin="-12"
             aria-valuemax="12"
+            @input="handleGainChange($event, index)"
           />
         </div>
         <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
@@ -271,7 +285,9 @@
   function resetEqualizer() {
     if (audioEngine && audioEngine.resetEq) {
       audioEngine.resetEq()
-      localBands.value.forEach((band) => { band.gain = 0 })
+      localBands.value.forEach((band) => {
+        band.gain = 0
+      })
       selectedPreset.value = ''
       notify(t.value.eq_reset_done, 'info')
     }
@@ -347,8 +363,14 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .preset-name-input {

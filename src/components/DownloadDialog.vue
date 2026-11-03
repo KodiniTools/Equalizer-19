@@ -7,9 +7,9 @@
           <h3>{{ t.dl_title }}</h3>
           <button
             class="btn btn-icon btn-ghost btn-sm"
-            @click="onCancel"
             :title="t.dl_cancel"
             :aria-label="t.dl_cancel"
+            @click="onCancel"
           >
             <AppIcon name="close" />
           </button>

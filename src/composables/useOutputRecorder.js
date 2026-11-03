@@ -44,7 +44,7 @@ export function useOutputRecorder() {
     try {
       const stored = parseInt(localStorage.getItem(BIT_DEPTH_STORAGE_KEY), 10)
       if (WAV_BIT_DEPTHS.includes(stored)) return stored
-    } catch (_e) {
+    } catch {
       // storage unavailable
     }
     return DEFAULT_WAV_BIT_DEPTH
@@ -150,13 +150,13 @@ export function useOutputRecorder() {
     await nodes.stop()
     try {
       nodes.source.disconnect(nodes.capture)
-    } catch (_e) {
+    } catch {
       // already disconnected
     }
     try {
       nodes.capture.disconnect()
       nodes.silent.disconnect()
-    } catch (_e) {
+    } catch {
       // ignore
     }
     if (nodes.capture.port) nodes.capture.port.onmessage = null
@@ -197,7 +197,7 @@ export function useOutputRecorder() {
     if (webmDestination) {
       try {
         audioEngineRef?.gainNode?.value?.disconnect(webmDestination)
-      } catch (_e) {
+      } catch {
         // ignore
       }
       webmDestination = null
@@ -377,7 +377,7 @@ export function useOutputRecorder() {
     bitDepth.value = depth
     try {
       localStorage.setItem(BIT_DEPTH_STORAGE_KEY, String(depth))
-    } catch (_e) {
+    } catch {
       // storage unavailable
     }
   }

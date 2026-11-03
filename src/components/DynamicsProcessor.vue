@@ -2,19 +2,19 @@
   <BasePanel icon="sliders" :title="t.dynamics">
     <template #actions>
       <button
-        @click="resetDynamics"
         class="btn btn-icon btn-sm"
         :title="t.reset"
         :aria-label="t.reset"
+        @click="resetDynamics"
       >
         <AppIcon name="undo" />
       </button>
       <button
-        @click="toggleDynamics"
         :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': dynamicsEnabled }]"
         :title="dynamicsEnabled ? t.comp_toggle_off : t.comp_toggle_on"
         :aria-label="t.a11y_dynamics_toggle"
         :aria-pressed="dynamicsEnabled"
+        @click="toggleDynamics"
       >
         <AppIcon name="power" />
       </button>
@@ -37,17 +37,17 @@
           </div>
           <input
             :id="ids.threshold"
+            v-model.number="threshold"
             type="range"
             min="-60"
             max="0"
             step="1"
-            v-model.number="threshold"
-            @input="applySettings"
             :disabled="!dynamicsEnabled"
             :aria-label="t.a11y_threshold.replace('{val}', threshold)"
             :aria-valuenow="threshold"
             aria-valuemin="-60"
             aria-valuemax="0"
+            @input="applySettings"
           />
         </div>
 
@@ -58,17 +58,17 @@
           </div>
           <input
             :id="ids.ratio"
+            v-model.number="ratio"
             type="range"
             min="1"
             max="20"
             step="0.5"
-            v-model.number="ratio"
-            @input="applySettings"
             :disabled="!dynamicsEnabled"
             :aria-label="t.a11y_ratio.replace('{val}', ratio)"
             :aria-valuenow="ratio"
             aria-valuemin="1"
             aria-valuemax="20"
+            @input="applySettings"
           />
         </div>
 
@@ -79,17 +79,17 @@
           </div>
           <input
             :id="ids.knee"
+            v-model.number="knee"
             type="range"
             min="0"
             max="40"
             step="1"
-            v-model.number="knee"
-            @input="applySettings"
             :disabled="!dynamicsEnabled"
             :aria-label="t.a11y_knee.replace('{val}', knee)"
             :aria-valuenow="knee"
             aria-valuemin="0"
             aria-valuemax="40"
+            @input="applySettings"
           />
         </div>
 
@@ -100,17 +100,17 @@
           </div>
           <input
             :id="ids.attack"
+            v-model.number="attack"
             type="range"
             min="0"
             max="1"
             step="0.001"
-            v-model.number="attack"
-            @input="applySettings"
             :disabled="!dynamicsEnabled"
             :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
             :aria-valuenow="(attack * 1000).toFixed(0)"
             aria-valuemin="0"
             aria-valuemax="1000"
+            @input="applySettings"
           />
         </div>
 
@@ -121,17 +121,17 @@
           </div>
           <input
             :id="ids.release"
+            v-model.number="release"
             type="range"
             min="0"
             max="1"
             step="0.01"
-            v-model.number="release"
-            @input="applySettings"
             :disabled="!dynamicsEnabled"
             :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
             :aria-valuenow="(release * 1000).toFixed(0)"
             aria-valuemin="0"
             aria-valuemax="1000"
+            @input="applySettings"
           />
         </div>
       </div>

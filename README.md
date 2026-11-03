@@ -37,8 +37,13 @@ npm run dev
 # Production Build erstellen
 npm run build
 
-# Unit-Tests (Node-Testrunner, keine Zusatzpakete)
+# Tests: Logik-Tests (tests/, node:test) und Komponententests (src/**/__tests__, Vitest)
 npm test
+
+# Lint, Formatierung, Typprüfung (laufen auch in der CI)
+npm run lint
+npm run format:check
+npm run type-check
 
 # Preview des Production Builds
 npm run preview
@@ -102,7 +107,7 @@ equalizer19-vue/
 │       ├── translations.js     # Übersetzungen
 │       ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
 │       └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
-└── tests/                      # Unit-Tests (npm test)
+└── tests/                      # Logik-Tests (node:test); Komponententests liegen in src/**/__tests__ (Vitest)
 ```
 
 ## Verwendung

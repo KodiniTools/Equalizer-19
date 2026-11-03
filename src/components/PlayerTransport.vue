@@ -1,31 +1,31 @@
 <template>
   <div class="sp-section sp-center">
     <button
-      @click="toggleShuffle"
       :class="['btn', 'btn-icon', 'btn-ghost', 'btn-sm', 'mode', { 'is-on': isShuffle }]"
       :title="t.player_shuffle"
       :aria-label="t.player_shuffle"
       :aria-pressed="isShuffle"
+      @click="toggleShuffle"
     >
       <AppIcon name="shuffle" />
     </button>
 
     <button
-      @click="playPrevious"
       :disabled="!canPlayPrevious"
       class="btn btn-icon btn-ghost btn-sm"
       :title="t.player_prev"
       :aria-label="t.player_prev"
+      @click="playPrevious"
     >
       <AppIcon name="prev" />
     </button>
 
     <button
-      @click="togglePlayPause"
       class="btn btn-icon btn-primary btn-round play"
       :title="isPlaying ? t.pause : t.play"
       :aria-label="isPlaying ? t.pause : t.play"
       :aria-pressed="isPlaying"
+      @click="togglePlayPause"
     >
       <AppIcon v-if="isLoading" name="spinner" spin />
       <AppIcon v-else-if="isPlaying" name="pause" />
@@ -33,30 +33,30 @@
     </button>
 
     <button
-      @click="stop"
       class="btn btn-icon btn-ghost btn-sm"
       :title="t.stop"
       :aria-label="t.stop"
+      @click="stop"
     >
       <AppIcon name="stop" />
     </button>
 
     <button
-      @click="playNext"
       :disabled="!canPlayNext"
       class="btn btn-icon btn-ghost btn-sm"
       :title="t.player_next"
       :aria-label="t.player_next"
+      @click="playNext"
     >
       <AppIcon name="next" />
     </button>
 
     <button
-      @click="cycleRepeat"
       :class="['btn', 'btn-icon', 'btn-ghost', 'btn-sm', 'mode', { 'is-on': repeatMode !== 'off' }]"
       :title="repeatTitle"
       :aria-label="repeatTitle"
       :aria-pressed="repeatMode !== 'off'"
+      @click="cycleRepeat"
     >
       <AppIcon name="repeat" />
       <span v-if="repeatMode === 'one'" class="repeat-one" aria-hidden="true">1</span>

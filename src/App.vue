@@ -19,22 +19,13 @@
   const audioEngine = useAudioEngine()
   const audioPlayer = useAudioPlayer()
 
-  // CRITICAL: Connect AudioPlayer to AudioEngine
-  console.log('Connecting AudioPlayer to AudioEngine...')
+  // Connect AudioPlayer to AudioEngine
   audioPlayer.setAudioEngine(audioEngine)
-  console.log('AudioEngine connected to AudioPlayer')
 
   // Undo/redo history of the processing settings (EQ + compressor)
   const history = useUndoRedo(audioEngine)
 
   useKeyboardShortcuts(audioPlayer, { history })
-
-  // Make available globally for debugging
-  if (typeof window !== 'undefined') {
-    window.audioEngine = audioEngine
-    window.audioPlayer = audioPlayer
-    console.log('audioEngine and audioPlayer available in window for debugging')
-  }
 
   // Provide to all child components
   provide('i18n', { t, currentLanguage, setLanguage })
@@ -42,17 +33,14 @@
   provide('audioEngine', audioEngine)
   provide('audioPlayer', audioPlayer)
   provide('history', history)
-  provide('notify', (message, type = 'info') => {
-    // Fallback; AppPage provides the toast implementation
-    console.log(`[${type}] ${message}`)
-  })
+  // Fallback without UI; AppPage overrides it with the toast implementation
+  provide('notify', () => {})
 
   onMounted(() => {
     // Dispatch initial language-changed so SSI partials (nav, footer, cookie-banner) sync
     window.dispatchEvent(
       new CustomEvent('language-changed', { detail: { lang: currentLanguage.value } })
     )
-    console.log('Equalizer 19 Vue 3 ready!')
   })
 </script>
 

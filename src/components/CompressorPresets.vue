@@ -4,8 +4,8 @@
       :id="id"
       class="preset-select"
       :value="activePreset"
-      @change="applyPreset($event.target.value)"
       :aria-label="t.a11y_comp_preset"
+      @change="applyPreset($event.target.value)"
     >
       <!-- Shown when the current settings match no preset -->
       <option value="" disabled>{{ t.comp_preset_custom }}</option>

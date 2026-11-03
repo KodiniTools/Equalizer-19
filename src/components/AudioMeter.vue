@@ -7,9 +7,9 @@
 
     <div class="meters-row" role="group" :aria-label="t.meter_title">
       <div
-        class="meter-block"
         v-for="(m, i) in meters"
         :key="m.label"
+        class="meter-block"
         role="meter"
         :aria-label="(i === 0 ? t.a11y_meter_in : t.a11y_meter_out).replace('{val}', m.dbText)"
         :aria-valuenow="isFinite(m.db) ? m.db : -60"
@@ -18,7 +18,7 @@
       >
         <span class="meter-label" aria-hidden="true">{{ m.label }}</span>
 
-        <div class="meter-track" ref="tracks" aria-hidden="true">
+        <div ref="tracks" class="meter-track" aria-hidden="true">
           <!-- Gradient background: green → yellow → red -->
           <!-- Dark mask covers the empty (top) part of the bar -->
           <div class="meter-mask" :style="{ height: 100 - m.fillPct + '%' }"></div>

@@ -74,8 +74,6 @@ export function useAudioEngine() {
       monitorNode.value.connect(audioContext.value.destination)
 
       isInitialized.value = true
-
-      console.log('✅ Audio Engine initialized with', eqFilters.value.length, 'EQ bands')
     } catch (error) {
       console.error('Failed to initialize Audio Context:', error)
     }
@@ -126,16 +124,12 @@ export function useAudioEngine() {
     if (sourceNode.value && sourceNode.value !== source) {
       try {
         sourceNode.value.disconnect()
-      } catch (e) {
+      } catch {
         // Ignore disconnect errors
       }
     }
 
     sourceNode.value = source
-
-    console.log('🔌 Connecting audio source...')
-    console.log('   EQ Bypass:', eqBypass.value)
-    console.log('   Dynamics Enabled:', dynamicsEnabled.value)
 
     // Build the chain: source → [EQ] → [dynamics] → gain. Bypassed parts are
     // detached as well so no edge of an earlier routing keeps feeding the output.
@@ -152,7 +146,6 @@ export function useAudioEngine() {
     } catch (e) {
       console.error('❌ Error building the processing chain:', e)
     }
-    console.log('   → Chain:', order.length - 1, 'stages behind the source')
 
     // Side tap for input metering (after the rebuild, which detaches the source)
     if (inputAnalyserNode.value) {
@@ -169,7 +162,6 @@ export function useAudioEngine() {
     if (analyserNode.value) {
       try {
         tail.connect(analyserNode.value)
-        console.log('   → Connected to Analyser')
       } catch (e) {
         console.error('      Error connecting analyser:', e)
       }
@@ -178,8 +170,6 @@ export function useAudioEngine() {
     // CRITICAL: Connect to Destination (speakers) via the monitor gain
     try {
       tail.connect(monitorNode.value || audioContext.value.destination)
-      console.log('   → Connected to DESTINATION (Speakers)')
-      console.log('✅ Audio chain complete!')
     } catch (e) {
       console.error('❌ Error connecting to destination:', e)
     }
@@ -192,7 +182,7 @@ export function useAudioEngine() {
     if (sourceNode.value) {
       try {
         sourceNode.value.disconnect()
-      } catch (e) {
+      } catch {
         // Ignore
       }
       sourceNode.value = null
@@ -219,7 +209,6 @@ export function useAudioEngine() {
 
       if (eqFilters.value[index]) {
         eqFilters.value[index].gain.value = gain
-        console.log(`🎛️ EQ Band ${index} (${eqBands[index].frequency}Hz) set to ${gain}dB`)
       }
     }
   }
