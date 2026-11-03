@@ -190,9 +190,7 @@
   onMounted(() => {
     // Initialize audio context on first user interaction
     const init = () => {
-      console.log('Initializing AudioEngine on user interaction...')
       audioEngine.initAudioContext()
-      console.log('AudioEngine AudioContext initialized')
       document.removeEventListener('click', init)
     }
     document.addEventListener('click', init, { once: true })

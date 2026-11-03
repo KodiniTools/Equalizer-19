@@ -3,37 +3,37 @@
     ref="barRef"
     class="sticky-player"
     :class="{ 'drop-active': isDragOver }"
+    role="region"
+    :aria-label="currentLanguage === 'de' ? 'Player-Leiste' : 'Player bar'"
     @dragover.prevent="onDragOver"
     @dragleave.prevent="onDragLeave"
     @drop.prevent="handleDrop"
-    role="region"
-    :aria-label="currentLanguage === 'de' ? 'Player-Leiste' : 'Player bar'"
   >
     <!-- Hidden file inputs -->
     <input
-      type="file"
       ref="fileInput"
-      @change="handleFileSelect"
+      type="file"
       accept="audio/*"
       multiple
       style="display: none"
+      @change="handleFileSelect"
     />
     <input
-      type="file"
       ref="folderInput"
-      @change="handleFileSelect"
+      type="file"
       accept="audio/*"
       webkitdirectory
       mozdirectory
       style="display: none"
+      @change="handleFileSelect"
     />
 
     <!-- Full-width progress bar at the top edge of the bar -->
     <div
       class="sp-progress"
       :class="{ disabled: !hasTrack }"
-      @click="hasTrack && handleProgressClick($event)"
       :title="hasTrack ? t.player_vol_hint : ''"
+      @click="hasTrack && handleProgressClick($event)"
     >
       <div class="sp-progress-bar">
         <div class="sp-progress-fill" :style="{ width: (hasTrack ? progress : 0) + '%' }"></div>
@@ -45,24 +45,24 @@
       <div class="sp-section sp-left">
         <div class="upload-group">
           <button
-            @click="triggerFileSelect"
             class="btn btn-icon btn-sm"
             :title="t.player_select_files"
             :aria-label="t.player_select_files"
+            @click="triggerFileSelect"
           >
             <AppIcon name="file-audio" />
           </button>
           <button
-            @click="triggerFolderSelect"
             class="btn btn-icon btn-sm"
             :title="t.player_select_folder"
             :aria-label="t.player_select_folder"
+            @click="triggerFolderSelect"
           >
             <AppIcon name="folder" />
           </button>
         </div>
 
-        <div class="track-info" v-if="inputSource?.isActive.value">
+        <div v-if="inputSource?.isActive.value" class="track-info">
           <span class="track-name">
             <span class="live-dot" aria-hidden="true"></span>{{ t.player_live_input }}
           </span>
@@ -70,11 +70,11 @@
             inputSource.activeIsSystem.value ? t.input_system_option : inputSource.activeLabel.value
           }}</span>
         </div>
-        <div class="track-info" v-else-if="currentTrack">
+        <div v-else-if="currentTrack" class="track-info">
           <span class="track-name">{{ currentTrack.name }}</span>
           <span class="track-time">{{ formattedCurrentTime }} / {{ formattedDuration }}</span>
         </div>
-        <div class="track-info empty" v-else>
+        <div v-else class="track-info empty">
           <span class="track-name">{{
             hasPlaylist ? playlist.length + ' Tracks' : t.player_no_file
           }}</span>

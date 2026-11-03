@@ -151,7 +151,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   function loadDevice() {
     try {
       return storage?.getItem(DEVICE_STORAGE_KEY) || ''
-    } catch (_e) {
+    } catch {
       return ''
     }
   }
@@ -159,7 +159,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   function saveDevice(id) {
     try {
       storage?.setItem(DEVICE_STORAGE_KEY, id)
-    } catch (_e) {
+    } catch {
       // storage unavailable
     }
   }
@@ -176,7 +176,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       outputs.value = list
         .filter((d) => d.kind === 'audiooutput' && d.label)
         .map((d) => ({ deviceId: d.deviceId, label: d.label }))
-    } catch (_e) {
+    } catch {
       devices.value = []
       outputs.value = []
     }
@@ -197,7 +197,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       } else {
         try {
           sourceNode.disconnect()
-        } catch (_e) {
+        } catch {
           // already disconnected
         }
       }
@@ -231,7 +231,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       // Keep this page in front: Chrome would otherwise switch to the shared tab/window
       try {
         controller?.setFocusBehavior('no-focus-change')
-      } catch (_e) {
+      } catch {
         // too late or unsupported – only the focus is affected
       }
       const video = display.getVideoTracks()[0]
@@ -277,7 +277,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     if (isMuted() !== wantMuted && typeof track.applyConstraints === 'function') {
       try {
         await track.applyConstraints({ suppressLocalAudioPlayback: wantMuted })
-      } catch (_e) {
+      } catch {
         // not supported – fall through and report the real state
       }
     }
@@ -296,7 +296,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       if (ctx?.state === 'suspended' && typeof ctx.resume === 'function') {
         ctx.resume().catch(() => {})
       }
-    } catch (_e) {
+    } catch {
       // engine unavailable – start() reports it after the stream was acquired
     }
   }

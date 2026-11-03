@@ -1,11 +1,11 @@
 <template>
   <div class="volume">
     <button
-      @click="toggleMute"
       class="btn btn-icon btn-ghost btn-sm"
       :title="t.player_mute"
       :aria-label="t.player_mute"
       :aria-pressed="isMuted"
+      @click="toggleMute"
     >
       <AppIcon v-if="isMuted" name="volume-mute" />
       <AppIcon v-else-if="volume > 0.5" name="volume-high" />
@@ -16,13 +16,13 @@
       min="0"
       max="100"
       :value="volume * 100"
-      @input="handleVolumeChange"
       class="vol-slider"
       :title="t.player_vol_hint"
       :aria-label="t.a11y_volume.replace('{val}', Math.round(volume * 100))"
       :aria-valuenow="Math.round(volume * 100)"
       aria-valuemin="0"
       aria-valuemax="100"
+      @input="handleVolumeChange"
     />
   </div>
 </template>

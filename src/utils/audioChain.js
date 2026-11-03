@@ -62,7 +62,7 @@ function disconnectAll(node) {
   if (!node) return
   try {
     node.disconnect()
-  } catch (_e) {
+  } catch {
     // not connected
   }
 }

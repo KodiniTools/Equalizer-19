@@ -1,28 +1,28 @@
 <template>
   <div class="recorder">
     <!-- Recording time display -->
-    <div class="rec-time" v-if="isRecording" aria-live="assertive" aria-atomic="true">
+    <div v-if="isRecording" class="rec-time" aria-live="assertive" aria-atomic="true">
       <span class="rec-dot" aria-hidden="true"></span>
       <span class="time">{{ formattedRecTime }}</span>
     </div>
 
     <!-- Format toggle (only when idle) -->
-    <div class="format-toggle" v-if="!isRecording && !hasRecording && !isCounting" role="group">
+    <div v-if="!isRecording && !hasRecording && !isCounting" class="format-toggle" role="group">
       <button
-        @click="selectFormat('wav')"
         :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
         :title="t.rec_format_wav"
         :aria-label="t.rec_format_wav"
         :aria-pressed="recordingFormat === 'wav'"
+        @click="selectFormat('wav')"
       >
         WAV
       </button>
       <button
-        @click="selectFormat('webm')"
         :class="['fmt-btn', { active: recordingFormat === 'webm' }]"
         :title="t.rec_format_webm"
         :aria-label="t.rec_format_webm"
         :aria-pressed="recordingFormat === 'webm'"
+        @click="selectFormat('webm')"
       >
         WebM
       </button>
@@ -30,19 +30,19 @@
 
     <!-- WAV bit depth (only for WAV, changeable while idle) -->
     <div
-      class="format-toggle"
       v-if="recordingFormat === 'wav' && !isRecording && !isCounting"
+      class="format-toggle"
       role="group"
       :aria-label="t.rec_bit_depth"
     >
       <button
         v-for="depth in bitDepths"
         :key="depth"
-        @click="setBitDepth(depth)"
         :class="['fmt-btn', { active: bitDepth === depth }]"
         :title="bitDepthTitle(depth)"
         :aria-label="bitDepthTitle(depth)"
         :aria-pressed="bitDepth === depth"
+        @click="setBitDepth(depth)"
       >
         {{ depth === 32 ? '32f' : depth }}
       </button>
@@ -67,10 +67,10 @@
       <!-- Countdown running: shows the seconds left, click cancels -->
       <button
         v-if="isCounting"
-        @click="cancelCountdown"
         class="btn btn-icon btn-sm rec-btn countdown"
         :title="t.rec_countdown_cancel"
         :aria-label="t.rec_countdown_cancel"
+        @click="cancelCountdown"
       >
         {{ countdownRemaining }}
       </button>
@@ -78,10 +78,10 @@
       <!-- Record button -->
       <button
         v-if="!isRecording && !hasRecording && !isCounting"
-        @click="handleStartRecording"
         class="btn btn-icon btn-sm rec-btn rec"
         :title="t.rec_start"
         :aria-label="t.rec_start"
+        @click="handleStartRecording"
       >
         <AppIcon name="record" />
       </button>
@@ -89,10 +89,10 @@
       <!-- Stop recording button -->
       <button
         v-if="isRecording"
-        @click="handleStopRecording"
         class="btn btn-icon btn-sm rec-btn stop"
         :title="t.stop"
         :aria-label="t.stop"
+        @click="handleStopRecording"
       >
         <AppIcon name="stop" />
       </button>
@@ -100,10 +100,10 @@
       <!-- Download button -->
       <button
         v-if="hasRecording && !isRecording"
-        @click="handleDownload"
         class="btn btn-icon btn-sm rec-btn download"
         :title="t.download"
         :aria-label="t.download"
+        @click="handleDownload"
       >
         <AppIcon name="download" />
       </button>
@@ -111,10 +111,10 @@
       <!-- New recording button -->
       <button
         v-if="hasRecording && !isRecording"
-        @click="handleNewRecording"
         class="btn btn-icon btn-sm rec-btn new"
         :title="t.rec_new"
         :aria-label="t.rec_new"
+        @click="handleNewRecording"
       >
         <AppIcon name="redo" />
       </button>
@@ -194,7 +194,7 @@
     try {
       const stored = parseInt(localStorage.getItem(DELAY_STORAGE_KEY), 10)
       if (START_DELAYS.includes(stored)) return stored
-    } catch (_e) {
+    } catch {
       // storage unavailable
     }
     return 0
@@ -206,7 +206,7 @@
     startDelay.value = delay
     try {
       localStorage.setItem(DELAY_STORAGE_KEY, String(delay))
-    } catch (_e) {
+    } catch {
       // storage unavailable
     }
   }

@@ -14,9 +14,9 @@
     <ol
       v-else
       class="playlist-items"
+      :aria-label="t.playlist_title"
       @dragover.prevent
       @drop.prevent
-      :aria-label="t.playlist_title"
     >
       <li
         v-for="(track, index) in playlist"
@@ -31,13 +31,13 @@
           },
         ]"
         draggable="true"
+        :aria-current="currentTrackIndex === index ? 'true' : undefined"
+        :aria-label="track.name"
         @dragstart="onDragStart(index, $event)"
         @dragover.prevent="onDragOver(index)"
         @drop.prevent="onDrop(index)"
         @dragend="onDragEnd"
         @click="handlePlayTrack(index)"
-        :aria-current="currentTrackIndex === index ? 'true' : undefined"
-        :aria-label="track.name"
       >
         <!-- Drag handle -->
         <span
@@ -62,10 +62,10 @@
           <div class="track-meta">{{ formatFileSize(track.size) }}</div>
         </div>
         <button
-          @click.stop="handleRemoveTrack(index)"
           class="btn btn-icon btn-ghost btn-sm btn-remove"
           :title="t.playlist_remove"
           :aria-label="t.playlist_remove + ' ' + track.name"
+          @click.stop="handleRemoveTrack(index)"
         >
           <AppIcon name="close" />
         </button>

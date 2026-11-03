@@ -11,9 +11,11 @@
 ### Frontend Framework
 | Technologie | Version | Zweck |
 |-------------|---------|-------|
-| **Vue 3** | ^3.4.0 | UI-Framework mit Composition API |
-| **Vite** | ^5.0.0 | Build-Tool und Dev-Server |
-| **@vitejs/plugin-vue** | ^5.0.0 | Vue-Integration für Vite |
+| **Vue 3** | ^3.5.22 | UI-Framework mit Composition API |
+| **Vite** | ^7.1.7 | Build-Tool und Dev-Server |
+| **@vitejs/plugin-vue** | ^6.0.1 | Vue-Integration für Vite |
+| **Vitest + @vue/test-utils** | ^3.2.4 / ^2.4.6 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
+| **TypeScript + vue-tsc** | ~5.9.0 / ^3.1.0 | `npm run type-check` (`allowJs`, Migration der Dateien folgt schrittweise) |
 
 ### Audio Processing
 | Technologie | Zweck |
@@ -98,7 +100,8 @@ Equalizer-19/
 │       ├── wavEncoder.js           # WAV-Export (16/24/32 Bit)
 │       └── workletLoader.js        # AudioWorklet laden (mit Timeout/Fallback)
 │
-├── tests/                  # Unit-Tests (npm test, node:test)
+├── tests/                  # Logik-Tests (node:test); Komponententests: src/**/__tests__ (Vitest)
+├── .github/workflows/ci.yml # CI: Lint, Format, Typecheck, Tests, Build
 │
 ├── node_modules/           # Dependencies
 │
