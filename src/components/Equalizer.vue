@@ -300,8 +300,8 @@
 
 <style scoped>
   .equalizer {
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 12px;
   }
@@ -316,40 +316,40 @@
   .preset-select {
     flex: 1;
     padding: 5px 8px;
-    border: 1px solid var(--border-color, #3a3a48);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 11px;
     cursor: pointer;
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-secondary, #c8c8d5);
+    background: var(--secondary-bg);
+    color: var(--text-secondary);
     transition: all 0.2s ease;
     min-width: 0;
   }
 
   .preset-select:hover,
   .preset-select:focus {
-    border-color: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary);
     outline: none;
   }
 
   /* Header buttons use the global .btn system; hover colours hint at the action */
   .btn.save-btn:hover:not(:disabled),
   .btn.reset-btn:hover:not(:disabled) {
-    background: var(--accent-primary, #00d9ff);
-    border-color: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--on-accent);
   }
 
   .btn.save-confirm-btn:hover:not(:disabled) {
-    background: var(--success, #1db954);
-    border-color: var(--success, #1db954);
+    background: var(--success);
+    border-color: var(--success);
     color: #ffffff;
   }
 
   .btn.cancel-btn:hover:not(:disabled),
   .btn.delete-btn:hover:not(:disabled) {
-    background: var(--error, #ef4444);
-    border-color: var(--error, #ef4444);
+    background: var(--error);
+    border-color: var(--error);
     color: #ffffff;
   }
 
@@ -376,16 +376,16 @@
   .preset-name-input {
     flex: 1;
     padding: 5px 10px;
-    border: 1px solid var(--accent-primary, #00d9ff);
+    border: 1px solid var(--accent-primary);
     border-radius: 6px;
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
+    background: var(--secondary-bg);
+    color: var(--text-primary);
     font-size: 12px;
     outline: none;
   }
 
   .preset-name-input::placeholder {
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   /* EQ bands: one grid column per band so the curve's band centres line up
@@ -400,8 +400,8 @@
     justify-items: center;
     align-items: end;
     padding: var(--eq-pad-y) var(--eq-pad-x);
-    background: var(--secondary-bg, #1a1a22);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     min-height: 220px;
   }
@@ -416,7 +416,7 @@
   }
 
   .eq-curve-zero {
-    stroke: var(--text-muted, #7a8da0);
+    stroke: var(--text-muted);
     stroke-width: 1;
     stroke-dasharray: 3 4;
     vector-effect: non-scaling-stroke;
@@ -427,11 +427,11 @@
   }
 
   .eq-curve-fill.boost {
-    fill: var(--eq-boost, #c9984d);
+    fill: var(--eq-boost);
   }
 
   .eq-curve-fill.cut {
-    fill: var(--eq-cut, #4a90d9);
+    fill: var(--eq-cut);
   }
 
   .eq-curve-line {
@@ -443,11 +443,11 @@
   }
 
   .eq-curve-line.boost {
-    stroke: var(--eq-boost, #c9984d);
+    stroke: var(--eq-boost);
   }
 
   .eq-curve-line.cut {
-    stroke: var(--eq-cut, #4a90d9);
+    stroke: var(--eq-cut);
   }
 
   .eq-bands.disabled {
@@ -492,7 +492,7 @@
     padding: 0;
     margin: 0;
     cursor: pointer;
-    background: var(--border-strong, #2f4a70);
+    background: var(--border-strong);
     border-radius: 3px;
     outline: none;
     border: none;
@@ -509,7 +509,7 @@
     border-radius: 50%;
     background: #ffffff;
     cursor: pointer;
-    border: 2px solid var(--text-muted, #7a8da0);
+    border: 2px solid var(--text-muted);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
     transition:
       transform 0.15s ease,
@@ -518,13 +518,13 @@
   }
 
   .slider-v.active::-webkit-slider-thumb {
-    border-color: var(--eq-boost, #c9984d);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost, #c9984d) 45%, transparent);
+    border-color: var(--eq-boost);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost) 45%, transparent);
   }
 
   .slider-v.active.negative::-webkit-slider-thumb {
-    border-color: var(--eq-cut, #4a90d9);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut, #4a90d9) 45%, transparent);
+    border-color: var(--eq-cut);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut) 45%, transparent);
   }
 
   .slider-v::-webkit-slider-thumb:hover {
@@ -533,7 +533,7 @@
 
   .slider-v::-moz-range-track {
     width: 3px;
-    background: var(--border-strong, #2f4a70);
+    background: var(--border-strong);
     border-radius: 3px;
     border: none;
   }
@@ -544,7 +544,7 @@
     border-radius: 50%;
     background: #ffffff;
     cursor: pointer;
-    border: 2px solid var(--text-muted, #7a8da0);
+    border: 2px solid var(--text-muted);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
     transition:
       transform 0.15s ease,
@@ -553,13 +553,13 @@
   }
 
   .slider-v.active::-moz-range-thumb {
-    border-color: var(--eq-boost, #c9984d);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost, #c9984d) 45%, transparent);
+    border-color: var(--eq-boost);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost) 45%, transparent);
   }
 
   .slider-v.active.negative::-moz-range-thumb {
-    border-color: var(--eq-cut, #4a90d9);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut, #4a90d9) 45%, transparent);
+    border-color: var(--eq-cut);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut) 45%, transparent);
   }
 
   .slider-v::-moz-range-thumb:hover {
@@ -569,7 +569,7 @@
   .val {
     font-size: 10.5px;
     font-weight: 600;
-    color: var(--accent-primary, #c9984d);
+    color: var(--accent-primary);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     min-width: 24px;
@@ -579,16 +579,16 @@
 
   /* Value colour follows the band state (boost / cut) */
   .slider-wrapper.active + .val {
-    color: var(--eq-boost, #c9984d);
+    color: var(--eq-boost);
   }
 
   .slider-wrapper.active.negative + .val {
-    color: var(--eq-cut, #4a90d9);
+    color: var(--eq-cut);
   }
 
   .freq {
     font-size: 10.5px;
-    color: var(--text-secondary, #8a8a9a);
+    color: var(--text-secondary);
     font-weight: 500;
     text-align: center;
     white-space: nowrap;

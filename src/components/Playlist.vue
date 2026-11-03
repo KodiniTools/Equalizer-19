@@ -177,9 +177,9 @@
   .empty-state {
     text-align: center;
     padding: 22px 12px;
-    border: 1px dashed var(--border-color, #3a3a48);
+    border: 1px dashed var(--border-color);
     border-radius: 10px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   .empty-state .icon {
@@ -222,12 +222,12 @@
   }
 
   .playlist-item:hover {
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
   }
 
   /* Active track: tinted row with an accent bar on the left */
   .playlist-item.active {
-    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 14%, transparent);
+    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
   }
 
   .playlist-item.active::before {
@@ -238,7 +238,7 @@
     bottom: 6px;
     width: 3px;
     border-radius: 2px;
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
   }
 
   .playlist-item.dragging {
@@ -246,15 +246,15 @@
   }
 
   .playlist-item.drop-before {
-    border-top-color: var(--accent-primary, #00d9ff);
+    border-top-color: var(--accent-primary);
   }
 
   .playlist-item.drop-after {
-    border-bottom-color: var(--accent-primary, #00d9ff);
+    border-bottom-color: var(--accent-primary);
   }
 
   .drag-handle {
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-size: 11px;
     cursor: grab;
     padding: 2px 1px;
@@ -279,12 +279,12 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-variant-numeric: tabular-nums;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     flex-shrink: 0;
   }
 
   .playlist-item.active .track-number {
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
     font-weight: 600;
   }
 
@@ -299,7 +299,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .playlist-item.active .track-name {
@@ -308,12 +308,12 @@
 
   .track-meta {
     font-size: 10.5px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   /* Remove button: global .btn-ghost, faded until the row is hovered */
   .btn-remove {
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     opacity: 0.6;
     transition:
       background-color 0.15s,
@@ -327,8 +327,8 @@
   }
 
   .btn.btn-remove:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--error, #ef4444) 15%, transparent);
-    color: var(--error, #ef4444);
+    background: color-mix(in srgb, var(--error) 15%, transparent);
+    color: var(--error);
   }
 
   /* ---- Keyboard shortcuts ---- */
@@ -340,7 +340,7 @@
     list-style: none;
     font-size: 11px;
     font-weight: 500;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     border-radius: 6px;
     transition: color 0.15s;
   }
@@ -350,11 +350,11 @@
   }
 
   .shortcuts summary:hover {
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .shortcuts summary:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
   }
 
@@ -384,7 +384,7 @@
   .shortcut-list dd {
     margin: 0;
     font-size: 11px;
-    color: var(--text-secondary, #c8c8d5);
+    color: var(--text-secondary);
   }
 
   kbd {
@@ -392,15 +392,15 @@
     align-items: center;
     justify-content: center;
     min-width: 20px;
-    background: var(--secondary-bg, #1a1a22);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
     border-bottom-width: 2px;
     border-radius: 4px;
     padding: 1px 5px;
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-size: 10.5px;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     line-height: 1.4;
   }
 
@@ -414,12 +414,12 @@
   }
 
   .playlist-items::-webkit-scrollbar-thumb {
-    background: var(--border-color, #3a3a48);
+    background: var(--border-color);
     border-radius: 4px;
   }
 
   .playlist-items::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-primary, #00d9ff);
+    background: var(--accent-primary);
   }
 
   @media (hover: none) {

@@ -85,7 +85,7 @@
     pointer-events: none;
     background: radial-gradient(
       circle at center,
-      color-mix(in srgb, var(--primary-bg, #000) 55%, transparent) 0%,
+      color-mix(in srgb, var(--primary-bg) 55%, transparent) 0%,
       transparent 70%
     );
   }
@@ -98,8 +98,8 @@
     gap: 14px;
     padding: 28px 36px 22px;
     border-radius: 24px;
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
   }
 
@@ -108,7 +108,7 @@
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.3px;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .cd-ring {
@@ -125,13 +125,13 @@
 
   .cd-track {
     fill: none;
-    stroke: var(--secondary-bg, #1a1a22);
+    stroke: var(--secondary-bg);
     stroke-width: 8;
   }
 
   .cd-progress {
     fill: none;
-    stroke: var(--error, #ef4444);
+    stroke: var(--error);
     stroke-width: 8;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s linear;
@@ -147,7 +147,7 @@
     font-weight: 800;
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     animation: cd-pop 0.35s ease-out;
   }
 
@@ -167,9 +167,9 @@
     height: 40px;
     padding: 0 20px;
     border-radius: 10px;
-    border: 1px solid var(--border-color, #3a3a48);
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
+    border: 1px solid var(--border-color);
+    background: var(--secondary-bg);
+    color: var(--text-primary);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -177,18 +177,18 @@
   }
 
   .cd-cancel:hover {
-    border-color: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary);
   }
 
   .cd-cancel:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 3px;
   }
 
   .cd-hint {
     margin: 0;
     font-size: 12px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   .cd-fade-enter-active,

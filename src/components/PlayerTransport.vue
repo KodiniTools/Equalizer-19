@@ -115,8 +115,8 @@
     font-size: 11px;
     font-weight: 700;
     line-height: 1;
-    color: var(--accent-primary, #00d9ff);
-    background: var(--card-bg, #252530);
+    color: var(--accent-primary);
+    background: var(--card-bg);
     border-radius: 50%;
     width: 11px;
     height: 11px;

@@ -57,10 +57,10 @@
     width: 100%;
     height: 32px;
     padding: 0 30px 0 10px;
-    border: 1px solid var(--border-color, #3a3a48);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-primary, #fff);
+    background: var(--secondary-bg);
+    color: var(--text-primary);
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -70,18 +70,18 @@
   }
 
   .preset-select:hover {
-    border-color: var(--accent-primary, #00d9ff);
+    border-color: var(--accent-primary);
   }
 
   .preset-select:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 1px;
   }
 
   .preset-select option,
   .preset-select optgroup {
-    background: var(--card-bg, #252530);
-    color: var(--text-primary, #fff);
+    background: var(--card-bg);
+    color: var(--text-primary);
   }
 
   .select-chevron {
@@ -91,7 +91,7 @@
     transform: translateY(-50%);
     width: 12px;
     height: 12px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     pointer-events: none;
   }
 

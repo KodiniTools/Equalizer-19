@@ -57,7 +57,9 @@ Equalizer-19/
 │   ├── App.vue             # Root-Komponente
 │   │
 │   ├── assets/
-│   │   └── style.css       # Globale Styles (~20KB)
+│   │   └── style.css       # Globale Styles; importiert design-system/tokens.css
+│   │
+│   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
 │   │
 │   ├── components/         # Vue-Komponenten
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer

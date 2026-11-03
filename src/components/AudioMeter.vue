@@ -126,8 +126,8 @@
 
 <style scoped>
   .audio-meter-wrap {
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 10px 12px 8px;
   }
@@ -142,7 +142,7 @@
   .meter-title {
     font-size: 12px;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -151,12 +151,12 @@
   .meter-title .icon {
     width: 14px;
     height: 14px;
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
   }
 
   .meter-hint {
     font-size: 10.5px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
@@ -180,7 +180,7 @@
   .meter-label {
     font-size: 10.5px;
     font-weight: 700;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     letter-spacing: 0.05em;
   }
 
@@ -208,7 +208,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     transition: height 40ms linear;
     min-height: 0;
     border-radius: 3px 3px 0 0;
@@ -230,7 +230,7 @@
     font-size: 10.5px;
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     min-width: 28px;
     text-align: center;
   }
@@ -250,7 +250,7 @@
 
   .meter-scale span {
     font-size: 10.5px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     opacity: 0.6;

@@ -42,8 +42,8 @@
 
 <style scoped>
   .panel {
-    background: var(--card-bg, #252530);
-    border: 1px solid var(--border-color, #3a3a48);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 12px;
     display: flex;
@@ -68,7 +68,7 @@
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .panel-title span {
@@ -78,7 +78,7 @@
   }
 
   .panel-title .icon {
-    color: var(--accent-primary, #00d9ff);
+    color: var(--accent-primary);
     width: 14px;
     height: 14px;
   }
@@ -98,7 +98,7 @@
   }
 
   .panel-footer {
-    border-top: 1px solid var(--border-color, #3a3a48);
+    border-top: 1px solid var(--border-color);
     padding-top: 10px;
   }
 
@@ -109,9 +109,9 @@
     font-size: 10.5px;
     font-weight: 600;
     white-space: nowrap;
-    color: var(--accent-primary, #00d9ff);
-    background: color-mix(in srgb, var(--accent-primary, #00d9ff) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-primary, #00d9ff) 35%, transparent);
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, transparent);
   }
 
   :slotted(.panel-section-label) {
@@ -120,7 +120,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
   }
 
   @media (max-width: 600px) {

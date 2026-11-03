@@ -299,7 +299,7 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-size: 13px;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     background: rgba(239, 68, 68, 0.15);
     padding: 4px 8px;
     border-radius: 6px;
@@ -330,7 +330,7 @@
   .format-toggle {
     display: flex;
     gap: 2px;
-    background: var(--secondary-bg, #1a1a22);
+    background: var(--secondary-bg);
     border-radius: 6px;
     padding: 2px;
   }
@@ -341,19 +341,19 @@
     font-weight: 600;
     border: none;
     background: transparent;
-    color: var(--text-muted, #8b8b9a);
+    color: var(--text-muted);
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .fmt-btn:hover {
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
   }
 
   .fmt-btn.active {
-    background: var(--accent-primary, #00d9ff);
-    color: var(--on-accent, #000);
+    background: var(--accent-primary);
+    color: var(--on-accent);
   }
 
   .rec-controls {
@@ -364,14 +364,14 @@
   /* Record / stop / download: global .btn system with a status colour */
   .btn.rec-btn.rec,
   .btn.rec-btn.countdown {
-    background: var(--error, #ef4444);
-    border-color: var(--error, #ef4444);
+    background: var(--error);
+    border-color: var(--error);
     color: #ffffff;
   }
 
   .btn.rec-btn.rec:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--error, #ef4444) 85%, #000);
-    border-color: color-mix(in srgb, var(--error, #ef4444) 85%, #000);
+    background: color-mix(in srgb, var(--error) 85%, #000);
+    border-color: color-mix(in srgb, var(--error) 85%, #000);
   }
 
   /* Countdown in the bar: seconds left, click cancels */
@@ -396,15 +396,15 @@
     height: 28px;
     padding: 0 4px 0 8px;
     border-radius: 6px;
-    background: var(--secondary-bg, #1a1a22);
-    color: var(--text-muted, #8b8b9a);
+    background: var(--secondary-bg);
+    color: var(--text-muted);
     font-size: 11px;
   }
 
   .delay-select {
     border: none;
     background: transparent;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
@@ -412,36 +412,36 @@
   }
 
   .delay-select:focus-visible {
-    outline: 2px solid var(--accent-primary, #00d9ff);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 1px;
     border-radius: 4px;
   }
 
   .delay-select option {
-    background: var(--card-bg, #252530);
-    color: var(--text-primary, #fff);
+    background: var(--card-bg);
+    color: var(--text-primary);
   }
 
   .btn.rec-btn.stop {
-    background: var(--warning, #f59e0b);
-    border-color: var(--warning, #f59e0b);
+    background: var(--warning);
+    border-color: var(--warning);
     color: #ffffff;
   }
 
   .btn.rec-btn.stop:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--warning, #f59e0b) 85%, #000);
-    border-color: color-mix(in srgb, var(--warning, #f59e0b) 85%, #000);
+    background: color-mix(in srgb, var(--warning) 85%, #000);
+    border-color: color-mix(in srgb, var(--warning) 85%, #000);
   }
 
   .btn.rec-btn.download {
-    background: var(--success, #10b981);
-    border-color: var(--success, #10b981);
+    background: var(--success);
+    border-color: var(--success);
     color: #ffffff;
   }
 
   .btn.rec-btn.download:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--success, #10b981) 85%, #000);
-    border-color: color-mix(in srgb, var(--success, #10b981) 85%, #000);
+    background: color-mix(in srgb, var(--success) 85%, #000);
+    border-color: color-mix(in srgb, var(--success) 85%, #000);
   }
 
   .error-dot {
