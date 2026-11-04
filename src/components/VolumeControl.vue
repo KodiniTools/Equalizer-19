@@ -15,7 +15,7 @@
       min="0"
       max="100"
       :value="volume * 100"
-      class="vol-slider"
+      class="ui-range vol-slider"
       :title="t.player_vol_hint"
       :aria-label="t.a11y_volume.replace('{val}', Math.round(volume * 100))"
       :aria-valuenow="Math.round(volume * 100)"
@@ -40,6 +40,8 @@
   }
 </script>
 
+<style scoped src="./ui/range.css"></style>
+
 <style scoped>
   /* ---- Volume ---- */
   .volume {
@@ -51,41 +53,23 @@
 
   .vol-slider {
     width: 80px;
-    height: 4px;
-    -webkit-appearance: none;
-    appearance: none;
-    background: var(--secondary-bg);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .vol-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  .vol-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-  }
-
-  .vol-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    cursor: pointer;
-    border: none;
+    margin: 2px;
   }
 
   @media (max-width: 600px) {
     .vol-slider {
       width: 60px;
+    }
+
+    /* Bleibt in der Sticky-Leiste auch auf Smartphones bei 12 px */
+    .vol-slider::-webkit-slider-thumb {
+      width: 12px;
+      height: 12px;
+    }
+
+    .vol-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
     }
   }
 </style>

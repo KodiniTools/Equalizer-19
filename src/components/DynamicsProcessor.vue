@@ -24,110 +24,66 @@
     <div class="section">
       <span class="panel-section-label">{{ t.comp_params }}</span>
       <div class="params" :class="{ disabled: !dynamicsEnabled }">
-        <div class="param">
-          <div class="param-head">
-            <label class="param-label" :for="ids.threshold">{{ t.threshold }}</label>
-            <span class="param-val">{{ threshold }} dB</span>
-          </div>
-          <input
-            :id="ids.threshold"
-            v-model.number="threshold"
-            type="range"
-            min="-60"
-            max="0"
-            step="1"
-            :disabled="!dynamicsEnabled"
-            :aria-label="t.a11y_threshold.replace('{val}', threshold)"
-            :aria-valuenow="threshold"
-            aria-valuemin="-60"
-            aria-valuemax="0"
-            @input="applySettings"
-          />
-        </div>
-
-        <div class="param">
-          <div class="param-head">
-            <label class="param-label" :for="ids.ratio">{{ t.ratio }}</label>
-            <span class="param-val">{{ ratio }}:1</span>
-          </div>
-          <input
-            :id="ids.ratio"
-            v-model.number="ratio"
-            type="range"
-            min="1"
-            max="20"
-            step="0.5"
-            :disabled="!dynamicsEnabled"
-            :aria-label="t.a11y_ratio.replace('{val}', ratio)"
-            :aria-valuenow="ratio"
-            aria-valuemin="1"
-            aria-valuemax="20"
-            @input="applySettings"
-          />
-        </div>
-
-        <div class="param">
-          <div class="param-head">
-            <label class="param-label" :for="ids.knee">{{ t.knee }}</label>
-            <span class="param-val">{{ knee }} dB</span>
-          </div>
-          <input
-            :id="ids.knee"
-            v-model.number="knee"
-            type="range"
-            min="0"
-            max="40"
-            step="1"
-            :disabled="!dynamicsEnabled"
-            :aria-label="t.a11y_knee.replace('{val}', knee)"
-            :aria-valuenow="knee"
-            aria-valuemin="0"
-            aria-valuemax="40"
-            @input="applySettings"
-          />
-        </div>
-
-        <div class="param">
-          <div class="param-head">
-            <label class="param-label" :for="ids.attack">{{ t.attack }}</label>
-            <span class="param-val">{{ (attack * 1000).toFixed(0) }} ms</span>
-          </div>
-          <input
-            :id="ids.attack"
-            v-model.number="attack"
-            type="range"
-            min="0"
-            max="1"
-            step="0.001"
-            :disabled="!dynamicsEnabled"
-            :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
-            :aria-valuenow="(attack * 1000).toFixed(0)"
-            aria-valuemin="0"
-            aria-valuemax="1000"
-            @input="applySettings"
-          />
-        </div>
-
-        <div class="param">
-          <div class="param-head">
-            <label class="param-label" :for="ids.release">{{ t.release }}</label>
-            <span class="param-val">{{ (release * 1000).toFixed(0) }} ms</span>
-          </div>
-          <input
-            :id="ids.release"
-            v-model.number="release"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            :disabled="!dynamicsEnabled"
-            :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
-            :aria-valuenow="(release * 1000).toFixed(0)"
-            aria-valuemin="0"
-            aria-valuemax="1000"
-            @input="applySettings"
-          />
-        </div>
+        <SliderField
+          :id="ids.threshold"
+          v-model="threshold"
+          :label="t.threshold"
+          :value-text="`${threshold} dB`"
+          :min="-60"
+          :max="0"
+          :step="1"
+          :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_threshold.replace('{val}', threshold)"
+          @input="applySettings"
+        />
+        <SliderField
+          :id="ids.ratio"
+          v-model="ratio"
+          :label="t.ratio"
+          :value-text="`${ratio}:1`"
+          :min="1"
+          :max="20"
+          :step="0.5"
+          :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_ratio.replace('{val}', ratio)"
+          @input="applySettings"
+        />
+        <SliderField
+          :id="ids.knee"
+          v-model="knee"
+          :label="t.knee"
+          :value-text="`${knee} dB`"
+          :min="0"
+          :max="40"
+          :step="1"
+          :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_knee.replace('{val}', knee)"
+          @input="applySettings"
+        />
+        <SliderField
+          :id="ids.attack"
+          v-model="attack"
+          :label="t.attack"
+          :value-text="`${(attack * 1000).toFixed(0)} ms`"
+          :min="0"
+          :max="1"
+          :step="0.001"
+          :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
+          @input="applySettings"
+        />
+        <SliderField
+          :id="ids.release"
+          v-model="release"
+          :label="t.release"
+          :value-text="`${(release * 1000).toFixed(0)} ms`"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          :disabled="!dynamicsEnabled"
+          :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
+          @input="applySettings"
+        />
       </div>
     </div>
   </BasePanel>
@@ -139,7 +95,7 @@
   import { DEFAULT_DYNAMICS } from '../utils/presets.js'
   import BasePanel from './BasePanel.vue'
   import CompressorPresets from './CompressorPresets.vue'
-  import { UiIconButton } from './ui'
+  import { SliderField, UiIconButton } from './ui'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
@@ -235,84 +191,5 @@
   .params.disabled {
     opacity: 0.4;
     pointer-events: none;
-  }
-
-  .param {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .param-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  .param-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
-
-  .param-val {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-variant-numeric: tabular-nums;
-    color: var(--accent-primary);
-  }
-
-  .param input[type='range'] {
-    width: 100%;
-    height: 4px;
-    margin: 4px 0;
-    -webkit-appearance: none;
-    appearance: none;
-    background: var(--secondary-bg);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .param input[type='range']:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 4px;
-  }
-
-  .param input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  .param input[type='range']::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-  }
-
-  .param input[type='range']::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    cursor: pointer;
-    border: none;
-  }
-
-  @media (max-width: 600px) {
-    .param input[type='range']::-webkit-slider-thumb {
-      width: 16px;
-      height: 16px;
-    }
-
-    .param input[type='range']::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-    }
   }
 </style>

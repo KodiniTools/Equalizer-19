@@ -51,7 +51,6 @@ const FROZEN_LITERALS = {
   'assets/style.css: #001d3d': 1,
   'assets/style.css: #003971': 1,
   'assets/style.css: #014f99': 1,
-  'assets/style.css: #ffffff': 3,
   'assets/style.css: rgba(0, 57, 113, 0.08)': 1,
   'assets/style.css: rgba(0, 57, 113, 0.12)': 1,
   'assets/style.css: rgba(1, 79, 153, 0.06)': 1,

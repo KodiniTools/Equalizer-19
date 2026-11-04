@@ -62,7 +62,7 @@ Equalizer-19/
 │   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
 │   │
 │   ├── components/         # Vue-Komponenten
-│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton), README
+│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField), README
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
 │   │   ├── BasePanel.vue              # Karten-Rahmen der Sidebars (Kopfzeile, Aktionen, Footer)

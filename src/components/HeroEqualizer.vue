@@ -235,7 +235,13 @@
     margin: 0;
     padding: 0;
     background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
     cursor: pointer;
+  }
+
+  .heq-slider:hover {
+    border-color: var(--accent-primary);
   }
 
   .heq-slider:focus-visible {
@@ -266,6 +272,14 @@
     background: var(--card-bg);
     border: 2px solid var(--text-muted);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .heq-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.15);
+    box-shadow: 0 3px 10px var(--shadow-medium);
   }
 
   .heq-slider::-moz-range-thumb {
@@ -275,6 +289,14 @@
     background: var(--card-bg);
     border: 2px solid var(--text-muted);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .heq-slider:hover::-moz-range-thumb {
+    transform: scale(1.15);
+    box-shadow: 0 3px 10px var(--shadow-medium);
   }
 
   .heq-slider.boost::-webkit-slider-thumb {
