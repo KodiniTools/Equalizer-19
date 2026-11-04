@@ -11,10 +11,10 @@
           <h1 class="lp-title">{{ t.lp_title }}</h1>
           <p class="lp-lead">{{ t.lp_subtitle }}</p>
           <div class="lp-actions">
-            <router-link to="/app" class="lp-btn lp-btn-primary">
+            <UiButton to="/app" variant="primary" size="lg">
               {{ t.lp_cta_start }} <span aria-hidden="true">→</span>
-            </router-link>
-            <a href="#features" class="lp-btn lp-btn-ghost">{{ t.lp_cta_learn }}</a>
+            </UiButton>
+            <UiButton href="#features" variant="outline" size="lg">{{ t.lp_cta_learn }}</UiButton>
           </div>
           <ul class="lp-trust">
             <li v-for="key in trust" :key="key">
@@ -213,9 +213,9 @@
         <div class="lp-final">
           <h2>{{ t.lp_final_title }}</h2>
           <p>{{ t.lp_final_desc }}</p>
-          <router-link to="/app" class="lp-btn lp-btn-primary">
+          <UiButton to="/app" variant="primary" size="lg">
             {{ t.lp_cta_start }} <span aria-hidden="true">→</span>
-          </router-link>
+          </UiButton>
         </div>
       </div>
     </section>
@@ -231,6 +231,7 @@
   import { buildBlogCards } from '../utils/blogCards.js'
   import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../utils/presets.js'
   import { buildEqCurve, smoothPath } from '../utils/eqCurve.js'
+  import { UiButton } from '../components/ui'
 
   const { t, currentLanguage } = inject('i18n')
 
@@ -843,7 +844,7 @@
       font-size: 16px;
     }
 
-    .lp-btn {
+    .lp-actions .ui-button {
       flex: 1 1 auto;
       justify-content: center;
     }
@@ -871,7 +872,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .lp-btn-primary:hover,
     .lp-blog-card:hover,
     .lp-blog-card:hover .lp-blog-media img {
       transform: none;

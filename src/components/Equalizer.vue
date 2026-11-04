@@ -1,14 +1,9 @@
 <template>
   <div class="equalizer">
     <div class="eq-header">
-      <button
-        :class="['btn', 'btn-icon', 'btn-sm', { 'is-on': !isEqBypassed }]"
-        :aria-label="t.a11y_eq_bypass"
-        :aria-pressed="!isEqBypassed"
-        @click="toggleBypass"
-      >
+      <UiIconButton :pressed="!isEqBypassed" :label="t.a11y_eq_bypass" @click="toggleBypass">
         <AppIcon name="power" />
-      </button>
+      </UiIconButton>
 
       <select
         v-model="selectedPreset"
@@ -26,35 +21,28 @@
       </select>
 
       <!-- Delete custom preset -->
-      <button
+      <UiIconButton
         v-if="isCustomSelected"
-        class="btn btn-icon btn-sm delete-btn"
-        :title="t.eq_preset_delete"
-        :aria-label="t.eq_preset_delete"
+        class="delete-btn"
+        :label="t.eq_preset_delete"
         @click="deleteSelectedCustomPreset"
       >
         <AppIcon name="trash" />
-      </button>
+      </UiIconButton>
 
       <!-- Save preset button -->
-      <button
+      <UiIconButton
         v-if="!showSaveForm"
-        class="btn btn-icon btn-sm save-btn"
-        :title="t.eq_preset_save_title"
-        :aria-label="t.eq_preset_save_title"
+        class="save-btn"
+        :label="t.eq_preset_save_title"
         @click="showSaveForm = true"
       >
         <AppIcon name="save" />
-      </button>
+      </UiIconButton>
 
-      <button
-        class="btn btn-icon btn-sm reset-btn"
-        :title="t.reset"
-        :aria-label="t.reset"
-        @click="resetEqualizer"
-      >
+      <UiIconButton class="reset-btn" :label="t.reset" @click="resetEqualizer">
         <AppIcon name="undo" />
-      </button>
+      </UiIconButton>
     </div>
 
     <!-- Inline save form -->
@@ -69,23 +57,17 @@
         @keydown.enter="confirmSavePreset"
         @keydown.escape="cancelSavePreset"
       />
-      <button
-        class="btn btn-icon btn-sm save-confirm-btn"
+      <UiIconButton
+        class="save-confirm-btn"
+        :label="t.eq_save"
         :disabled="!newPresetName.trim()"
-        :title="t.eq_save"
-        :aria-label="t.eq_save"
         @click="confirmSavePreset"
       >
         <AppIcon name="check" />
-      </button>
-      <button
-        class="btn btn-icon btn-sm cancel-btn"
-        :title="t.eq_cancel"
-        :aria-label="t.eq_cancel"
-        @click="cancelSavePreset"
-      >
+      </UiIconButton>
+      <UiIconButton class="cancel-btn" :label="t.eq_cancel" @click="cancelSavePreset">
         <AppIcon name="close" />
-      </button>
+      </UiIconButton>
     </div>
 
     <div class="eq-bands" :class="{ disabled: isEqBypassed }">
@@ -146,6 +128,7 @@
   import { EQ_PRESETS, EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
   import { buildEqCurve } from '../utils/eqCurve.js'
+  import { UiIconButton } from './ui'
 
   const { t } = inject('i18n')
 
@@ -332,22 +315,22 @@
     outline: none;
   }
 
-  /* Header buttons use the global .btn system; hover colours hint at the action */
-  .btn.save-btn:hover:not(:disabled),
-  .btn.reset-btn:hover:not(:disabled) {
+  /* Header buttons are UiIconButton; hover colours hint at the action */
+  .ui-button.save-btn:hover:not(:disabled),
+  .ui-button.reset-btn:hover:not(:disabled) {
     background: var(--accent-primary);
     border-color: var(--accent-primary);
     color: var(--on-accent);
   }
 
-  .btn.save-confirm-btn:hover:not(:disabled) {
+  .ui-button.save-confirm-btn:hover:not(:disabled) {
     background: var(--success);
     border-color: var(--success);
     color: #ffffff;
   }
 
-  .btn.cancel-btn:hover:not(:disabled),
-  .btn.delete-btn:hover:not(:disabled) {
+  .ui-button.cancel-btn:hover:not(:disabled),
+  .ui-button.delete-btn:hover:not(:disabled) {
     background: var(--error);
     border-color: var(--error);
     color: #ffffff;

@@ -30,9 +30,9 @@
           {{ t[section.labelKey] }}
         </a>
         <router-link to="/faq" class="hero-nav-link">{{ t.lp_nav_faq }}</router-link>
-        <router-link to="/app" class="lp-btn lp-btn-primary hero-nav-cta">
+        <UiButton to="/app" variant="primary" size="lg" class="hero-nav-cta">
           {{ t.lp_cta_start }} <span aria-hidden="true">→</span>
-        </router-link>
+        </UiButton>
       </nav>
     </div>
   </div>
@@ -41,6 +41,7 @@
 <script setup>
   import { inject, ref, onMounted, onUnmounted } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { UiButton } from './ui'
 
   const { t } = inject('i18n')
 
@@ -157,10 +158,11 @@
     color: var(--accent-primary);
   }
 
-  /* Kompakte Variante des globalen .lp-btn */
-  .hero-nav-cta {
+  /* Kompakte Variante des UiButton (lg) */
+  .ui-button.hero-nav-cta {
     margin-left: 8px;
-    padding: 8px 14px;
+    height: 32px;
+    padding: 0 14px;
     font-size: 14px;
     white-space: nowrap;
   }

@@ -49,9 +49,9 @@
       <div class="fq-final">
         <h2>{{ t.faq_cta_title }}</h2>
         <p>{{ t.faq_cta_desc }}</p>
-        <router-link to="/app" class="lp-btn lp-btn-primary">
+        <UiButton to="/app" variant="primary" size="lg">
           {{ t.nav_start_app }} <span aria-hidden="true">→</span>
-        </router-link>
+        </UiButton>
       </div>
     </section>
   </div>
@@ -59,6 +59,7 @@
 
 <script setup>
   import { inject } from 'vue'
+  import { UiButton } from '../components/ui'
 
   const { t } = inject('i18n')
 

@@ -105,7 +105,8 @@ describe('Styles außerhalb von src/design-system', () => {
   it('definieren keine eigenen Variablen außer den dokumentierten', () => {
     const hits = []
     for (const [file, css] of styleSheets()) {
-      for (const [, name] of css.matchAll(/(--[\w-]+)\s*:/g)) {
+      // Nur Deklarationen am Zeilenanfang; BEM-Modifier wie .ui-button--primary: sind keine
+      for (const [, name] of css.matchAll(/^\s*(--[\w-]+)\s*:/gm)) {
         if (LOCAL_VARIABLES[name] === file) continue
         hits.push(
           tokenNames.has(name)

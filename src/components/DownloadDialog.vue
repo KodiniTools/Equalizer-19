@@ -5,14 +5,9 @@
         <div class="dl-header">
           <AppIcon name="download" />
           <h3>{{ t.dl_title }}</h3>
-          <button
-            class="btn btn-icon btn-ghost btn-sm"
-            :title="t.dl_cancel"
-            :aria-label="t.dl_cancel"
-            @click="onCancel"
-          >
+          <UiIconButton variant="ghost" :label="t.dl_cancel" @click="onCancel">
             <AppIcon name="close" />
-          </button>
+          </UiIconButton>
         </div>
 
         <div class="dl-body">
@@ -42,12 +37,12 @@
         </div>
 
         <div class="dl-footer">
-          <button class="btn" @click="onCancel">{{ t.dl_cancel }}</button>
-          <button class="btn btn-primary" :disabled="!trimmedName || saving" @click="onConfirm">
+          <UiButton @click="onCancel">{{ t.dl_cancel }}</UiButton>
+          <UiButton variant="primary" :disabled="!trimmedName || saving" @click="onConfirm">
             <AppIcon v-if="saving" name="spinner" spin />
             <AppIcon v-else name="save" />
             {{ t.dl_save }}
-          </button>
+          </UiButton>
         </div>
       </div>
     </div>
@@ -57,6 +52,7 @@
 <script setup>
   import { ref, computed, watch, inject, nextTick } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { UiButton, UiIconButton } from './ui'
 
   const props = defineProps({
     show: { type: Boolean, default: false },

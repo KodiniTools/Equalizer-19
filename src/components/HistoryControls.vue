@@ -1,29 +1,25 @@
 <template>
   <div class="history-controls" role="group" :aria-label="t.history_title">
-    <button
-      type="button"
-      class="btn btn-icon btn-sm history-btn"
+    <UiIconButton
+      class="history-btn"
+      :label="undoTitle"
       :disabled="!canUndo"
-      :title="undoTitle"
-      :aria-label="undoTitle"
       :aria-keyshortcuts="'Control+Z Meta+Z'"
       @click="history.undo()"
     >
       <AppIcon name="undo" />
       <span v-if="undoDepth > 0" class="history-count" aria-hidden="true">{{ undoDepth }}</span>
-    </button>
-    <button
-      type="button"
-      class="btn btn-icon btn-sm history-btn"
+    </UiIconButton>
+    <UiIconButton
+      class="history-btn"
+      :label="redoTitle"
       :disabled="!canRedo"
-      :title="redoTitle"
-      :aria-label="redoTitle"
       :aria-keyshortcuts="'Control+Shift+Z Control+Y Meta+Shift+Z'"
       @click="history.redo()"
     >
       <AppIcon name="redo" />
       <span v-if="redoDepth > 0" class="history-count" aria-hidden="true">{{ redoDepth }}</span>
-    </button>
+    </UiIconButton>
   </div>
 </template>
 
@@ -31,6 +27,7 @@
   import { inject, computed, watch } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
+  import { UiIconButton } from './ui'
 
   /**
    * Undo / redo buttons for the processing history (EQ + compressor).
@@ -97,7 +94,7 @@
     gap: 6px;
   }
 
-  /* Button look comes from the global .btn system; only the badge anchor is local */
+  /* Button look comes from UiIconButton; only the badge anchor is local */
   .history-btn {
     position: relative;
   }

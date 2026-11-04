@@ -6,17 +6,16 @@
     </div>
 
     <div class="heq-presets" role="toolbar" :aria-label="t.lp_demo_presets">
-      <button
+      <UiButton
         v-for="name in presetNames"
         :key="name"
-        type="button"
-        class="btn btn-sm heq-chip"
-        :class="{ 'is-on': name === activePreset }"
-        :aria-pressed="name === activePreset"
+        size="sm"
+        :pressed="name === activePreset"
+        class="heq-chip"
         @click="loadPreset(name)"
       >
         {{ name }}
-      </button>
+      </UiButton>
     </div>
 
     <div class="heq-stage">
@@ -80,6 +79,7 @@
   import { computed, inject, ref } from 'vue'
   import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../utils/presets.js'
   import { buildEqCurve, formatGain } from '../utils/eqCurve.js'
+  import { UiButton } from './ui'
 
   /**
    * Interactive 19-band demo for the landing page. Uses the real preset data
