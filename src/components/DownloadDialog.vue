@@ -1,58 +1,47 @@
 <template>
-  <Teleport to="body">
-    <div v-if="show" class="dl-overlay" @click.self="onCancel">
-      <div class="dl-dialog" role="dialog" aria-modal="true" :aria-label="t.dl_title">
-        <div class="dl-header">
-          <AppIcon name="download" />
-          <h3>{{ t.dl_title }}</h3>
-          <UiIconButton variant="ghost" :label="t.dl_cancel" @click="onCancel">
-            <AppIcon name="close" />
-          </UiIconButton>
-        </div>
-
-        <div class="dl-body">
-          <label class="dl-label" for="dl-filename">{{ t.dl_filename_label }}</label>
-          <div class="dl-input-wrap">
-            <input
-              id="dl-filename"
-              ref="nameInput"
-              v-model="name"
-              type="text"
-              class="dl-input"
-              :placeholder="t.dl_name_placeholder"
-              spellcheck="false"
-              autocomplete="off"
-              @keydown.enter.prevent="onConfirm"
-              @keydown.esc.prevent="onCancel"
-            />
-            <span class="dl-ext">.{{ ext }}</span>
-          </div>
-
-          <p class="dl-hint">
-            <AppIcon :name="folderSupported ? 'folder' : 'info'" />
-            <span>{{
-              folderSupported ? t.dl_folder_hint_supported : t.dl_folder_hint_unsupported
-            }}</span>
-          </p>
-        </div>
-
-        <div class="dl-footer">
-          <UiButton @click="onCancel">{{ t.dl_cancel }}</UiButton>
-          <UiButton variant="primary" :disabled="!trimmedName || saving" @click="onConfirm">
-            <AppIcon v-if="saving" name="spinner" spin />
-            <AppIcon v-else name="save" />
-            {{ t.dl_save }}
-          </UiButton>
-        </div>
-      </div>
+  <UiDialog
+    :open="show"
+    :title="t.dl_title"
+    icon="download"
+    :close-label="t.dl_cancel"
+    @close="onCancel"
+  >
+    <label class="dl-label" for="dl-filename">{{ t.dl_filename_label }}</label>
+    <div class="dl-input-wrap">
+      <input
+        id="dl-filename"
+        ref="nameInput"
+        v-model="name"
+        type="text"
+        class="dl-input"
+        :placeholder="t.dl_name_placeholder"
+        spellcheck="false"
+        autocomplete="off"
+        @keydown.enter.prevent="onConfirm"
+      />
+      <span class="dl-ext">.{{ ext }}</span>
     </div>
-  </Teleport>
+
+    <p class="dl-hint">
+      <AppIcon :name="folderSupported ? 'folder' : 'info'" />
+      <span>{{ folderSupported ? t.dl_folder_hint_supported : t.dl_folder_hint_unsupported }}</span>
+    </p>
+
+    <template #footer>
+      <UiButton @click="onCancel">{{ t.dl_cancel }}</UiButton>
+      <UiButton variant="primary" :disabled="!trimmedName || saving" @click="onConfirm">
+        <AppIcon v-if="saving" name="spinner" spin />
+        <AppIcon v-else name="save" />
+        {{ t.dl_save }}
+      </UiButton>
+    </template>
+  </UiDialog>
 </template>
 
 <script setup>
   import { ref, computed, watch, inject, nextTick } from 'vue'
   import AppIcon from './AppIcon.vue'
-  import { UiButton, UiIconButton } from './ui'
+  import { UiButton, UiDialog } from './ui'
 
   const props = defineProps({
     show: { type: Boolean, default: false },
@@ -97,77 +86,6 @@
 </script>
 
 <style scoped>
-  .dl-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: dl-fade 0.15s ease-out;
-  }
-
-  @keyframes dl-fade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .dl-dialog {
-    width: 100%;
-    max-width: 420px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    overflow: hidden;
-    animation: dl-pop 0.18s ease-out;
-  }
-
-  @keyframes dl-pop {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  .dl-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .dl-header .icon {
-    color: var(--accent-primary);
-    width: 16px;
-    height: 16px;
-  }
-
-  .dl-header h3 {
-    margin: 0;
-    font-size: 1em;
-    font-weight: 600;
-    color: var(--text-primary);
-    flex: 1;
-  }
-
-  .dl-body {
-    padding: 18px 16px;
-  }
-
   .dl-label {
     display: block;
     font-size: 13px;
@@ -225,19 +143,5 @@
     width: 14px;
     height: 14px;
     color: var(--accent-primary);
-  }
-
-  .dl-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding: 14px 16px;
-    border-top: 1px solid var(--border-color);
-  }
-
-  @media (max-width: 480px) {
-    .dl-dialog {
-      max-width: 100%;
-    }
   }
 </style>

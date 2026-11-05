@@ -1,20 +1,20 @@
 <template>
-  <section class="panel" :aria-labelledby="titleId">
-    <header class="panel-header">
-      <h3 :id="titleId" class="panel-title">
+  <section class="ui-panel" :aria-labelledby="titleId">
+    <header class="ui-panel__header">
+      <h3 :id="titleId" class="ui-panel__title">
         <AppIcon v-if="icon" :name="icon" />
         <span>{{ title }}</span>
       </h3>
-      <div v-if="$slots.actions" class="panel-actions">
+      <div v-if="$slots.actions" class="ui-panel__actions">
         <slot name="actions" />
       </div>
     </header>
 
-    <div class="panel-body">
+    <div class="ui-panel__body">
       <slot />
     </div>
 
-    <footer v-if="$slots.footer" class="panel-footer">
+    <footer v-if="$slots.footer" class="ui-panel__footer">
       <slot name="footer" />
     </footer>
   </section>
@@ -22,15 +22,15 @@
 
 <script setup>
   import { useId } from 'vue'
-  import AppIcon from './AppIcon.vue'
+  import AppIcon from '../AppIcon.vue'
 
   /**
-   * Card shell shared by the sidebar panels: consistent header (icon, title,
-   * right-aligned actions), body and optional footer.
+   * Karten-Rahmen der Sidebar-Panels: Kopfzeile (Icon, Titel, Aktionen rechts),
+   * Body und optionaler Footer. `icon` ist ein Name aus utils/icons.js, Aktionen
+   * sind UiIconButton (`pressed` = an).
    *
-   * `icon` is a name from utils/icons.js. Header buttons are UiIconButton
-   * (components/ui), `pressed` = on. Slotted helpers styled
-   * here: .panel-badge (small pill), .panel-section-label (small caps label).
+   * Hilfsklassen für Slot-Inhalte: .panel-badge (kleine Pille) und
+   * .panel-section-label (kleine Kapitälchen-Beschriftung).
    */
   defineProps({
     title: { type: String, required: true },
@@ -41,7 +41,7 @@
 </script>
 
 <style scoped>
-  .panel {
+  .ui-panel {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -51,7 +51,7 @@
     gap: 12px;
   }
 
-  .panel-header {
+  .ui-panel__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -59,7 +59,7 @@
     min-height: 28px;
   }
 
-  .panel-title {
+  .ui-panel__title {
     margin: 0;
     display: flex;
     align-items: center;
@@ -71,38 +71,38 @@
     color: var(--text-primary);
   }
 
-  .panel-title span {
+  .ui-panel__title span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .panel-title .icon {
+  .ui-panel__title .icon {
     color: var(--accent-primary);
     width: 14px;
     height: 14px;
   }
 
-  .panel-actions {
+  .ui-panel__actions {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
   }
 
-  .panel-body {
+  .ui-panel__body {
     display: flex;
     flex-direction: column;
     gap: 12px;
     min-width: 0;
   }
 
-  .panel-footer {
+  .ui-panel__footer {
     border-top: 1px solid var(--border-color);
     padding-top: 10px;
   }
 
-  /* ---- Slotted helpers ---- */
+  /* ---- Hilfsklassen für Slot-Inhalte ---- */
   :slotted(.panel-badge) {
     padding: 2px 8px;
     border-radius: 999px;
@@ -124,7 +124,7 @@
   }
 
   @media (max-width: 600px) {
-    .panel {
+    .ui-panel {
       padding: 10px;
     }
   }

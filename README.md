@@ -64,7 +64,6 @@ equalizer19-vue/
 │   ├── components/
 │   │   ├── RelatedTools.vue    # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
-│   │   ├── BasePanel.vue       # Karten-Rahmen der Sidebars (Kopfzeile, Aktionen, Footer)
 │   │   ├── CompressorPresets.vue # Kompressor-Preset-Dropdown (in DynamicsProcessor)
 │   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
@@ -72,7 +71,7 @@ equalizer19-vue/
 │   │   ├── HeroNav.vue         # Lokale Navigation der Landing-Page (Start, Funktionen, Blog, FAQ)
 │   │   ├── HistoryControls.vue # Undo/Redo-Buttons (Kopfzeile der App)
 │   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
-│   │   ├── Notification.vue    # Toast-Notifications
+│   │   ├── Notification.vue    # Toast-Host für UiToast
 │   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
 │   │   ├── RecorderControls.vue # Aufnahme & Download (Teil der Player-Leiste)

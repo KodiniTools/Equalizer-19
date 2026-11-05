@@ -1,5 +1,5 @@
 <template>
-  <BasePanel icon="microphone" :title="t.input_title">
+  <UiPanel icon="microphone" :title="t.input_title">
     <template v-if="input.isActive.value" #actions>
       <span class="panel-badge live-badge">
         <span class="live-dot" aria-hidden="true"></span>{{ t.input_live_badge }}
@@ -94,15 +94,14 @@
         {{ t.input_help_link }} <span aria-hidden="true">→</span>
       </router-link>
     </template>
-  </BasePanel>
+  </UiPanel>
 </template>
 
 <script setup>
   import { inject, useId, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
-  import BasePanel from './BasePanel.vue'
   import { SYSTEM_AUDIO } from '../composables/useInputSource'
-  import { UiButton, UiSegmentedControl, UiSwitch } from './ui'
+  import { UiButton, UiPanel, UiSegmentedControl, UiSwitch } from './ui'
 
   const { t } = inject('i18n')
   // Provided by AppPage (useInputSource)
