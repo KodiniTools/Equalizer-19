@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { translations } from '../utils/translations'
+import { translations } from '../i18n'
 import { applyPageMeta, resolveInitialLanguage, routePathFromLocation } from '../utils/seoMeta'
 
 // ?lang=en (hreflang-Ziel) hat Vorrang vor der gespeicherten Sprache, sonst Deutsch.
