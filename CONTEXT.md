@@ -90,6 +90,8 @@ Equalizer-19/
 │   │   ├── history.js                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
 │   │   └── toast.js                   # Benachrichtigungen: notify(message, type)
 │   │
+│   ├── i18n/               # Übersetzungen: de.ts (Referenz, TranslationKey), en.ts (Record<TranslationKey, string>), index.ts (translations, LANGUAGES)
+│   │
 │   ├── composables/        # Vue Composition API Logik
 │   │   ├── useCustomPresets.js        # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js             # Dateiauswahl & Drag & Drop (inkl. Ordner)
@@ -105,7 +107,6 @@ Equalizer-19/
 │       ├── playbackOrder.js        # Playlist-Navigation (reine Funktionen)
 │       ├── presets.js              # EQ- und Kompressor-Presets
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
-│       ├── translations.js         # DE/EN Übersetzungen
 │       ├── wavEncoder.js           # WAV-Export (16/24/32 Bit)
 │       └── workletLoader.js        # AudioWorklet laden (mit Timeout/Fallback)
 │
@@ -223,14 +224,21 @@ COMP_PRESETS = {
 
 ### Übersetzungen (i18n)
 
-```javascript
-// Definiert in: src/utils/translations.js
-// Unterstützte Sprachen: 'de' (Deutsch), 'en' (English)
-translations = {
-  de: { /* 63 Übersetzungsschlüssel */ },
-  en: { /* 63 Übersetzungsschlüssel */ }
-}
+```typescript
+// src/i18n/de.ts – deutsche Texte, Referenz für alle Schlüssel
+const de = { nav_start_app: 'App starten', /* … rund 380 Schlüssel */ }
+export type TranslationKey = keyof typeof de
+
+// src/i18n/en.ts – fehlende oder überzählige Schlüssel sind ein Typfehler (npm run type-check)
+const en: Record<TranslationKey, string> = { nav_start_app: 'Start App', /* … */ }
+
+// src/i18n/index.ts
+export const translations = { de, en } // Language = 'de' | 'en'
 ```
+
+Neue Texte zuerst in `de.ts` eintragen, dann in `en.ts`. `src/i18n/__tests__/translations.spec.js` prüft
+zusätzlich zur Laufzeit: gleiche Schlüssel, keine leeren Texte, gleiche Platzhalter (`{name}`, `{count}`).
+Die Komponenten lesen weiterhin `t.value.key` (bzw. `t.key` im Template) über `inject('i18n')`.
 
 ---
 
@@ -297,7 +305,7 @@ Die AudioNodes im Engine-Store sind `shallowRef` und `markRaw`: Vue darf sie nie
 wickeln, weil `connect()`/`disconnect()` auf einem Proxy fehlschlägt. Tests erzeugen die Stores
 mit `setActivePinia(createPinia())` (auch unter node:test).
 
-Nur i18n und Theme laufen noch über provide/inject aus `App.vue` (bis Schritt 5, i18n):
+i18n und Theme laufen bewusst über provide/inject aus `App.vue` (`useI18n` liest `src/i18n/`):
 
 ```javascript
 provide('i18n', { t, currentLanguage, setLanguage })

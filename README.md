@@ -98,6 +98,7 @@ equalizer19-vue/
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
 │   │   ├── useTheme.js         # Theme-Management
 │   │   └── useUndoRedo.js      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
+│   ├── i18n/                   # Übersetzungen: de.ts (Referenz), en.ts (typgeprüft gegen de), index.ts
 │   ├── pages/                  # Landing (ohne Icon-Font, Kennzahlen aus presets.js), App, FAQ
 │   ├── router/                 # Vue Router
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
@@ -110,7 +111,6 @@ equalizer19-vue/
 │       ├── presets.js          # EQ/Comp Presets
 │       ├── processingState.js  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
 │       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
-│       ├── translations.js     # Übersetzungen
 │       ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
 │       └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
 └── tests/                      # Logik-Tests (node:test); Komponententests liegen in src/**/__tests__ (Vitest)
