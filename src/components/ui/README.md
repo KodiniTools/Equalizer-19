@@ -10,7 +10,16 @@ Bausteine des Design-Systems, Muster: `components/ui/` im Playlist-Generator. Al
 - Je ein Vitest unter `__tests__/`.
 
 ```js
-import { SliderField, UiButton, UiIconButton, UiSegmentedControl, UiSwitch } from '@/components/ui'
+import {
+  SliderField,
+  UiButton,
+  UiDialog,
+  UiIconButton,
+  UiPanel,
+  UiSegmentedControl,
+  UiSwitch,
+  UiToast,
+} from '@/components/ui'
 ```
 
 | Komponente     | Zweck                                           | Wichtige Props                                                                                                        |
@@ -20,6 +29,9 @@ import { SliderField, UiButton, UiIconButton, UiSegmentedControl, UiSwitch } fro
 | `UiSwitch`     | Schalter (Checkbox mit `role="switch"`)         | `v-model` (Boolean), `label` (Pflicht), `labelHidden`, `disabled`, `id`                                               |
 | `SliderField`  | Beschrifteter Regler mit Wertanzeige            | `v-model` (Number), `label` (Pflicht), `valueText`, `min`, `max`, `step`, `disabled`, `ariaLabel`, `ariaValueText`     |
 | `UiSegmentedControl` | Umschalter mit genau einer gewählten Option (Radiogroup) | `v-model` (String oder Number), `options` `[{ value, label, title?, disabled? }]`, `label`, `variant` accent · surface, `size` sm · md · lg, `block` |
+| `UiPanel` | Karten-Rahmen der Sidebar-Panels mit Kopfzeile | `title` (Pflicht), `icon`; Slots default, `actions`, `footer` |
+| `UiDialog` | Modaler Dialog, teleportiert nach body | `open`, `title`, `closeLabel` (Pflicht), `icon`; Slots default, `footer`; Event `close` (Escape, Hintergrund, Button) |
+| `UiToast` | Eine Benachrichtigung mit Statusfarbe | `message` (Pflicht), `type` info · success · warning · error |
 
 `pressed` (true/false) setzt `aria-pressed` und den Zustand „an“: primary/secondary werden zur
 Akzentfläche, ghost zur getönten Fläche (Shuffle, Repeat). Ohne `pressed` gibt es kein `aria-pressed`.
@@ -36,6 +48,13 @@ Pos1 und Ende wechseln und wählen. `variant="accent"` färbt die gewählte Opti
 Akzentfarbe (Quelle, Aufnahmeformat), `variant="surface"` hebt sie als Kartenfläche ab (Tabs der
 App-Seite). `block` verteilt die Optionen gleich breit über die volle Breite, sonst ist der
 Umschalter so breit wie sein Inhalt. `title` einer Option wird auch `aria-label`.
+
+`UiPanel` stylt zwei Hilfsklassen für Slot-Inhalte: `.panel-badge` (kleine Pille) und
+`.panel-section-label` (Beschriftung in Kapitälchen). `UiDialog` schließt nie selbst: der Aufrufer
+hält `open` und reagiert auf `close`, so kann er z. B. während des Speicherns das Schließen
+verweigern. Fokussiert der Aufrufer nach dem Öffnen selbst ein Element (`nextTick`), lässt der
+Dialog es dort. `UiToast` ist nur die Fläche; Position, Dauer und Ein-/Ausblenden übernimmt
+`components/Notification.vue` (`notify` aus AppPage).
 
 ### Regler-Anatomie `range.css`
 
@@ -69,6 +88,22 @@ Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin
 
 <UiSwitch v-model="monitor" :label="t.input_monitor" :disabled="!monitorAllowed" />
 
+<UiPanel icon="sliders" :title="t.dynamics">
+  <template #actions>
+    <UiIconButton :label="t.reset" @click="reset"><AppIcon name="undo" /></UiIconButton>
+  </template>
+  <span class="panel-section-label">{{ t.comp_params }}</span>
+  …
+</UiPanel>
+
+<UiDialog :open="show" :title="t.dl_title" icon="download" :close-label="t.dl_cancel" @close="onCancel">
+  …
+  <template #footer>
+    <UiButton @click="onCancel">{{ t.dl_cancel }}</UiButton>
+    <UiButton variant="primary" @click="onConfirm">{{ t.dl_save }}</UiButton>
+  </template>
+</UiDialog>
+
 <UiSegmentedControl
   v-model="activeTab"
   :options="[
@@ -92,7 +127,8 @@ Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin
 />
 ```
 
-## Noch nicht enthalten (folgt in Schritt 2d)
+## Schritt 2 ist abgeschlossen
 
-- `UiPanel` (aus BasePanel), `UiDialog` (aus DownloadDialog), `UiToast` (aus Notification).
-- Die in `designTokens.spec.js` eingefrorenen Farb-Literale werden mit diesen Komponenten abgebaut.
+Alle Bausteine aus dem Playlist-Generator-Muster, die der Equalizer braucht, liegen hier. Die in
+`designTokens.spec.js` eingefrorenen Farb-Literale der restlichen Komponenten (AudioMeter,
+Equalizer, CountdownOverlay, RecorderControls, AppPage) werden in späteren Schritten abgebaut.

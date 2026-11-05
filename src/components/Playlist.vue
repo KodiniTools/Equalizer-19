@@ -1,5 +1,5 @@
 <template>
-  <BasePanel icon="list" :title="t.playlist_title">
+  <UiPanel icon="list" :title="t.playlist_title">
     <template v-if="playlist.length > 0" #actions>
       <span class="panel-badge">
         {{ playlist.length }} {{ playlist.length === 1 ? 'Track' : 'Tracks' }}
@@ -105,14 +105,13 @@
         </dl>
       </details>
     </template>
-  </BasePanel>
+  </UiPanel>
 </template>
 
 <script setup>
   import { ref, inject, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
-  import BasePanel from './BasePanel.vue'
-  import { UiIconButton } from './ui'
+  import { UiIconButton, UiPanel } from './ui'
 
   const { t } = inject('i18n')
   const audioPlayer = inject('audioPlayer', {

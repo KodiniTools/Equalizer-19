@@ -44,6 +44,8 @@
   --shadow-light: rgba(201, 152, 77, 0.12);
   --shadow-medium: rgba(201, 152, 77, 0.2);
   --shadow-raised: rgba(0, 0, 0, 0.2); /* neutraler Schatten erhabener Flächen (Tabs) */
+  --shadow-overlay: rgba(0, 0, 0, 0.45); /* Schatten schwebender Flächen (Dialoge) */
+  --overlay-backdrop: rgba(0, 0, 0, 0.55); /* Abdunkelung hinter Dialogen */
   /* EQ band colours: boost in the brand accent, cut in the secondary accent.
      Traffic-light colours stay reserved for meters and status. */
   --eq-boost: var(--accent-primary);
@@ -83,6 +85,8 @@
   --shadow-light: rgba(1, 79, 153, 0.1);
   --shadow-medium: rgba(1, 79, 153, 0.18);
   --shadow-raised: rgba(0, 0, 0, 0.2);
+  --shadow-overlay: rgba(0, 0, 0, 0.45);
+  --overlay-backdrop: rgba(0, 0, 0, 0.55);
   /* EQ band colours follow the accents (explicit per theme, like tokens.json) */
   --eq-boost: var(--accent-primary);
   --eq-cut: var(--accent-secondary);

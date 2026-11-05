@@ -39,32 +39,6 @@ body {
   padding: 16px;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.header h1,
-.header h2 {
-  font-size: 17px;
-  margin: 0;
-  background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
 /* ===== THREE-COLUMN LAYOUT FOR EQUALIZER ===== */
 .main-layout {
   max-width: 1600px;
@@ -112,61 +86,9 @@ body {
 
 /* Buttons: UiButton / UiIconButton in src/components/ui (kein globales .btn mehr) */
 
-/* ===== METERS & VISUALIZATIONS ===== */
-.meter {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.meter .bar {
-  height: 14px;
-  background: var(--secondary-bg);
-  border-radius: 7px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid var(--border-color);
-}
-
-.meter .bar > .fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  transition: width 0.1s ease;
-  border-radius: 6px;
-}
-
 canvas {
   border-radius: 10px;
   border: 1px solid var(--border-color);
-}
-
-/* ===== NOTIFICATIONS ===== */
-#notification {
-  position: fixed;
-  bottom: 18px;
-  right: 18px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent-primary);
-  padding: 14px 18px;
-  border-radius: 10px;
-  display: none;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 1500;
-  max-width: 280px;
-  box-shadow: 0 6px 20px var(--shadow-medium);
-  transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 12px;
-}
-
-#notification.show {
-  transform: translateX(0);
 }
 
 /* ===== ACCESSIBILITY ===== */
@@ -225,10 +147,6 @@ select:focus {
 }
 
 @media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
   .grid-three-column {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
@@ -244,16 +162,6 @@ select:focus {
   .column-center {
     order: -1;
   }
-
-  .header {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .header h1,
-  .header h2 {
-    font-size: 15px;
-  }
 }
 
 @media (max-width: 600px) {
@@ -263,17 +171,6 @@ select:focus {
 
   .controls {
     gap: 8px;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .header h1,
-  .header h2 {
-    font-size: 14px;
   }
 
   .row {
@@ -287,13 +184,6 @@ select:focus {
   .row .value {
     min-width: 38px;
     font-size: 10px;
-  }
-
-  #notification {
-    left: 10px;
-    right: 10px;
-    max-width: none;
-    bottom: 12px;
   }
 }
 
@@ -311,7 +201,7 @@ select:focus {
    Only colours fade on a theme switch. The previous `* { transition … !important }`
    overrode every component transition (meter mask, sliders, dialogs). */
 body,
-.panel,
+.ui-panel,
 input,
 select {
   transition-property: background-color, border-color, color, box-shadow;
@@ -405,7 +295,7 @@ body.has-sticky-player {
 @media print {
   .top-nav,
   .faq-modal,
-  #notification {
+  .app-toast {
     display: none !important;
   }
 

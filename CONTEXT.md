@@ -62,16 +62,15 @@ Equalizer-19/
 │   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
 │   │
 │   ├── components/         # Vue-Komponenten
-│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiSegmentedControl), README
+│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiSegmentedControl, UiPanel, UiDialog, UiToast), README
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
-│   │   ├── BasePanel.vue              # Karten-Rahmen der Sidebars (Kopfzeile, Aktionen, Footer)
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Dropdown (in DynamicsProcessor)
-│   │   ├── DownloadDialog.vue         # Dateiname/Speicherort für Aufnahmen
+│   │   ├── DownloadDialog.vue         # Dateiname/Speicherort für Aufnahmen (auf UiDialog)
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
 │   │   ├── Equalizer.vue              # 19-Band EQ-Interface
 │   │   ├── HeroNav.vue                # Lokale Navigation der Landing-Page (sticky unter der globalen Nav)
-│   │   ├── Notification.vue           # Toast-Benachrichtigungen
+│   │   ├── Notification.vue           # Toast-Host (Position, Dauer) für UiToast
 │   │   ├── PlayerTransport.vue        # Wiedergabe-Buttons (in StickyPlayerBar)
 │   │   ├── Playlist.vue               # Track-Playlist
 │   │   ├── RecorderControls.vue       # Aufnahme & Download (in StickyPlayerBar)

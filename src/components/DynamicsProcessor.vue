@@ -1,5 +1,5 @@
 <template>
-  <BasePanel icon="sliders" :title="t.dynamics">
+  <UiPanel icon="sliders" :title="t.dynamics">
     <template #actions>
       <UiIconButton :label="t.reset" @click="resetDynamics">
         <AppIcon name="undo" />
@@ -86,16 +86,15 @@
         />
       </div>
     </div>
-  </BasePanel>
+  </UiPanel>
 </template>
 
 <script setup>
   import { ref, inject, onMounted, watch, useId } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { DEFAULT_DYNAMICS } from '../utils/presets.js'
-  import BasePanel from './BasePanel.vue'
   import CompressorPresets from './CompressorPresets.vue'
-  import { SliderField, UiIconButton } from './ui'
+  import { SliderField, UiIconButton, UiPanel } from './ui'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')

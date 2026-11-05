@@ -62,8 +62,6 @@ const FROZEN_LITERALS = {
   'components/AudioMeter.vue: #f59e0b': 2,
   'components/AudioMeter.vue: #fff': 1,
   'components/CountdownOverlay.vue: rgba(0, 0, 0, 0.35)': 1,
-  'components/DownloadDialog.vue: rgba(0, 0, 0, 0.45)': 1,
-  'components/DownloadDialog.vue: rgba(0, 0, 0, 0.55)': 1,
   'components/Equalizer.vue: #ffffff': 4,
   'components/Equalizer.vue: rgba(0, 0, 0, 0.35)': 2,
   'components/Equalizer.vue: rgba(127, 127, 140, 0.08)': 1,
