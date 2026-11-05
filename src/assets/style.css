@@ -112,124 +112,6 @@ body {
 
 /* Buttons: UiButton / UiIconButton in src/components/ui (kein globales .btn mehr) */
 
-/* ===== SLIDERS - KOMPAKTER ===== */
-.row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 10px 0;
-}
-
-.row label {
-  flex: 1;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.row input[type='range'] {
-  flex: 2;
-}
-
-.row .value {
-  min-width: 45px;
-  text-align: right;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent-primary);
-}
-
-input[type='range'] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-color);
-  outline: none;
-  cursor: pointer;
-}
-
-input[type='range']:hover {
-  border-color: var(--accent-primary);
-}
-
-input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 6px var(--shadow-medium);
-}
-
-input[type='range']::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 6px var(--shadow-medium);
-}
-
-input[type='range']:hover::-webkit-slider-thumb {
-  transform: scale(1.15);
-  box-shadow: 0 3px 10px var(--shadow-medium);
-}
-
-input[type='range']:hover::-moz-range-thumb {
-  transform: scale(1.15);
-  box-shadow: 0 3px 10px var(--shadow-medium);
-}
-
-/* ===== EQUALIZER - KOMPAKTER ===== */
-.eq {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  overflow-x: auto;
-  padding: 14px 8px;
-  background: var(--secondary-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  justify-content: center;
-}
-
-.eq .col {
-  min-width: 32px;
-  text-align: center;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.eq .col label {
-  display: block;
-  font-size: 9px;
-  color: var(--text-secondary);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  margin-top: 6px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-
-.eq .col input[type='range'] {
-  writing-mode: vertical-lr;
-  direction: rtl;
-  height: 120px;
-  width: 6px;
-  margin: 6px 0;
-}
-
 /* ===== METERS & VISUALIZATIONS ===== */
 .meter {
   display: flex;
@@ -407,39 +289,11 @@ select:focus {
     font-size: 10px;
   }
 
-  .eq {
-    gap: 5px;
-    padding: 10px 6px;
-  }
-
-  .eq .col {
-    min-width: 28px;
-  }
-
-  .eq .col input[type='range'] {
-    height: 100px;
-    width: 5px;
-  }
-
-  .eq .col label {
-    font-size: 8px;
-  }
-
   #notification {
     left: 10px;
     right: 10px;
     max-width: none;
     bottom: 12px;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    width: 20px;
-    height: 20px;
-  }
-
-  input[type='range']::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
   }
 }
 
@@ -450,24 +304,6 @@ select:focus {
 
   .controls {
     justify-content: space-between;
-  }
-
-  .eq {
-    gap: 3px;
-    padding: 8px 4px;
-  }
-
-  .eq .col {
-    min-width: 24px;
-  }
-
-  .eq .col input[type='range'] {
-    height: 85px;
-    width: 4px;
-  }
-
-  .eq .col label {
-    font-size: 7px;
   }
 }
 

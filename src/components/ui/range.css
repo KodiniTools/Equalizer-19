@@ -1,0 +1,69 @@
+/* Regler-Anatomie für horizontale Range-Inputs (SliderField, VolumeControl):
+   Spur 4 px auf --secondary-bg mit 1 px Rahmen, Daumen 12 px in --accent-primary mit
+   hellem Rand und Schatten, auf Smartphones 16 px.
+   Scoped einbinden: <style scoped src="./ui/range.css"></style> und die Klasse .ui-range setzen. */
+.ui-range {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 4px 0;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.ui-range:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+}
+
+.ui-range:disabled {
+  cursor: not-allowed;
+}
+
+.ui-range:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 4px;
+}
+
+.ui-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--on-status);
+  background: var(--accent-primary);
+  box-shadow: 0 2px 6px var(--shadow-medium);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.ui-range:hover:not(:disabled)::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.ui-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--on-status);
+  background: var(--accent-primary);
+  box-shadow: 0 2px 6px var(--shadow-medium);
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .ui-range::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ui-range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}

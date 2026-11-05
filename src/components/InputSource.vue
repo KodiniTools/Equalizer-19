@@ -78,20 +78,13 @@
 
         <!-- Monitoring -->
         <div class="monitor">
-          <label
-            class="switch"
-            :class="{ disabled: !input.monitorAllowed.value }"
+          <UiSwitch
+            :model-value="input.monitor.value && input.monitorAllowed.value"
+            :label="t.input_monitor"
+            :disabled="!input.monitorAllowed.value"
             :title="input.monitorAllowed.value ? undefined : t.input_monitor_locked"
-          >
-            <input
-              type="checkbox"
-              :checked="input.monitor.value && input.monitorAllowed.value"
-              :disabled="!input.monitorAllowed.value"
-              @change="input.setMonitor($event.target.checked)"
-            />
-            <span class="switch-track" aria-hidden="true"></span>
-            <span class="switch-label">{{ t.input_monitor }}</span>
-          </label>
+            @update:model-value="input.setMonitor($event)"
+          />
         </div>
 
         <!-- What the user hears while PC audio is live -->
@@ -120,7 +113,7 @@
   import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
   import { SYSTEM_AUDIO } from '../composables/useInputSource'
-  import { UiButton } from './ui'
+  import { UiButton, UiSwitch } from './ui'
 
   const { t } = inject('i18n')
   // Provided by AppPage (useInputSource)
@@ -268,71 +261,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-  }
-
-  .switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    width: fit-content;
-  }
-
-  .switch input {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-  }
-
-  .switch-track {
-    position: relative;
-    width: 32px;
-    height: 18px;
-    border-radius: 999px;
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    transition: background 0.2s;
-  }
-
-  .switch-track::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    transition:
-      transform 0.2s,
-      background 0.2s;
-  }
-
-  .switch input:checked + .switch-track {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-  }
-
-  .switch input:checked + .switch-track::after {
-    transform: translateX(14px);
-    background: var(--on-accent);
-  }
-
-  .switch input:focus-visible + .switch-track {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-  }
-
-  .switch.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
-  .switch-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
   }
 
   /* ---- Messages ---- */
