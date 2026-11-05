@@ -1,129 +1,163 @@
 # EQUALIZER 19 - Vue 3 Edition
 
-Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 und der Composition API erstellt wurde.
+Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 und der Composition API erstellt wurde. Die gesamte Verarbeitung läuft im Browser; es gibt kein Backend und keine Uploads.
 
 ## Features
 
-- **19-Band Parametrischer Equalizer** mit professionellen Filtern
-- **Dynamics Processor** mit Echtzeit-Kompression
-- **Audio-Recording** in WebM (Opus) und verlustfreiem WAV (16 / 24 Bit PCM oder 32 Bit Float, per AudioWorklet direkt als PCM mitgeschnitten)
-- **Echtzeit-Visualisierung** mit Spektrum-Analyzer
-- **LUFS Loudness-Normalisierung**
-- **Sättigungseffekte** mit Oversampling
-- **Linear-Phase-Processing**
-- **Preset-Management** für EQ und Kompressor
+- **19-Band Parametrischer Equalizer** (20 Hz bis 20 kHz, Peaking-Filter) mit Frequenzkurve
+- **Dynamics Processor** (Kompressor) mit Echtzeit-Pegelanzeige
+- **Audio-Eingang**: Line-In, Mikrofon, Stereomix oder der Ton des PCs live durch EQ und Kompressor
+- **Audio-Recording** in WebM (Opus) und verlustfreiem WAV (16 / 24 Bit PCM oder 32 Bit Float, per AudioWorklet direkt als PCM mitgeschnitten), mit Countdown und Dateidialog
+- **Echtzeit-Visualisierung** mit Spektrum-Analyzer und Ein-/Ausgangspegel
+- **Preset-Management** für EQ (eingebaut + eigene, localStorage) und Kompressor
 - **Undo/Redo** für alle Klangeinstellungen (EQ-Bänder, Bypass, Kompressor) – per Buttons oder Strg+Z / Strg+Y
+- **Playlist-Management** mit Drag & Drop, Shuffle und Repeat; Übergabe vom Audio-Konverter
 - **Internationalisierung** (Deutsch/Englisch)
-- **Theme-Switching** (Dark/Light)
-- **Playlist-Management**
+- **Theme-Switching** (Dark/Light) über Design-Tokens
+- **Landing-Page und FAQ** mit interaktiver EQ-Demo
 
 ## Technologie-Stack
 
-- **Vue 3** mit Composition API
-- **Pinia** für den globalen Zustand (Audio-Engine, Player, Verlauf, Toasts)
-- **Vite** als Build-Tool
-- **Web Audio API** für Audio-Processing
-- **CSS Variables** für Theming
-- **Font Awesome** für Icons
+- **Vue 3** (Composition API, `<script setup>`) mit **Vue Router**
+- **Pinia** für den globalen Zustand (Audio-Engine, Playlist, Player, Verlauf, Toasts)
+- **Vite 7** als Build-Tool
+- **Web Audio API** (BiquadFilter, DynamicsCompressor, Analyser, AudioWorklet) und MediaRecorder API
+- **Design-Tokens** als CSS Custom Properties (`src/design-system/`) und ein eigener Satz **Ui-Komponenten** (`src/components/ui/`)
+- **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.js`), keine Icon-Font
+- **TypeScript** für die Übersetzungen (`src/i18n/`), Typprüfung per `vue-tsc` auch für JS-Dateien (`allowJs`)
+- **Tests**: node:test für reine Logik, Vitest + Vue Test Utils (jsdom) für Komponenten und Stores
+- **ESLint + Prettier**, GitHub-Actions-CI
 
 ## Installation
+
+Voraussetzung: Node.js 20.19+ oder 22.12+ (siehe `engines` in `package.json`).
 
 ```bash
 # Dependencies installieren
 npm install
 
-# Entwicklungsserver starten
+# Entwicklungsserver starten (http://localhost:3000)
 npm run dev
 
-# Production Build erstellen
+# Production Build erstellen (dist/, Base-URL /equaliser19/)
 npm run build
-
-# Tests: Logik-Tests (tests/, node:test) und Komponententests (src/**/__tests__, Vitest)
-npm test
-
-# Lint, Formatierung, Typprüfung (laufen auch in der CI)
-npm run lint
-npm run format:check
-npm run type-check
 
 # Preview des Production Builds
 npm run preview
 ```
 
+## Qualitätssicherung
+
+```bash
+npm test               # beide Test-Läufer: node:test (tests/) und Vitest (src/**/__tests__)
+npm run test:node      # nur Logik-Tests (tests/*.test.js)
+npm run test:unit      # nur Komponenten-/Store-Tests (Vitest, jsdom)
+npm run test:watch     # Vitest im Watch-Modus
+
+npm run lint           # ESLint (JS, Vue)
+npm run format:check   # Prettier
+npm run type-check     # vue-tsc: TypeScript und JS (allowJs), inkl. en.ts gegen de.ts
+```
+
+Die CI (`.github/workflows/ci.yml`) führt Lint, Format, Type-Check, Tests und Build bei jedem Pull Request aus.
+
+Besondere Tests:
+
+- `src/design-system/__tests__/designTokens.spec.js` sorgt dafür, dass Styles nur Design-Tokens verwenden. Die Liste der verbliebenen Farb-Literale ist eingefroren und darf nur kleiner werden.
+- `src/i18n/__tests__/translations.spec.js` prüft, dass `en` dieselben Schlüssel und Platzhalter hat wie `de`; `en.ts` ist zusätzlich als `Record<TranslationKey, string>` typisiert.
+- Komponententests bekommen die Übersetzungen über `src/__tests__/i18nStub.js` (jeder Schlüssel liefert sich selbst).
+
 ## Projektstruktur
 
 ```
-equalizer19-vue/
-├── index.html
+Equalizer-19/
+├── index.html                  # Entry-Point, bindet die SSI-Partials der Hauptseite ein
 ├── package.json
-├── vite.config.js
+├── vite.config.js              # Base /equaliser19/, Alias @ → src, Worklet nicht inlinen
+├── vitest.config.js            # Komponententests (jsdom), setup in src/__tests__/setup.js
+├── tsconfig.json               # strict, allowJs; Grundlage für vue-tsc
+├── eslint.config.js
+├── .github/workflows/ci.yml    # Lint, Format, Type-Check, Tests, Build
 ├── src/
-│   ├── main.js                 # Entry Point
-│   ├── App.vue                 # Haupt-Komponente
+│   ├── main.js                 # Entry Point: Pinia, Router
+│   ├── App.vue                 # Root: stellt i18n und Theme bereit, Tastaturkürzel
 │   ├── assets/
-│   │   └── style.css           # Globale Styles
+│   │   └── style.css           # Globale Styles; importiert design-system/tokens.css
+│   ├── design-system/          # Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
 │   ├── components/
-│   │   ├── ui/                 # Design-System-Komponenten (Ui*)
-│   │   ├── landing/            # Abschnitte der Landing-Page (Hero, Facts, Signalkette, Schritte, Details, Blog, CTA), HeroNav, HeroEqualizer
-│   │   ├── equalizer/          # Teile des Equalizers (Kopfzeile, Preset-Formular, Bänder)
-│   │   ├── recorder/           # Teile der Aufnahme (Zeit, Einstellungen, Buttons, Countdown, Download-Dialog)
-│   │   ├── RelatedTools.vue    # Links zu Konverter, Cutter, Normalisierer
+│   │   ├── ui/                 # Design-System-Komponenten: UiButton, UiIconButton, UiSwitch, SliderField,
+│   │   │                       #   UiSegmentedControl, UiPanel, UiDialog, UiToast (+ range.css, README, Tests)
+│   │   ├── landing/            # Abschnitte der Landing-Page (Hero, Facts, Signalkette, Schritte, Details,
+│   │   │                       #   Blog, CTA), HeroNav, HeroEqualizer, landing.css
+│   │   ├── equalizer/          # Teile des Equalizers: EqPresetControls, EqPresetForm, EqBands
+│   │   ├── recorder/           # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons,
+│   │   │                       #   CountdownOverlay, DownloadDialog
+│   │   ├── AppIcon.vue         # Inline-SVG-Icon (Namen aus utils/icons.js)
 │   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue # Kompressor-Preset-Dropdown (in DynamicsProcessor)
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
-│   │   ├── Equalizer.vue       # Equalizer-UI (Container für components/equalizer/)
+│   │   ├── Equalizer.vue       # Equalizer: Container für components/equalizer/
 │   │   ├── HistoryControls.vue # Undo/Redo-Buttons (Kopfzeile der App)
 │   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
 │   │   ├── Notification.vue    # Toast-Host für UiToast
 │   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
-│   │   ├── RecorderControls.vue # Aufnahme & Download (Container für components/recorder/)
+│   │   ├── RecorderControls.vue # Aufnahme & Download: Container für components/recorder/
+│   │   ├── RelatedTools.vue    # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── StickyPlayerBar.vue # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
 │   │   └── Visualization.vue   # Spektrum-Analyzer
-│   ├── data/
-│   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
-│   ├── stores/                 # Pinia-Stores
-│   │   ├── audioEngine.js      # Audio-Engine (Verarbeitungskette)
-│   │   ├── playlist.js         # Playlist (Tracks, Reihenfolge, Shuffle/Repeat)
-│   │   ├── player.js           # Wiedergabe (Audio-Element, Position, Lautstärke)
+│   ├── stores/                 # Pinia-Stores (Setup-Stores)
+│   │   ├── audioEngine.js      # Audio-Verarbeitungskette (AudioNodes shallowRef + markRaw)
+│   │   ├── playlist.js         # Playlist: Tracks, Reihenfolge, Shuffle/Repeat
+│   │   ├── player.js           # Wiedergabe: Audio-Element, Position, Lautstärke
 │   │   ├── history.js          # Undo/Redo
 │   │   └── toast.js            # Benachrichtigungen
 │   ├── composables/
+│   │   ├── useCountdown.js     # Countdown vor der Aufnahme
 │   │   ├── useCustomPresets.js # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
-│   │   ├── useInputSource.js   # Live-Eingang (Line-In, Stereomix, virtuelles Kabel)
-│   │   ├── useI18n.js          # Internationalisierung
+│   │   ├── useI18n.js          # Sprache, <html lang>, Meta-Tags, SSI-Sync
+│   │   ├── useInputSource.js   # Live-Eingang (Line-In, Stereomix, PC-Ton)
 │   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
 │   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
 │   │   ├── useTheme.js         # Theme-Management
 │   │   └── useUndoRedo.js      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
-│   ├── i18n/                   # Übersetzungen: de.ts (Referenz), en.ts (typgeprüft gegen de), index.ts
-│   ├── pages/                  # Landing (ohne Icon-Font, Kennzahlen aus presets.js), App, FAQ
-│   ├── router/                 # Vue Router
+│   ├── i18n/                   # de.ts (Referenz, TranslationKey), en.ts (typgeprüft gegen de), index.ts
+│   ├── data/
+│   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
+│   ├── pages/                  # LandingPage, AppPage, FaqPage
+│   ├── router/                 # Vue Router (Meta-Tags je Route)
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
-│   └── utils/
-│       ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
-│       ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
-│       ├── blogCards.js        # Blog-Karten: Datum/Sprache (reine Funktionen)
-│       ├── history.js          # Generischer Undo/Redo-Stack (reine Funktionen)
-│       ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
-│       ├── presets.js          # EQ/Comp Presets
-│       ├── processingState.js  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
-│       ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
-│       ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
-│       └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
-└── tests/                      # Logik-Tests (node:test); Komponententests liegen in src/**/__tests__ (Vitest)
+│   ├── utils/
+│   │   ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
+│   │   ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
+│   │   ├── blogCards.js        # Blog-Karten: Datum/Sprache (reine Funktionen)
+│   │   ├── eqCurve.js          # Frequenzkurve als SVG-Pfad (reine Funktionen)
+│   │   ├── history.js          # Generischer Undo/Redo-Stack (reine Funktionen)
+│   │   ├── icons.js            # Inline-SVG-Icon-Set
+│   │   ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
+│   │   ├── presets.js          # EQ/Comp Presets, Bandfrequenzen
+│   │   ├── processingState.js  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
+│   │   ├── seoMeta.js          # Titel/Description je Route und Sprache
+│   │   ├── sharedFileRepository.js # Übergabe vom Audio-Konverter (IndexedDB)
+│   │   ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
+│   │   └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
+│   └── __tests__/              # Vitest-Setup und i18n-Stub für Komponententests
+└── tests/                      # Logik-Tests (node:test); Komponenten-/Store-Tests liegen in src/**/__tests__
 ```
+
+Weitere Dokumente: `CONTEXT.md` (Architektur, Datenmodelle, Stores), `INSTALLATION.md`, `DEPLOY.md`, `LIESMICH.txt`.
 
 ## Verwendung
 
-1. **Audio-Dateien laden**: Klicken Sie auf "Audio-Dateien wählen" und wählen Sie Ihre Audiodateien
-2. **Equalizer anpassen**: Verwenden Sie die 19 Frequenzbänder oder wählen Sie ein Preset
-3. **Kompressor einstellen**: Passen Sie Threshold, Ratio, Attack und Release an
-4. **Pro-Features aktivieren**: Aktivieren Sie Saturation, Linear-Phase oder LUFS-Normalisierung
-5. **Visualisierung**: Sehen Sie die Echtzeit-Frequenzanalyse
-6. **Playlist verwalten**: Navigieren Sie durch Ihre Tracks
+1. **Audio-Dateien laden**: Dateien oder einen Ordner wählen oder in die Player-Leiste ziehen
+2. **Equalizer anpassen**: Die 19 Frequenzbänder ziehen oder ein Preset wählen; eigene Presets speichern
+3. **Kompressor einstellen**: Threshold, Knee, Ratio, Attack und Release anpassen oder ein Preset wählen
+4. **Audio-Eingang nutzen**: Unter „Quelle“ auf den Audio-Eingang wechseln (Line-In, Mikrofon, PC-Ton)
+5. **Aufnehmen**: Format (WAV/WebM), Bit-Tiefe und Startverzögerung wählen, aufnehmen, herunterladen
+6. **Visualisierung**: Spektrum und Pegel in Echtzeit verfolgen
+7. **Playlist verwalten**: Reihenfolge per Drag & Drop, Shuffle und Repeat
 
 ## Tastenkombinationen
 
@@ -145,7 +179,7 @@ Jede Änderung an den Klangeinstellungen ist ein Schritt im Verlauf: EQ-Bänder,
 - Firefox 88+
 - Safari 14+
 
-Benötigt einen modernen Browser mit Web Audio API-Unterstützung.
+Benötigt einen modernen Browser mit Web Audio API-Unterstützung. Der Ton des PCs als Eingang (Bildschirmfreigabe mit Audio) ist in Chrome und Edge verfügbar.
 
 ## Lizenz
 
@@ -155,6 +189,6 @@ MIT License - Erstellt von KodiniTools
 
 - Original JavaScript-Version: EQUALIZER 19
 - Vue 3 Migration: 2025
-- Icons: Font Awesome
+- Icons: eigenes Inline-SVG-Set (`src/utils/icons.js`)
 
   Author: Dinko Ramić - Kodini Tools - kodinitools.com
