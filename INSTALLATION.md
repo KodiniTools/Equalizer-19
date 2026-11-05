@@ -2,7 +2,7 @@
 
 ## Voraussetzungen
 
-- **Node.js** Version 16 oder höher (empfohlen: Version 18+)
+- **Node.js** 20.19 oder höher bzw. 22.12 oder höher (LTS empfohlen)
 - **npm** (wird mit Node.js installiert)
 
 ## Node.js Installation
@@ -23,7 +23,7 @@ brew install node
 ### Linux
 ```bash
 # Ubuntu/Debian
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Fedora

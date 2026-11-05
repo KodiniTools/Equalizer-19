@@ -38,20 +38,22 @@ ALTERNATIV: Manuelle Installation
 DOKUMENTATION
 ═══════════════════════════════════════════════════════════════════════
 
-README.md            - Vollständige Projektdokumentation (Englisch)
-INSTALLATION.md      - Detaillierte Installationsanleitung (Deutsch)
-QUICKSTART.md        - Schnelleinstieg für Benutzer
+README.md            - Projektdokumentation: Features, Struktur, Tests
+CONTEXT.md           - Architektur, Datenmodelle, Stores, Verarbeitungskette
+INSTALLATION.md      - Detaillierte Installationsanleitung
+DEPLOY.md            - Deployment auf dem Server
 
 FUNKTIONEN
 ═══════════════════════════════════════════════════════════════════════
 
 ✓ 19-Band Parametrischer Equalizer
 ✓ Dynamics Processor mit Echtzeit-Feedback
-✓ LUFS Loudness-Normalisierung
-✓ Sättigungseffekte mit Oversampling
-✓ Echtzeit Spektrum-Analyzer
-✓ 8 EQ-Presets + 5 Kompressor-Presets
-✓ Playlist-Management
+✓ Audio-Eingang (Line-In, Mikrofon, PC-Ton) live bearbeiten
+✓ Aufnahme als WAV (16/24/32 Bit) oder WebM, mit Countdown
+✓ Echtzeit Spektrum-Analyzer und Pegelanzeige
+✓ 8 EQ-Presets + eigene Presets, 15 Kompressor-Presets
+✓ Undo/Redo für alle Klangeinstellungen
+✓ Playlist-Management mit Drag & Drop, Shuffle, Repeat
 ✓ Dark/Light Theme
 ✓ Deutsch/Englisch
 
@@ -69,7 +71,7 @@ Strg+Y       - Wiederholen (auch Strg+Shift+Z)
 SYSTEM-ANFORDERUNGEN
 ═══════════════════════════════════════════════════════════════════════
 
-• Node.js 16+ (empfohlen: 18+)
+• Node.js 20.19+ oder 22.12+
 • Moderner Browser (Chrome, Firefox, Safari, Edge)
 • Mindestens 2 GB RAM
 • Web Audio API-Unterstützung
