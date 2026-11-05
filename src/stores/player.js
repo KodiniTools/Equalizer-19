@@ -1,24 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import {
-  getNextIndex as nextIndexFor,
-  getPrevIndex as prevIndexFor,
-  nextRepeatMode,
-  moveItem,
-  indexAfterMove,
-  formatTime,
-} from '../utils/playbackOrder.js'
+import { formatTime } from '../utils/playbackOrder.js'
 import { analyzeBlob, recordToBlob } from '../utils/audioBlob.js'
 import { useAudioEngineStore } from './audioEngine.js'
+import { usePlaylistStore, createTrack } from './playlist.js'
 
 /**
- * Player: Playlist, Wiedergabe (HTMLAudioElement) und Lautstärke. Hängt sich
- * über den Audio-Engine-Store in die Verarbeitungskette ein.
+ * Player: Wiedergabe (HTMLAudioElement), Position und Lautstärke. Hängt sich
+ * über den Audio-Engine-Store in die Verarbeitungskette ein. Die Liste selbst
+ * liegt im Playlist-Store; die Listenoperationen hier (addFiles, removeTrack,
+ * clearPlaylist, handleSharedFiles) halten die Wiedergabe dazu konsistent.
  */
 export const usePlayerStore = defineStore('player', () => {
+  const playlist = usePlaylistStore()
+  const audioEngineRef = useAudioEngineStore()
+
   // State
-  const playlist = ref([])
-  const currentTrackIndex = ref(-1)
   const isPlaying = ref(false)
   const isPaused = ref(false)
   const currentTime = ref(0)
@@ -28,14 +25,8 @@ export const usePlayerStore = defineStore('player', () => {
   const isLoading = ref(false)
   const error = ref(null)
 
-  // Playback modes
-  const isShuffle = ref(false)
-  const repeatMode = ref('off') // 'off' | 'all' | 'one'
-  const shuffleHistory = ref([]) // visited indices, for shuffle "previous"
-
   // Audio Elements
   const audioElement = ref(null)
-  const audioEngineRef = useAudioEngineStore()
   let mediaElementSource = null
   let isSourceConnected = false
   // Set while an external source (live audio input) owns the processing chain:
@@ -43,27 +34,6 @@ export const usePlayerStore = defineStore('player', () => {
   let externalSourceRelease = null
 
   // Computed
-  const currentTrack = computed(() => {
-    if (currentTrackIndex.value >= 0 && currentTrackIndex.value < playlist.value.length) {
-      return playlist.value[currentTrackIndex.value]
-    }
-    return null
-  })
-
-  const hasTrack = computed(() => currentTrack.value !== null)
-  const hasPlaylist = computed(() => playlist.value.length > 0)
-  const canPlayNext = computed(() => {
-    if (!hasPlaylist.value) return false
-    // Shuffle or repeat-all makes navigation wrap around the playlist
-    if (isShuffle.value || repeatMode.value === 'all') return playlist.value.length > 1
-    return currentTrackIndex.value < playlist.value.length - 1
-  })
-  const canPlayPrevious = computed(() => {
-    if (!hasPlaylist.value) return false
-    if (isShuffle.value || repeatMode.value === 'all') return playlist.value.length > 1
-    return currentTrackIndex.value > 0
-  })
-
   const progress = computed(() => {
     if (duration.value === 0) return 0
     return (currentTime.value / duration.value) * 100
@@ -72,7 +42,6 @@ export const usePlayerStore = defineStore('player', () => {
   const formattedCurrentTime = computed(() => formatTime(currentTime.value))
   const formattedDuration = computed(() => formatTime(duration.value))
 
-  // Set audio engine reference
   // Initialize audio element
   function initAudio() {
     if (!audioElement.value) {
@@ -157,16 +126,16 @@ export const usePlayerStore = defineStore('player', () => {
     currentTime.value = 0
 
     // Repeat the current track
-    if (repeatMode.value === 'one') {
+    if (playlist.repeatMode === 'one') {
       seek(0)
       play()
       return
     }
 
     // Otherwise advance to the next track (shuffle / repeat-all aware)
-    const nextIndex = getNextIndex()
+    const nextIndex = playlist.getNextIndex()
     if (nextIndex >= 0) {
-      if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
+      if (playlist.isShuffle) playlist.rememberShuffleStep()
       playTrack(nextIndex)
     }
   }
@@ -215,29 +184,13 @@ export const usePlayerStore = defineStore('player', () => {
     }
   })
 
-  // Playlist management
-  function createTrack(id, name, blob, file, type) {
-    return {
-      id,
-      name,
-      file,
-      url: URL.createObjectURL(blob),
-      size: blob.size,
-      type,
-      duration: 0,
-    }
-  }
-
+  // ---- Playlist operations that touch playback ----
   function addFiles(files) {
-    const newTracks = Array.from(files).map((file, index) =>
-      createTrack(Date.now() + index, file.name, file, file, file.type)
-    )
+    const hadTrack = playlist.hasTrack
+    const newTracks = playlist.addFiles(files)
 
-    playlist.value.push(...newTracks)
-
-    // If no track is selected, select the first one
-    if (currentTrackIndex.value === -1 && playlist.value.length > 0) {
-      currentTrackIndex.value = 0
+    // If no track was selected, the first new one is loaded
+    if (!hadTrack && playlist.hasTrack) {
       loadTrack(0)
     }
 
@@ -245,50 +198,21 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   function removeTrack(index) {
-    const track = playlist.value[index]
-    if (track && track.url) {
-      URL.revokeObjectURL(track.url)
-    }
-
-    playlist.value.splice(index, 1)
-    shuffleHistory.value = []
-
-    // Adjust current index if needed
-    if (currentTrackIndex.value === index) {
+    const { removedCurrent, nextIndex } = playlist.removeTrack(index)
+    if (removedCurrent) {
       stop()
-      currentTrackIndex.value = -1
-      if (playlist.value.length > 0) {
-        const newIndex = Math.min(index, playlist.value.length - 1)
-        loadTrack(newIndex)
-      }
-    } else if (currentTrackIndex.value > index) {
-      currentTrackIndex.value--
+      if (nextIndex >= 0) loadTrack(nextIndex)
     }
-  }
-
-  function reorderTracks(fromIndex, toIndex) {
-    if (fromIndex === toIndex) return
-    playlist.value = moveItem(playlist.value, fromIndex, toIndex)
-    currentTrackIndex.value = indexAfterMove(currentTrackIndex.value, fromIndex, toIndex)
   }
 
   function clearPlaylist() {
-    // Clean up URLs
-    playlist.value.forEach((track) => {
-      if (track.url) {
-        URL.revokeObjectURL(track.url)
-      }
-    })
-
     stop()
-    playlist.value = []
-    currentTrackIndex.value = -1
-    shuffleHistory.value = []
+    playlist.clear()
   }
 
   // Playback control
   async function loadTrack(index) {
-    if (index < 0 || index >= playlist.value.length) {
+    if (index < 0 || index >= playlist.tracks.length) {
       return false
     }
 
@@ -296,10 +220,10 @@ export const usePlayerStore = defineStore('player', () => {
 
     error.value = null
     isLoading.value = true
-    currentTrackIndex.value = index
+    playlist.currentTrackIndex = index
 
     try {
-      const track = playlist.value[index]
+      const track = playlist.tracks[index]
 
       // Load new audio
       audioElement.value.src = track.url
@@ -325,9 +249,9 @@ export const usePlayerStore = defineStore('player', () => {
       release()
     }
 
-    if (!audioElement.value || !hasTrack.value) {
+    if (!audioElement.value || !playlist.hasTrack) {
       // If no track loaded, try to load first track
-      if (playlist.value.length > 0) {
+      if (playlist.hasPlaylist) {
         await loadTrack(0)
       } else {
         return
@@ -384,24 +308,10 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  // Resolve the next / previous track index for the current playlist state
-  function getNextIndex() {
-    return nextIndexFor(
-      playlist.value.length,
-      currentTrackIndex.value,
-      isShuffle.value,
-      repeatMode.value
-    )
-  }
-
-  function getPrevIndex() {
-    return prevIndexFor(playlist.value.length, currentTrackIndex.value, repeatMode.value)
-  }
-
   async function playNext() {
-    const nextIndex = getNextIndex()
+    const nextIndex = playlist.getNextIndex()
     if (nextIndex < 0) return
-    if (isShuffle.value) shuffleHistory.value.push(currentTrackIndex.value)
+    if (playlist.isShuffle) playlist.rememberShuffleStep()
     await playTrack(nextIndex)
   }
 
@@ -413,24 +323,13 @@ export const usePlayerStore = defineStore('player', () => {
     }
 
     let prevIndex
-    if (isShuffle.value) {
-      prevIndex = shuffleHistory.value.length > 0 ? shuffleHistory.value.pop() : getNextIndex()
+    if (playlist.isShuffle) {
+      prevIndex = playlist.popShuffleStep()
+      if (prevIndex < 0) prevIndex = playlist.getNextIndex()
     } else {
-      prevIndex = getPrevIndex()
+      prevIndex = playlist.getPrevIndex()
     }
     await playTrack(prevIndex)
-  }
-
-  // Playback mode toggles
-  function toggleShuffle() {
-    isShuffle.value = !isShuffle.value
-    shuffleHistory.value = []
-    return isShuffle.value
-  }
-
-  function cycleRepeat() {
-    repeatMode.value = nextRepeatMode(repeatMode.value)
-    return repeatMode.value
   }
 
   async function playTrack(index) {
@@ -483,13 +382,10 @@ export const usePlayerStore = defineStore('player', () => {
           record.mimeType || blob.type || 'audio/wav'
         )
 
-        playlist.value.push(track)
+        const becameCurrent = playlist.addTrack(track)
         processed++
 
-        if (currentTrackIndex.value === -1) {
-          currentTrackIndex.value = 0
-          loadTrack(0)
-        }
+        if (becameCurrent) loadTrack(0)
       } catch (err) {
         console.error('Error processing shared file:', record.name, err)
       }
@@ -497,13 +393,6 @@ export const usePlayerStore = defineStore('player', () => {
 
     return { processed }
   }
-
-  // Revoke all Object URLs when the page is unloaded to free browser memory
-  window.addEventListener('pagehide', () => {
-    playlist.value.forEach((track) => {
-      if (track.url) URL.revokeObjectURL(track.url)
-    })
-  })
 
   // Cleanup
   function cleanup() {
@@ -531,9 +420,6 @@ export const usePlayerStore = defineStore('player', () => {
 
   return {
     // State
-    playlist,
-    currentTrackIndex,
-    currentTrack,
     isPlaying,
     isPaused,
     isLoading,
@@ -542,14 +428,8 @@ export const usePlayerStore = defineStore('player', () => {
     volume,
     isMuted,
     error,
-    isShuffle,
-    repeatMode,
 
     // Computed
-    hasTrack,
-    hasPlaylist,
-    canPlayNext,
-    canPlayPrevious,
     progress,
     formattedCurrentTime,
     formattedDuration,
@@ -564,7 +444,6 @@ export const usePlayerStore = defineStore('player', () => {
     connectToAudioEngine,
     addFiles,
     removeTrack,
-    reorderTracks,
     clearPlaylist,
     loadTrack,
     play,
@@ -574,13 +453,10 @@ export const usePlayerStore = defineStore('player', () => {
     playNext,
     playPrevious,
     playTrack,
-    toggleShuffle,
-    cycleRepeat,
     seek,
     seekToPercent,
     setVolume,
     toggleMute,
-    analyzeBlob,
     handleSharedFiles,
     cleanup,
   }

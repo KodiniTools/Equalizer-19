@@ -40,8 +40,8 @@
 
 <script setup>
   import { ref, computed, watch, inject, nextTick } from 'vue'
-  import AppIcon from './AppIcon.vue'
-  import { UiButton, UiDialog } from './ui'
+  import AppIcon from '../AppIcon.vue'
+  import { UiButton, UiDialog } from '../ui'
 
   const props = defineProps({
     show: { type: Boolean, default: false },

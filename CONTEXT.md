@@ -64,17 +64,18 @@ Equalizer-19/
 │   │
 │   ├── components/         # Vue-Komponenten
 │   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiSegmentedControl, UiPanel, UiDialog, UiToast), README
+│   │   ├── landing/                   # Abschnitte der Landing-Page (LandingHero, LandingFacts, LandingSignalChain, LandingSteps, LandingDetails, LandingBlog, LandingCta), HeroNav, HeroEqualizer, landing.css
+│   │   ├── equalizer/                 # Teile des Equalizers: EqPresetControls (Kopfzeile), EqPresetForm (Preset speichern), EqBands (19 Regler + Kurve)
+│   │   ├── recorder/                  # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons, CountdownOverlay, DownloadDialog
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Dropdown (in DynamicsProcessor)
-│   │   ├── DownloadDialog.vue         # Dateiname/Speicherort für Aufnahmen (auf UiDialog)
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
-│   │   ├── Equalizer.vue              # 19-Band EQ-Interface
-│   │   ├── HeroNav.vue                # Lokale Navigation der Landing-Page (sticky unter der globalen Nav)
+│   │   ├── Equalizer.vue              # 19-Band EQ: Container (Bänder, Presets, Engine-Store) für components/equalizer/
 │   │   ├── Notification.vue           # Toast-Host (Position, Dauer) für UiToast
 │   │   ├── PlayerTransport.vue        # Wiedergabe-Buttons (in StickyPlayerBar)
 │   │   ├── Playlist.vue               # Track-Playlist
-│   │   ├── RecorderControls.vue       # Aufnahme & Download (in StickyPlayerBar)
+│   │   ├── RecorderControls.vue       # Aufnahme & Download: Container (Recorder, Countdown) für components/recorder/
 │   │   ├── StickyPlayerBar.vue        # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue          # Lautstärke (in StickyPlayerBar)
 │   │   └── Visualization.vue          # Spektrum-Analyzer
@@ -84,7 +85,8 @@ Equalizer-19/
 │   │
 │   ├── stores/             # Pinia-Stores (globaler Zustand, src/main.js: app.use(createPinia()))
 │   │   ├── audioEngine.js             # Audio-Verarbeitungskette: Parameter reaktiv, AudioNodes shallowRef + markRaw
-│   │   ├── player.js                  # Playlist, Wiedergabe, Lautstärke
+│   │   ├── playlist.js                # Playlist: Tracks, aktueller Index, Shuffle/Repeat, Navigation
+│   │   ├── player.js                  # Wiedergabe (HTMLAudioElement), Position, Lautstärke; Listenänderungen mit Wiedergabe-Folgen
 │   │   ├── history.js                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
 │   │   └── toast.js                   # Benachrichtigungen: notify(message, type)
 │   │
@@ -130,7 +132,7 @@ Equalizer-19/
 ### Track-Modell (Playlist)
 
 ```javascript
-// Definiert in: src/stores/player.js
+// Definiert in: src/stores/playlist.js (createTrack)
 {
   id: Number,           // Eindeutige ID (timestamp + index)
   name: String,         // Dateiname
@@ -279,7 +281,8 @@ ausgepackt, `storeToRefs` liefert sie bei Bedarf als Refs zurück):
 ```javascript
 import { storeToRefs } from 'pinia'
 import { useAudioEngineStore } from '@/stores/audioEngine' // eqBands, dynamics, eqBypass, updateEqBand(), …
-import { usePlayerStore } from '@/stores/player' // playlist, isPlaying, volume, play(), addFiles(), …
+import { usePlaylistStore } from '@/stores/playlist' // tracks, currentTrack, canPlayNext, reorderTracks(), toggleShuffle(), …
+import { usePlayerStore } from '@/stores/player' // isPlaying, volume, play(), playTrack(), addFiles(), removeTrack(), …
 import { useHistoryStore } from '@/stores/history' // canUndo, undoChange, undo(), redo()
 import { useToastStore } from '@/stores/toast' // current, notify(message, type)
 

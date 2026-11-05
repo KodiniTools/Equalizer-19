@@ -77,9 +77,9 @@
 
 <script setup>
   import { computed, inject, ref } from 'vue'
-  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../utils/presets.js'
-  import { buildEqCurve, formatGain } from '../utils/eqCurve.js'
-  import { UiButton } from './ui'
+  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../../utils/presets.js'
+  import { buildEqCurve, formatGain } from '../../utils/eqCurve.js'
+  import { UiButton } from '../ui'
 
   /**
    * Interactive 19-band demo for the landing page. Uses the real preset data

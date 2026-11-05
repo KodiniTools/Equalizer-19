@@ -10,13 +10,17 @@
   import { useTheme } from './composables/useTheme'
   import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts'
   import { usePlayerStore } from './stores/player'
+  import { usePlaylistStore } from './stores/playlist'
   import { useHistoryStore } from './stores/history'
 
   // Initialize composables
   const { t, currentLanguage, setLanguage } = useI18n()
   const { currentTheme, setTheme } = useTheme()
   // Audio engine, player, history and toasts are Pinia stores (src/stores)
-  useKeyboardShortcuts(usePlayerStore(), { history: useHistoryStore() })
+  useKeyboardShortcuts(usePlayerStore(), {
+    playlist: usePlaylistStore(),
+    history: useHistoryStore(),
+  })
 
   // Provide to all child components
   provide('i18n', { t, currentLanguage, setLanguage })

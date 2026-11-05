@@ -68,7 +68,7 @@ Die Optik horizontaler Regler (Spur 4 px, Daumen 12 px, auf Smartphones 16 px) l
 <style scoped src="./ui/range.css"></style>
 ```
 
-Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin eigene Styles.
+Die vertikalen Regler in `equalizer/EqBands.vue` und `landing/HeroEqualizer.vue` haben weiterhin eigene Styles.
 
 ## Beispiel
 
@@ -131,4 +131,4 @@ Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin
 
 Alle Bausteine aus dem Playlist-Generator-Muster, die der Equalizer braucht, liegen hier. Die in
 `designTokens.spec.js` eingefrorenen Farb-Literale der restlichen Komponenten (AudioMeter,
-Equalizer, CountdownOverlay, RecorderControls, AppPage) werden in späteren Schritten abgebaut.
+equalizer/, recorder/, AppPage) werden in späteren Schritten abgebaut.

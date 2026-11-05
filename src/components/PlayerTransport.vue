@@ -60,12 +60,15 @@
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
+  import { usePlaylistStore } from '../stores/playlist'
 
   const { t } = inject('i18n')
   const audioPlayer = usePlayerStore()
-  const { isPlaying, isLoading, canPlayNext, canPlayPrevious, isShuffle, repeatMode } =
-    storeToRefs(audioPlayer)
-  const { stop, togglePlayPause, playNext, playPrevious, toggleShuffle, cycleRepeat } = audioPlayer
+  const playlist = usePlaylistStore()
+  const { isPlaying, isLoading } = storeToRefs(audioPlayer)
+  const { canPlayNext, canPlayPrevious, isShuffle, repeatMode } = storeToRefs(playlist)
+  const { stop, togglePlayPause, playNext, playPrevious } = audioPlayer
+  const { toggleShuffle, cycleRepeat } = playlist
 
   const repeatTitle = computed(() => {
     if (repeatMode.value === 'all') return t.value.player_repeat_all
