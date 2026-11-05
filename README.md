@@ -63,19 +63,21 @@ equalizer19-vue/
 │   ├── assets/
 │   │   └── style.css           # Globale Styles
 │   ├── components/
+│   │   ├── ui/                 # Design-System-Komponenten (Ui*)
+│   │   ├── landing/            # Abschnitte der Landing-Page (Hero, Facts, Signalkette, Schritte, Details, Blog, CTA), HeroNav, HeroEqualizer
+│   │   ├── equalizer/          # Teile des Equalizers (Kopfzeile, Preset-Formular, Bänder)
+│   │   ├── recorder/           # Teile der Aufnahme (Zeit, Einstellungen, Buttons, Countdown, Download-Dialog)
 │   │   ├── RelatedTools.vue    # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue # Kompressor-Preset-Dropdown (in DynamicsProcessor)
-│   │   ├── DownloadDialog.vue  # Dateiname/Speicherort für Aufnahmen
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
-│   │   ├── Equalizer.vue       # Equalizer-UI
-│   │   ├── HeroNav.vue         # Lokale Navigation der Landing-Page (Start, Funktionen, Blog, FAQ)
+│   │   ├── Equalizer.vue       # Equalizer-UI (Container für components/equalizer/)
 │   │   ├── HistoryControls.vue # Undo/Redo-Buttons (Kopfzeile der App)
 │   │   ├── InputSource.vue     # Eingangsquelle: Playlist oder Audio-Eingang
 │   │   ├── Notification.vue    # Toast-Host für UiToast
 │   │   ├── PlayerTransport.vue # Wiedergabe-Buttons (Teil der Player-Leiste)
 │   │   ├── Playlist.vue        # Playlist-Verwaltung
-│   │   ├── RecorderControls.vue # Aufnahme & Download (Teil der Player-Leiste)
+│   │   ├── RecorderControls.vue # Aufnahme & Download (Container für components/recorder/)
 │   │   ├── StickyPlayerBar.vue # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
 │   │   └── Visualization.vue   # Spektrum-Analyzer
@@ -83,7 +85,8 @@ equalizer19-vue/
 │   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   ├── stores/                 # Pinia-Stores
 │   │   ├── audioEngine.js      # Audio-Engine (Verarbeitungskette)
-│   │   ├── player.js           # Player-Logik (Playlist, Wiedergabe)
+│   │   ├── playlist.js         # Playlist (Tracks, Reihenfolge, Shuffle/Repeat)
+│   │   ├── player.js           # Wiedergabe (Audio-Element, Position, Lautstärke)
 │   │   ├── history.js          # Undo/Redo
 │   │   └── toast.js            # Benachrichtigungen
 │   ├── composables/

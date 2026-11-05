@@ -66,7 +66,7 @@
         </div>
         <div v-else class="track-info empty">
           <span class="track-name">{{
-            hasPlaylist ? playlist.length + ' Tracks' : t.player_no_file
+            hasPlaylist ? tracks.length + ' Tracks' : t.player_no_file
           }}</span>
         </div>
       </div>
@@ -104,12 +104,14 @@
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
+  import { usePlaylistStore } from '../stores/playlist'
   import { useToastStore } from '../stores/toast'
 
   const emit = defineEmits(['files-selected'])
 
   const { t, currentLanguage } = inject('i18n')
   const audioPlayer = usePlayerStore()
+  const playlistStore = usePlaylistStore()
   const { notify } = useToastStore()
   // Live input state (provided by AppPage); optional so the bar also works standalone
   const inputSource = inject('inputSource', null)
@@ -145,15 +147,8 @@
     document.documentElement.style.removeProperty('--sticky-player-h')
   })
 
-  const {
-    playlist,
-    currentTrack,
-    hasTrack,
-    hasPlaylist,
-    progress,
-    formattedCurrentTime,
-    formattedDuration,
-  } = storeToRefs(audioPlayer)
+  const { tracks, currentTrack, hasTrack, hasPlaylist } = storeToRefs(playlistStore)
+  const { progress, formattedCurrentTime, formattedDuration } = storeToRefs(audioPlayer)
   const { addFiles, play, seekToPercent } = audioPlayer
 
   // ---- File selection / drag & drop ----

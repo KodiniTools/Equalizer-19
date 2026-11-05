@@ -1,12 +1,12 @@
 <template>
   <UiPanel icon="list" :title="t.playlist_title">
-    <template v-if="playlist.length > 0" #actions>
+    <template v-if="tracks.length > 0" #actions>
       <span class="panel-badge">
-        {{ playlist.length }} {{ playlist.length === 1 ? 'Track' : 'Tracks' }}
+        {{ tracks.length }} {{ tracks.length === 1 ? 'Track' : 'Tracks' }}
       </span>
     </template>
 
-    <div v-if="playlist.length === 0" class="empty-state">
+    <div v-if="tracks.length === 0" class="empty-state">
       <AppIcon name="music" />
       <p>{{ t.playlist_empty }}</p>
     </div>
@@ -19,7 +19,7 @@
       @drop.prevent
     >
       <li
-        v-for="(track, index) in playlist"
+        v-for="(track, index) in tracks"
         :key="track.id"
         :class="[
           'playlist-item',
@@ -114,13 +114,16 @@
   import { UiIconButton, UiPanel } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
+  import { usePlaylistStore } from '../stores/playlist'
   import { useToastStore } from '../stores/toast'
 
   const { t } = inject('i18n')
   const audioPlayer = usePlayerStore()
+  const playlistStore = usePlaylistStore()
   const { notify } = useToastStore()
 
-  const { playlist, currentTrackIndex, isPlaying } = storeToRefs(audioPlayer)
+  const { tracks, currentTrackIndex } = storeToRefs(playlistStore)
+  const { isPlaying } = storeToRefs(audioPlayer)
 
   // Drag state
   const dragIndex = ref(null)
@@ -138,7 +141,7 @@
 
   function onDrop(index) {
     if (dragIndex.value !== null && dragIndex.value !== index) {
-      audioPlayer.reorderTracks(dragIndex.value, index)
+      playlistStore.reorderTracks(dragIndex.value, index)
     }
     dragIndex.value = null
     dropIndex.value = null

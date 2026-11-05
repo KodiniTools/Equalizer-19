@@ -40,8 +40,8 @@
 
 <script setup>
   import { inject, ref, onMounted, onUnmounted } from 'vue'
-  import AppIcon from './AppIcon.vue'
-  import { UiButton } from './ui'
+  import AppIcon from '../AppIcon.vue'
+  import { UiButton } from '../ui'
 
   const { t } = inject('i18n')
 

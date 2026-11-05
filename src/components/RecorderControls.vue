@@ -1,97 +1,30 @@
 <template>
   <div class="recorder">
-    <!-- Recording time display -->
-    <div v-if="isRecording" class="rec-time" aria-live="assertive" aria-atomic="true">
-      <span class="rec-dot" aria-hidden="true"></span>
-      <span class="time">{{ formattedRecTime }}</span>
-    </div>
+    <RecorderTime v-if="isRecording" :seconds="recordingTime" />
 
-    <!-- Format toggle (only when idle) -->
-    <UiSegmentedControl
-      v-if="!isRecording && !hasRecording && !isCounting"
-      :model-value="recordingFormat"
-      :options="formatOptions"
-      :label="t.rec_format_label"
-      size="sm"
-      @update:model-value="selectFormat($event)"
+    <RecorderSettings
+      :format="recordingFormat"
+      :bit-depth="bitDepth"
+      :bit-depths="bitDepths"
+      :start-delay="startDelay"
+      :idle="!isRecording && !isCounting"
+      :has-recording="hasRecording"
+      @update:format="setFormat"
+      @update:bit-depth="setBitDepth"
+      @update:start-delay="setStartDelay"
     />
 
-    <!-- WAV bit depth (only for WAV, changeable while idle) -->
-    <UiSegmentedControl
-      v-if="recordingFormat === 'wav' && !isRecording && !isCounting"
-      :model-value="bitDepth"
-      :options="bitDepthOptions"
-      :label="t.rec_bit_depth"
-      size="sm"
-      @update:model-value="setBitDepth($event)"
+    <RecorderButtons
+      :is-recording="isRecording"
+      :has-recording="hasRecording"
+      :is-counting="isCounting"
+      :countdown-remaining="countdownRemaining"
+      @start="handleStartRecording"
+      @stop="handleStopRecording"
+      @download="handleDownload"
+      @new="handleNewRecording"
+      @cancel-countdown="cancelCountdown"
     />
-
-    <!-- Start delay (countdown before recording starts) -->
-    <label v-if="!isRecording && !hasRecording && !isCounting" class="delay" :title="t.rec_delay">
-      <AppIcon name="timer" />
-      <select
-        class="delay-select"
-        :value="startDelay"
-        :aria-label="t.rec_delay"
-        @change="setStartDelay($event.target.value)"
-      >
-        <option v-for="d in START_DELAYS" :key="d" :value="d">
-          {{ d === 0 ? t.rec_delay_none : t.rec_delay_s.replace('{n}', d) }}
-        </option>
-      </select>
-    </label>
-
-    <div class="rec-controls">
-      <!-- Countdown running: shows the seconds left, click cancels -->
-      <UiIconButton
-        v-if="isCounting"
-        class="rec-btn countdown"
-        :label="t.rec_countdown_cancel"
-        @click="cancelCountdown"
-      >
-        {{ countdownRemaining }}
-      </UiIconButton>
-
-      <!-- Record button -->
-      <UiIconButton
-        v-if="!isRecording && !hasRecording && !isCounting"
-        class="rec-btn rec"
-        :label="t.rec_start"
-        @click="handleStartRecording"
-      >
-        <AppIcon name="record" />
-      </UiIconButton>
-
-      <!-- Stop recording button -->
-      <UiIconButton
-        v-if="isRecording"
-        class="rec-btn stop"
-        :label="t.stop"
-        @click="handleStopRecording"
-      >
-        <AppIcon name="stop" />
-      </UiIconButton>
-
-      <!-- Download button -->
-      <UiIconButton
-        v-if="hasRecording && !isRecording"
-        class="rec-btn download"
-        :label="t.download"
-        @click="handleDownload"
-      >
-        <AppIcon name="download" />
-      </UiIconButton>
-
-      <!-- New recording button -->
-      <UiIconButton
-        v-if="hasRecording && !isRecording"
-        class="rec-btn new"
-        :label="t.rec_new"
-        @click="handleNewRecording"
-      >
-        <AppIcon name="redo" />
-      </UiIconButton>
-    </div>
 
     <!-- Error indicator -->
     <div v-if="errorMessage" class="error-dot" :title="errorMessage" role="alert">
@@ -119,16 +52,22 @@
 </template>
 
 <script setup>
-  import { ref, inject, computed } from 'vue'
+  import { ref, inject } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
   import { useCountdown, START_DELAYS } from '../composables/useCountdown'
-  import DownloadDialog from './DownloadDialog.vue'
-  import CountdownOverlay from './CountdownOverlay.vue'
-  import { UiIconButton, UiSegmentedControl } from './ui'
+  import RecorderTime from './recorder/RecorderTime.vue'
+  import RecorderSettings from './recorder/RecorderSettings.vue'
+  import RecorderButtons from './recorder/RecorderButtons.vue'
+  import DownloadDialog from './recorder/DownloadDialog.vue'
+  import CountdownOverlay from './recorder/CountdownOverlay.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { useToastStore } from '../stores/toast'
 
+  /**
+   * Container für Aufnahme und Download in der Player-Leiste: verbindet
+   * useOutputRecorder und useCountdown mit den Teilen in components/recorder/.
+   */
   const { t } = inject('i18n')
   const audioEngine = useAudioEngineStore()
   const { notify } = useToastStore()
@@ -176,8 +115,7 @@
     return 0
   }
 
-  function setStartDelay(value) {
-    const delay = parseInt(value, 10)
+  function setStartDelay(delay) {
     if (!START_DELAYS.includes(delay)) return
     startDelay.value = delay
     try {
@@ -190,33 +128,6 @@
   const errorMessage = ref('')
   const showDownloadDialog = ref(false)
   const isSaving = ref(false)
-
-  const formattedRecTime = computed(() => {
-    const mins = Math.floor(recordingTime.value / 60)
-    const secs = recordingTime.value % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  })
-
-  function selectFormat(format) {
-    setFormat(format)
-  }
-
-  function bitDepthTitle(depth) {
-    return t.value[`rec_bit_${depth}`] || `${depth} Bit`
-  }
-
-  const formatOptions = computed(() => [
-    { value: 'wav', label: 'WAV', title: t.value.rec_format_wav },
-    { value: 'webm', label: 'WebM', title: t.value.rec_format_webm },
-  ])
-
-  const bitDepthOptions = computed(() =>
-    bitDepths.map((depth) => ({
-      value: depth,
-      label: depth === 32 ? '32f' : String(depth),
-      title: bitDepthTitle(depth),
-    }))
-  )
 
   // Record button: start right away or after the chosen countdown
   function handleStartRecording() {
@@ -279,129 +190,6 @@
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
-  }
-
-  .rec-time {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-size: 13px;
-    color: var(--text-primary);
-    background: rgba(239, 68, 68, 0.15);
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-
-  .rec-dot {
-    width: 8px;
-    height: 8px;
-    background: #ef4444;
-    border-radius: 50%;
-    animation: sp-pulse 1s infinite;
-  }
-
-  @keyframes sp-pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.4;
-    }
-  }
-
-  .rec-time .time {
-    font-weight: 600;
-  }
-
-  .rec-controls {
-    display: flex;
-    gap: 6px;
-  }
-
-  /* Record / stop / download: UiIconButton with a status colour */
-  .ui-button.rec-btn.rec,
-  .ui-button.rec-btn.countdown {
-    background: var(--error);
-    border-color: var(--error);
-    color: #ffffff;
-  }
-
-  .ui-button.rec-btn.rec:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--error) 85%, #000);
-    border-color: color-mix(in srgb, var(--error) 85%, #000);
-  }
-
-  /* Countdown in the bar: seconds left, click cancels */
-  .ui-button.rec-btn.countdown {
-    font-size: 15px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    animation: rec-countdown-pulse 1s infinite;
-  }
-
-  @keyframes rec-countdown-pulse {
-    50% {
-      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.25);
-    }
-  }
-
-  /* Start delay select */
-  .delay {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    height: 28px;
-    padding: 0 4px 0 8px;
-    border-radius: 6px;
-    background: var(--secondary-bg);
-    color: var(--text-muted);
-    font-size: 11px;
-  }
-
-  .delay-select {
-    border: none;
-    background: transparent;
-    color: var(--text-primary);
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 2px 2px;
-  }
-
-  .delay-select:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 1px;
-    border-radius: 4px;
-  }
-
-  .delay-select option {
-    background: var(--card-bg);
-    color: var(--text-primary);
-  }
-
-  .ui-button.rec-btn.stop {
-    background: var(--warning);
-    border-color: var(--warning);
-    color: #ffffff;
-  }
-
-  .ui-button.rec-btn.stop:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--warning) 85%, #000);
-    border-color: color-mix(in srgb, var(--warning) 85%, #000);
-  }
-
-  .ui-button.rec-btn.download {
-    background: var(--success);
-    border-color: var(--success);
-    color: #ffffff;
-  }
-
-  .ui-button.rec-btn.download:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--success) 85%, #000);
-    border-color: color-mix(in srgb, var(--success) 85%, #000);
   }
 
   .error-dot {

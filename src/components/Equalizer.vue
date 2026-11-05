@@ -1,153 +1,44 @@
 <template>
   <div class="equalizer">
-    <div class="eq-header">
-      <UiIconButton :pressed="!isEqBypassed" :label="t.a11y_eq_bypass" @click="toggleBypass">
-        <AppIcon name="power" />
-      </UiIconButton>
+    <EqPresetControls
+      v-model="selectedPreset"
+      :custom-presets="customPresets"
+      :bypassed="isEqBypassed"
+      :saving="showSaveForm"
+      @change="handlePresetChange"
+      @toggle-bypass="toggleBypass"
+      @delete="deleteSelectedCustomPreset"
+      @save="showSaveForm = true"
+      @reset="resetEqualizer"
+    />
 
-      <select
-        v-model="selectedPreset"
-        class="preset-select"
-        :aria-label="t.a11y_eq_select_preset"
-        @change="handlePresetChange"
-      >
-        <option value="">Custom</option>
-        <optgroup :label="t.eq_builtin_group">
-          <option v-for="(_, name) in EQ_PRESETS" :key="name" :value="name">{{ name }}</option>
-        </optgroup>
-        <optgroup v-if="customPresets.length" :label="t.eq_custom_group">
-          <option v-for="p in customPresets" :key="p.id" :value="p.id">{{ p.name }}</option>
-        </optgroup>
-      </select>
+    <EqPresetForm v-if="showSaveForm" @save="confirmSavePreset" @cancel="cancelSavePreset" />
 
-      <!-- Delete custom preset -->
-      <UiIconButton
-        v-if="isCustomSelected"
-        class="delete-btn"
-        :label="t.eq_preset_delete"
-        @click="deleteSelectedCustomPreset"
-      >
-        <AppIcon name="trash" />
-      </UiIconButton>
-
-      <!-- Save preset button -->
-      <UiIconButton
-        v-if="!showSaveForm"
-        class="save-btn"
-        :label="t.eq_preset_save_title"
-        @click="showSaveForm = true"
-      >
-        <AppIcon name="save" />
-      </UiIconButton>
-
-      <UiIconButton class="reset-btn" :label="t.reset" @click="resetEqualizer">
-        <AppIcon name="undo" />
-      </UiIconButton>
-    </div>
-
-    <!-- Inline save form -->
-    <div v-if="showSaveForm" class="save-form">
-      <input
-        ref="presetNameInput"
-        v-model="newPresetName"
-        :placeholder="t.eq_preset_name_placeholder"
-        :aria-label="t.a11y_eq_save_name"
-        class="preset-name-input"
-        maxlength="32"
-        @keydown.enter="confirmSavePreset"
-        @keydown.escape="cancelSavePreset"
-      />
-      <UiIconButton
-        class="save-confirm-btn"
-        :label="t.eq_save"
-        :disabled="!newPresetName.trim()"
-        @click="confirmSavePreset"
-      >
-        <AppIcon name="check" />
-      </UiIconButton>
-      <UiIconButton class="cancel-btn" :label="t.eq_cancel" @click="cancelSavePreset">
-        <AppIcon name="close" />
-      </UiIconButton>
-    </div>
-
-    <div class="eq-bands" :class="{ disabled: isEqBypassed }">
-      <!-- Frequency curve behind the sliders: boost above, cut below the 0 dB line -->
-      <svg
-        class="eq-curve"
-        :viewBox="`0 0 ${CURVE.w} ${CURVE.h}`"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <clipPath id="eq-curve-up">
-            <rect x="0" y="0" :width="CURVE.w" :height="curve.mid" />
-          </clipPath>
-          <clipPath id="eq-curve-dn">
-            <rect x="0" :y="curve.mid" :width="CURVE.w" :height="curve.mid" />
-          </clipPath>
-        </defs>
-        <line class="eq-curve-zero" x1="0" :x2="CURVE.w" :y1="curve.mid" :y2="curve.mid" />
-        <path class="eq-curve-fill boost" :d="curve.area" clip-path="url(#eq-curve-up)" />
-        <path class="eq-curve-fill cut" :d="curve.area" clip-path="url(#eq-curve-dn)" />
-        <path class="eq-curve-line boost" :d="curve.line" clip-path="url(#eq-curve-up)" />
-        <path class="eq-curve-line cut" :d="curve.line" clip-path="url(#eq-curve-dn)" />
-      </svg>
-
-      <div v-for="(band, index) in localBands" :key="band.frequency" class="band">
-        <div class="slider-wrapper" :class="{ active: band.gain !== 0, negative: band.gain < 0 }">
-          <input
-            type="range"
-            min="-12"
-            max="12"
-            step="0.5"
-            :value="band.gain"
-            :disabled="isEqBypassed"
-            class="slider-v"
-            :class="{ active: band.gain !== 0, negative: band.gain < 0 }"
-            :aria-label="
-              t.a11y_eq_band
-                .replace('{freq}', formatFrequency(band.frequency))
-                .replace('{gain}', band.gain)
-            "
-            :aria-valuenow="band.gain"
-            aria-valuemin="-12"
-            aria-valuemax="12"
-            @input="handleGainChange($event, index)"
-          />
-        </div>
-        <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
-        <span class="freq">{{ formatFrequency(band.frequency) }}</span>
-      </div>
-    </div>
+    <EqBands :bands="localBands" :disabled="isEqBypassed" @change="handleGainChange" />
   </div>
 </template>
 
 <script setup>
-  import { ref, inject, watch, computed, onMounted, nextTick } from 'vue'
-  import AppIcon from './AppIcon.vue'
-  import { EQ_PRESETS, EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
+  import { ref, inject, watch, computed, onMounted } from 'vue'
+  import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
-  import { buildEqCurve } from '../utils/eqCurve.js'
-  import { UiIconButton } from './ui'
+  import EqPresetControls from './equalizer/EqPresetControls.vue'
+  import EqPresetForm from './equalizer/EqPresetForm.vue'
+  import EqBands from './equalizer/EqBands.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { useToastStore } from '../stores/toast'
 
+  /**
+   * Container des 19-Band-Equalizers: hält Bänder, Preset-Auswahl und das
+   * Speichern-Formular und spricht mit dem Engine-Store. Die Darstellung liegt
+   * in components/equalizer/.
+   */
   const { t } = inject('i18n')
 
   const audioEngine = useAudioEngineStore()
   const { notify } = useToastStore()
 
   const localBands = ref(EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0 })))
-
-  // Curve geometry (SVG user units, stretched to the slider area). The ±12 dB
-  // range maps to 43 % of the height, which is where the slider thumbs travel.
-  const CURVE = { w: 380, h: 100 }
-  const curve = computed(() =>
-    buildEqCurve(
-      localBands.value.map((b) => b.gain),
-      { w: CURVE.w, h: CURVE.h, range: CURVE.h * 0.43 }
-    )
-  )
 
   const selectedPreset = ref('')
   // Mirrors the engine so external changes (undo/redo) are reflected as well
@@ -157,25 +48,18 @@
   const { customPresets, loadCustomPresets, findPreset, addPreset, removePreset } =
     useCustomPresets()
   const showSaveForm = ref(false)
-  const newPresetName = ref('')
-  const presetNameInput = ref(null)
 
   const isCustomSelected = computed(() => isCustomPresetId(selectedPreset.value))
 
-  function confirmSavePreset() {
-    const name = newPresetName.value.trim()
-    if (!name) return
-
+  function confirmSavePreset(name) {
     const gains = localBands.value.map((b) => b.gain)
     selectedPreset.value = addPreset(name, gains).id
     showSaveForm.value = false
-    newPresetName.value = ''
     notify(t.value.eq_preset_saved.replace('{name}', name), 'success')
   }
 
   function cancelSavePreset() {
     showSaveForm.value = false
-    newPresetName.value = ''
   }
 
   function deleteSelectedCustomPreset() {
@@ -184,11 +68,6 @@
     selectedPreset.value = ''
     notify(t.value.eq_preset_deleted.replace('{name}', preset.name), 'info')
   }
-
-  // Focus input when save form opens
-  watch(showSaveForm, (v) => {
-    if (v) nextTick(() => presetNameInput.value?.focus())
-  })
 
   // Gains of the preset currently shown in the dropdown (built-in or custom)
   function selectedPresetGains() {
@@ -218,8 +97,7 @@
     )
   }
 
-  function handleGainChange(event, index) {
-    const value = parseFloat(event.target.value)
+  function handleGainChange(index, value) {
     if (localBands.value && localBands.value[index]) {
       localBands.value[index].gain = value
     }
@@ -291,421 +169,15 @@
     padding: 12px;
   }
 
-  .eq-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-
-  .preset-select {
-    flex: 1;
-    padding: 5px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 11px;
-    cursor: pointer;
-    background: var(--secondary-bg);
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    min-width: 0;
-  }
-
-  .preset-select:hover,
-  .preset-select:focus {
-    border-color: var(--accent-primary);
-    outline: none;
-  }
-
-  /* Header buttons are UiIconButton; hover colours hint at the action */
-  .ui-button.save-btn:hover:not(:disabled),
-  .ui-button.reset-btn:hover:not(:disabled) {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: var(--on-accent);
-  }
-
-  .ui-button.save-confirm-btn:hover:not(:disabled) {
-    background: var(--success);
-    border-color: var(--success);
-    color: #ffffff;
-  }
-
-  .ui-button.cancel-btn:hover:not(:disabled),
-  .ui-button.delete-btn:hover:not(:disabled) {
-    background: var(--error);
-    border-color: var(--error);
-    color: #ffffff;
-  }
-
-  /* Inline save form */
-  .save-form {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-    animation: fadeIn 0.15s ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .preset-name-input {
-    flex: 1;
-    padding: 5px 10px;
-    border: 1px solid var(--accent-primary);
-    border-radius: 6px;
-    background: var(--secondary-bg);
-    color: var(--text-primary);
-    font-size: 12px;
-    outline: none;
-  }
-
-  .preset-name-input::placeholder {
-    color: var(--text-muted);
-  }
-
-  /* EQ bands: one grid column per band so the curve's band centres line up
-     with the slider thumbs. The custom properties feed the curve overlay. */
-  .eq-bands {
-    --eq-pad-x: 8px;
-    --eq-pad-y: 12px;
-    --eq-stage-h: 160px;
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(19, minmax(0, 1fr));
-    justify-items: center;
-    align-items: end;
-    padding: var(--eq-pad-y) var(--eq-pad-x);
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    min-height: 220px;
-  }
-
-  .eq-curve {
-    position: absolute;
-    top: var(--eq-pad-y);
-    left: var(--eq-pad-x);
-    width: calc(100% - 2 * var(--eq-pad-x));
-    height: var(--eq-stage-h);
-    pointer-events: none;
-  }
-
-  .eq-curve-zero {
-    stroke: var(--text-muted);
-    stroke-width: 1;
-    stroke-dasharray: 3 4;
-    vector-effect: non-scaling-stroke;
-  }
-
-  .eq-curve-fill {
-    opacity: 0.2;
-  }
-
-  .eq-curve-fill.boost {
-    fill: var(--eq-boost);
-  }
-
-  .eq-curve-fill.cut {
-    fill: var(--eq-cut);
-  }
-
-  .eq-curve-line {
-    fill: none;
-    stroke-width: 2;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
-  }
-
-  .eq-curve-line.boost {
-    stroke: var(--eq-boost);
-  }
-
-  .eq-curve-line.cut {
-    stroke: var(--eq-cut);
-  }
-
-  .eq-bands.disabled {
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .band {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-    max-width: 36px;
-  }
-
-  .slider-wrapper {
-    position: relative;
-    width: 18px;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    transition: background 0.25s ease;
-  }
-
-  /* Subtle hover highlight instead of a heavy neon capsule */
-  .slider-wrapper:hover {
-    background: rgba(127, 127, 140, 0.08);
-  }
-
-  .slider-v {
-    -webkit-appearance: none;
-    appearance: none;
-    writing-mode: vertical-lr;
-    direction: rtl;
-    width: 3px;
-    height: 152px;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    background: var(--border-strong);
-    border-radius: 3px;
-    outline: none;
-    border: none;
-    transition:
-      background 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .slider-v::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: #ffffff;
-    cursor: pointer;
-    border: 2px solid var(--text-muted);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-    transition:
-      transform 0.15s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .slider-v.active::-webkit-slider-thumb {
-    border-color: var(--eq-boost);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost) 45%, transparent);
-  }
-
-  .slider-v.active.negative::-webkit-slider-thumb {
-    border-color: var(--eq-cut);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut) 45%, transparent);
-  }
-
-  .slider-v::-webkit-slider-thumb:hover {
-    transform: scale(1.18);
-  }
-
-  .slider-v::-moz-range-track {
-    width: 3px;
-    background: var(--border-strong);
-    border-radius: 3px;
-    border: none;
-  }
-
-  .slider-v::-moz-range-thumb {
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: #ffffff;
-    cursor: pointer;
-    border: 2px solid var(--text-muted);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-    transition:
-      transform 0.15s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .slider-v.active::-moz-range-thumb {
-    border-color: var(--eq-boost);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-boost) 45%, transparent);
-  }
-
-  .slider-v.active.negative::-moz-range-thumb {
-    border-color: var(--eq-cut);
-    box-shadow: 0 1px 6px color-mix(in srgb, var(--eq-cut) 45%, transparent);
-  }
-
-  .slider-v::-moz-range-thumb:hover {
-    transform: scale(1.18);
-  }
-
-  .val {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--accent-primary);
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    min-width: 24px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  /* Value colour follows the band state (boost / cut) */
-  .slider-wrapper.active + .val {
-    color: var(--eq-boost);
-  }
-
-  .slider-wrapper.active.negative + .val {
-    color: var(--eq-cut);
-  }
-
-  .freq {
-    font-size: 10.5px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 900px) {
-    .eq-bands {
-      --eq-pad-x: 4px;
-      --eq-pad-y: 10px;
-      --eq-stage-h: 130px;
-    }
-
-    .slider-wrapper {
-      height: 130px;
-      width: 16px;
-    }
-
-    .slider-v {
-      height: 120px;
-    }
-
-    .val {
-      font-size: 10.5px;
-    }
-
-    .freq {
-      font-size: 10.5px;
-    }
-  }
-
   @media (max-width: 600px) {
     .equalizer {
       padding: 10px;
-    }
-
-    .eq-header {
-      gap: 5px;
-    }
-
-    .preset-select {
-      font-size: 12px;
-      padding: 6px 8px;
-    }
-
-    .eq-bands {
-      --eq-pad-x: 2px;
-      --eq-pad-y: 8px;
-      --eq-stage-h: 110px;
-      min-height: 180px;
-    }
-
-    .slider-wrapper {
-      height: 110px;
-      width: 14px;
-    }
-
-    .slider-v {
-      height: 100px;
-      width: 4px;
-    }
-
-    .band {
-      max-width: 28px;
-    }
-
-    .val {
-      font-size: 10px;
-    }
-
-    .freq {
-      font-size: 10px;
-    }
-
-    /* 19 labels at >= 10px do not fit side by side: show every second one */
-    .band:nth-child(even) .freq {
-      visibility: hidden;
-    }
-
-    .slider-v::-webkit-slider-thumb {
-      width: 12px;
-      height: 12px;
-    }
-
-    .slider-v::-moz-range-thumb {
-      width: 12px;
-      height: 12px;
     }
   }
 
   @media (max-width: 400px) {
     .equalizer {
       padding: 8px;
-    }
-
-    .eq-bands {
-      --eq-pad-y: 6px;
-      --eq-stage-h: 95px;
-      min-height: 160px;
-    }
-
-    .slider-wrapper {
-      height: 95px;
-      width: 13px;
-    }
-
-    .slider-v {
-      height: 85px;
-      width: 4px;
-    }
-
-    .band {
-      max-width: 24px;
-    }
-
-    .val {
-      font-size: 10px;
-    }
-
-    .freq {
-      font-size: 10px;
-    }
-
-    .slider-v::-webkit-slider-thumb {
-      width: 11px;
-      height: 11px;
-      border-width: 1.5px;
-    }
-
-    .slider-v::-moz-range-thumb {
-      width: 11px;
-      height: 11px;
-      border-width: 1.5px;
     }
   }
 </style>

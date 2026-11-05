@@ -37,11 +37,12 @@ export function historyActionForKey(e) {
 }
 
 /**
- * @param audioPlayer player composable (transport shortcuts)
- * @param {object} [options]
+ * @param audioPlayer Player-Store (Transport, Position, Lautstärke)
+ * @param {object} options
+ * @param options.playlist Playlist-Store (hasPlaylist, hasTrack, canPlayNext, canPlayPrevious)
  * @param {{ undo: Function, redo: Function }} [options.history] processing history (undo/redo)
  */
-export function useKeyboardShortcuts(audioPlayer, { history = null } = {}) {
+export function useKeyboardShortcuts(audioPlayer, { playlist, history = null }) {
   function onKeydown(e) {
     // Undo / redo first: they also work while a slider has focus
     const historyAction = history ? historyActionForKey(e) : null
@@ -58,19 +59,19 @@ export function useKeyboardShortcuts(audioPlayer, { history = null } = {}) {
 
     switch (e.code) {
       case 'Space':
-        if (!audioPlayer.hasPlaylist) return
+        if (!playlist.hasPlaylist) return
         e.preventDefault()
         togglePlayPause()
         break
 
       case 'ArrowLeft':
-        if (!audioPlayer.hasTrack) return
+        if (!playlist.hasTrack) return
         e.preventDefault()
         seek(Math.max(0, audioPlayer.currentTime - SEEK_STEP))
         break
 
       case 'ArrowRight':
-        if (!audioPlayer.hasTrack) return
+        if (!playlist.hasTrack) return
         e.preventDefault()
         seek(Math.min(audioPlayer.duration, audioPlayer.currentTime + SEEK_STEP))
         break
@@ -90,11 +91,11 @@ export function useKeyboardShortcuts(audioPlayer, { history = null } = {}) {
         break
 
       case 'KeyN':
-        if (audioPlayer.canPlayNext) playNext()
+        if (playlist.canPlayNext) playNext()
         break
 
       case 'KeyP':
-        if (audioPlayer.canPlayPrevious) playPrevious()
+        if (playlist.canPlayPrevious) playPrevious()
         break
     }
   }

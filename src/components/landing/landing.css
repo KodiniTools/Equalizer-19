@@ -1,0 +1,50 @@
+/* Gemeinsame Abschnitts-Anatomie der Landing-Page. Wird von den Abschnitten in
+   components/landing/ per <style scoped src="./landing.css"> eingebunden. */
+.lp-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.lp-section {
+  padding: 88px 0;
+}
+
+.lp-section-alt {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.lp-section-head {
+  max-width: 640px;
+  margin-bottom: 40px;
+}
+
+.lp-section-head h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.2vw, 36px);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+
+.lp-section-head p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 960px) {
+  .lp-section {
+    padding: 64px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .lp-wrap {
+    padding: 0 16px;
+  }
+}
