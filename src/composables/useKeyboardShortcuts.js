@@ -54,49 +54,35 @@ export function useKeyboardShortcuts(audioPlayer, { history = null } = {}) {
 
     if (isInputFocused()) return
 
-    const {
-      hasTrack,
-      hasPlaylist,
-      canPlayNext,
-      canPlayPrevious,
-      currentTime,
-      duration,
-      volume,
-      togglePlayPause,
-      seek,
-      setVolume,
-      toggleMute,
-      playNext,
-      playPrevious,
-    } = audioPlayer
+    const { togglePlayPause, seek, setVolume, toggleMute, playNext, playPrevious } = audioPlayer
 
     switch (e.code) {
       case 'Space':
-        if (!hasPlaylist.value) return
+        if (!audioPlayer.hasPlaylist) return
         e.preventDefault()
         togglePlayPause()
         break
 
       case 'ArrowLeft':
-        if (!hasTrack.value) return
+        if (!audioPlayer.hasTrack) return
         e.preventDefault()
-        seek(Math.max(0, currentTime.value - SEEK_STEP))
+        seek(Math.max(0, audioPlayer.currentTime - SEEK_STEP))
         break
 
       case 'ArrowRight':
-        if (!hasTrack.value) return
+        if (!audioPlayer.hasTrack) return
         e.preventDefault()
-        seek(Math.min(duration.value, currentTime.value + SEEK_STEP))
+        seek(Math.min(audioPlayer.duration, audioPlayer.currentTime + SEEK_STEP))
         break
 
       case 'ArrowUp':
         e.preventDefault()
-        setVolume(Math.min(1, volume.value + VOLUME_STEP))
+        setVolume(Math.min(1, audioPlayer.volume + VOLUME_STEP))
         break
 
       case 'ArrowDown':
         e.preventDefault()
-        setVolume(Math.max(0, volume.value - VOLUME_STEP))
+        setVolume(Math.max(0, audioPlayer.volume - VOLUME_STEP))
         break
 
       case 'KeyM':
@@ -104,11 +90,11 @@ export function useKeyboardShortcuts(audioPlayer, { history = null } = {}) {
         break
 
       case 'KeyN':
-        if (canPlayNext.value) playNext()
+        if (audioPlayer.canPlayNext) playNext()
         break
 
       case 'KeyP':
-        if (canPlayPrevious.value) playPrevious()
+        if (audioPlayer.canPlayPrevious) playPrevious()
         break
     }
   }

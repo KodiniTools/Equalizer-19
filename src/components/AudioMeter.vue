@@ -47,9 +47,10 @@
 <script setup>
   import { reactive, inject, onMounted, onUnmounted } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { useAudioEngineStore } from '../stores/audioEngine'
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
+  const audioEngine = useAudioEngineStore()
 
   const DB_MIN = -60
   const DB_MAX = 0
@@ -106,7 +107,7 @@
   }
 
   function tick() {
-    if (audioEngine && audioEngine.isInitialized?.value) {
+    if (audioEngine && audioEngine.isInitialized) {
       updateMeter(meters[0], audioEngine.getInputLevel())
       updateMeter(meters[1], audioEngine.getOutputLevel())
     } else {

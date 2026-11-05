@@ -107,8 +107,8 @@ export function inputErrorKey(error, { specificDevice = false, systemAudio = fal
  * play releases the input and switches back to the playlist. Speaker
  * monitoring is off by default for inputs to prevent feedback loops.
  *
- * @param {object} audioEngine  useAudioEngine() instance
- * @param {object} audioPlayer  useAudioPlayer() instance
+ * @param {object} audioEngine  Audio-Engine-Store (stores/audioEngine.js)
+ * @param {object} audioPlayer  Player-Store (stores/player.js)
  * @param {{ mediaDevices?: MediaDevices, storage?: Storage }} [deps] injectable for tests
  */
 export function useInputSource(audioEngine, audioPlayer, deps = {}) {
@@ -192,7 +192,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       stream = null
     }
     if (sourceNode) {
-      if (audioEngine.sourceNode?.value === sourceNode) {
+      if (audioEngine.sourceNode === sourceNode) {
         audioEngine.disconnectAudioSource()
       } else {
         try {
@@ -291,8 +291,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   /** Create/resume the AudioContext synchronously (no await: keeps user activation). */
   function wakeEngine() {
     try {
-      if (!audioEngine.isInitialized.value) audioEngine.initAudioContext()
-      const ctx = audioEngine.audioContext.value
+      if (!audioEngine.isInitialized) audioEngine.initAudioContext()
+      const ctx = audioEngine.audioContext
       if (ctx?.state === 'suspended' && typeof ctx.resume === 'function') {
         ctx.resume().catch(() => {})
       }
@@ -331,8 +331,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       // No await before this call: the share dialog needs the click's user activation
       const { stream: newStream, surface } = await acquireStream(selectedDeviceId.value)
 
-      if (!audioEngine.isInitialized.value) audioEngine.initAudioContext()
-      const ctx = audioEngine.audioContext.value
+      if (!audioEngine.isInitialized) audioEngine.initAudioContext()
+      const ctx = audioEngine.audioContext
       if (!ctx) {
         newStream.getTracks().forEach((track) => track.stop())
         throw new Error('AudioContext unavailable')

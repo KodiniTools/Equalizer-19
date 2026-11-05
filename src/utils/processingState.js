@@ -23,9 +23,9 @@ export function captureProcessingState(engine) {
   for (const key of DYNAMICS_KEYS) dynamics[key] = engine.dynamics[key]
   return {
     eqGains: engine.eqBands.map((band) => band.gain),
-    eqBypass: !!engine.eqBypass.value,
+    eqBypass: !!engine.eqBypass,
     dynamics,
-    dynamicsEnabled: !!engine.dynamicsEnabled.value,
+    dynamicsEnabled: !!engine.dynamicsEnabled,
   }
 }
 
@@ -51,8 +51,8 @@ export function applyProcessingState(engine, state) {
   }
   if (dynamicsChanged) engine.updateDynamics(dynamics)
 
-  if (!!engine.eqBypass.value !== state.eqBypass) engine.toggleEqBypass()
-  if (!!engine.dynamicsEnabled.value !== state.dynamicsEnabled) engine.toggleDynamics()
+  if (!!engine.eqBypass !== state.eqBypass) engine.toggleEqBypass()
+  if (!!engine.dynamicsEnabled !== state.dynamicsEnabled) engine.toggleDynamics()
 }
 
 /**

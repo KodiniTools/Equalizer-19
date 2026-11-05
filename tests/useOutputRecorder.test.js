@@ -41,7 +41,7 @@ function fakeEngine() {
   const source = fakeNode('mediaStreamSource')
   const gainNode = fakeNode('gain')
   source.connect(gainNode) // stands in for source → EQ → dynamics → gain
-  return { audioContext: { value: audioContext }, gainNode: { value: gainNode }, source }
+  return { audioContext, gainNode, source }
 }
 
 function feed(processor, channels) {
@@ -62,8 +62,8 @@ test('WAV recording taps the master gain – the end of the processing chain', a
   assert.equal(await rec.startRecording(), true)
   assert.equal(rec.isRecording.value, true)
 
-  const [capture] = engine.audioContext.value.processors
-  assert.ok(engine.gainNode.value.outputs.has(capture), 'capture hangs behind the master gain')
+  const [capture] = engine.audioContext.processors
+  assert.ok(engine.gainNode.outputs.has(capture), 'capture hangs behind the master gain')
   assert.ok(!engine.source.outputs.has(capture), 'the raw source is never recorded')
 
   // Processed samples arrive at the capture node and end up in the WAV
@@ -72,14 +72,14 @@ test('WAV recording taps the master gain – the end of the processing chain', a
 
   assert.equal(rec.isRecording.value, false)
   assert.equal(rec.hasRecording.value, true)
-  assert.ok(!engine.gainNode.value.outputs.has(capture), 'capture detached after stop')
+  assert.ok(!engine.gainNode.outputs.has(capture), 'capture detached after stop')
   assert.equal(capture.outputs.size, 0)
 })
 
 test('startRecording fails cleanly without an initialised engine', async () => {
   const rec = useOutputRecorder()
   assert.equal(await rec.startRecording(), false)
-  rec.setAudioEngine({ audioContext: { value: null }, gainNode: { value: null } })
+  rec.setAudioEngine({ audioContext: null, gainNode: null })
   assert.equal(await rec.startRecording(), false)
   assert.equal(rec.isRecording.value, false)
 })

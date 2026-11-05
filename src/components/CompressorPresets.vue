@@ -30,13 +30,14 @@
     compPresetToDynamics,
     findCompPreset,
   } from '../utils/presets'
+  import { useAudioEngineStore } from '../stores/audioEngine'
 
   defineProps({
     id: { type: String, default: undefined },
   })
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
+  const audioEngine = useAudioEngineStore()
 
   // Derived from the engine: shows "Custom" as soon as a parameter is changed manually
   const activePreset = computed(() => findCompPreset(audioEngine?.dynamics))

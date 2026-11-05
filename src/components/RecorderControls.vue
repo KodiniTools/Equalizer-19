@@ -126,10 +126,12 @@
   import DownloadDialog from './DownloadDialog.vue'
   import CountdownOverlay from './CountdownOverlay.vue'
   import { UiIconButton, UiSegmentedControl } from './ui'
+  import { useAudioEngineStore } from '../stores/audioEngine'
+  import { useToastStore } from '../stores/toast'
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
-  const notify = inject('notify', () => {})
+  const audioEngine = useAudioEngineStore()
+  const { notify } = useToastStore()
 
   // ---- Output recorder (record + download) ----
   const {
