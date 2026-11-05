@@ -95,9 +95,10 @@
   import { DEFAULT_DYNAMICS } from '../utils/presets.js'
   import CompressorPresets from './CompressorPresets.vue'
   import { SliderField, UiIconButton, UiPanel } from './ui'
+  import { useAudioEngineStore } from '../stores/audioEngine'
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
+  const audioEngine = useAudioEngineStore()
 
   // Unique ids linking labels to their controls
   const uid = useId()
@@ -118,7 +119,7 @@
     knee.value = audioEngine.dynamics.knee
     attack.value = audioEngine.dynamics.attack
     release.value = audioEngine.dynamics.release
-    dynamicsEnabled.value = audioEngine.dynamicsEnabled?.value ?? true
+    dynamicsEnabled.value = audioEngine.dynamicsEnabled
   }
 
   // Watch for external changes (e.g., from presets or undo/redo)
@@ -136,9 +137,12 @@
     )
   }
   if (audioEngine && audioEngine.dynamicsEnabled) {
-    watch(audioEngine.dynamicsEnabled, (enabled) => {
-      dynamicsEnabled.value = enabled
-    })
+    watch(
+      () => audioEngine.dynamicsEnabled,
+      (enabled) => {
+        dynamicsEnabled.value = enabled
+      }
+    )
   }
 
   function applySettings() {
@@ -155,7 +159,7 @@
   function toggleDynamics() {
     if (audioEngine && audioEngine.toggleDynamics) {
       audioEngine.toggleDynamics()
-      dynamicsEnabled.value = audioEngine.dynamicsEnabled?.value ?? true
+      dynamicsEnabled.value = audioEngine.dynamicsEnabled
     }
   }
 

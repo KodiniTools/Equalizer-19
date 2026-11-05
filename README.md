@@ -20,6 +20,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 ## Technologie-Stack
 
 - **Vue 3** mit Composition API
+- **Pinia** für den globalen Zustand (Audio-Engine, Player, Verlauf, Toasts)
 - **Vite** als Build-Tool
 - **Web Audio API** für Audio-Processing
 - **CSS Variables** für Theming
@@ -80,9 +81,12 @@ equalizer19-vue/
 │   │   └── Visualization.vue   # Spektrum-Analyzer
 │   ├── data/
 │   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
+│   ├── stores/                 # Pinia-Stores
+│   │   ├── audioEngine.js      # Audio-Engine (Verarbeitungskette)
+│   │   ├── player.js           # Player-Logik (Playlist, Wiedergabe)
+│   │   ├── history.js          # Undo/Redo
+│   │   └── toast.js            # Benachrichtigungen
 │   ├── composables/
-│   │   ├── useAudioEngine.js   # Audio-Engine-Management
-│   │   ├── useAudioPlayer.js   # Player-Logik
 │   │   ├── useCustomPresets.js # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useInputSource.js   # Live-Eingang (Line-In, Stereomix, virtuelles Kabel)

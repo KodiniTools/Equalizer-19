@@ -58,22 +58,14 @@
   import { inject, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { UiIconButton } from './ui'
+  import { storeToRefs } from 'pinia'
+  import { usePlayerStore } from '../stores/player'
 
   const { t } = inject('i18n')
-  const {
-    isPlaying,
-    isLoading,
-    canPlayNext,
-    canPlayPrevious,
-    isShuffle,
-    repeatMode,
-    stop,
-    togglePlayPause,
-    playNext,
-    playPrevious,
-    toggleShuffle,
-    cycleRepeat,
-  } = inject('audioPlayer')
+  const audioPlayer = usePlayerStore()
+  const { isPlaying, isLoading, canPlayNext, canPlayPrevious, isShuffle, repeatMode } =
+    storeToRefs(audioPlayer)
+  const { stop, togglePlayPause, playNext, playPrevious, toggleShuffle, cycleRepeat } = audioPlayer
 
   const repeatTitle = computed(() => {
     if (repeatMode.value === 'all') return t.value.player_repeat_all

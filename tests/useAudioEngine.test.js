@@ -69,7 +69,14 @@ class FakeAudioContext {
 }
 
 globalThis.window = { AudioContext: FakeAudioContext }
-const { useAudioEngine } = await import('../src/composables/useAudioEngine.js')
+const { createPinia, setActivePinia } = await import('pinia')
+const { useAudioEngineStore } = await import('../src/stores/audioEngine.js')
+
+// Each test gets its own Pinia, so the store starts from scratch
+function useAudioEngine() {
+  setActivePinia(createPinia())
+  return useAudioEngineStore()
+}
 
 const outs = (n) => [...n.outputs].map((t) => t.name)
 
@@ -85,8 +92,8 @@ function engineWithSource(name = 'source') {
 function pathToGain(engine, source) {
   const path = []
   let node = source
-  const inputAnalyser = engine.inputAnalyserNode.value
-  for (let i = 0; i < 30 && node !== engine.gainNode.value; i++) {
+  const inputAnalyser = engine.inputAnalyserNode
+  for (let i = 0; i < 30 && node !== engine.gainNode; i++) {
     const next = [...node.outputs].filter((n) => n !== inputAnalyser)
     assert.equal(next.length, 1, `${node.name} must have exactly one chain output`)
     node = next[0]
@@ -101,41 +108,41 @@ test('live input is routed source → 19 EQ filters → compressor → master ga
   assert.equal(path.length, 19 + 1 + 1)
   assert.deepEqual(
     path.slice(0, 19),
-    engine.eqFilters.value,
+    engine.eqFilters,
     'all EQ filters in order, lowest band first'
   )
-  assert.equal(path[19], engine.dynamicsNode.value)
-  assert.equal(path[20], engine.gainNode.value)
-  assert.ok(source.outputs.has(engine.inputAnalyserNode.value), 'input meter tap')
+  assert.equal(path[19], engine.dynamicsNode)
+  assert.equal(path[20], engine.gainNode)
+  assert.ok(source.outputs.has(engine.inputAnalyserNode), 'input meter tap')
 })
 
 test('EQ gain changes reach the filters live (what the recorder captures)', () => {
   const { engine } = engineWithSource()
   engine.updateEqBand(16, -12)
-  assert.equal(engine.eqFilters.value[16].gain.value, -12)
+  assert.equal(engine.eqFilters[16].gain.value, -12)
   assert.equal(engine.eqBands[16].gain, -12)
 })
 
 test('toggling the compressor off and on does not leave a second (dry) path', () => {
   const { engine, source } = engineWithSource()
-  const lastFilter = engine.eqFilters.value.at(-1)
+  const lastFilter = engine.eqFilters.at(-1)
 
   engine.toggleDynamics() // off
   assert.deepEqual(pathToGain(engine, source).length, 19 + 1)
   assert.deepEqual(outs(lastFilter), ['gain'])
-  assert.deepEqual(outs(engine.dynamicsNode.value), [], 'bypassed compressor detached')
+  assert.deepEqual(outs(engine.dynamicsNode), [], 'bypassed compressor detached')
 
   engine.toggleDynamics() // on again
   assert.deepEqual(pathToGain(engine, source).length, 19 + 1 + 1)
   assert.deepEqual(outs(lastFilter), ['dynamics'])
-  assert.deepEqual(outs(engine.dynamicsNode.value), ['gain'])
+  assert.deepEqual(outs(engine.dynamicsNode), ['gain'])
 })
 
 test('EQ bypass detaches the filters and re-enabling restores them', () => {
   const { engine, source } = engineWithSource()
   engine.toggleEqBypass()
   assert.equal(pathToGain(engine, source).length, 1 + 1)
-  engine.eqFilters.value.forEach((f) => assert.deepEqual(outs(f), []))
+  engine.eqFilters.forEach((f) => assert.deepEqual(outs(f), []))
 
   engine.toggleEqBypass()
   assert.equal(pathToGain(engine, source).length, 19 + 1 + 1)
@@ -144,7 +151,7 @@ test('EQ bypass detaches the filters and re-enabling restores them', () => {
 test('recorder tap on the master gain survives routing changes and source switches', () => {
   const { engine, source } = engineWithSource('player')
   const capture = fakeNode('recorder')
-  engine.gainNode.value.connect(capture)
+  engine.gainNode.connect(capture)
 
   engine.toggleDynamics()
   engine.toggleEqBypass()
@@ -153,7 +160,7 @@ test('recorder tap on the master gain survives routing changes and source switch
   engine.toggleEqBypass()
   engine.toggleDynamics()
 
-  assert.ok(engine.gainNode.value.outputs.has(capture), 'recorder still attached')
+  assert.ok(engine.gainNode.outputs.has(capture), 'recorder still attached')
   assert.deepEqual(outs(source), [], 'previous source fully detached')
   assert.equal(pathToGain(engine, live).length, 19 + 1 + 1)
 })

@@ -129,11 +129,13 @@
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
   import { buildEqCurve } from '../utils/eqCurve.js'
   import { UiIconButton } from './ui'
+  import { useAudioEngineStore } from '../stores/audioEngine'
+  import { useToastStore } from '../stores/toast'
 
   const { t } = inject('i18n')
 
-  const audioEngine = inject('audioEngine')
-  const notify = inject('notify', () => {})
+  const audioEngine = useAudioEngineStore()
+  const { notify } = useToastStore()
 
   const localBands = ref(EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0 })))
 
@@ -149,7 +151,7 @@
 
   const selectedPreset = ref('')
   // Mirrors the engine so external changes (undo/redo) are reflected as well
-  const isEqBypassed = computed(() => audioEngine?.eqBypass?.value ?? false)
+  const isEqBypassed = computed(() => audioEngine.eqBypass)
 
   // Custom presets
   const { customPresets, loadCustomPresets, findPreset, addPreset, removePreset } =

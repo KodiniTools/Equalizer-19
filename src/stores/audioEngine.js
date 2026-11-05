@@ -1,23 +1,30 @@
-import { ref, reactive, watch } from 'vue'
+import { defineStore } from 'pinia'
+import { ref, shallowRef, reactive, markRaw, watch } from 'vue'
 import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets.js'
 import { processingChainOrder, connectProcessingChain } from '../utils/audioChain.js'
 
-export function useAudioEngine() {
+/**
+ * Audio-Engine: Web-Audio-Kette Source → 19 EQ-Filter → Kompressor → Master-Gain →
+ * Analyser/Monitor. Nur die Parameter (eqBands, dynamics, masterGain, Bypass-Flags)
+ * sind reaktiv; die AudioNodes liegen in shallowRef und sind markRaw, damit Vue sie
+ * nie in Proxies wickelt (connect()/disconnect() auf einem Proxy schlägt fehl).
+ */
+export const useAudioEngineStore = defineStore('audioEngine', () => {
   // Audio Context
-  const audioContext = ref(null)
+  const audioContext = shallowRef(null)
   const isInitialized = ref(false)
 
   // Audio Nodes
-  const sourceNode = ref(null)
-  const analyserNode = ref(null)
-  const inputAnalyserNode = ref(null)
-  const gainNode = ref(null)
+  const sourceNode = shallowRef(null)
+  const analyserNode = shallowRef(null)
+  const inputAnalyserNode = shallowRef(null)
+  const gainNode = shallowRef(null)
   // Between the end of the chain and the speakers; recording/meters tap before it
-  const monitorNode = ref(null)
-  const dynamicsNode = ref(null)
+  const monitorNode = shallowRef(null)
+  const dynamicsNode = shallowRef(null)
 
   // Equalizer Filters (19 Bands)
-  const eqFilters = ref([])
+  const eqFilters = shallowRef([])
 
   // Equalizer Settings (19 bands, 20 Hz – 20 kHz)
   const eqBands = reactive(
@@ -46,30 +53,30 @@ export function useAudioEngine() {
     if (isInitialized.value) return
 
     try {
-      audioContext.value = new (window.AudioContext || window.webkitAudioContext)()
+      audioContext.value = markRaw(new (window.AudioContext || window.webkitAudioContext)())
 
       // Create Analyser Nodes
-      analyserNode.value = audioContext.value.createAnalyser()
+      analyserNode.value = markRaw(audioContext.value.createAnalyser())
       analyserNode.value.fftSize = 2048
       analyserNode.value.smoothingTimeConstant = 0.8
 
-      inputAnalyserNode.value = audioContext.value.createAnalyser()
+      inputAnalyserNode.value = markRaw(audioContext.value.createAnalyser())
       inputAnalyserNode.value.fftSize = 1024
       inputAnalyserNode.value.smoothingTimeConstant = 0.3
 
       // Create Dynamics Compressor
-      dynamicsNode.value = audioContext.value.createDynamicsCompressor()
+      dynamicsNode.value = markRaw(audioContext.value.createDynamicsCompressor())
       applyDynamicsToNode(dynamics)
 
       // Create Equalizer Filters (19 bands)
       createEqFilters()
 
       // Create Master Gain Node
-      gainNode.value = audioContext.value.createGain()
+      gainNode.value = markRaw(audioContext.value.createGain())
       gainNode.value.gain.value = masterGain.value
 
       // Monitor (speaker output) gain – muted for live inputs to avoid feedback
-      monitorNode.value = audioContext.value.createGain()
+      monitorNode.value = markRaw(audioContext.value.createGain())
       monitorNode.value.gain.value = monitorEnabled.value ? 1 : 0
       monitorNode.value.connect(audioContext.value.destination)
 
@@ -86,18 +93,20 @@ export function useAudioEngine() {
    * would only act outside the hearing range and the sliders would do nothing.
    */
   function createEqFilters() {
-    eqFilters.value = []
+    const filters = []
 
     eqBands.forEach((band) => {
-      const filter = audioContext.value.createBiquadFilter()
+      const filter = markRaw(audioContext.value.createBiquadFilter())
 
       filter.type = 'peaking'
       filter.frequency.value = band.frequency
       filter.gain.value = band.gain
       filter.Q.value = band.q
 
-      eqFilters.value.push(filter)
+      filters.push(filter)
     })
+
+    eqFilters.value = filters
   }
 
   /**
@@ -129,7 +138,7 @@ export function useAudioEngine() {
       }
     }
 
-    sourceNode.value = source
+    sourceNode.value = markRaw(source)
 
     // Build the chain: source → [EQ] → [dynamics] → gain. Bypassed parts are
     // detached as well so no edge of an earlier routing keeps feeding the output.
@@ -414,4 +423,4 @@ export function useAudioEngine() {
     applyEqPreset,
     cleanup,
   }
-}
+})

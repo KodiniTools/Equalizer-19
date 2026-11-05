@@ -102,12 +102,15 @@
   import VolumeControl from './VolumeControl.vue'
   import RecorderControls from './RecorderControls.vue'
   import { UiIconButton } from './ui'
+  import { storeToRefs } from 'pinia'
+  import { usePlayerStore } from '../stores/player'
+  import { useToastStore } from '../stores/toast'
 
   const emit = defineEmits(['files-selected'])
 
   const { t, currentLanguage } = inject('i18n')
-  const audioPlayer = inject('audioPlayer')
-  const notify = inject('notify', () => {})
+  const audioPlayer = usePlayerStore()
+  const { notify } = useToastStore()
   // Live input state (provided by AppPage); optional so the bar also works standalone
   const inputSource = inject('inputSource', null)
 
@@ -150,10 +153,8 @@
     progress,
     formattedCurrentTime,
     formattedDuration,
-    addFiles,
-    play,
-    seekToPercent,
-  } = audioPlayer
+  } = storeToRefs(audioPlayer)
+  const { addFiles, play, seekToPercent } = audioPlayer
 
   // ---- File selection / drag & drop ----
   // Add files to the playlist, start playback and announce the new tracks

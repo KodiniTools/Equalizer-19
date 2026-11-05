@@ -1,7 +1,7 @@
 <template>
   <div class="app-page">
     <!-- Notification System -->
-    <Notification ref="notificationRef" />
+    <Notification />
 
     <!-- Shared Files Banner -->
     <div v-if="sharedBanner" class="shared-banner" :class="'shared-banner-' + sharedBanner.type">
@@ -94,6 +94,9 @@
   import InputSource from '../components/InputSource.vue'
   import HistoryControls from '../components/HistoryControls.vue'
   import { useInputSource } from '../composables/useInputSource'
+  import { useAudioEngineStore } from '../stores/audioEngine'
+  import { usePlayerStore } from '../stores/player'
+  import { useToastStore } from '../stores/toast'
   import RelatedTools from '../components/RelatedTools.vue'
   import { UiSegmentedControl } from '../components/ui'
 
@@ -101,14 +104,14 @@
   const router = useRouter()
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
-  const audioPlayer = inject('audioPlayer')
+  const audioEngine = useAudioEngineStore()
+  const audioPlayer = usePlayerStore()
+  const { notify } = useToastStore()
 
   // Live audio input as alternative source; stopped automatically when leaving the app
   const inputSource = useInputSource(audioEngine, audioPlayer)
   provide('inputSource', inputSource)
 
-  const notificationRef = ref(null)
   const sharedBanner = ref(null)
 
   // Section shown on narrow screens (< 900px); all three are visible otherwise.
@@ -124,22 +127,13 @@
   const activeTab = ref('eq')
   let sharedFilesHandled = false
 
-  // Toasts for the components on this page (presets, bypass, undo/redo, …).
-  // Overrides the console-only fallback provided by App.vue.
-  provide('notify', (message, type = 'info') => {
-    notificationRef.value?.show(message, type)
-  })
-
   const bannerIcon = computed(() => {
     const icons = { success: 'success', error: 'error', warning: 'warning', info: 'info' }
     return icons[sharedBanner.value?.type] || 'info'
   })
 
   const handleFilesSelected = (files) => {
-    if (notificationRef.value) {
-      const message = t.value.player_tracks_added.replace('{count}', files.length)
-      notificationRef.value.show(message, 'success')
-    }
+    notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
   }
 
   const BANNER_HIDE_MS = 5000

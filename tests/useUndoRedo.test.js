@@ -1,7 +1,8 @@
 import { test, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { nextTick } from 'vue'
-import { useAudioEngine } from '../src/composables/useAudioEngine.js'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAudioEngineStore } from '../src/stores/audioEngine.js'
 import { useUndoRedo } from '../src/composables/useUndoRedo.js'
 import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets.js'
 
@@ -16,7 +17,8 @@ function clock(start = 1000) {
 // the observer (a Vue watcher) run, as it would before the next render.
 function setup(options = {}) {
   const c = clock()
-  const engine = useAudioEngine()
+  setActivePinia(createPinia())
+  const engine = useAudioEngineStore()
   const history = useUndoRedo(engine, { now: c.now, ...options })
   return { engine, history, clock: c, flush: nextTick }
 }
@@ -97,11 +99,11 @@ test('bypass and compressor toggles are undoable and rebuild the chain state', a
   assert.deepEqual(history.undoChange.value, { type: 'dyn-toggle', enabled: false })
 
   history.undo()
-  assert.equal(engine.dynamicsEnabled.value, true)
-  assert.equal(engine.eqBypass.value, true)
+  assert.equal(engine.dynamicsEnabled, true)
+  assert.equal(engine.eqBypass, true)
   assert.deepEqual(history.undoChange.value, { type: 'eq-bypass', enabled: false })
   history.undo()
-  assert.equal(engine.eqBypass.value, false)
+  assert.equal(engine.eqBypass, false)
   await flush()
   assert.equal(history.canUndo.value, false)
 })

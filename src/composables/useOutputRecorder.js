@@ -196,7 +196,7 @@ export function useOutputRecorder() {
     mediaRecorder.value = null
     if (webmDestination) {
       try {
-        audioEngineRef?.gainNode?.value?.disconnect(webmDestination)
+        audioEngineRef?.gainNode?.disconnect(webmDestination)
       } catch {
         // ignore
       }
@@ -209,10 +209,10 @@ export function useOutputRecorder() {
   // ---------------------------------------------------------------------------
   async function startRecording() {
     if (isRecording.value) return false
-    if (!audioEngineRef?.audioContext?.value || !audioEngineRef.gainNode?.value) return false
+    if (!audioEngineRef?.audioContext || !audioEngineRef.gainNode) return false
 
-    const audioContext = audioEngineRef.audioContext.value
-    const sourceNode = audioEngineRef.gainNode.value
+    const audioContext = audioEngineRef.audioContext
+    const sourceNode = audioEngineRef.gainNode
 
     try {
       if (audioContext.state === 'suspended') await audioContext.resume()

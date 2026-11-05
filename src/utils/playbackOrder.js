@@ -1,5 +1,5 @@
 /**
- * Pure playlist navigation helpers (no Vue, no DOM) used by useAudioPlayer.
+ * Pure playlist navigation helpers (no Vue, no DOM) used by the player store (stores/player.js).
  *
  * repeat: 'off' | 'all' | 'one'
  */

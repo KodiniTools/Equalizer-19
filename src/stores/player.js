@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import {
   getNextIndex as nextIndexFor,
@@ -8,8 +9,13 @@ import {
   formatTime,
 } from '../utils/playbackOrder.js'
 import { analyzeBlob, recordToBlob } from '../utils/audioBlob.js'
+import { useAudioEngineStore } from './audioEngine.js'
 
-export function useAudioPlayer() {
+/**
+ * Player: Playlist, Wiedergabe (HTMLAudioElement) und Lautstärke. Hängt sich
+ * über den Audio-Engine-Store in die Verarbeitungskette ein.
+ */
+export const usePlayerStore = defineStore('player', () => {
   // State
   const playlist = ref([])
   const currentTrackIndex = ref(-1)
@@ -29,7 +35,7 @@ export function useAudioPlayer() {
 
   // Audio Elements
   const audioElement = ref(null)
-  let audioEngineRef = null
+  const audioEngineRef = useAudioEngineStore()
   let mediaElementSource = null
   let isSourceConnected = false
   // Set while an external source (live audio input) owns the processing chain:
@@ -67,10 +73,6 @@ export function useAudioPlayer() {
   const formattedDuration = computed(() => formatTime(duration.value))
 
   // Set audio engine reference
-  function setAudioEngine(engine) {
-    audioEngineRef = engine
-  }
-
   // Initialize audio element
   function initAudio() {
     if (!audioElement.value) {
@@ -111,14 +113,14 @@ export function useAudioPlayer() {
     }
 
     // Initialize AudioEngine if needed
-    if (!audioEngineRef.isInitialized.value) {
+    if (!audioEngineRef.isInitialized) {
       audioEngineRef.initAudioContext()
     }
 
     // Create MediaElementSource only once
-    if (!mediaElementSource && audioEngineRef.audioContext.value) {
+    if (!mediaElementSource && audioEngineRef.audioContext) {
       try {
-        mediaElementSource = audioEngineRef.audioContext.value.createMediaElementSource(
+        mediaElementSource = audioEngineRef.audioContext.createMediaElementSource(
           audioElement.value
         )
       } catch (e) {
@@ -339,9 +341,9 @@ export function useAudioPlayer() {
       connectToAudioEngine()
 
       // Resume audio context if suspended
-      if (audioEngineRef && audioEngineRef.audioContext.value) {
-        if (audioEngineRef.audioContext.value.state === 'suspended') {
-          await audioEngineRef.audioContext.value.resume()
+      if (audioEngineRef && audioEngineRef.audioContext) {
+        if (audioEngineRef.audioContext.state === 'suspended') {
+          await audioEngineRef.audioContext.resume()
         }
       }
 
@@ -556,7 +558,6 @@ export function useAudioPlayer() {
     audioElement,
 
     // Methods
-    setAudioEngine,
     setExternalSource,
     clearExternalSource,
     initAudio,
@@ -583,4 +584,4 @@ export function useAudioPlayer() {
     handleSharedFiles,
     cleanup,
   }
-}
+})

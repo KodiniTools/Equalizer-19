@@ -12,6 +12,7 @@
 | Technologie | Version | Zweck |
 |-------------|---------|-------|
 | **Vue 3** | ^3.5.22 | UI-Framework mit Composition API |
+| **Pinia** | ^3.0.4 | Globaler Zustand (`src/stores/`) |
 | **Vite** | ^7.1.7 | Build-Tool und Dev-Server |
 | **@vitejs/plugin-vue** | ^6.0.1 | Vue-Integration für Vite |
 | **Vitest + @vue/test-utils** | ^3.2.4 / ^2.4.6 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
@@ -81,9 +82,13 @@ Equalizer-19/
 │   ├── data/
 │   │   └── blogArticles.js            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   │
+│   ├── stores/             # Pinia-Stores (globaler Zustand, src/main.js: app.use(createPinia()))
+│   │   ├── audioEngine.js             # Audio-Verarbeitungskette: Parameter reaktiv, AudioNodes shallowRef + markRaw
+│   │   ├── player.js                  # Playlist, Wiedergabe, Lautstärke
+│   │   ├── history.js                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
+│   │   └── toast.js                   # Benachrichtigungen: notify(message, type)
+│   │
 │   ├── composables/        # Vue Composition API Logik
-│   │   ├── useAudioEngine.js          # Audio-Verarbeitungskette
-│   │   ├── useAudioPlayer.js          # Playback-Steuerung
 │   │   ├── useCustomPresets.js        # Eigene EQ-Presets (localStorage)
 │   │   ├── useFileDrop.js             # Dateiauswahl & Drag & Drop (inkl. Ordner)
 │   │   ├── useI18n.js                 # Internationalisierung
@@ -125,7 +130,7 @@ Equalizer-19/
 ### Track-Modell (Playlist)
 
 ```javascript
-// Definiert in: src/composables/useAudioPlayer.js
+// Definiert in: src/stores/player.js
 {
   id: Number,           // Eindeutige ID (timestamp + index)
   name: String,         // Dateiname
@@ -140,7 +145,7 @@ Equalizer-19/
 ### EQ-Band-Modell
 
 ```javascript
-// Definiert in: src/composables/useAudioEngine.js
+// Definiert in: src/stores/audioEngine.js
 // Frequenzen: EQ_BAND_FREQUENCIES in src/utils/presets.js
 // 19 Bänder von 20 Hz bis 20 kHz (logarithmisch, ca. Halboktav-Abstand), alle 'peaking'
 {
@@ -157,7 +162,7 @@ Equalizer-19/
 ### Dynamics/Kompressor-Einstellungen
 
 ```javascript
-// Definiert in: src/composables/useAudioEngine.js
+// Definiert in: src/stores/audioEngine.js
 {
   threshold: Number,    // Schwellenwert in dB (-100 bis 0, Standard: -30)
   knee: Number,         // Knee in dB (0 bis 40, Standard: 20)
@@ -266,27 +271,40 @@ Die Kette ist für Playlist und Audio-Eingang identisch. Der Recorder greift hin
 
 ## Wichtige APIs
 
-### Provide/Inject Pattern
+### Pinia-Stores
 
-Die App verwendet Vue's Dependency Injection für globalen State:
+Globaler Zustand liegt in Pinia-Stores unter `src/stores/` (Setup-Stores; Refs sind am Store
+ausgepackt, `storeToRefs` liefert sie bei Bedarf als Refs zurück):
 
 ```javascript
-// In App.vue (provide)
+import { storeToRefs } from 'pinia'
+import { useAudioEngineStore } from '@/stores/audioEngine' // eqBands, dynamics, eqBypass, updateEqBand(), …
+import { usePlayerStore } from '@/stores/player' // playlist, isPlaying, volume, play(), addFiles(), …
+import { useHistoryStore } from '@/stores/history' // canUndo, undoChange, undo(), redo()
+import { useToastStore } from '@/stores/toast' // current, notify(message, type)
+
+const audioEngine = useAudioEngineStore()
+audioEngine.eqBypass // Boolean, kein .value
+const { isPlaying, volume } = storeToRefs(usePlayerStore()) // Refs für Templates/Watcher
+const { notify } = useToastStore()
+notify(t.value.eq_reset_done, 'info')
+```
+
+Die AudioNodes im Engine-Store sind `shallowRef` und `markRaw`: Vue darf sie nie in Proxies
+wickeln, weil `connect()`/`disconnect()` auf einem Proxy fehlschlägt. Tests erzeugen die Stores
+mit `setActivePinia(createPinia())` (auch unter node:test).
+
+Nur i18n und Theme laufen noch über provide/inject aus `App.vue` (bis Schritt 5, i18n):
+
+```javascript
 provide('i18n', { t, currentLanguage, setLanguage })
 provide('theme', { currentTheme, setTheme })
-provide('audioEngine', audioEngine)
-provide('audioPlayer', audioPlayer)
-provide('history', history) // useUndoRedo(audioEngine)
-provide('notify', notifyFunction) // AppPage.vue ersetzt den Stub durch echte Toasts
-
-// In Komponenten (inject)
 const { t } = inject('i18n')
-const audioEngine = inject('audioEngine')
 ```
 
 ### Undo/Redo
 
-`useUndoRedo(audioEngine)` (in `App.vue`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.js`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
+`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.js`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
 
 ### Browser-Kompatibilität
 

@@ -13,9 +13,10 @@
 
 <script setup>
   import { ref, inject, onMounted, onUnmounted } from 'vue'
+  import { useAudioEngineStore } from '../stores/audioEngine'
 
   const { t } = inject('i18n')
-  const audioEngine = inject('audioEngine')
+  const audioEngine = useAudioEngineStore()
 
   const canvasRef = ref(null)
   const canvasWidth = ref(800)

@@ -28,6 +28,9 @@
   import AppIcon from './AppIcon.vue'
   import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
   import { UiIconButton } from './ui'
+  import { storeToRefs } from 'pinia'
+  import { useHistoryStore } from '../stores/history'
+  import { useToastStore } from '../stores/toast'
 
   /**
    * Undo / redo buttons for the processing history (EQ + compressor).
@@ -35,10 +38,11 @@
    * these buttons or the keyboard shortcuts – is announced via `notify`.
    */
   const { t } = inject('i18n')
-  const history = inject('history')
-  const notify = inject('notify', () => {})
+  const history = useHistoryStore()
+  const { notify } = useToastStore()
 
-  const { canUndo, canRedo, undoChange, redoChange, undoDepth, redoDepth, lastAction } = history
+  const { canUndo, canRedo, undoChange, redoChange, undoDepth, redoDepth, lastAction } =
+    storeToRefs(history)
 
   /**
    * Turn a change descriptor (see utils/processingState.js) into text.

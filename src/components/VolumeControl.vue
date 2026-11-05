@@ -30,9 +30,13 @@
   import { inject } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { UiIconButton } from './ui'
+  import { storeToRefs } from 'pinia'
+  import { usePlayerStore } from '../stores/player'
 
   const { t } = inject('i18n')
-  const { volume, isMuted, setVolume, toggleMute } = inject('audioPlayer')
+  const audioPlayer = usePlayerStore()
+  const { volume, isMuted } = storeToRefs(audioPlayer)
+  const { setVolume, toggleMute } = audioPlayer
 
   function handleVolumeChange(event) {
     const value = parseInt(event.target.value) / 100

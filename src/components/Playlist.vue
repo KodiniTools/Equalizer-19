@@ -109,23 +109,18 @@
 </template>
 
 <script setup>
-  import { ref, inject, computed } from 'vue'
+  import { ref, inject } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { UiIconButton, UiPanel } from './ui'
+  import { storeToRefs } from 'pinia'
+  import { usePlayerStore } from '../stores/player'
+  import { useToastStore } from '../stores/toast'
 
   const { t } = inject('i18n')
-  const audioPlayer = inject('audioPlayer', {
-    playlist: { value: [] },
-    currentTrackIndex: { value: -1 },
-    playTrack: () => {},
-    removeTrack: () => {},
-    reorderTracks: () => {},
-  })
-  const notify = inject('notify', () => {})
+  const audioPlayer = usePlayerStore()
+  const { notify } = useToastStore()
 
-  const playlist = computed(() => audioPlayer.playlist?.value || [])
-  const currentTrackIndex = computed(() => audioPlayer.currentTrackIndex?.value ?? -1)
-  const isPlaying = computed(() => audioPlayer.isPlaying?.value ?? false)
+  const { playlist, currentTrackIndex, isPlaying } = storeToRefs(audioPlayer)
 
   // Drag state
   const dragIndex = ref(null)
@@ -155,7 +150,7 @@
   }
 
   function handlePlayTrack(index) {
-    if (audioPlayer.playTrack) audioPlayer.playTrack(index)
+    audioPlayer.playTrack(index)
   }
 
   function handleRemoveTrack(index) {

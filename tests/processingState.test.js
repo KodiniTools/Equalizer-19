@@ -1,6 +1,7 @@
 import { test, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { useAudioEngine } from '../src/composables/useAudioEngine.js'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAudioEngineStore } from '../src/stores/audioEngine.js'
 import { DEFAULT_DYNAMICS, EQ_BAND_FREQUENCIES } from '../src/utils/presets.js'
 import {
   captureProcessingState,
@@ -15,7 +16,8 @@ mock.method(console, 'log', () => {})
 // The engine works without an AudioContext: settings are kept in reactive
 // state and only forwarded to nodes once they exist.
 function engine() {
-  return useAudioEngine()
+  setActivePinia(createPinia())
+  return useAudioEngineStore()
 }
 
 test('captureProcessingState reads the engine defaults', () => {
@@ -46,8 +48,8 @@ test('applyProcessingState restores every covered setting', () => {
   }
   applyProcessingState(e, target)
   assert.deepEqual(captureProcessingState(e), target)
-  assert.equal(e.eqBypass.value, true)
-  assert.equal(e.dynamicsEnabled.value, false)
+  assert.equal(e.eqBypass, true)
+  assert.equal(e.dynamicsEnabled, false)
 
   // and back again, flipping the toggles once more
   const defaults = captureProcessingState(engine())

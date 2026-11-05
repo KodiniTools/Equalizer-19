@@ -68,28 +68,26 @@ function fakeEngine() {
   const engine = {
     connected: [],
     monitor: [],
-    isInitialized: { value: true },
-    sourceNode: { value: null },
+    isInitialized: true,
+    sourceNode: null,
     audioContext: {
-      value: {
-        state: 'running',
-        createMediaStreamSource: (stream) => ({
-          stream,
-          disconnected: false,
-          disconnect() {
-            this.disconnected = true
-          },
-        }),
-      },
+      state: 'running',
+      createMediaStreamSource: (stream) => ({
+        stream,
+        disconnected: false,
+        disconnect() {
+          this.disconnected = true
+        },
+      }),
     },
     initAudioContext() {},
     connectAudioSource(node) {
-      engine.sourceNode.value = node
+      engine.sourceNode = node
       engine.connected.push(node)
     },
     disconnectAudioSource() {
-      engine.sourceNode.value?.disconnect()
-      engine.sourceNode.value = null
+      engine.sourceNode?.disconnect()
+      engine.sourceNode = null
     },
     setMonitorEnabled(on) {
       engine.monitor.push(on)

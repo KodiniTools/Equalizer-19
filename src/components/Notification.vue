@@ -1,43 +1,20 @@
 <template>
   <div class="app-toast">
     <Transition name="app-toast">
-      <UiToast v-if="isVisible" :message="message" :type="type" />
+      <UiToast v-if="toast.current" :message="toast.current.message" :type="toast.current.type" />
     </Transition>
   </div>
 </template>
 
 <script setup>
-  import { onBeforeUnmount, ref } from 'vue'
   import { UiToast } from './ui'
+  import { useToastStore } from '../stores/toast'
 
   /**
-   * Toast-Host der App-Seite: unten rechts fest positioniert, zeigt jeweils eine
-   * Meldung für drei Sekunden. `show(message, type)` wird von AppPage als `notify`
-   * bereitgestellt.
+   * Toast-Host der App-Seite: unten rechts fest positioniert, zeigt die aktuelle
+   * Meldung des Toast-Stores (`useToastStore().notify(message, type)`).
    */
-  const isVisible = ref(false)
-  const message = ref('')
-  const type = ref('info')
-  let timeout = null
-
-  const show = (msg, notifType = 'info') => {
-    if (timeout) clearTimeout(timeout)
-
-    message.value = msg
-    type.value = notifType
-    isVisible.value = true
-
-    timeout = setTimeout(() => {
-      isVisible.value = false
-      timeout = null
-    }, 3000)
-  }
-
-  onBeforeUnmount(() => {
-    if (timeout) clearTimeout(timeout)
-  })
-
-  defineExpose({ show })
+  const toast = useToastStore()
 </script>
 
 <style scoped>
