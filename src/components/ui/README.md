@@ -10,7 +10,7 @@ Bausteine des Design-Systems, Muster: `components/ui/` im Playlist-Generator. Al
 - Je ein Vitest unter `__tests__/`.
 
 ```js
-import { SliderField, UiButton, UiIconButton, UiSwitch } from '@/components/ui'
+import { SliderField, UiButton, UiIconButton, UiSegmentedControl, UiSwitch } from '@/components/ui'
 ```
 
 | Komponente     | Zweck                                           | Wichtige Props                                                                                                        |
@@ -19,6 +19,7 @@ import { SliderField, UiButton, UiIconButton, UiSwitch } from '@/components/ui'
 | `UiIconButton` | Quadratischer Icon-Button, `label` ist Pflicht  | `label` (wird aria-label und title), `variant`, `size` (Standard sm), `pressed`, `round`                              |
 | `UiSwitch`     | Schalter (Checkbox mit `role="switch"`)         | `v-model` (Boolean), `label` (Pflicht), `labelHidden`, `disabled`, `id`                                               |
 | `SliderField`  | Beschrifteter Regler mit Wertanzeige            | `v-model` (Number), `label` (Pflicht), `valueText`, `min`, `max`, `step`, `disabled`, `ariaLabel`, `ariaValueText`     |
+| `UiSegmentedControl` | Umschalter mit genau einer gewählten Option (Radiogroup) | `v-model` (String oder Number), `options` `[{ value, label, title?, disabled? }]`, `label`, `variant` accent · surface, `size` sm · md · lg, `block` |
 
 `pressed` (true/false) setzt `aria-pressed` und den Zustand „an“: primary/secondary werden zur
 Akzentfläche, ghost zur getönten Fläche (Shuffle, Repeat). Ohne `pressed` gibt es kein `aria-pressed`.
@@ -29,6 +30,12 @@ durch. Zusätzliche Klassen des Aufrufers landen auf dem Root-Element; eigene Re
 
 `SliderField` gibt `update:modelValue`, `input` und `change` jeweils als Zahl weiter. `ariaLabel`
 überschreibt den sichtbaren `label`-Text für Screenreader (z. B. mit eingesetztem Wert).
+
+`UiSegmentedControl` folgt dem Radiogroup-Muster: Tab springt als Ganzes hinein, Pfeiltasten,
+Pos1 und Ende wechseln und wählen. `variant="accent"` färbt die gewählte Option in der
+Akzentfarbe (Quelle, Aufnahmeformat), `variant="surface"` hebt sie als Kartenfläche ab (Tabs der
+App-Seite). `block` verteilt die Optionen gleich breit über die volle Breite, sonst ist der
+Umschalter so breit wie sein Inhalt. `title` einer Option wird auch `aria-label`.
 
 ### Regler-Anatomie `range.css`
 
@@ -62,6 +69,18 @@ Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin
 
 <UiSwitch v-model="monitor" :label="t.input_monitor" :disabled="!monitorAllowed" />
 
+<UiSegmentedControl
+  v-model="activeTab"
+  :options="[
+    { value: 'source', label: t.app_tab_source },
+    { value: 'eq', label: t.app_tab_eq },
+  ]"
+  :label="t.app_tabs_label"
+  variant="surface"
+  size="lg"
+  block
+/>
+
 <SliderField
   v-model="threshold"
   :label="t.threshold"
@@ -73,9 +92,7 @@ Die vertikalen Regler in `Equalizer.vue` und `HeroEqualizer.vue` haben weiterhin
 />
 ```
 
-## Noch nicht enthalten (folgt in Schritt 2c und 2d)
+## Noch nicht enthalten (folgt in Schritt 2d)
 
-- `UiSegmentedControl` (Tabs in AppPage, Modus-Umschalter in InputSource, Format-Wahl in
-  RecorderControls).
 - `UiPanel` (aus BasePanel), `UiDialog` (aus DownloadDialog), `UiToast` (aus Notification).
 - Die in `designTokens.spec.js` eingefrorenen Farb-Literale werden mit diesen Komponenten abgebaut.

@@ -76,7 +76,6 @@ const FROZEN_LITERALS = {
   'components/RecorderControls.vue: rgba(239, 68, 68, 0.25)': 1,
   'components/StickyPlayerBar.vue: rgba(0, 0, 0, 0.12)': 1,
   'components/StickyPlayerBar.vue: rgba(0, 217, 255, 0.12)': 1,
-  'pages/AppPage.vue: rgba(0, 0, 0, 0.2)': 1,
   'pages/AppPage.vue: rgba(1, 79, 153, 0.12)': 1,
   'pages/AppPage.vue: rgba(1, 79, 153, 0.3)': 1,
   'pages/AppPage.vue: rgba(239, 68, 68, 0.12)': 1,

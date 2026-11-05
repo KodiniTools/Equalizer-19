@@ -233,6 +233,7 @@ export const translations = {
     player_repeat_one: 'Titel wiederholen',
 
     // Recording
+    rec_format_label: 'Aufnahmeformat',
     rec_format_wav: 'WAV (Unkomprimiert, verlustfrei)',
     rec_format_webm: 'WebM (Komprimiert, Opus)',
     rec_bit_depth: 'Bit-Tiefe der WAV-Datei',
@@ -618,6 +619,7 @@ export const translations = {
     player_repeat_one: 'Repeat one',
 
     // Recording
+    rec_format_label: 'Recording format',
     rec_format_wav: 'WAV (Uncompressed, lossless)',
     rec_format_webm: 'WebM (Compressed, Opus)',
     rec_bit_depth: 'WAV bit depth',

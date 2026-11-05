@@ -7,46 +7,24 @@
     </div>
 
     <!-- Format toggle (only when idle) -->
-    <div v-if="!isRecording && !hasRecording && !isCounting" class="format-toggle" role="group">
-      <button
-        :class="['fmt-btn', { active: recordingFormat === 'wav' }]"
-        :title="t.rec_format_wav"
-        :aria-label="t.rec_format_wav"
-        :aria-pressed="recordingFormat === 'wav'"
-        @click="selectFormat('wav')"
-      >
-        WAV
-      </button>
-      <button
-        :class="['fmt-btn', { active: recordingFormat === 'webm' }]"
-        :title="t.rec_format_webm"
-        :aria-label="t.rec_format_webm"
-        :aria-pressed="recordingFormat === 'webm'"
-        @click="selectFormat('webm')"
-      >
-        WebM
-      </button>
-    </div>
+    <UiSegmentedControl
+      v-if="!isRecording && !hasRecording && !isCounting"
+      :model-value="recordingFormat"
+      :options="formatOptions"
+      :label="t.rec_format_label"
+      size="sm"
+      @update:model-value="selectFormat($event)"
+    />
 
     <!-- WAV bit depth (only for WAV, changeable while idle) -->
-    <div
+    <UiSegmentedControl
       v-if="recordingFormat === 'wav' && !isRecording && !isCounting"
-      class="format-toggle"
-      role="group"
-      :aria-label="t.rec_bit_depth"
-    >
-      <button
-        v-for="depth in bitDepths"
-        :key="depth"
-        :class="['fmt-btn', { active: bitDepth === depth }]"
-        :title="bitDepthTitle(depth)"
-        :aria-label="bitDepthTitle(depth)"
-        :aria-pressed="bitDepth === depth"
-        @click="setBitDepth(depth)"
-      >
-        {{ depth === 32 ? '32f' : depth }}
-      </button>
-    </div>
+      :model-value="bitDepth"
+      :options="bitDepthOptions"
+      :label="t.rec_bit_depth"
+      size="sm"
+      @update:model-value="setBitDepth($event)"
+    />
 
     <!-- Start delay (countdown before recording starts) -->
     <label v-if="!isRecording && !hasRecording && !isCounting" class="delay" :title="t.rec_delay">
@@ -147,7 +125,7 @@
   import { useCountdown, START_DELAYS } from '../composables/useCountdown'
   import DownloadDialog from './DownloadDialog.vue'
   import CountdownOverlay from './CountdownOverlay.vue'
-  import { UiIconButton } from './ui'
+  import { UiIconButton, UiSegmentedControl } from './ui'
 
   const { t } = inject('i18n')
   const audioEngine = inject('audioEngine')
@@ -224,6 +202,19 @@
   function bitDepthTitle(depth) {
     return t.value[`rec_bit_${depth}`] || `${depth} Bit`
   }
+
+  const formatOptions = computed(() => [
+    { value: 'wav', label: 'WAV', title: t.value.rec_format_wav },
+    { value: 'webm', label: 'WebM', title: t.value.rec_format_webm },
+  ])
+
+  const bitDepthOptions = computed(() =>
+    bitDepths.map((depth) => ({
+      value: depth,
+      label: depth === 32 ? '32f' : String(depth),
+      title: bitDepthTitle(depth),
+    }))
+  )
 
   // Record button: start right away or after the chosen countdown
   function handleStartRecording() {
@@ -321,35 +312,6 @@
 
   .rec-time .time {
     font-weight: 600;
-  }
-
-  .format-toggle {
-    display: flex;
-    gap: 2px;
-    background: var(--secondary-bg);
-    border-radius: 6px;
-    padding: 2px;
-  }
-
-  .fmt-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .fmt-btn:hover {
-    color: var(--text-primary);
-  }
-
-  .fmt-btn.active {
-    background: var(--accent-primary);
-    color: var(--on-accent);
   }
 
   .rec-controls {
