@@ -7,24 +7,13 @@
     </template>
 
     <!-- Source switch -->
-    <div class="segmented" role="group" :aria-label="t.input_title">
-      <button
-        type="button"
-        :class="{ active: input.mode.value === 'playlist' }"
-        :aria-pressed="input.mode.value === 'playlist'"
-        @click="input.setMode('playlist')"
-      >
-        {{ t.input_mode_playlist }}
-      </button>
-      <button
-        type="button"
-        :class="{ active: input.mode.value === 'input' }"
-        :aria-pressed="input.mode.value === 'input'"
-        @click="input.setMode('input')"
-      >
-        {{ t.input_mode_live }}
-      </button>
-    </div>
+    <UiSegmentedControl
+      :model-value="input.mode.value"
+      :options="modeOptions"
+      :label="t.input_title"
+      block
+      @update:model-value="input.setMode($event)"
+    />
 
     <template v-if="input.mode.value === 'input'">
       <p v-if="!input.isSupported && !input.systemAudioSupported" class="msg error" role="alert">
@@ -113,13 +102,18 @@
   import AppIcon from './AppIcon.vue'
   import BasePanel from './BasePanel.vue'
   import { SYSTEM_AUDIO } from '../composables/useInputSource'
-  import { UiButton, UiSwitch } from './ui'
+  import { UiButton, UiSegmentedControl, UiSwitch } from './ui'
 
   const { t } = inject('i18n')
   // Provided by AppPage (useInputSource)
   const input = inject('inputSource')
 
   const deviceSelectId = useId()
+
+  const modeOptions = computed(() => [
+    { value: 'playlist', label: t.value.input_mode_playlist },
+    { value: 'input', label: t.value.input_mode_live },
+  ])
 
   // Name shown while live: device label, or "PC audio" for system audio
   const activeName = computed(() =>
@@ -140,50 +134,6 @@
 </script>
 
 <style scoped>
-  /* ---- Source switch ---- */
-  .segmented {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2px;
-    padding: 2px;
-    border-radius: 8px;
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-  }
-
-  .segmented button {
-    height: 28px;
-    min-width: 0;
-    padding: 0 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      color 0.2s;
-  }
-
-  .segmented button:hover {
-    color: var(--text-primary);
-  }
-
-  .segmented button.active {
-    background: var(--accent-primary);
-    color: var(--on-accent);
-  }
-
-  .segmented button:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 1px;
-  }
-
   /* ---- Device select ---- */
   .field {
     display: flex;

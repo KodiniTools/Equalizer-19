@@ -26,18 +26,15 @@
         </div>
 
         <!-- Narrow screens: one section at a time instead of three stacked columns -->
-        <div class="app-tabs" role="group" :aria-label="t.app_tabs_label">
-          <button
-            v-for="tab in TABS"
-            :key="tab.key"
-            type="button"
-            :class="{ active: activeTab === tab.key }"
-            :aria-pressed="activeTab === tab.key"
-            @click="activeTab = tab.key"
-          >
-            {{ t[tab.label] }}
-          </button>
-        </div>
+        <UiSegmentedControl
+          v-model="activeTab"
+          class="app-tabs"
+          :options="tabOptions"
+          :label="t.app_tabs_label"
+          variant="surface"
+          size="lg"
+          block
+        />
 
         <div class="grid-three-column">
           <!-- Left Column: Playlist -->
@@ -98,6 +95,7 @@
   import HistoryControls from '../components/HistoryControls.vue'
   import { useInputSource } from '../composables/useInputSource'
   import RelatedTools from '../components/RelatedTools.vue'
+  import { UiSegmentedControl } from '../components/ui'
 
   const route = useRoute()
   const router = useRouter()
@@ -120,6 +118,9 @@
     { key: 'eq', label: 'app_tab_eq' },
     { key: 'dynamics', label: 'app_tab_dynamics' },
   ]
+  const tabOptions = computed(() =>
+    TABS.map((tab) => ({ value: tab.key, label: t.value[tab.label] }))
+  )
   const activeTab = ref('eq')
   let sharedFilesHandled = false
 
@@ -241,49 +242,13 @@
   }
 
   /* Segment control: hidden on wide screens where all columns fit */
-  .app-tabs {
+  .ui-segmented.app-tabs {
     display: none;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2px;
-    padding: 3px;
     margin-bottom: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--secondary-bg);
-  }
-
-  .app-tabs button {
-    height: 32px;
-    min-width: 0;
-    padding: 0 8px;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    transition:
-      background 0.2s,
-      color 0.2s;
-  }
-
-  .app-tabs button.active {
-    background: var(--card-bg);
-    color: var(--text-primary);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-
-  .app-tabs button:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 1px;
   }
 
   @media (max-width: 900px) {
-    .app-tabs {
+    .ui-segmented.app-tabs {
       display: grid;
     }
 
