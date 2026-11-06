@@ -26,15 +26,25 @@
   </section>
 </template>
 
-<script setup>
-  import { inject, useId } from 'vue'
+<script setup lang="ts">
+  import { useId } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import { injectI18n } from '../composables/useI18n'
+  import type { IconName } from '../utils/icons'
+  import type { TranslationKey } from '../i18n'
+
+  interface RelatedTool {
+    url: string
+    icon: IconName
+    titleKey: TranslationKey
+    descKey: TranslationKey
+  }
 
   /**
    * Links to the other KodiniTools audio tools (open in a new tab).
    * Add an entry here (plus its *_title / *_desc strings) to show another card.
    */
-  const TOOLS = [
+  const TOOLS: readonly RelatedTool[] = [
     {
       url: 'https://kodinitools.com/audiokonverter/',
       icon: 'convert',
@@ -55,7 +65,7 @@
     },
   ]
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const titleId = useId()
 </script>
 

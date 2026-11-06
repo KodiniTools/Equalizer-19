@@ -27,7 +27,8 @@
             active: currentTrackIndex === index,
             dragging: dragIndex === index,
             'drop-before': dropIndex === index && dropIndex !== dragIndex,
-            'drop-after': dropIndex === index + 1 && dropIndex !== dragIndex + 1,
+            'drop-after':
+              dropIndex === index + 1 && (dragIndex === null || dropIndex !== dragIndex + 1),
           },
         ]"
         draggable="true"
@@ -108,16 +109,17 @@
   </UiPanel>
 </template>
 
-<script setup>
-  import { ref, inject } from 'vue'
+<script setup lang="ts">
+  import { ref } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { UiIconButton, UiPanel } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
   import { usePlaylistStore } from '../stores/playlist'
   import { useToastStore } from '../stores/toast'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioPlayer = usePlayerStore()
   const playlistStore = usePlaylistStore()
   const { notify } = useToastStore()
@@ -126,20 +128,22 @@
   const { isPlaying } = storeToRefs(audioPlayer)
 
   // Drag state
-  const dragIndex = ref(null)
-  const dropIndex = ref(null)
+  const dragIndex = ref<number | null>(null)
+  const dropIndex = ref<number | null>(null)
 
-  function onDragStart(index, event) {
+  function onDragStart(index: number, event: DragEvent): void {
     dragIndex.value = index
-    event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('text/plain', String(index))
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('text/plain', String(index))
+    }
   }
 
-  function onDragOver(index) {
+  function onDragOver(index: number): void {
     dropIndex.value = index
   }
 
-  function onDrop(index) {
+  function onDrop(index: number): void {
     if (dragIndex.value !== null && dragIndex.value !== index) {
       playlistStore.reorderTracks(dragIndex.value, index)
     }
@@ -147,23 +151,21 @@
     dropIndex.value = null
   }
 
-  function onDragEnd() {
+  function onDragEnd(): void {
     dragIndex.value = null
     dropIndex.value = null
   }
 
-  function handlePlayTrack(index) {
+  function handlePlayTrack(index: number): void {
     audioPlayer.playTrack(index)
   }
 
-  function handleRemoveTrack(index) {
-    if (audioPlayer.removeTrack) {
-      audioPlayer.removeTrack(index)
-      notify(t.value.playlist_removed, 'info')
-    }
+  function handleRemoveTrack(index: number): void {
+    audioPlayer.removeTrack(index)
+    notify(t.value.playlist_removed, 'info')
   }
 
-  function formatFileSize(bytes) {
+  function formatFileSize(bytes: number): string {
     if (!bytes) return '0 B'
     const k = 1024
     const sizes = ['B', 'KB', 'MB', 'GB']

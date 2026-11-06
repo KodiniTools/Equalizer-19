@@ -27,13 +27,14 @@
 
         <!-- Narrow screens: one section at a time instead of three stacked columns -->
         <UiSegmentedControl
-          v-model="activeTab"
+          :model-value="activeTab"
           class="app-tabs"
           :options="tabOptions"
           :label="t.app_tabs_label"
           variant="surface"
           size="lg"
           block
+          @update:model-value="onTabChange"
         />
 
         <div class="grid-three-column">
@@ -74,8 +75,8 @@
   </div>
 </template>
 
-<script setup>
-  import { ref, computed, watch, inject, provide, onMounted } from 'vue'
+<script setup lang="ts">
+  import { ref, computed, watch, provide, onMounted } from 'vue'
   import AppIcon from '../components/AppIcon.vue'
   import { useRoute, useRouter } from 'vue-router'
   import {
@@ -99,11 +100,15 @@
   import { useToastStore } from '../stores/toast'
   import RelatedTools from '../components/RelatedTools.vue'
   import { UiSegmentedControl } from '../components/ui'
+  import type { UiSegmentedOption } from '../components/ui'
+  import { injectI18n } from '../composables/useI18n'
+  import type { TranslationKey } from '../i18n'
+  import type { IconName } from '../utils/icons'
 
   const route = useRoute()
   const router = useRouter()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
   const audioPlayer = usePlayerStore()
   const { notify } = useToastStore()
@@ -112,34 +117,49 @@
   const inputSource = useInputSource(audioEngine, audioPlayer)
   provide('inputSource', inputSource)
 
-  const sharedBanner = ref(null)
+  type BannerType = 'success' | 'error' | 'warning' | 'info'
+  interface Banner {
+    type: BannerType
+    message: string
+  }
+  const sharedBanner = ref<Banner | null>(null)
 
   // Section shown on narrow screens (< 900px); all three are visible otherwise.
   // Components stay mounted, so audio and keyboard shortcuts keep working.
-  const TABS = [
+  type TabKey = 'source' | 'eq' | 'dynamics'
+  const TABS: ReadonlyArray<{ key: TabKey; label: TranslationKey }> = [
     { key: 'source', label: 'app_tab_source' },
     { key: 'eq', label: 'app_tab_eq' },
     { key: 'dynamics', label: 'app_tab_dynamics' },
   ]
-  const tabOptions = computed(() =>
+  const tabOptions = computed<UiSegmentedOption<TabKey>[]>(() =>
     TABS.map((tab) => ({ value: tab.key, label: t.value[tab.label] }))
   )
-  const activeTab = ref('eq')
+  const activeTab = ref<TabKey>('eq')
   let sharedFilesHandled = false
 
-  const bannerIcon = computed(() => {
-    const icons = { success: 'success', error: 'error', warning: 'warning', info: 'info' }
-    return icons[sharedBanner.value?.type] || 'info'
-  })
+  function onTabChange(value: string | number): void {
+    activeTab.value = value as TabKey
+  }
 
-  const handleFilesSelected = (files) => {
-    notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
+  const BANNER_ICONS: Readonly<Record<BannerType, IconName>> = {
+    success: 'success',
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+  }
+  const bannerIcon = computed<IconName>(() =>
+    sharedBanner.value ? BANNER_ICONS[sharedBanner.value.type] : 'info'
+  )
+
+  const handleFilesSelected = (files: File[]): void => {
+    notify(t.value.player_tracks_added.replace('{count}', String(files.length)), 'success')
   }
 
   const BANNER_HIDE_MS = 5000
 
   // Show the shared-files banner; autoHide removes it after BANNER_HIDE_MS
-  function showBanner(type, message, autoHide = true) {
+  function showBanner(type: BannerType, message: string, autoHide = true): void {
     sharedBanner.value = { type, message }
     if (autoHide) {
       setTimeout(() => {
@@ -148,7 +168,7 @@
     }
   }
 
-  async function loadSharedFiles() {
+  async function loadSharedFiles(): Promise<void> {
     if (sharedFilesHandled) return
     sharedFilesHandled = true
 
@@ -160,14 +180,18 @@
         return
       }
 
-      showBanner('info', t.value.sharedFilesLoading.replace('{count}', records.length), false)
+      showBanner(
+        'info',
+        t.value.sharedFilesLoading.replace('{count}', String(records.length)),
+        false
+      )
 
       const { processed } = await audioPlayer.handleSharedFiles(records)
 
       if (processed > 0) {
         sharedBanner.value = {
           type: 'success',
-          message: t.value.sharedFilesLoaded.replace('{count}', processed),
+          message: t.value.sharedFilesLoaded.replace('{count}', String(processed)),
         }
         await clearSharedFiles()
         setTimeout(() => {

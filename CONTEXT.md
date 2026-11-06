@@ -17,7 +17,7 @@
 | **Vite** | ^7.3.7 | Build-Tool und Dev-Server |
 | **@vitejs/plugin-vue** | ^6.0.10 | Vue-Integration für Vite |
 | **Vitest + @vue/test-utils** | ^3.2.7 / ^2.5.1 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
-| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs`; `.ts` unter `src/i18n/`, `utils/`, `composables/`, `stores/`, `router/`; Komponenten in `ui/`, `equalizer/`, `recorder/`, `landing/` mit `lang="ts"`) |
+| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs` nur noch für die Tests; `.ts` unter `src/i18n/`, `utils/`, `composables/`, `stores/`, `router/`; alle Komponenten und Seiten mit `lang="ts"`) |
 | **ESLint + Prettier** | ^10.4.1 / ^3.8.4 | `npm run lint`, `npm run format:check` (`eslint.config.js` über `@vue/eslint-config-typescript`, lintet `.js`, `.ts` und `.vue`) |
 
 ### Audio Processing
@@ -343,12 +343,15 @@ mit `setActivePinia(createPinia())`.
 
 i18n und Theme laufen bewusst über provide/inject aus `App.vue` (`useI18n` liest `src/i18n/`):
 
-```javascript
+```typescript
 provide('i18n', { t, currentLanguage, setLanguage })
 provide('theme', { currentTheme, setTheme })
-const { t } = inject('i18n') // JS-Komponenten
-const { t } = injectI18n() // TS-Komponenten: typisiert, aus composables/useI18n.ts (analog injectTheme)
+const { t } = injectI18n() // in Komponenten: typisiert, aus composables/useI18n.ts (analog injectTheme)
 ```
+
+Die Live-Eingangsquelle stellt `AppPage.vue` per `provide('inputSource', useInputSource(…))` bereit;
+`InputSource.vue` liest sie über `injectInputSource()` (Typ `InputSourceApi` in `composables/useInputSource.ts`),
+`StickyPlayerBar.vue` optional per `inject<InputSourceApi | null>('inputSource', null)`.
 
 ### Undo/Redo
 

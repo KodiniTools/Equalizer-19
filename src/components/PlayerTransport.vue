@@ -54,15 +54,16 @@
   </div>
 </template>
 
-<script setup>
-  import { inject, computed } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
   import { usePlaylistStore } from '../stores/playlist'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioPlayer = usePlayerStore()
   const playlist = usePlaylistStore()
   const { isPlaying, isLoading } = storeToRefs(audioPlayer)

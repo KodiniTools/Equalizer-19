@@ -44,12 +44,13 @@
   </div>
 </template>
 
-<script setup>
-  import { reactive, inject, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+  import { reactive, onMounted, onUnmounted } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
 
   const DB_MIN = -60
@@ -58,35 +59,38 @@
   const PEAK_HOLD_MS = 2000
   const PEAK_DECAY_DB_PER_FRAME = 0.15
 
-  const meters = reactive([
-    {
-      label: 'IN',
+  interface MeterState {
+    label: string
+    fillPct: number
+    peakPct: number
+    db: number
+    dbText: string
+    _peakDb: number
+    _peakTime: number
+  }
+
+  function createMeter(label: string): MeterState {
+    return {
+      label,
       fillPct: 0,
       peakPct: 0,
       db: -Infinity,
       dbText: '—',
       _peakDb: -Infinity,
       _peakTime: 0,
-    },
-    {
-      label: 'OUT',
-      fillPct: 0,
-      peakPct: 0,
-      db: -Infinity,
-      dbText: '—',
-      _peakDb: -Infinity,
-      _peakTime: 0,
-    },
-  ])
+    }
+  }
 
-  let rafId = null
+  const meters = reactive<MeterState[]>([createMeter('IN'), createMeter('OUT')])
 
-  function dbToPercent(db) {
+  let rafId: number | null = null
+
+  function dbToPercent(db: number): number {
     if (!isFinite(db)) return 0
     return Math.max(0, Math.min(100, ((db - DB_MIN) / DB_RANGE) * 100))
   }
 
-  function updateMeter(m, rawDb) {
+  function updateMeter(m: MeterState, rawDb: number): void {
     const db = Math.max(DB_MIN, Math.min(0, rawDb))
     const isActive = isFinite(rawDb) && rawDb > DB_MIN + 2
 
@@ -106,8 +110,8 @@
     m.peakPct = isFinite(m._peakDb) ? dbToPercent(m._peakDb) : 0
   }
 
-  function tick() {
-    if (audioEngine && audioEngine.isInitialized) {
+  function tick(): void {
+    if (audioEngine.isInitialized) {
       updateMeter(meters[0], audioEngine.getInputLevel())
       updateMeter(meters[1], audioEngine.getOutputLevel())
     } else {

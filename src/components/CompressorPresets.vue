@@ -5,14 +5,14 @@
       class="preset-select"
       :value="activePreset"
       :aria-label="t.a11y_comp_preset"
-      @change="applyPreset($event.target.value)"
+      @change="onPresetChange"
     >
       <!-- Shown when the current settings match no preset -->
       <option value="" disabled>{{ t.comp_preset_custom }}</option>
       <optgroup
         v-for="group in COMP_PRESET_GROUPS"
         :key="group.labelKey"
-        :label="t[group.labelKey]"
+        :label="t[group.labelKey] ?? group.labelKey"
       >
         <option v-for="name in group.presets" :key="name" :value="name">{{ name }}</option>
       </optgroup>
@@ -21,8 +21,8 @@
   </div>
 </template>
 
-<script setup>
-  import { inject, computed } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import AppIcon from './AppIcon.vue'
   import {
     COMP_PRESETS,
@@ -31,21 +31,24 @@
     findCompPreset,
   } from '../utils/presets'
   import { useAudioEngineStore } from '../stores/audioEngine'
+  import { injectI18n } from '../composables/useI18n'
 
-  defineProps({
-    id: { type: String, default: undefined },
-  })
+  withDefaults(defineProps<{ id?: string }>(), { id: undefined })
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
 
   // Derived from the engine: shows "Custom" as soon as a parameter is changed manually
-  const activePreset = computed(() => findCompPreset(audioEngine?.dynamics))
+  const activePreset = computed(() => findCompPreset(audioEngine.dynamics))
 
-  function applyPreset(presetName) {
+  function applyPreset(presetName: string): void {
     const preset = COMP_PRESETS[presetName]
-    if (!preset || !audioEngine?.updateDynamics) return
+    if (!preset) return
     audioEngine.updateDynamics(compPresetToDynamics(preset))
+  }
+
+  function onPresetChange(event: Event): void {
+    applyPreset((event.target as HTMLSelectElement).value)
   }
 </script>
 

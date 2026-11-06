@@ -17,7 +17,7 @@
       :value="volume * 100"
       class="ui-range vol-slider"
       :title="t.player_vol_hint"
-      :aria-label="t.a11y_volume.replace('{val}', Math.round(volume * 100))"
+      :aria-label="t.a11y_volume.replace('{val}', String(Math.round(volume * 100)))"
       :aria-valuenow="Math.round(volume * 100)"
       aria-valuemin="0"
       aria-valuemax="100"
@@ -26,20 +26,20 @@
   </div>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import AppIcon from './AppIcon.vue'
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioPlayer = usePlayerStore()
   const { volume, isMuted } = storeToRefs(audioPlayer)
   const { setVolume, toggleMute } = audioPlayer
 
-  function handleVolumeChange(event) {
-    const value = parseInt(event.target.value) / 100
+  function handleVolumeChange(event: Event): void {
+    const value = parseInt((event.target as HTMLInputElement).value, 10) / 100
     setVolume(value)
   }
 </script>

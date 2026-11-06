@@ -33,7 +33,7 @@
       class="sp-progress"
       :class="{ disabled: !hasTrack }"
       :title="hasTrack ? t.player_vol_hint : ''"
-      @click="hasTrack && handleProgressClick($event)"
+      @click="handleProgressClick"
     >
       <div class="sp-progress-bar">
         <div class="sp-progress-fill" :style="{ width: (hasTrack ? progress : 0) + '%' }"></div>
@@ -94,10 +94,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, inject, onMounted, onBeforeUnmount } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { useFileDrop } from '../composables/useFileDrop'
+  import { type InputSourceApi } from '../composables/useInputSource'
   import PlayerTransport from './PlayerTransport.vue'
   import VolumeControl from './VolumeControl.vue'
   import RecorderControls from './RecorderControls.vue'
@@ -106,27 +107,28 @@
   import { usePlayerStore } from '../stores/player'
   import { usePlaylistStore } from '../stores/playlist'
   import { useToastStore } from '../stores/toast'
+  import { injectI18n } from '../composables/useI18n'
 
-  const emit = defineEmits(['files-selected'])
+  const emit = defineEmits<{ 'files-selected': [files: File[]] }>()
 
-  const { t, currentLanguage } = inject('i18n')
+  const { t, currentLanguage } = injectI18n()
   const audioPlayer = usePlayerStore()
   const playlistStore = usePlaylistStore()
   const { notify } = useToastStore()
   // Live input state (provided by AppPage); optional so the bar also works standalone
-  const inputSource = inject('inputSource', null)
+  const inputSource = inject<InputSourceApi | null>('inputSource', null)
 
-  const fileInput = ref(null)
-  const folderInput = ref(null)
-  const barRef = ref(null)
+  const fileInput = ref<HTMLInputElement | null>(null)
+  const folderInput = ref<HTMLInputElement | null>(null)
+  const barRef = ref<HTMLElement | null>(null)
 
   // ---- Reserve space for the fixed bar ----
   // The bar overlays the bottom of the viewport. Publishing its real height
   // (it wraps to 2–3 rows on small screens) lets the page add exactly that much
   // bottom padding, so page content and the global footer stay visible.
-  let resizeObserver = null
+  let resizeObserver: ResizeObserver | null = null
 
-  function publishBarHeight() {
+  function publishBarHeight(): void {
     const height = barRef.value?.offsetHeight ?? 0
     document.documentElement.style.setProperty('--sticky-player-h', `${height}px`)
   }
@@ -153,26 +155,27 @@
 
   // ---- File selection / drag & drop ----
   // Add files to the playlist, start playback and announce the new tracks
-  function addAndPlay(files) {
+  function addAndPlay(files: File[]): void {
     const tracks = addFiles(files)
     emit('files-selected', files)
     if (tracks.length > 0) setTimeout(() => play(), 100)
-    notify(t.value.player_tracks_added.replace('{count}', files.length), 'success')
+    notify(t.value.player_tracks_added.replace('{count}', String(files.length)), 'success')
   }
 
   const { isDragOver, onDragOver, onDragLeave, handleFileSelect, handleDrop } =
     useFileDrop(addAndPlay)
 
-  function triggerFileSelect() {
+  function triggerFileSelect(): void {
     fileInput.value?.click()
   }
 
-  function triggerFolderSelect() {
+  function triggerFolderSelect(): void {
     folderInput.value?.click()
   }
 
-  function handleProgressClick(event) {
-    const rect = event.currentTarget.getBoundingClientRect()
+  function handleProgressClick(event: MouseEvent): void {
+    if (!hasTrack.value) return
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
     const x = event.clientX - rect.left
     const percent = (x / rect.width) * 100
     seekToPercent(percent)

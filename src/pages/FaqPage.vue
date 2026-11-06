@@ -57,17 +57,26 @@
   </div>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import { UiButton } from '../components/ui'
+  import { injectI18n } from '../composables/useI18n'
+  import type { TranslationKey } from '../i18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
+
+  interface FaqCategory {
+    id: string
+    titleKey: TranslationKey
+    /** question/answer strings are `${prefix}q${n}` / `${prefix}a${n}` */
+    prefix: string
+    count: number
+  }
 
   /**
    * FAQ structure: question/answer strings are `${prefix}q${n}` / `${prefix}a${n}`.
    * Add a question by adding both strings and increasing `count`.
    */
-  const CATEGORIES = [
+  const CATEGORIES: readonly FaqCategory[] = [
     { id: 'allgemein', titleKey: 'faq_cat_general', prefix: 'faq_', count: 3 },
     { id: 'equalizer', titleKey: 'faq_cat_equalizer', prefix: 'faq_eq_', count: 3 },
     { id: 'kompressor', titleKey: 'faq_cat_compressor', prefix: 'faq_comp_', count: 3 },

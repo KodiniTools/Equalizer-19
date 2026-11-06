@@ -51,8 +51,8 @@
   </div>
 </template>
 
-<script setup>
-  import { ref, inject } from 'vue'
+<script setup lang="ts">
+  import { ref } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { useOutputRecorder } from '../composables/useOutputRecorder'
   import { useCountdown, START_DELAYS } from '../composables/useCountdown'
@@ -63,12 +63,13 @@
   import CountdownOverlay from './recorder/CountdownOverlay.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { useToastStore } from '../stores/toast'
+  import { injectI18n } from '../composables/useI18n'
 
   /**
    * Container für Aufnahme und Download in der Player-Leiste: verbindet
    * useOutputRecorder und useCountdown mit den Teilen in components/recorder/.
    */
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
   const { notify } = useToastStore()
 
@@ -90,9 +91,7 @@
     discardRecording,
   } = useOutputRecorder()
 
-  if (audioEngine) {
-    setAudioEngine(audioEngine)
-  }
+  setAudioEngine(audioEngine)
 
   // ---- Start delay / countdown ----
   const DELAY_STORAGE_KEY = 'eq19_rec_start_delay'
@@ -105,9 +104,9 @@
     cancel: cancelCountdown,
   } = useCountdown()
 
-  function loadStartDelay() {
+  function loadStartDelay(): number {
     try {
-      const stored = parseInt(localStorage.getItem(DELAY_STORAGE_KEY), 10)
+      const stored = parseInt(localStorage.getItem(DELAY_STORAGE_KEY) ?? '', 10)
       if (START_DELAYS.includes(stored)) return stored
     } catch {
       // storage unavailable
@@ -115,7 +114,7 @@
     return 0
   }
 
-  function setStartDelay(delay) {
+  function setStartDelay(delay: number): void {
     if (!START_DELAYS.includes(delay)) return
     startDelay.value = delay
     try {
@@ -130,16 +129,12 @@
   const isSaving = ref(false)
 
   // Record button: start right away or after the chosen countdown
-  function handleStartRecording() {
+  function handleStartRecording(): void {
     errorMessage.value = ''
-    if (!audioEngine) {
-      errorMessage.value = t.value.rec_error_engine
-      return
-    }
     startCountdown(startDelay.value, beginRecording)
   }
 
-  async function beginRecording() {
+  async function beginRecording(): Promise<void> {
     const success = await startRecording()
     if (!success) {
       errorMessage.value = t.value.rec_error_start
@@ -147,16 +142,16 @@
     }
   }
 
-  async function handleStopRecording() {
+  async function handleStopRecording(): Promise<void> {
     await stopRecording()
   }
 
-  function handleDownload() {
+  function handleDownload(): void {
     errorMessage.value = ''
     showDownloadDialog.value = true
   }
 
-  async function handleConfirmDownload({ filename }) {
+  async function handleConfirmDownload({ filename }: { filename: string }): Promise<void> {
     isSaving.value = true
     try {
       const result = await saveRecordingAs(filename)
@@ -177,7 +172,7 @@
     }
   }
 
-  function handleNewRecording() {
+  function handleNewRecording(): void {
     discardRecording()
     errorMessage.value = ''
   }

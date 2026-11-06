@@ -23,21 +23,23 @@
   </div>
 </template>
 
-<script setup>
-  import { inject, computed, watch } from 'vue'
+<script setup lang="ts">
+  import { computed, watch } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets'
+  import type { ProcessingChange } from '../utils/processingState'
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { useHistoryStore } from '../stores/history'
   import { useToastStore } from '../stores/toast'
+  import { injectI18n } from '../composables/useI18n'
 
   /**
    * Undo / redo buttons for the processing history (EQ + compressor).
    * Tooltips name the step that would be reverted; every undo/redo – from
    * these buttons or the keyboard shortcuts – is announced via `notify`.
    */
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const history = useHistoryStore()
   const { notify } = useToastStore()
 
@@ -47,7 +49,7 @@
   /**
    * Turn a change descriptor (see utils/processingState.ts) into text.
    */
-  function describe(change) {
+  function describe(change: ProcessingChange | null | undefined): string {
     const tr = t.value
     if (!change) return ''
     switch (change.type) {

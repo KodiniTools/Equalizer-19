@@ -12,7 +12,7 @@
       :options="modeOptions"
       :label="t.input_title"
       block
-      @update:model-value="input.setMode($event)"
+      @update:model-value="onModeChange"
     />
 
     <template v-if="input.mode.value === 'input'">
@@ -32,12 +32,12 @@
               class="device-select"
               :value="input.selectedDeviceId.value"
               :disabled="input.isStarting.value"
-              @change="input.selectDevice($event.target.value)"
+              @change="onDeviceChange"
             >
               <optgroup :label="t.input_group_inputs">
                 <option value="">{{ t.input_default }}</option>
                 <option v-for="(d, i) in input.devices.value" :key="d.deviceId" :value="d.deviceId">
-                  {{ d.label || t.input_device_n.replace('{n}', i + 1) }}
+                  {{ d.label || t.input_device_n.replace('{n}', String(i + 1)) }}
                 </option>
               </optgroup>
               <optgroup v-if="input.systemAudioSupported" :label="t.input_group_playback">
@@ -97,22 +97,32 @@
   </UiPanel>
 </template>
 
-<script setup>
-  import { inject, useId, computed } from 'vue'
+<script setup lang="ts">
+  import { useId, computed } from 'vue'
   import AppIcon from './AppIcon.vue'
-  import { SYSTEM_AUDIO } from '../composables/useInputSource'
+  import { SYSTEM_AUDIO, injectInputSource } from '../composables/useInputSource'
   import { UiButton, UiPanel, UiSegmentedControl, UiSwitch } from './ui'
+  import { injectI18n } from '../composables/useI18n'
+  import type { UiSegmentedOption } from './ui'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   // Provided by AppPage (useInputSource)
-  const input = inject('inputSource')
+  const input = injectInputSource()
 
   const deviceSelectId = useId()
 
-  const modeOptions = computed(() => [
+  const modeOptions = computed<UiSegmentedOption<string>[]>(() => [
     { value: 'playlist', label: t.value.input_mode_playlist },
     { value: 'input', label: t.value.input_mode_live },
   ])
+
+  function onModeChange(value: string | number): void {
+    input.setMode(String(value))
+  }
+
+  function onDeviceChange(event: Event): void {
+    input.selectDevice((event.target as HTMLSelectElement).value)
+  }
 
   // Name shown while live: device label, or "PC audio" for system audio
   const activeName = computed(() =>

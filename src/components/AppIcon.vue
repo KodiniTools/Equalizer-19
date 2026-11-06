@@ -17,21 +17,27 @@
   </svg>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { computed } from 'vue'
-  import { ICONS } from '../utils/icons'
+  import { ICONS, isIconName, type IconDefinition } from '../utils/icons'
 
   /**
    * Inline SVG icon from utils/icons.ts. Sized in em so it follows the
    * surrounding font size; colour comes from `currentColor`.
+   * Unknown names fall back to the `alert` icon.
    */
-  const props = defineProps({
-    name: { type: String, required: true },
-    size: { type: [String, Number], default: '1em' },
-    spin: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      name: string
+      size?: string | number
+      spin?: boolean
+    }>(),
+    { size: '1em', spin: false }
+  )
 
-  const icon = computed(() => ICONS[props.name] || ICONS.alert)
+  const icon = computed<IconDefinition>(() =>
+    isIconName(props.name) ? ICONS[props.name] : ICONS.alert
+  )
 </script>
 
 <style scoped>
