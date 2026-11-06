@@ -112,15 +112,15 @@ Equalizer-19/
 │   │   ├── history.ts          # Undo/Redo
 │   │   └── toast.js            # Benachrichtigungen
 │   ├── composables/
-│   │   ├── useCountdown.js     # Countdown vor der Aufnahme
-│   │   ├── useCustomPresets.js # Eigene EQ-Presets (localStorage)
-│   │   ├── useFileDrop.js      # Dateiauswahl & Drag & Drop (inkl. Ordner)
-│   │   ├── useI18n.js          # Sprache, <html lang>, Meta-Tags, SSI-Sync
-│   │   ├── useInputSource.js   # Live-Eingang (Line-In, Stereomix, PC-Ton)
-│   │   ├── useKeyboardShortcuts.js # Tastaturkürzel
-│   │   ├── useOutputRecorder.js # Aufnahme des bearbeiteten Signals
-│   │   ├── useTheme.js         # Theme-Management
-│   │   └── useUndoRedo.js      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
+│   │   ├── useCountdown.ts     # Countdown vor der Aufnahme
+│   │   ├── useCustomPresets.ts # Eigene EQ-Presets (localStorage)
+│   │   ├── useFileDrop.ts      # Dateiauswahl & Drag & Drop (inkl. Ordner)
+│   │   ├── useI18n.ts          # Sprache, <html lang>, Meta-Tags, SSI-Sync
+│   │   ├── useInputSource.ts   # Live-Eingang (Line-In, Stereomix, PC-Ton)
+│   │   ├── useKeyboardShortcuts.ts # Tastaturkürzel
+│   │   ├── useOutputRecorder.ts # Aufnahme des bearbeiteten Signals
+│   │   ├── useTheme.ts         # Theme-Management
+│   │   └── useUndoRedo.ts      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
 │   ├── i18n/                   # de.ts (Referenz, TranslationKey), en.ts (typgeprüft gegen de), index.ts
 │   ├── data/
 │   │   └── blogArticles.ts     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page

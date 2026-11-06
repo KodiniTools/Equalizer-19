@@ -1,16 +1,23 @@
 import { ref, computed } from 'vue'
 
-const currentTheme = ref(
-  localStorage.getItem('equalizer-theme') || localStorage.getItem('theme') || detectSystemTheme()
-)
+export type Theme = 'dark' | 'light'
 
-function detectSystemTheme() {
+const isTheme = (value: unknown): value is Theme => value === 'dark' || value === 'light'
+
+function detectSystemTheme(): Theme {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
+function loadTheme(): Theme {
+  const stored = localStorage.getItem('equalizer-theme') || localStorage.getItem('theme')
+  return isTheme(stored) ? stored : detectSystemTheme()
+}
+
+const currentTheme = ref<Theme>(loadTheme())
+
 export function useTheme() {
-  const setTheme = (theme) => {
-    if (theme !== currentTheme.value && (theme === 'dark' || theme === 'light')) {
+  const setTheme = (theme: string): void => {
+    if (theme !== currentTheme.value && isTheme(theme)) {
       currentTheme.value = theme
       localStorage.setItem('equalizer-theme', theme)
       localStorage.setItem('theme', theme)
@@ -25,8 +32,8 @@ export function useTheme() {
 
   // Listen for SSI navigation theme-changed events
   window.addEventListener('theme-changed', (e) => {
-    const theme = e.detail?.theme
-    if (theme && (theme === 'dark' || theme === 'light') && theme !== currentTheme.value) {
+    const theme = (e as CustomEvent<{ theme?: unknown }>).detail?.theme
+    if (isTheme(theme) && theme !== currentTheme.value) {
       currentTheme.value = theme
       localStorage.setItem('equalizer-theme', theme)
       document.documentElement.setAttribute('data-theme', theme)
@@ -37,7 +44,7 @@ export function useTheme() {
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (!localStorage.getItem('equalizer-theme') && !localStorage.getItem('theme')) {
-        const theme = e.matches ? 'dark' : 'light'
+        const theme: Theme = e.matches ? 'dark' : 'light'
         currentTheme.value = theme
         document.documentElement.setAttribute('data-theme', theme)
       }
@@ -49,3 +56,6 @@ export function useTheme() {
     setTheme,
   }
 }
+
+/** What `provide('theme', …)` hands to the components. */
+export type ThemeApi = ReturnType<typeof useTheme>

@@ -49,7 +49,7 @@
   import { computed, inject } from 'vue'
   import AppIcon from '../AppIcon.vue'
   import { EQ_PRESETS } from '../../utils/presets'
-  import { isCustomPresetId } from '../../composables/useCustomPresets.js'
+  import { isCustomPresetId } from '../../composables/useCustomPresets'
   import { UiIconButton } from '../ui'
 
   /**

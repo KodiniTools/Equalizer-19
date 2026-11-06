@@ -6,7 +6,7 @@ import {
   buildInputConstraints,
   inputErrorKey,
   SYSTEM_AUDIO,
-} from '../src/composables/useInputSource.js'
+} from '../src/composables/useInputSource'
 
 vi.spyOn(console, 'error').mockImplementation(() => {})
 

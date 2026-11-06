@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
-import { useCountdown, START_DELAYS } from '../src/composables/useCountdown.js'
+import { useCountdown, START_DELAYS } from '../src/composables/useCountdown'
 
 test('offers 0, 3, 5 and 10 seconds', () => {
   assert.deepEqual(START_DELAYS, [0, 3, 5, 10])

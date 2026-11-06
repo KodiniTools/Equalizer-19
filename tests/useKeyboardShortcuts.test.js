@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { historyActionForKey } from '../src/composables/useKeyboardShortcuts.js'
+import { historyActionForKey } from '../src/composables/useKeyboardShortcuts'
 
 const ev = (key, mods = {}) => ({
   key,

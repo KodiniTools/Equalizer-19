@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
-import { useOutputRecorder } from '../src/composables/useOutputRecorder.js'
+import { useOutputRecorder } from '../src/composables/useOutputRecorder'
 
 vi.spyOn(console, 'error').mockImplementation(() => {})
 
