@@ -4,19 +4,23 @@ import assert from 'node:assert/strict'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAudioEngineStore } from '../src/stores/audioEngine'
-import { useUndoRedo } from '../src/composables/useUndoRedo'
+import {
+  useUndoRedo,
+  type HistoryActionInfo,
+  type UndoRedoOptions,
+} from '../src/composables/useUndoRedo'
 import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets'
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
 
 function clock(start = 1000) {
   let t = start
-  return { now: () => t, advance: (ms) => (t += ms) }
+  return { now: () => t, advance: (ms: number) => (t += ms) }
 }
 
 // Engine without an AudioContext plus a history observing it; `flush` lets
 // the observer (a Vue watcher) run, as it would before the next render.
-function setup(options = {}) {
+function setup(options: Partial<UndoRedoOptions> = {}) {
   const c = clock()
   setActivePinia(createPinia())
   const engine = useAudioEngineStore()
@@ -24,7 +28,7 @@ function setup(options = {}) {
   return { engine, history, clock: c, flush: nextTick }
 }
 
-const gains = (engine) => engine.eqBands.map((b) => b.gain)
+const gains = (engine: ReturnType<typeof useAudioEngineStore>) => engine.eqBands.map((b) => b.gain)
 
 test('starts without steps', () => {
   const { history } = setup()
@@ -130,12 +134,14 @@ test('lastAction reports what was undone/redone for user feedback', async () => 
   engine.updateDynamics({ threshold: -10 })
   await flush()
   history.undo()
-  assert.equal(history.lastAction.value.kind, 'undo')
-  assert.deepEqual(history.lastAction.value.change, { type: 'dyn-param', param: 'threshold' })
-  const firstId = history.lastAction.value.id
+  const undone = history.lastAction.value as HistoryActionInfo | null
+  assert.equal(undone?.kind, 'undo')
+  assert.deepEqual(undone?.change, { type: 'dyn-param', param: 'threshold' })
+  const firstId = undone?.id
   history.redo()
-  assert.equal(history.lastAction.value.kind, 'redo')
-  assert.notEqual(history.lastAction.value.id, firstId)
+  const redone = history.lastAction.value as HistoryActionInfo | null
+  assert.equal(redone?.kind, 'redo')
+  assert.notEqual(redone?.id, firstId)
 })
 
 test('clear makes the current settings the new baseline', async () => {

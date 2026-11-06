@@ -17,8 +17,7 @@ describe('Equalizer-Teile', () => {
     expect(sliders[0].classes()).toContain('negative')
     expect(wrapper.findAll('.val')[0].text()).toBe('-3')
     expect(wrapper.find('.eq-curve path.boost').exists()).toBe(true)
-
-    sliders[3].element.value = '4.5'
+    ;(sliders[3].element as HTMLInputElement).value = '4.5'
     await sliders[3].trigger('input')
     expect(wrapper.emitted('change')).toEqual([[3, 4.5]])
   })
@@ -31,7 +30,10 @@ describe('Equalizer-Teile', () => {
 
   it('EqPresetControls listet Presets und meldet die Auswahl nach dem Wert', async () => {
     const wrapper = mount(EqPresetControls, {
-      props: { modelValue: '', customPresets: [{ id: '__custom__1', name: 'Mein Preset' }] },
+      props: {
+        modelValue: '',
+        customPresets: [{ id: '__custom__1', name: 'Mein Preset', gains: [] }],
+      },
       global,
     })
     const options = wrapper.findAll('option').map((o) => o.attributes('value'))

@@ -1,10 +1,14 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { blogArticles, getBlogArticlesNewestFirst } from '../src/data/blogArticles'
-import { formatBlogDate, buildBlogCards } from '../src/utils/blogCards'
+import {
+  blogArticles,
+  getBlogArticlesNewestFirst,
+  type BlogArticle,
+} from '../src/data/blogArticles'
+import { formatBlogDate, buildBlogCards, type BlogCard } from '../src/utils/blogCards'
 
-const LOCALIZED_FIELDS = ['tag', 'url', 'image', 'title', 'description']
+const LOCALIZED_FIELDS = ['tag', 'url', 'image', 'title', 'description'] as const
 
 test('blogArticles: jeder Beitrag ist vollständig und zweisprachig', () => {
   assert.ok(blogArticles.length >= 2)
@@ -15,7 +19,7 @@ test('blogArticles: jeder Beitrag ist vollständig und zweisprachig', () => {
     assert.match(article.date, /^\d{4}-\d{2}-\d{2}$/)
     assert.ok(Number.isInteger(article.minutes) && article.minutes > 0)
     for (const field of LOCALIZED_FIELDS) {
-      for (const lang of ['de', 'en']) {
+      for (const lang of ['de', 'en'] as const) {
         assert.equal(typeof article[field][lang], 'string', `${article.id}.${field}.${lang}`)
         assert.ok(article[field][lang].length > 0, `${article.id}.${field}.${lang} ist leer`)
       }
@@ -60,7 +64,7 @@ test('buildBlogCards: aktive Sprache, Fallback auf Deutsch, Meta-Zeile', () => {
       minutes: 7,
       tag: { de: 'Audio', en: 'Audio' },
       url: { de: 'u-de', en: 'u-en' },
-      image: { de: 'i-de' }, // keine EN-Übersetzung → Deutsch
+      image: { de: 'i-de' } as BlogArticle['image'], // keine EN-Übersetzung → Deutsch
       title: { de: 'T de', en: 'T en' },
       description: { de: 'D de', en: 'D en' },
     },
@@ -82,9 +86,10 @@ test('buildBlogCards: aktive Sprache, Fallback auf Deutsch, Meta-Zeile', () => {
 })
 
 test('buildBlogCards: echte Beiträge liefern für beide Sprachen vollständige Karten', () => {
-  for (const lang of ['de', 'en']) {
+  for (const lang of ['de', 'en'] as const) {
     for (const card of buildBlogCards(getBlogArticlesNewestFirst(), lang, 'x')) {
-      for (const key of ['id', 'url', 'image', 'tag', 'title', 'description', 'meta']) {
+      const keys: (keyof BlogCard)[] = ['id', 'url', 'image', 'tag', 'title', 'description', 'meta']
+      for (const key of keys) {
         assert.ok(card[key], `${card.id}.${key} (${lang}) fehlt`)
       }
     }

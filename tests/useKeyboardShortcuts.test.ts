@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { historyActionForKey } from '../src/composables/useKeyboardShortcuts'
+import { historyActionForKey, type KeyLike } from '../src/composables/useKeyboardShortcuts'
 
-const ev = (key, mods = {}) => ({
+const ev = (key: string | undefined, mods: Partial<KeyLike> = {}): KeyLike => ({
   key,
   ctrlKey: false,
   metaKey: false,
@@ -31,6 +31,8 @@ test('plain letters, Alt chords and other keys are ignored', () => {
 
 test('relies on the printed key, so QWERTZ layouts are not swapped', () => {
   // On a German keyboard the key labelled Z reports code "KeyY" but key "z"
-  assert.equal(historyActionForKey({ ...ev('z', { ctrlKey: true }), code: 'KeyY' }), 'undo')
-  assert.equal(historyActionForKey({ ...ev('y', { ctrlKey: true }), code: 'KeyZ' }), 'redo')
+  const qwertzZ: KeyLike & { code: string } = { ...ev('z', { ctrlKey: true }), code: 'KeyY' }
+  const qwertzY: KeyLike & { code: string } = { ...ev('y', { ctrlKey: true }), code: 'KeyZ' }
+  assert.equal(historyActionForKey(qwertzZ), 'undo')
+  assert.equal(historyActionForKey(qwertzY), 'redo')
 })

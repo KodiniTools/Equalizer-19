@@ -14,7 +14,7 @@ describe('SliderField', () => {
     expect(input.attributes('aria-label')).toBe('Schwelle')
     expect(input.attributes('aria-valuetext')).toBe('-30 dB')
     expect(input.attributes('min')).toBe('-60')
-    expect(input.element.value).toBe('-30')
+    expect((input.element as HTMLInputElement).value).toBe('-30')
     expect(wrapper.get('.slider-field__value').text()).toBe('-30 dB')
   })
 

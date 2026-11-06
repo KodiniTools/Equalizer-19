@@ -6,7 +6,7 @@ import { createHistory } from '../src/utils/history'
 // Manual clock so merge windows are deterministic
 function clock(start = 0) {
   let t = start
-  return { now: () => t, advance: (ms) => (t += ms) }
+  return { now: () => t, advance: (ms: number) => (t += ms) }
 }
 
 test('starts empty: nothing to undo or redo', () => {
@@ -74,7 +74,7 @@ test('limit drops the oldest steps', () => {
 
 test('consecutive mergeable changes inside the window collapse into one step', () => {
   const c = clock()
-  const h = createHistory({
+  const h = createHistory<number, { key: string }>({
     mergeWindowMs: 500,
     now: c.now,
     canMerge: (prev, next) => prev.key === next.key,
@@ -92,7 +92,7 @@ test('consecutive mergeable changes inside the window collapse into one step', (
 
 test('a different change, an expired window or a non-mergeable change start a new step', () => {
   const c = clock()
-  const h = createHistory({
+  const h = createHistory<number, { key: string }>({
     mergeWindowMs: 500,
     now: c.now,
     canMerge: (prev, next) => prev.key === next.key,
@@ -115,7 +115,7 @@ test('the first step is never merged into the baseline', () => {
   h.reset('base')
   h.record('x', 'k')
   assert.equal(h.undoDepth(), 1)
-  assert.equal(h.undo().state, 'x')
+  assert.equal(h.undo()?.state, 'x')
   assert.equal(h.present(), 'base')
 })
 

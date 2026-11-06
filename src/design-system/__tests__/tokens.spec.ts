@@ -21,14 +21,23 @@ const hcLight = cssBlock(highContrast, "[data-theme='light']")
 const navLight = cssBlock(styleCss, "[data-theme='light'] .global-nav")
 
 /** Alle JSON-Einträge, die eine CSS-Variable beschreiben: name → [{ path, value }]. */
-function jsonVariables() {
-  const result = new Map()
-  const walk = (node, path) => {
-    for (const [key, value] of Object.entries(node)) {
+interface JsonVariable {
+  path: string
+  value: string
+}
+
+function jsonVariables(): Map<string, JsonVariable[]> {
+  const result = new Map<string, JsonVariable[]>()
+  const walk = (node: object, path: string[]): void => {
+    for (const [key, value] of Object.entries(node) as [string, unknown][]) {
       if (key.startsWith('$')) continue
       if (key.startsWith('--') && value && typeof value === 'object' && '$value' in value) {
-        if (!result.has(key)) result.set(key, [])
-        result.get(key).push({ path: path.join('.'), value: normalizeValue(value.$value) })
+        const entries = result.get(key) ?? []
+        result.set(key, entries)
+        entries.push({
+          path: path.join('.'),
+          value: normalizeValue((value as { $value: unknown }).$value),
+        })
       } else if (value && typeof value === 'object') {
         walk(value, [...path, key])
       }
@@ -44,7 +53,11 @@ const jsonVars = jsonVariables()
  * @param {Map<string, string>} cssVars
  * @param {string} themePath Pfad-Suffix in tokens.json, z. B. 'dark' oder 'high-contrast.light'
  */
-function expectThemeMatchesJson(cssVars, themePath, label) {
+function expectThemeMatchesJson(
+  cssVars: Map<string, string>,
+  themePath: string,
+  label: string
+): void {
   for (const [name, cssValue] of cssVars) {
     const entries = jsonVars.get(name) ?? []
     const themed = entries.filter((e) => e.path === themePath || e.path.endsWith(`.${themePath}`))
@@ -89,7 +102,7 @@ describe('tokens.css ↔ tokens.json', () => {
   })
 
   it('jedes Farb-Token aus tokens.json ist in tokens.css deklariert', () => {
-    for (const theme of ['dark', 'light']) {
+    for (const theme of ['dark', 'light'] as const) {
       const cssVars = theme === 'dark' ? dark : light
       for (const name of Object.keys(tokens.color[theme])) {
         if (!name.startsWith('--')) continue

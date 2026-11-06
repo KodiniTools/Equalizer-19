@@ -16,8 +16,8 @@
 | **Pinia** | ^3.0.4 | Globaler Zustand (`src/stores/`) |
 | **Vite** | ^7.3.7 | Build-Tool und Dev-Server |
 | **@vitejs/plugin-vue** | ^6.0.10 | Vue-Integration für Vite |
-| **Vitest + @vue/test-utils** | ^3.2.7 / ^2.5.1 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
-| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs` nur noch für die Tests; `.ts` unter `src/i18n/`, `utils/`, `composables/`, `stores/`, `router/`; alle Komponenten und Seiten mit `lang="ts"`) |
+| **Vitest + @vue/test-utils** | ^3.2.7 / ^2.5.1 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.ts` |
+| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (strict, ohne `allowJs`; `.ts` unter `src/` und `tests/`, alle Komponenten und Seiten mit `lang="ts"`; nur `src/worklets/pcm-recorder.worklet.js` bleibt JS, weil Vite es als Asset kopiert) |
 | **ESLint + Prettier** | ^10.4.1 / ^3.8.4 | `npm run lint`, `npm run format:check` (`eslint.config.js` über `@vue/eslint-config-typescript`, lintet `.js`, `.ts` und `.vue`) |
 
 ### Audio Processing
@@ -55,8 +55,8 @@ Equalizer-19/
 ├── package.json            # NPM-Konfiguration
 ├── package-lock.json       # Dependency Lock-File
 ├── vite.config.js          # Vite Build-Konfiguration
-├── vitest.config.js        # Vitest (jsdom, src/**/__tests__/*.spec.js, Setup src/__tests__/setup.js)
-├── tsconfig.json           # TypeScript (strict, allowJs) für vue-tsc
+├── vitest.config.js        # Vitest (jsdom, src/**/__tests__/*.spec.ts, Setup src/__tests__/setup.ts)
+├── tsconfig.json           # TypeScript (strict) für vue-tsc
 ├── env.d.ts                # Typen für .vue-Imports
 ├── eslint.config.js        # ESLint Flat Config
 │
@@ -140,7 +140,7 @@ Equalizer-19/
 │   ├── worklets/
 │   │   └── pcm-recorder.worklet.js # AudioWorklet für die WAV-Aufnahme
 │   │
-│   └── __tests__/          # Vitest-Setup (setup.js) und Test-Helfer (i18nStub.js)
+│   └── __tests__/          # Vitest-Setup (setup.ts) und Test-Helfer (i18nStub.ts)
 │
 ├── tests/                  # Logik-Tests (Vitest, Node-Umgebung); Komponententests: src/**/__tests__ (jsdom)
 ├── .github/workflows/ci.yml # CI: Lint, Format, Typecheck, Tests, Build
@@ -270,7 +270,7 @@ const en: Record<TranslationKey, string> = { nav_start_app: 'Start App', /* … 
 export const translations = { de, en } // Language = 'de' | 'en'
 ```
 
-Neue Texte zuerst in `de.ts` eintragen, dann in `en.ts`. `src/i18n/__tests__/translations.spec.js` prüft
+Neue Texte zuerst in `de.ts` eintragen, dann in `en.ts`. `src/i18n/__tests__/translations.spec.ts` prüft
 zusätzlich zur Laufzeit: gleiche Schlüssel, keine leeren Texte, gleiche Platzhalter (`{name}`, `{count}`).
 Die Komponenten lesen weiterhin `t.value.key` (bzw. `t.key` im Template); TS-Komponenten holen die API
 über `injectI18n()` aus `composables/useI18n.ts` (typisiert als `I18n`, `t` ist `Translations`: bekannte
@@ -373,7 +373,7 @@ Benötigt Web Audio API und MediaRecorder API Support.
 npm run dev           # Startet Vite Dev-Server auf Port 3000
 npm run build         # Production Build nach /dist
 npm run preview       # Preview des Production Builds
-npm run lint          # ESLint (.js, .ts, .vue)
+npm run lint          # ESLint (.ts, .vue, Konfigurationsdateien)
 npm run format        # Prettier schreibt
 npm run format:check  # Prettier prüft (CI)
 npm run type-check    # vue-tsc --noEmit
@@ -383,11 +383,11 @@ npm run test:watch    # Vitest im Watch-Modus
 
 ## Tests
 
-- **`tests/*.test.js`** (Vitest, Kopfzeile `// @vitest-environment node`): reine Logik und Composables ohne
+- **`tests/*.test.ts`** (Vitest, Kopfzeile `// @vitest-environment node`): reine Logik und Composables ohne
   DOM, z. B. `audioChain`, `history`, `useOutputRecorder`; Assertions über `node:assert/strict`, Stubs über
   `vi.spyOn`/`vi.useFakeTimers`. Stores werden mit `setActivePinia(createPinia())` erzeugt.
-- **`src/**/__tests__/*.spec.js`** (Vitest + @vue/test-utils, jsdom): Komponenten; i18n per
-  `global: { provide: i18nStub() }` aus `src/__tests__/i18nStub.js`.
+- **`src/**/__tests__/*.spec.ts`** (Vitest + @vue/test-utils, jsdom): Komponenten; i18n per
+  `global: { provide: i18nStub() }` aus `src/__tests__/i18nStub.ts`.
 - **Regressionsschutz:** `src/design-system/__tests__/` prüft Tokens (CSS = JSON = JS) und dass Styles
   außerhalb des Design-Systems nur `var(--token)` ohne Fallback nutzen; neue Farb-Literale lassen den
   Test fehlschlagen (`FROZEN_LITERALS` darf nur schrumpfen). `src/i18n/__tests__/` prüft de/en-Schlüssel.

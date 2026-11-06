@@ -1,19 +1,37 @@
 // @vitest-environment node
 import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
-import { useOutputRecorder } from '../src/composables/useOutputRecorder'
+import { useOutputRecorder, type RecorderEngine } from '../src/composables/useOutputRecorder'
 
 vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // ---- Fake Web Audio (no AudioWorklet → ScriptProcessor path) -----------------
-function fakeNode(name) {
+interface FakeNode {
+  name: string
+  outputs: Set<FakeNode>
+  connect(target: FakeNode): void
+  disconnect(target?: FakeNode): void
+}
+
+type FakeProcessor = FakeNode & {
+  bufferSize: number
+  channels: number
+  onaudioprocess?: (event: { inputBuffer: FakeInputBuffer }) => void
+}
+
+interface FakeInputBuffer {
+  numberOfChannels: number
+  getChannelData(channel: number): Float32Array
+}
+
+function fakeNode(name: string): FakeNode {
   return {
     name,
-    outputs: new Set(),
-    connect(target) {
+    outputs: new Set<FakeNode>(),
+    connect(target: FakeNode) {
       this.outputs.add(target)
     },
-    disconnect(target) {
+    disconnect(target?: FakeNode) {
       if (target) this.outputs.delete(target)
       else this.outputs.clear()
     },
@@ -21,7 +39,7 @@ function fakeNode(name) {
 }
 
 function fakeContext() {
-  const processors = []
+  const processors: FakeProcessor[] = []
   return {
     processors,
     state: 'running',
@@ -29,8 +47,8 @@ function fakeContext() {
     destination: Object.assign(fakeNode('destination'), { channelCount: 2 }),
     resume: () => Promise.resolve(),
     createGain: () => Object.assign(fakeNode('silent'), { gain: { value: 1 } }),
-    createScriptProcessor(bufferSize, channels) {
-      const p = Object.assign(fakeNode('scriptProcessor'), { bufferSize, channels })
+    createScriptProcessor(bufferSize: number, channels: number): FakeProcessor {
+      const p: FakeProcessor = Object.assign(fakeNode('scriptProcessor'), { bufferSize, channels })
       processors.push(p)
       return p
     },
@@ -45,11 +63,14 @@ function fakeEngine() {
   return { audioContext, gainNode, source }
 }
 
-function feed(processor, channels) {
-  processor.onaudioprocess({
+/** The fakes cover what the recorder touches; the cast marks that boundary. */
+const asEngine = (engine: ReturnType<typeof fakeEngine>) => engine as unknown as RecorderEngine
+
+function feed(processor: FakeProcessor, channels: Float32Array[]) {
+  processor.onaudioprocess?.({
     inputBuffer: {
       numberOfChannels: channels.length,
-      getChannelData: (ch) => channels[ch],
+      getChannelData: (ch: number) => channels[ch],
     },
   })
 }
@@ -57,7 +78,7 @@ function feed(processor, channels) {
 test('WAV recording taps the master gain – the end of the processing chain', async () => {
   const engine = fakeEngine()
   const rec = useOutputRecorder()
-  rec.setAudioEngine(engine)
+  rec.setAudioEngine(asEngine(engine))
   rec.setFormat('wav')
 
   assert.equal(await rec.startRecording(), true)

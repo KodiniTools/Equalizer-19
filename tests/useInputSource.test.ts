@@ -6,12 +6,23 @@ import {
   buildInputConstraints,
   inputErrorKey,
   SYSTEM_AUDIO,
+  type InputSourceEngine,
+  type InputSourcePlayer,
 } from '../src/composables/useInputSource'
 
 vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // ---- Fakes -----------------------------------------------------------------
-function fakeTrack(label = 'Stereomix (Realtek)') {
+// Plain objects stand in for the browser APIs; the `as…` helpers at the end of
+// this block mark the boundary where they are handed to the composable.
+interface FakeTrack {
+  label: string
+  stopped: boolean
+  onended: (() => void) | null
+  stop(): void
+}
+
+function fakeTrack(label = 'Stereomix (Realtek)'): FakeTrack {
   return {
     label,
     stopped: false,
@@ -22,21 +33,102 @@ function fakeTrack(label = 'Stereomix (Realtek)') {
   }
 }
 
-function fakeStream(label) {
+interface FakeStream {
+  track: FakeTrack
+  getTracks(): FakeTrack[]
+  getAudioTracks(): FakeTrack[]
+}
+
+function fakeStream(label?: string): FakeStream {
   const track = fakeTrack(label)
   return { track, getTracks: () => [track], getAudioTracks: () => [track] }
 }
 
-function fakeMediaDevices({ fail = null, devices } = {}) {
-  const calls = []
-  let listener = null
+interface FakeDeviceInfo {
+  kind: string
+  deviceId: string
+  label: string
+}
+
+interface FakeAudioConstraints {
+  deviceId?: { exact: string }
+  echoCancellation?: boolean
+  suppressLocalAudioPlayback?: boolean
+}
+
+interface FakeUserMediaConstraints {
+  audio: FakeAudioConstraints
+}
+
+interface FakeDisplayOptions {
+  audio: FakeAudioConstraints
+  systemAudio?: string
+  controller?: unknown
+}
+
+interface FakeDisplayFailure {
+  name: string
+  message?: string
+}
+
+interface FakeVideoTrack {
+  kind: 'video'
+  stopped: boolean
+  getSettings(): { displaySurface: string }
+  stop(): void
+}
+
+interface FakeSystemAudioTrack {
+  kind: 'audio'
+  label: string
+  stopped: boolean
+  onended: (() => void) | null
+  muted: boolean
+  constraints: Record<string, unknown>[]
+  getSettings(): { suppressLocalAudioPlayback: boolean }
+  applyConstraints(c: Record<string, unknown>): Promise<void>
+  stop(): void
+}
+
+interface FakeMediaDevicesOptions {
+  fail?: string | null
+  devices?: FakeDeviceInfo[]
+}
+
+interface FakeMediaDevices {
+  calls: FakeUserMediaConstraints[]
+  fail: string | null
+  readonly listener: (() => void) | null
+  missing: Set<string>
+  getUserMedia(constraints: FakeUserMediaConstraints): Promise<FakeStream>
+  enumerateDevices(): Promise<FakeDeviceInfo[]>
+  addEventListener(type: string, fn: () => void): void
+  removeEventListener(type: string, fn: () => void): void
+  // set by withDisplayMedia()
+  getDisplayMedia?: (options: FakeDisplayOptions) => Promise<unknown>
+  getSupportedConstraints?: () => { restrictOwnAudio: boolean }
+}
+
+/** fakeMediaDevices() plus getDisplayMedia; lastVideo/lastAudio exist once a share started. */
+interface FakeDisplayDevices extends FakeMediaDevices {
+  displayCalls: FakeDisplayOptions[]
+  lastVideo: FakeVideoTrack
+  lastAudio: FakeSystemAudioTrack
+}
+
+function fakeMediaDevices({
+  fail = null,
+  devices,
+}: FakeMediaDevicesOptions = {}): FakeMediaDevices {
+  const calls: FakeUserMediaConstraints[] = []
+  let listener: (() => void) | null = null
   return {
     calls,
     fail,
     get listener() {
       return listener
     },
-    missing: new Set(),
+    missing: new Set<string>(),
     async getUserMedia(constraints) {
       calls.push(constraints)
       if (this.fail) throw Object.assign(new Error(this.fail), { name: this.fail })
@@ -65,8 +157,29 @@ function fakeMediaDevices({ fail = null, devices } = {}) {
   }
 }
 
-function fakeEngine() {
-  const engine = {
+interface FakeSourceNode {
+  stream: FakeStream
+  disconnected: boolean
+  disconnect(): void
+}
+
+interface FakeEngine {
+  connected: FakeSourceNode[]
+  monitor: boolean[]
+  isInitialized: boolean
+  sourceNode: FakeSourceNode | null
+  audioContext: {
+    state: string
+    createMediaStreamSource(stream: FakeStream): FakeSourceNode
+  }
+  initAudioContext(): void
+  connectAudioSource(node: FakeSourceNode): void
+  disconnectAudioSource(): void
+  setMonitorEnabled(on: boolean): void
+}
+
+function fakeEngine(): FakeEngine {
+  const engine: FakeEngine = {
     connected: [],
     monitor: [],
     isInitialized: true,
@@ -97,7 +210,14 @@ function fakeEngine() {
   return engine
 }
 
-function fakePlayer() {
+interface FakePlayer {
+  release: (() => void) | null
+  cleared: number
+  setExternalSource(fn: () => void): void
+  clearExternalSource(): void
+}
+
+function fakePlayer(): FakePlayer {
   return {
     release: null,
     cleared: 0,
@@ -112,18 +232,34 @@ function fakePlayer() {
 }
 
 function memoryStorage() {
-  const data = new Map()
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => data.set(k, v), data }
+  const data = new Map<string, string>()
+  return {
+    getItem: (k: string) => data.get(k) ?? null,
+    setItem: (k: string, v: string) => {
+      data.set(k, v)
+    },
+    data,
+  }
 }
+
+const asMediaDevices = (md: FakeMediaDevices | undefined) =>
+  md as unknown as MediaDevices | undefined
+const asEngine = (engine: FakeEngine) => engine as unknown as InputSourceEngine
+const asPlayer = (player: FakePlayer) => player as unknown as InputSourcePlayer
+const asStorage = (storage: ReturnType<typeof memoryStorage> | null) =>
+  storage as unknown as Storage | null
 
 const tick = () => new Promise((r) => setTimeout(r, 0))
 
-function setup(opts = {}) {
+function setup(opts: FakeMediaDevicesOptions = {}) {
   const md = fakeMediaDevices(opts)
   const engine = fakeEngine()
   const player = fakePlayer()
   const storage = memoryStorage()
-  const input = useInputSource(engine, player, { mediaDevices: md, storage })
+  const input = useInputSource(asEngine(engine), asPlayer(player), {
+    mediaDevices: asMediaDevices(md),
+    storage: asStorage(storage),
+  })
   return { md, engine, player, storage, input }
 }
 
@@ -136,7 +272,7 @@ test('buildInputConstraints disables voice processing and pins the device', () =
     autoGainControl: false,
     channelCount: { ideal: 2 },
   })
-  assert.equal('deviceId' in buildInputConstraints('').audio, false)
+  assert.equal('deviceId' in (buildInputConstraints('').audio as object), false)
 })
 
 test('inputErrorKey maps browser errors to messages', () => {
@@ -191,7 +327,7 @@ test('stop releases the device and hands the chain back to the playlist', async 
 test('pressing play (player release) switches back to playlist mode', async () => {
   const { input, engine, player } = setup()
   await input.start()
-  player.release()
+  player.release?.()
   assert.equal(input.isActive.value, false)
   assert.equal(input.mode.value, 'playlist')
   assert.equal(engine.connected[0].stream.track.stopped, true)
@@ -214,7 +350,7 @@ test('device choice is persisted and restarts a running input', async () => {
   await tick()
   await tick()
   assert.equal(storage.data.get('eq19_input_device'), 'line')
-  assert.deepEqual(md.calls.at(-1).audio.deviceId, { exact: 'line' })
+  assert.deepEqual(md.calls.at(-1)?.audio.deviceId, { exact: 'line' })
   assert.equal(engine.connected.length, 2)
   assert.equal(engine.connected[0].stream.track.stopped, true)
   assert.equal(input.activeLabel.value, 'Line-In')
@@ -242,7 +378,7 @@ test('a failed device switch keeps the running input', async () => {
 test('unplugging the device stops the input with a message', async () => {
   const { input, engine, player } = setup()
   await input.start()
-  engine.connected[0].stream.track.onended()
+  engine.connected[0].stream.track.onended?.()
   assert.equal(input.isActive.value, false)
   assert.equal(input.errorKey.value, 'input_err_ended')
   assert.equal(player.cleared, 1)
@@ -255,7 +391,7 @@ test('setMode(playlist) stops a live input; unsupported browsers get a message',
   assert.equal(input.isActive.value, false)
   assert.equal(input.mode.value, 'playlist')
 
-  const none = useInputSource(fakeEngine(), fakePlayer(), {
+  const none = useInputSource(asEngine(fakeEngine()), asPlayer(fakePlayer()), {
     mediaDevices: undefined,
     storage: null,
   })
@@ -277,8 +413,8 @@ test('a remembered device that is gone falls back to the default input', async (
   assert.equal(await input.start(), true)
   assert.equal(input.selectedDeviceId.value, '')
   assert.equal(storage.data.get('eq19_input_device'), '')
-  assert.deepEqual(md.calls.at(-2).audio.deviceId, { exact: 'old' })
-  assert.equal('deviceId' in md.calls.at(-1).audio, false)
+  assert.deepEqual(md.calls.at(-2)?.audio.deviceId, { exact: 'old' })
+  assert.equal('deviceId' in md.calls[md.calls.length - 1].audio, false)
 })
 
 test('OS privacy block is reported separately', async () => {
@@ -295,15 +431,30 @@ test('OS privacy block is reported separately', async () => {
 //   'full'    honoured at capture time and via applyConstraints()
 //   'initial' honoured at capture time only (applyConstraints is ignored)
 //   'none'    not supported at all (older browsers)
+interface DisplayMediaOptions {
+  audio?: boolean
+  fail?: FakeDisplayFailure | null
+  restrictOwnAudio?: boolean
+  surface?: string
+  mute?: 'full' | 'initial' | 'none'
+}
+
 function withDisplayMedia(
-  md,
-  { audio = true, fail = null, restrictOwnAudio = false, surface = 'monitor', mute = 'full' } = {}
-) {
-  md.displayCalls = []
+  base: FakeMediaDevices,
+  {
+    audio = true,
+    fail = null,
+    restrictOwnAudio = false,
+    surface = 'monitor',
+    mute = 'full',
+  }: DisplayMediaOptions = {}
+): FakeDisplayDevices {
+  const displayCalls: FakeDisplayOptions[] = []
+  const md = Object.assign(base, { displayCalls }) as FakeDisplayDevices
   md.getDisplayMedia = async (options) => {
-    md.displayCalls.push(options)
+    displayCalls.push(options)
     if (fail) throw Object.assign(new Error(fail.message || fail.name), { name: fail.name })
-    const video = {
+    const video: FakeVideoTrack = {
       kind: 'video',
       stopped: false,
       getSettings: () => ({ displaySurface: surface }),
@@ -312,7 +463,7 @@ function withDisplayMedia(
       },
     }
     const tabCapture = surface === 'browser'
-    const audioTrack = {
+    const audioTrack: FakeSystemAudioTrack = {
       kind: 'audio',
       label: 'System Audio',
       stopped: false,
@@ -346,12 +497,15 @@ function withDisplayMedia(
   return md
 }
 
-function setupSystem(opts = {}, mdOpts = {}) {
+function setupSystem(opts: DisplayMediaOptions = {}, mdOpts: FakeMediaDevicesOptions = {}) {
   const md = withDisplayMedia(fakeMediaDevices(mdOpts), opts)
   const engine = fakeEngine()
   const player = fakePlayer()
   const storage = memoryStorage()
-  const input = useInputSource(engine, player, { mediaDevices: md, storage })
+  const input = useInputSource(asEngine(engine), asPlayer(player), {
+    mediaDevices: asMediaDevices(md),
+    storage: asStorage(storage),
+  })
   return { md, engine, player, storage, input }
 }
 
@@ -484,11 +638,13 @@ test('screen share: the tab is never muted and monitoring stays as configured', 
 
 test('system audio keeps this page in front (CaptureController focus behaviour)', async () => {
   class FakeCaptureController {
-    setFocusBehavior(behavior) {
+    focus = ''
+    setFocusBehavior(behavior: string) {
       this.focus = behavior
     }
   }
-  globalThis.CaptureController = FakeCaptureController
+  const scope = globalThis as { CaptureController?: unknown }
+  scope.CaptureController = FakeCaptureController
   try {
     const { input, md } = setupSystem()
     input.selectDevice(SYSTEM_AUDIO)
@@ -497,7 +653,7 @@ test('system audio keeps this page in front (CaptureController focus behaviour)'
     assert.ok(controller instanceof FakeCaptureController)
     assert.equal(controller.focus, 'no-focus-change')
   } finally {
-    delete globalThis.CaptureController
+    delete scope.CaptureController
   }
 })
 
@@ -515,7 +671,7 @@ test('"Stop sharing" in the browser stops quietly', async () => {
   const { input, md, player } = setupSystem()
   input.selectDevice(SYSTEM_AUDIO)
   await input.start()
-  md.lastAudio.onended()
+  md.lastAudio.onended?.()
   assert.equal(input.isActive.value, false)
   assert.equal(input.errorKey.value, '')
   assert.equal(player.cleared, 1)
@@ -532,9 +688,9 @@ test('output devices are listed for information, placeholder inputs are ignored'
       },
     ],
   })
-  const input = useInputSource(fakeEngine(), fakePlayer(), {
-    mediaDevices: md,
-    storage: memoryStorage(),
+  const input = useInputSource(asEngine(fakeEngine()), asPlayer(fakePlayer()), {
+    mediaDevices: asMediaDevices(md),
+    storage: asStorage(memoryStorage()),
   })
   await tick()
   assert.equal(input.devices.value.length, 0)
