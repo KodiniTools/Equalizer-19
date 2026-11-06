@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { useCustomPresets, isCustomPresetId } from '../src/composables/useCustomPresets.js'
+import { useCustomPresets, isCustomPresetId } from '../src/composables/useCustomPresets'
 
 function memoryStorage(initial = {}) {
   const data = new Map(Object.entries(initial))

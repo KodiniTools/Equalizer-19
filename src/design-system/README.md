@@ -14,7 +14,7 @@ Design-Tokens von Equalizer 19. Die Namen sind die Quellnamen der App
 
 ## Theme-Mechanik
 
-`useTheme.js` setzt `html[data-theme]` (Dark ist Standard, Light bei `data-theme='light'`); die
+`useTheme.ts` setzt `html[data-theme]` (Dark ist Standard, Light bei `data-theme='light'`); die
 SSI-Partials lesen dasselbe Attribut. Beide Token-Selektoren treffen `<html>`, deshalb lösen
 Tokens mit `var()`-Verweis (`--eq-boost`, `--eq-cut`) im Light-Theme automatisch um.
 

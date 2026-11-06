@@ -112,15 +112,15 @@ Equalizer-19/
 │   ├── i18n/               # Übersetzungen: de.ts (Referenz, TranslationKey), en.ts (Record<TranslationKey, string>), index.ts (translations, LANGUAGES)
 │   │
 │   ├── composables/        # Vue Composition API Logik
-│   │   ├── useCountdown.js            # Startverzögerung der Aufnahme (Countdown)
-│   │   ├── useCustomPresets.js        # Eigene EQ-Presets (localStorage)
-│   │   ├── useFileDrop.js             # Dateiauswahl & Drag & Drop (inkl. Ordner)
-│   │   ├── useI18n.js                 # Internationalisierung (liest src/i18n/)
-│   │   ├── useInputSource.js          # Audio-Eingang (getUserMedia/getDisplayMedia) in die Kette hängen
-│   │   ├── useKeyboardShortcuts.js    # Tastaturkürzel
-│   │   ├── useOutputRecorder.js       # Output-Stream-Recording (WebM/WAV)
-│   │   ├── useTheme.js                # Dark/Light Mode
-│   │   └── useUndoRedo.js             # Verlauf der Klangeinstellungen (vom History-Store genutzt)
+│   │   ├── useCountdown.ts            # Startverzögerung der Aufnahme (Countdown)
+│   │   ├── useCustomPresets.ts        # Eigene EQ-Presets (localStorage)
+│   │   ├── useFileDrop.ts             # Dateiauswahl & Drag & Drop (inkl. Ordner)
+│   │   ├── useI18n.ts                 # Internationalisierung (liest src/i18n/)
+│   │   ├── useInputSource.ts          # Audio-Eingang (getUserMedia/getDisplayMedia) in die Kette hängen
+│   │   ├── useKeyboardShortcuts.ts    # Tastaturkürzel
+│   │   ├── useOutputRecorder.ts       # Output-Stream-Recording (WebM/WAV)
+│   │   ├── useTheme.ts                # Dark/Light Mode
+│   │   └── useUndoRedo.ts             # Verlauf der Klangeinstellungen (vom History-Store genutzt)
 │   │
 │   ├── utils/              # Hilfsfunktionen & Konstanten
 │   │   ├── audioBlob.ts            # Blob-Prüfung für übergebene Dateien
@@ -349,7 +349,7 @@ const { t } = inject('i18n')
 
 ### Undo/Redo
 
-`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.ts`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
+`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.ts`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.ts`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
 
 ### Browser-Kompatibilität
 

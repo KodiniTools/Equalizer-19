@@ -1,7 +1,7 @@
 import { ref, computed, getCurrentInstance, onBeforeUnmount } from 'vue'
 
 /** Selectable recording start delays in seconds (0 = start immediately). */
-export const START_DELAYS = [0, 3, 5, 10]
+export const START_DELAYS: readonly number[] = [0, 3, 5, 10]
 
 /**
  * Whole-second countdown that runs a callback when it reaches zero.
@@ -12,9 +12,9 @@ export function useCountdown() {
   const remaining = ref(0)
   const total = ref(0)
   const isCounting = computed(() => remaining.value > 0)
-  let timer = null
+  let timer: ReturnType<typeof setInterval> | null = null
 
-  function clear() {
+  function clear(): void {
     if (timer !== null) {
       clearInterval(timer)
       timer = null
@@ -22,10 +22,9 @@ export function useCountdown() {
   }
 
   /**
-   * @param {number} seconds  delay; <= 0 runs onDone right away
-   * @param {() => void} onDone
+   * @param seconds  delay; <= 0 runs onDone right away
    */
-  function start(seconds, onDone) {
+  function start(seconds: number, onDone: () => void): void {
     cancel()
     const delay = Math.max(0, Math.floor(Number(seconds) || 0))
     if (delay === 0) {
@@ -44,7 +43,7 @@ export function useCountdown() {
     }, 1000)
   }
 
-  function cancel() {
+  function cancel(): void {
     clear()
     remaining.value = 0
   }

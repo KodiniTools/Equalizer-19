@@ -5,20 +5,61 @@ const VOLUME_STEP = 0.05
 
 const TEXT_INPUT_TYPES = new Set(['text', 'search', 'email', 'url', 'number', 'password', 'tel'])
 
-function isInputFocused() {
+export type HistoryAction = 'undo' | 'redo'
+
+/** The part of the player store the shortcuts drive. */
+export interface ShortcutPlayer {
+  currentTime: number
+  duration: number
+  volume: number
+  togglePlayPause(): void
+  seek(time: number): void
+  setVolume(value: number): void
+  toggleMute(): void
+  playNext(): void
+  playPrevious(): void
+}
+
+/** The part of the playlist store the shortcuts read. */
+export interface ShortcutPlaylist {
+  hasPlaylist: boolean
+  hasTrack: boolean
+  canPlayNext: boolean
+  canPlayPrevious: boolean
+}
+
+/** Processing history (undo/redo). */
+export interface ShortcutHistory {
+  undo(): unknown
+  redo(): unknown
+}
+
+export interface KeyboardShortcutOptions {
+  playlist: ShortcutPlaylist
+  history?: ShortcutHistory | null
+}
+
+/** The key properties historyActionForKey() looks at (a KeyboardEvent or a test stub). */
+export type KeyLike = Pick<KeyboardEvent, 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'> & {
+  key?: unknown
+}
+
+function isInputFocused(): boolean {
   const tag = document.activeElement?.tagName?.toLowerCase()
   return tag === 'input' || tag === 'textarea' || tag === 'select'
 }
 
 // Text fields own Ctrl+Z natively (undoing typed text); sliders, selects and
 // buttons do not, so the app-wide undo/redo may act while they have focus.
-function isTextEditingFocused() {
-  const el = document.activeElement
+function isTextEditingFocused(): boolean {
+  const el = document.activeElement as HTMLElement | null
   if (!el) return false
   if (el.isContentEditable) return true
   const tag = el.tagName?.toLowerCase()
   if (tag === 'textarea') return true
-  return tag === 'input' && TEXT_INPUT_TYPES.has((el.type || 'text').toLowerCase())
+  return (
+    tag === 'input' && TEXT_INPUT_TYPES.has(((el as HTMLInputElement).type || 'text').toLowerCase())
+  )
 }
 
 /**
@@ -27,7 +68,7 @@ function isTextEditingFocused() {
  * labelled Z sits where US layouts have Y, and `code` would swap undo and redo.
  * Returns 'undo', 'redo' or null.
  */
-export function historyActionForKey(e) {
+export function historyActionForKey(e: KeyLike): HistoryAction | null {
   const mod = e.ctrlKey || e.metaKey
   if (!mod || e.altKey) return null
   const key = typeof e.key === 'string' ? e.key.toLowerCase() : ''
@@ -38,15 +79,17 @@ export function historyActionForKey(e) {
 
 /**
  * @param audioPlayer Player-Store (Transport, Position, Lautstärke)
- * @param {object} options
  * @param options.playlist Playlist-Store (hasPlaylist, hasTrack, canPlayNext, canPlayPrevious)
- * @param {{ undo: Function, redo: Function }} [options.history] processing history (undo/redo)
+ * @param options.history processing history (undo/redo)
  */
-export function useKeyboardShortcuts(audioPlayer, { playlist, history = null }) {
-  function onKeydown(e) {
+export function useKeyboardShortcuts(
+  audioPlayer: ShortcutPlayer,
+  { playlist, history = null }: KeyboardShortcutOptions
+): void {
+  function onKeydown(e: KeyboardEvent): void {
     // Undo / redo first: they also work while a slider has focus
     const historyAction = history ? historyActionForKey(e) : null
-    if (historyAction) {
+    if (historyAction && history) {
       if (isTextEditingFocused()) return
       e.preventDefault()
       history[historyAction]()

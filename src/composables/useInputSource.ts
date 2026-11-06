@@ -10,14 +10,80 @@ const DEVICE_STORAGE_KEY = 'eq19_input_device'
  */
 export const SYSTEM_AUDIO = '__system__'
 
+export type InputMode = 'playlist' | 'input'
+
+/** Display surface of a system-audio share ('' while no system audio is active). */
+export type DisplaySurface = 'browser' | 'window' | 'monitor' | ''
+
+export interface InputDevice {
+  deviceId: string
+  label: string
+}
+
+/** Chrome's CaptureController (not in lib.dom yet). */
+interface CaptureController {
+  setFocusBehavior(behavior: 'focus-captured-surface' | 'no-focus-change'): void
+}
+
+type CaptureControllerCtor = new () => CaptureController
+
+/** getDisplayMedia options incl. Chrome extensions beyond DisplayMediaStreamOptions. */
+export interface SystemAudioOptions {
+  video: true
+  audio: MediaTrackConstraints & {
+    suppressLocalAudioPlayback: boolean
+    restrictOwnAudio: boolean
+  }
+  systemAudio: 'include' | 'exclude'
+  selfBrowserSurface: 'include' | 'exclude'
+  surfaceSwitching: 'include' | 'exclude'
+  monitorTypeSurfaces: 'include' | 'exclude'
+  controller?: CaptureController
+}
+
+/** The part of the audio engine store the input source drives. */
+export interface InputSourceEngine {
+  isInitialized: boolean
+  sourceNode: AudioNode | null
+  audioContext: {
+    state: AudioContextState
+    resume(): Promise<void>
+    createMediaStreamSource(stream: MediaStream): MediaStreamAudioSourceNode
+  } | null
+  initAudioContext(): void
+  connectAudioSource(node: AudioNode): void
+  disconnectAudioSource(): void
+  setMonitorEnabled(enabled: boolean): void
+}
+
+/** The part of the player store the input source talks to. */
+export interface InputSourcePlayer {
+  setExternalSource(release: () => void): void
+  clearExternalSource(): void
+}
+
+export interface InputSourceDeps {
+  mediaDevices?: MediaDevices | null
+  storage?: Storage | null
+}
+
+export interface InputErrorContext {
+  /** a particular device was requested (otherwise "not found" means no recording device at all) */
+  specificDevice?: boolean
+  /** the error came from sharing system audio */
+  systemAudio?: boolean
+}
+
 /**
  * getDisplayMedia options for capturing system audio. Chrome requires video to
  * be requested; the video track is stopped right away.
  *
- * @param {CaptureController|null} [controller] lets the app stay in front
- *   instead of Chrome switching to the shared tab/window
+ * @param controller lets the app stay in front instead of Chrome switching to
+ *   the shared tab/window
  */
-export function buildSystemAudioOptions(controller = null) {
+export function buildSystemAudioOptions(
+  controller: CaptureController | null = null
+): SystemAudioOptions {
   return {
     video: true,
     audio: {
@@ -44,7 +110,7 @@ export function buildSystemAudioOptions(controller = null) {
  * switched off (it would pump, gate and colour the signal); stereo if possible.
  * An empty deviceId means the system default input.
  */
-export function buildInputConstraints(deviceId) {
+export function buildInputConstraints(deviceId: string): MediaStreamConstraints {
   return {
     audio: {
       ...(deviceId ? { deviceId: { exact: deviceId } } : {}),
@@ -60,21 +126,25 @@ export function buildInputConstraints(deviceId) {
 // getUserMedia errors meaning "this device does not exist (any more)"
 const DEVICE_MISSING = new Set(['NotFoundError', 'OverconstrainedError'])
 
+// Errors arrive as DOMException/Error or, from older engines and tests, as plain { name, message }
+function errorField(error: unknown, field: 'name' | 'message'): string {
+  if (typeof error !== 'object' || error === null) return ''
+  const value = (error as Record<string, unknown>)[field]
+  return typeof value === 'string' ? value : ''
+}
+
 /**
  * Map a getUserMedia / Web Audio error to a translation key.
- *
- * @param {Error} error
- * @param {{ specificDevice?: boolean, systemAudio?: boolean }} [ctx]
- *   specificDevice: a particular device was requested (otherwise "not found"
- *   means the system offers no recording device at all);
- *   systemAudio: the error came from sharing system audio
  */
-export function inputErrorKey(error, { specificDevice = false, systemAudio = false } = {}) {
-  switch (error?.name) {
+export function inputErrorKey(
+  error: unknown,
+  { specificDevice = false, systemAudio = false }: InputErrorContext = {}
+): string {
+  switch (errorField(error, 'name')) {
     case 'NotAllowedError':
     case 'SecurityError':
       // Chrome reports an OS-level block (privacy settings) as "Permission denied by system"
-      if (/system/i.test(error?.message || '')) return 'input_err_denied_system'
+      if (/system/i.test(errorField(error, 'message'))) return 'input_err_denied_system'
       // For screen sharing this simply means the share dialog was cancelled
       return systemAudio ? 'input_err_share_cancelled' : 'input_err_denied'
     case 'NoAudioTrackError':
@@ -95,6 +165,17 @@ export function inputErrorKey(error, { specificDevice = false, systemAudio = fal
   }
 }
 
+interface AcquiredStream {
+  stream: MediaStream
+  surface: DisplaySurface
+}
+
+/** Track settings beyond lib.dom (Chrome). */
+interface ExtendedTrackSettings extends MediaTrackSettings {
+  displaySurface?: string
+  suppressLocalAudioPlayback?: boolean
+}
+
 /**
  * Live audio input (line-in, microphone, "Stereo Mix", virtual cable …) or the
  * PC's own playback (SYSTEM_AUDIO, via screen sharing) as an alternative
@@ -107,22 +188,30 @@ export function inputErrorKey(error, { specificDevice = false, systemAudio = fal
  * play releases the input and switches back to the playlist. Speaker
  * monitoring is off by default for inputs to prevent feedback loops.
  *
- * @param {object} audioEngine  Audio-Engine-Store (stores/audioEngine.js)
- * @param {object} audioPlayer  Player-Store (stores/player.js)
- * @param {{ mediaDevices?: MediaDevices, storage?: Storage }} [deps] injectable for tests
+ * @param audioEngine audio engine store (stores/audioEngine.js)
+ * @param audioPlayer player store (stores/player.js)
+ * @param deps injectable for tests (a key that is present but null disables the feature)
  */
-export function useInputSource(audioEngine, audioPlayer, deps = {}) {
-  const mediaDevices =
+export function useInputSource(
+  audioEngine: InputSourceEngine,
+  audioPlayer: InputSourcePlayer,
+  deps: InputSourceDeps = {}
+) {
+  const mediaDevices: MediaDevices | null | undefined =
     'mediaDevices' in deps ? deps.mediaDevices : globalThis.navigator?.mediaDevices
-  const storage = 'storage' in deps ? deps.storage : globalThis.localStorage
+  const storage: Storage | null | undefined =
+    'storage' in deps ? deps.storage : globalThis.localStorage
 
   const isSupported = typeof mediaDevices?.getUserMedia === 'function'
   const systemAudioSupported = typeof mediaDevices?.getDisplayMedia === 'function'
   // Can the capture exclude this tab's own output? Only then is monitoring
   // system audio safe (otherwise the processed sound is captured again → loop).
-  const ownAudioExcludable = !!mediaDevices?.getSupportedConstraints?.()?.restrictOwnAudio
-  const mode = ref('playlist')
-  const devices = ref([]) // { deviceId, label } – labels are empty until access was granted
+  const supported = mediaDevices?.getSupportedConstraints?.() as
+    | (MediaTrackSupportedConstraints & { restrictOwnAudio?: boolean })
+    | undefined
+  const ownAudioExcludable = !!supported?.restrictOwnAudio
+  const mode = ref<InputMode>('playlist')
+  const devices = ref<InputDevice[]>([]) // labels are empty until access was granted
   const selectedDeviceId = ref(loadDevice())
   const isActive = ref(false)
   const isStarting = ref(false)
@@ -131,10 +220,10 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   const activeLabel = ref('')
   const activeIsSystem = ref(false)
   // What the system-audio share covers: 'browser' (a tab), 'window', 'monitor' or ''
-  const activeSurface = ref('')
+  const activeSurface = ref<DisplaySurface>('')
   // Tab share: is the shared tab muted locally by the browser right now?
   const tabMuted = ref(false)
-  const outputs = ref([]) // detected output devices (information only)
+  const outputs = ref<InputDevice[]>([]) // detected output devices (information only)
 
   const isSystemSelected = computed(() => selectedDeviceId.value === SYSTEM_AUDIO)
   // A shared tab is never this one (selfBrowserSurface: 'exclude'), so its
@@ -144,11 +233,11 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     () => !isSystemSelected.value || ownAudioExcludable || isTabShare.value
   )
 
-  let stream = null
-  let sourceNode = null
+  let stream: MediaStream | null = null
+  let sourceNode: MediaStreamAudioSourceNode | null = null
   let monitorTouched = false // the user set the monitor switch themselves
 
-  function loadDevice() {
+  function loadDevice(): string {
     try {
       return storage?.getItem(DEVICE_STORAGE_KEY) || ''
     } catch {
@@ -156,7 +245,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     }
   }
 
-  function saveDevice(id) {
+  function saveDevice(id: string): void {
     try {
       storage?.setItem(DEVICE_STORAGE_KEY, id)
     } catch {
@@ -164,12 +253,12 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
     }
   }
 
-  async function refreshDevices() {
+  async function refreshDevices(): Promise<void> {
     if (typeof mediaDevices?.enumerateDevices !== 'function') return
     try {
       const list = await mediaDevices.enumerateDevices()
       // Without permission some browsers report placeholder entries without id
-      const real = (d) => d.deviceId && d.deviceId !== 'default'
+      const real = (d: MediaDeviceInfo) => d.deviceId && d.deviceId !== 'default'
       devices.value = list
         .filter((d) => d.kind === 'audioinput' && real(d))
         .map((d) => ({ deviceId: d.deviceId, label: d.label || '' }))
@@ -183,7 +272,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   }
 
   /** Stop the stream and detach it from the chain (no player hand-back). */
-  function stopStream() {
+  function stopStream(): void {
     if (stream) {
       stream.getTracks().forEach((track) => {
         track.onended = null
@@ -216,18 +305,19 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
    * Resolves { stream, surface }; surface is the shared display surface
    * ('browser' | 'window' | 'monitor') for system audio, '' otherwise.
    */
-  async function acquireStream(deviceId) {
+  async function acquireStream(deviceId: string): Promise<AcquiredStream> {
     if (deviceId === SYSTEM_AUDIO) {
-      if (!systemAudioSupported) {
+      if (!systemAudioSupported || !mediaDevices) {
         throw Object.assign(new Error('getDisplayMedia unsupported'), {
           name: 'SystemAudioUnsupportedError',
         })
       }
+      const Controller = (globalThis as { CaptureController?: unknown }).CaptureController
       const controller =
-        typeof globalThis.CaptureController === 'function'
-          ? new globalThis.CaptureController()
-          : null
-      const display = await mediaDevices.getDisplayMedia(buildSystemAudioOptions(controller))
+        typeof Controller === 'function' ? new (Controller as CaptureControllerCtor)() : null
+      const display = await mediaDevices.getDisplayMedia(
+        buildSystemAudioOptions(controller) as DisplayMediaStreamOptions
+      )
       // Keep this page in front: Chrome would otherwise switch to the shared tab/window
       try {
         controller?.setFocusBehavior('no-focus-change')
@@ -235,7 +325,8 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
         // too late or unsupported – only the focus is affected
       }
       const video = display.getVideoTracks()[0]
-      const surface = video?.getSettings?.()?.displaySurface || ''
+      const surface = ((video?.getSettings?.() as ExtendedTrackSettings | undefined)
+        ?.displaySurface || '') as DisplaySurface
       // Only the sound is used; ending the picture also removes the capture overhead
       display.getVideoTracks().forEach((track) => track.stop())
       if (display.getAudioTracks().length === 0) {
@@ -245,6 +336,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       return { stream: display, surface }
     }
 
+    if (!mediaDevices) throw new Error('getUserMedia unsupported')
     try {
       return {
         stream: await mediaDevices.getUserMedia(buildInputConstraints(deviceId)),
@@ -252,7 +344,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       }
     } catch (error) {
       // The remembered device is gone (unplugged, disabled): fall back to the default input
-      if (!deviceId || !DEVICE_MISSING.has(error?.name)) throw error
+      if (!deviceId || !DEVICE_MISSING.has(errorField(error, 'name'))) throw error
       selectedDeviceId.value = ''
       saveDevice('')
       return { stream: await mediaDevices.getUserMedia(buildInputConstraints('')), surface: '' }
@@ -266,17 +358,21 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
    * runtime change) – tabMuted always reflects what it actually does, and the
    * user is never left with silence: a muted tab keeps monitoring on.
    */
-  async function syncTabPlayback() {
+  async function syncTabPlayback(): Promise<void> {
     const track = stream?.getAudioTracks?.()[0]
     if (!track || !isTabShare.value) {
       tabMuted.value = false
       return
     }
-    const isMuted = () => track.getSettings?.()?.suppressLocalAudioPlayback === true
+    const isMuted = () =>
+      (track.getSettings?.() as ExtendedTrackSettings | undefined)?.suppressLocalAudioPlayback ===
+      true
     const wantMuted = monitorAllowed.value && monitor.value
     if (isMuted() !== wantMuted && typeof track.applyConstraints === 'function') {
       try {
-        await track.applyConstraints({ suppressLocalAudioPlayback: wantMuted })
+        await track.applyConstraints({
+          suppressLocalAudioPlayback: wantMuted,
+        } as MediaTrackConstraints)
       } catch {
         // not supported – fall through and report the real state
       }
@@ -289,7 +385,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   }
 
   /** Create/resume the AudioContext synchronously (no await: keeps user activation). */
-  function wakeEngine() {
+  function wakeEngine(): void {
     try {
       if (!audioEngine.isInitialized) audioEngine.initAudioContext()
       const ctx = audioEngine.audioContext
@@ -302,7 +398,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   }
 
   // Called by the player when the user starts playback while the input is live
-  function releaseToPlaylist() {
+  function releaseToPlaylist(): void {
     stopStream()
     mode.value = 'playlist'
   }
@@ -311,7 +407,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
    * Start (or restart, e.g. after a device change) the selected input.
    * Resolves true on success; on failure errorKey holds a translation key.
    */
-  async function start() {
+  async function start(): Promise<boolean> {
     const system = selectedDeviceId.value === SYSTEM_AUDIO
     if (!isSupported && !(system && systemAudioSupported)) {
       errorKey.value = 'input_err_unsupported'
@@ -339,7 +435,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
       }
       if (ctx.state === 'suspended') await ctx.resume()
 
-      let node
+      let node: MediaStreamAudioSourceNode
       try {
         node = ctx.createMediaStreamSource(newStream)
       } catch (error) {
@@ -399,28 +495,28 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   }
 
   /** Stop the input and give the chain back to the playlist. */
-  function stop() {
+  function stop(): void {
     const hadInput = isActive.value || stream !== null
     stopStream()
     if (hadInput) audioPlayer.clearExternalSource()
   }
 
   /** Switch between 'playlist' and 'input'. Leaving 'input' stops a live input. */
-  function setMode(next) {
+  function setMode(next: string): void {
     if (next !== 'playlist' && next !== 'input') return
     if (next === 'playlist') stop()
     errorKey.value = ''
     mode.value = next
   }
 
-  function selectDevice(deviceId) {
+  function selectDevice(deviceId: string | null | undefined): void {
     selectedDeviceId.value = deviceId || ''
     saveDevice(selectedDeviceId.value)
     if (isActive.value) start()
   }
 
   /** Speaker monitoring for the live input (recording is unaffected). */
-  function setMonitor(enabled) {
+  function setMonitor(enabled: boolean): void {
     monitor.value = !!enabled
     monitorTouched = true
     if (isActive.value) {
@@ -432,7 +528,7 @@ export function useInputSource(audioEngine, audioPlayer, deps = {}) {
   mediaDevices?.addEventListener?.('devicechange', refreshDevices)
   refreshDevices()
 
-  function dispose() {
+  function dispose(): void {
     mediaDevices?.removeEventListener?.('devicechange', refreshDevices)
     stop()
   }

@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { getAudioFiles, useFileDrop } from '../src/composables/useFileDrop.js'
+import { getAudioFiles, useFileDrop } from '../src/composables/useFileDrop'
 
 const file = (name, type = '') => ({ name, type })
 
