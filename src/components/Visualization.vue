@@ -11,17 +11,18 @@
   </div>
 </template>
 
-<script setup>
-  import { ref, inject, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+  import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
 
-  const canvasRef = ref(null)
+  const canvasRef = ref<HTMLCanvasElement | null>(null)
   const canvasWidth = ref(800)
   const canvasHeight = ref(200)
-  let animationId = null
+  let animationId: number | null = null
 
   function getThemeColors() {
     const style = getComputedStyle(document.documentElement)
@@ -33,18 +34,18 @@
     }
   }
 
-  function drawVisualization() {
-    if (!canvasRef.value || !audioEngine) {
+  function drawVisualization(): void {
+    const canvas = canvasRef.value
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) {
       animationId = requestAnimationFrame(drawVisualization)
       return
     }
 
-    const canvas = canvasRef.value
-    const ctx = canvas.getContext('2d')
     const colors = getThemeColors()
 
     // Get audio data
-    let dataArray
+    let dataArray: Uint8Array | null = null
     try {
       const nodes = audioEngine.getAudioNodes()
       if (!nodes || !nodes.analyserNode) {
@@ -53,7 +54,7 @@
       }
 
       dataArray = audioEngine.getFrequencyData()
-    } catch (e) {
+    } catch {
       animationId = requestAnimationFrame(drawVisualization)
       return
     }
@@ -99,8 +100,8 @@
 
   onMounted(() => {
     // Set canvas size based on container
-    if (canvasRef.value) {
-      const container = canvasRef.value.parentElement
+    const container = canvasRef.value?.parentElement
+    if (container) {
       canvasWidth.value = container.clientWidth - 50
       canvasHeight.value = 200
     }

@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import HeroNav from '../components/landing/HeroNav.vue'
   import LandingHero from '../components/landing/LandingHero.vue'
   import LandingFacts from '../components/landing/LandingFacts.vue'

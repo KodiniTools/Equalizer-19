@@ -1,4 +1,4 @@
-import { ref, computed, getCurrentInstance, onBeforeUnmount } from 'vue'
+import { ref, computed, getCurrentInstance, inject, onBeforeUnmount } from 'vue'
 
 const DEVICE_STORAGE_KEY = 'eq19_input_device'
 
@@ -562,4 +562,18 @@ export function useInputSource(
     setMonitor,
     dispose,
   }
+}
+
+export type InputSourceApi = ReturnType<typeof useInputSource>
+
+/**
+ * The live-input API provided by AppPage (`provide('inputSource', …)`), typed
+ * for the components. Throws when used outside the app page.
+ */
+export function injectInputSource(): InputSourceApi {
+  const input = inject<InputSourceApi>('inputSource')
+  if (!input) {
+    throw new Error("inputSource is not provided: AppPage.vue calls provide('inputSource', …)")
+  }
+  return input
 }

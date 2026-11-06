@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { provide, onMounted } from 'vue'
   import { useI18n } from './composables/useI18n'
   import { useTheme } from './composables/useTheme'
@@ -22,7 +22,7 @@
     history: useHistoryStore(),
   })
 
-  // Provide to all child components
+  // Provide to all child components (read via injectI18n() / injectTheme())
   provide('i18n', { t, currentLanguage, setLanguage })
   provide('theme', { currentTheme, setTheme })
 

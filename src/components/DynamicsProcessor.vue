@@ -33,7 +33,7 @@
           :max="0"
           :step="1"
           :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_threshold.replace('{val}', threshold)"
+          :aria-label="t.a11y_threshold.replace('{val}', String(threshold))"
           @input="applySettings"
         />
         <SliderField
@@ -45,7 +45,7 @@
           :max="20"
           :step="0.5"
           :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_ratio.replace('{val}', ratio)"
+          :aria-label="t.a11y_ratio.replace('{val}', String(ratio))"
           @input="applySettings"
         />
         <SliderField
@@ -57,7 +57,7 @@
           :max="40"
           :step="1"
           :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_knee.replace('{val}', knee)"
+          :aria-label="t.a11y_knee.replace('{val}', String(knee))"
           @input="applySettings"
         />
         <SliderField
@@ -89,64 +89,53 @@
   </UiPanel>
 </template>
 
-<script setup>
-  import { ref, inject, onMounted, watch, useId } from 'vue'
+<script setup lang="ts">
+  import { ref, onMounted, watch, useId } from 'vue'
   import AppIcon from './AppIcon.vue'
   import { DEFAULT_DYNAMICS } from '../utils/presets'
   import CompressorPresets from './CompressorPresets.vue'
   import { SliderField, UiIconButton, UiPanel } from './ui'
   import { useAudioEngineStore } from '../stores/audioEngine'
+  import { injectI18n } from '../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
   const audioEngine = useAudioEngineStore()
 
   // Unique ids linking labels to their controls
   const uid = useId()
-  const ids = Object.fromEntries(
-    ['preset', 'threshold', 'ratio', 'knee', 'attack', 'release'].map((k) => [k, `${uid}-${k}`])
-  )
+  const ID_KEYS = ['preset', 'threshold', 'ratio', 'knee', 'attack', 'release'] as const
+  const ids = Object.fromEntries(ID_KEYS.map((k) => [k, `${uid}-${k}`])) as Record<
+    (typeof ID_KEYS)[number],
+    string
+  >
 
-  const threshold = ref(DEFAULT_DYNAMICS.threshold)
-  const ratio = ref(DEFAULT_DYNAMICS.ratio)
-  const knee = ref(DEFAULT_DYNAMICS.knee)
-  const attack = ref(DEFAULT_DYNAMICS.attack)
-  const release = ref(DEFAULT_DYNAMICS.release)
-  const dynamicsEnabled = ref(true)
-
-  if (audioEngine && audioEngine.dynamics) {
-    threshold.value = audioEngine.dynamics.threshold
-    ratio.value = audioEngine.dynamics.ratio
-    knee.value = audioEngine.dynamics.knee
-    attack.value = audioEngine.dynamics.attack
-    release.value = audioEngine.dynamics.release
-    dynamicsEnabled.value = audioEngine.dynamicsEnabled
-  }
+  const threshold = ref(audioEngine.dynamics.threshold)
+  const ratio = ref(audioEngine.dynamics.ratio)
+  const knee = ref(audioEngine.dynamics.knee)
+  const attack = ref(audioEngine.dynamics.attack)
+  const release = ref(audioEngine.dynamics.release)
+  const dynamicsEnabled = ref(audioEngine.dynamicsEnabled)
 
   // Watch for external changes (e.g., from presets or undo/redo)
-  if (audioEngine && audioEngine.dynamics) {
-    watch(
-      () => ({ ...audioEngine.dynamics }),
-      (newVal) => {
-        threshold.value = newVal.threshold
-        ratio.value = newVal.ratio
-        knee.value = newVal.knee
-        attack.value = newVal.attack
-        release.value = newVal.release
-      },
-      { deep: true }
-    )
-  }
-  if (audioEngine && audioEngine.dynamicsEnabled) {
-    watch(
-      () => audioEngine.dynamicsEnabled,
-      (enabled) => {
-        dynamicsEnabled.value = enabled
-      }
-    )
-  }
+  watch(
+    () => ({ ...audioEngine.dynamics }),
+    (newVal) => {
+      threshold.value = newVal.threshold
+      ratio.value = newVal.ratio
+      knee.value = newVal.knee
+      attack.value = newVal.attack
+      release.value = newVal.release
+    },
+    { deep: true }
+  )
+  watch(
+    () => audioEngine.dynamicsEnabled,
+    (enabled) => {
+      dynamicsEnabled.value = enabled
+    }
+  )
 
-  function applySettings() {
-    if (!audioEngine || !audioEngine.updateDynamics) return
+  function applySettings(): void {
     audioEngine.updateDynamics({
       threshold: threshold.value,
       ratio: ratio.value,
@@ -156,14 +145,12 @@
     })
   }
 
-  function toggleDynamics() {
-    if (audioEngine && audioEngine.toggleDynamics) {
-      audioEngine.toggleDynamics()
-      dynamicsEnabled.value = audioEngine.dynamicsEnabled
-    }
+  function toggleDynamics(): void {
+    audioEngine.toggleDynamics()
+    dynamicsEnabled.value = audioEngine.dynamicsEnabled
   }
 
-  function resetDynamics() {
+  function resetDynamics(): void {
     threshold.value = DEFAULT_DYNAMICS.threshold
     ratio.value = DEFAULT_DYNAMICS.ratio
     knee.value = DEFAULT_DYNAMICS.knee
