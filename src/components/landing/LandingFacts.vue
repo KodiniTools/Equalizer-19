@@ -21,11 +21,11 @@
   </section>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../utils/presets'
+  import { injectI18n } from '../../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   // Facts derived from the actual configuration, so they never go stale
   const bandCount = EQ_BAND_FREQUENCIES.length

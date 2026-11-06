@@ -34,16 +34,17 @@
   </Teleport>
 </template>
 
-<script setup>
-  import { computed, inject, watch, onBeforeUnmount } from 'vue'
+<script setup lang="ts">
+  import { computed, watch, onBeforeUnmount } from 'vue'
+  import { injectI18n } from '../../composables/useI18n'
 
-  const props = defineProps({
-    remaining: { type: Number, required: true },
-    total: { type: Number, required: true },
-  })
-  const emit = defineEmits(['cancel'])
+  const props = defineProps<{
+    remaining: number
+    total: number
+  }>()
+  const emit = defineEmits<{ cancel: [] }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   const RADIUS = 52
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS
@@ -55,7 +56,7 @@
   })
 
   // Escape cancels while the countdown is visible
-  function onKeydown(event) {
+  function onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       event.preventDefault()
       emit('cancel')

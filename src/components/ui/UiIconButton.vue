@@ -13,21 +13,25 @@
   </UiButton>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import UiButton from './UiButton.vue'
+  import type { UiButtonVariant, UiSize } from './types'
 
   /**
    * Quadratischer Icon-Button. `label` ist Pflicht und wird zu aria-label und
    * title; ein eigenes `title`-Attribut überschreibt nur den Tooltip.
    * Das Icon (AppIcon) kommt in den Default-Slot.
    */
-  defineProps({
-    label: { type: String, required: true },
-    variant: { type: String, default: 'secondary' },
-    size: { type: String, default: 'sm', validator: (v) => ['sm', 'md', 'lg'].includes(v) },
-    pressed: { type: [Boolean, null], default: null },
-    round: { type: Boolean, default: false },
-  })
+  withDefaults(
+    defineProps<{
+      label: string
+      variant?: UiButtonVariant
+      size?: UiSize
+      pressed?: boolean | null
+      round?: boolean
+    }>(),
+    { variant: 'secondary', size: 'sm', pressed: null, round: false }
+  )
 </script>
 
 <style scoped>

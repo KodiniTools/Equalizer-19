@@ -38,25 +38,35 @@
   </UiDialog>
 </template>
 
-<script setup>
-  import { ref, computed, watch, inject, nextTick } from 'vue'
+<script setup lang="ts">
+  import { ref, computed, watch, nextTick } from 'vue'
   import AppIcon from '../AppIcon.vue'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiButton, UiDialog } from '../ui'
 
-  const props = defineProps({
-    show: { type: Boolean, default: false },
-    defaultName: { type: String, default: 'audio-export' },
-    format: { type: String, default: 'webm' },
-    folderSupported: { type: Boolean, default: false },
-    saving: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      show?: boolean
+      defaultName?: string
+      format?: string
+      folderSupported?: boolean
+      saving?: boolean
+    }>(),
+    {
+      show: false,
+      defaultName: 'audio-export',
+      format: 'webm',
+      folderSupported: false,
+      saving: false,
+    }
+  )
 
-  const emit = defineEmits(['close', 'confirm'])
+  const emit = defineEmits<{ close: []; confirm: [payload: { filename: string }] }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   const name = ref(props.defaultName)
-  const nameInput = ref(null)
+  const nameInput = ref<HTMLInputElement | null>(null)
 
   const ext = computed(() => (props.format === 'wav' ? 'wav' : 'webm'))
   const trimmedName = computed(() => name.value.trim())
@@ -74,12 +84,12 @@
     }
   )
 
-  function onCancel() {
+  function onCancel(): void {
     if (props.saving) return
     emit('close')
   }
 
-  function onConfirm() {
+  function onConfirm(): void {
     if (!trimmedName.value || props.saving) return
     emit('confirm', { filename: trimmedName.value })
   }

@@ -35,12 +35,13 @@
   </section>
 </template>
 
-<script setup>
-  import { inject, computed } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import { getBlogArticlesNewestFirst } from '../../data/blogArticles'
   import { buildBlogCards } from '../../utils/blogCards'
+  import { injectI18n } from '../../composables/useI18n'
 
-  const { t, currentLanguage } = inject('i18n')
+  const { t, currentLanguage } = injectI18n()
 
   // Blog cards in the active language, newest post first (src/data/blogArticles.ts)
   const blogCards = computed(() =>

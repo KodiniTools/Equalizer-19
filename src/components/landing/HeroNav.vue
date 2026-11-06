@@ -38,15 +38,17 @@
   </div>
 </template>
 
-<script setup>
-  import { inject, ref, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+  import { ref, onMounted, onUnmounted } from 'vue'
   import AppIcon from '../AppIcon.vue'
+  import { injectI18n } from '../../composables/useI18n'
+  import type { TranslationKey } from '../../i18n'
   import { UiButton } from '../ui'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   // Abschnitte der Landing-Page, die per Anker erreichbar sind (Reihenfolge = Seite)
-  const SECTIONS = [
+  const SECTIONS: ReadonlyArray<{ id: string; labelKey: TranslationKey }> = [
     { id: 'features', labelKey: 'lp_nav_features' },
     { id: 'blog', labelKey: 'lp_nav_blog' },
   ]
@@ -58,7 +60,7 @@
   const isScrolled = ref(false)
   const activeSection = ref('')
 
-  function handleScroll() {
+  function handleScroll(): void {
     isScrolled.value = window.scrollY > 8
     // Aktiv ist der letzte Abschnitt, dessen Oberkante die Linie passiert hat
     let current = ''
@@ -71,7 +73,7 @@
 
   // „Start“/Logo auf der Landing-Page selbst: der Router hat nichts zu tun,
   // also nur nach oben scrollen.
-  function scrollToTop() {
+  function scrollToTop(): void {
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
   }

@@ -16,12 +16,12 @@
       :aria-label="ariaLabel || label"
       :aria-valuetext="ariaValueText || valueText"
       @input="onInput"
-      @change="emit('change', Number($event.target.value))"
+      @change="onChange"
     />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { computed, useId } from 'vue'
 
   /**
@@ -34,28 +34,50 @@
    * - `ariaLabel` überschreibt das Label für Screenreader (Standard: `label`).
    * - Events: `update:modelValue` und `input` bei jeder Bewegung, `change` beim Loslassen.
    */
-  const props = defineProps({
-    modelValue: { type: Number, required: true },
-    label: { type: String, required: true },
-    valueText: { type: String, default: '' },
-    min: { type: Number, default: 0 },
-    max: { type: Number, default: 100 },
-    step: { type: Number, default: 1 },
-    disabled: { type: Boolean, default: false },
-    id: { type: String, default: '' },
-    ariaLabel: { type: String, default: '' },
-    ariaValueText: { type: String, default: '' },
-  })
+  const props = withDefaults(
+    defineProps<{
+      modelValue: number
+      label: string
+      valueText?: string
+      min?: number
+      max?: number
+      step?: number
+      disabled?: boolean
+      id?: string
+      ariaLabel?: string
+      ariaValueText?: string
+    }>(),
+    {
+      valueText: '',
+      min: 0,
+      max: 100,
+      step: 1,
+      disabled: false,
+      id: '',
+      ariaLabel: '',
+      ariaValueText: '',
+    }
+  )
 
-  const emit = defineEmits(['update:modelValue', 'input', 'change'])
+  const emit = defineEmits<{
+    'update:modelValue': [value: number]
+    input: [value: number]
+    change: [value: number]
+  }>()
 
   const generatedId = useId()
   const inputId = computed(() => props.id || generatedId)
 
-  function onInput(event) {
-    const value = Number(event.target.value)
+  const valueOf = (event: Event): number => Number((event.target as HTMLInputElement).value)
+
+  function onInput(event: Event): void {
+    const value = valueOf(event)
     emit('update:modelValue', value)
     emit('input', value)
+  }
+
+  function onChange(event: Event): void {
+    emit('change', valueOf(event))
   }
 </script>
 

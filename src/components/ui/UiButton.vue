@@ -14,9 +14,10 @@
   </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { computed } from 'vue'
-  import { RouterLink } from 'vue-router'
+  import { RouterLink, type RouteLocationRaw } from 'vue-router'
+  import type { UiButtonVariant, UiSize } from './types'
 
   /**
    * Textbutton des Design-Systems. Ersetzt das frühere globale .btn-System.
@@ -30,25 +31,33 @@
    * Icons (AppIcon) kommen als Kinder in den Default-Slot. Weitere Attribute
    * (title, aria-label, disabled, @click) fallen auf das native Element durch.
    */
-  const props = defineProps({
-    variant: {
-      type: String,
-      default: 'secondary',
-      validator: (v) => ['secondary', 'primary', 'ghost', 'outline', 'danger'].includes(v),
-    },
-    size: { type: String, default: 'md', validator: (v) => ['sm', 'md', 'lg'].includes(v) },
-    type: { type: String, default: 'button' },
-    pressed: { type: [Boolean, null], default: null },
-    round: { type: Boolean, default: false },
-    block: { type: Boolean, default: false },
-    href: { type: String, default: '' },
-    to: { type: [String, Object], default: null },
-  })
+  const props = withDefaults(
+    defineProps<{
+      variant?: UiButtonVariant
+      size?: UiSize
+      type?: 'button' | 'submit' | 'reset'
+      pressed?: boolean | null
+      round?: boolean
+      block?: boolean
+      href?: string
+      to?: RouteLocationRaw | null
+    }>(),
+    {
+      variant: 'secondary',
+      size: 'md',
+      type: 'button',
+      pressed: null,
+      round: false,
+      block: false,
+      href: '',
+      to: null,
+    }
+  )
 
   const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'button'))
 
   /** Nur die Attribute des jeweiligen Elements, damit kein `href: undefined` den RouterLink stört. */
-  const rootProps = computed(() => {
+  const rootProps = computed<Record<string, unknown>>(() => {
     if (props.to) return { to: props.to }
     if (props.href) return { href: props.href }
     return { type: props.type }

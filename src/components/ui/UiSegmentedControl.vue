@@ -27,8 +27,9 @@
   </div>
 </template>
 
-<script setup>
-  import { computed, ref } from 'vue'
+<script setup lang="ts">
+  import { computed, ref, type ComponentPublicInstance } from 'vue'
+  import type { UiSegmentedOption, UiSegmentedVariant, UiSize } from './types'
 
   /**
    * Segmented Control nach dem Radiogroup-Muster: genau eine Option ist gewählt,
@@ -39,28 +40,23 @@
    * size: sm (kompakt, ohne Rahmen) | md (28 px) | lg (32 px)
    * block: füllt die Breite, alle Optionen gleich breit (sonst inline, so breit wie der Inhalt)
    */
-  const props = defineProps({
-    options: {
-      type: Array,
-      required: true,
-      validator: (list) => list.every((o) => o && 'value' in o && typeof o.label === 'string'),
-    },
-    modelValue: { type: [String, Number], required: true },
-    label: { type: String, default: undefined },
-    variant: {
-      type: String,
-      default: 'accent',
-      validator: (v) => ['accent', 'surface'].includes(v),
-    },
-    size: { type: String, default: 'md', validator: (v) => ['sm', 'md', 'lg'].includes(v) },
-    block: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      options: readonly UiSegmentedOption[]
+      modelValue: string | number
+      label?: string
+      variant?: UiSegmentedVariant
+      size?: UiSize
+      block?: boolean
+    }>(),
+    { label: undefined, variant: 'accent', size: 'md', block: false }
+  )
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits<{ 'update:modelValue': [value: string | number] }>()
 
-  const buttons = ref([])
+  const buttons = ref<HTMLButtonElement[]>([])
 
-  function setButtonRef(el, index) {
+  function setButtonRef(el: Element | ComponentPublicInstance | null, index: number): void {
     if (el instanceof HTMLButtonElement) buttons.value[index] = el
   }
 
@@ -69,14 +65,14 @@
     return index === -1 ? 0 : index
   })
 
-  function select(index) {
+  function select(index: number): void {
     const option = props.options[index]
     if (!option || option.disabled) return
     if (option.value !== props.modelValue) emit('update:modelValue', option.value)
     buttons.value[index]?.focus()
   }
 
-  function step(from, direction) {
+  function step(from: number, direction: 1 | -1): number {
     const count = props.options.length
     let index = from
     for (let i = 0; i < count; i++) {
@@ -86,20 +82,20 @@
     return from
   }
 
-  function firstEnabled() {
+  function firstEnabled(): number {
     const index = props.options.findIndex((option) => !option.disabled)
     return index === -1 ? 0 : index
   }
 
-  function lastEnabled() {
+  function lastEnabled(): number {
     for (let index = props.options.length - 1; index >= 0; index--) {
       if (!props.options[index]?.disabled) return index
     }
     return 0
   }
 
-  function onKeydown(event, index) {
-    const targets = {
+  function onKeydown(event: KeyboardEvent, index: number): void {
+    const targets: Record<string, () => number> = {
       ArrowRight: () => step(index, 1),
       ArrowDown: () => step(index, 1),
       ArrowLeft: () => step(index, -1),
