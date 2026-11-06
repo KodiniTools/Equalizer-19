@@ -41,7 +41,7 @@ export interface HistoryActionInfo {
  * resulting state equals the history's present state, so the observer records
  * nothing for it.
  *
- * @param engine the audio engine store (stores/audioEngine.js) or any object with its processing API
+ * @param engine the audio engine store (stores/audioEngine.ts) or any object with its processing API
  */
 export function useUndoRedo(
   engine: ProcessingEngine,

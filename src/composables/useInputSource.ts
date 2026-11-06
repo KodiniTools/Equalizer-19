@@ -188,8 +188,8 @@ interface ExtendedTrackSettings extends MediaTrackSettings {
  * play releases the input and switches back to the playlist. Speaker
  * monitoring is off by default for inputs to prevent feedback loops.
  *
- * @param audioEngine audio engine store (stores/audioEngine.js)
- * @param audioPlayer player store (stores/player.js)
+ * @param audioEngine audio engine store (stores/audioEngine.ts)
+ * @param audioPlayer player store (stores/player.ts)
  * @param deps injectable for tests (a key that is present but null disables the feature)
  */
 export function useInputSource(

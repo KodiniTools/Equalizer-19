@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { formatTime } from '../utils/playbackOrder'
-import { analyzeBlob, recordToBlob } from '../utils/audioBlob'
-import { useAudioEngineStore } from './audioEngine.js'
-import { usePlaylistStore, createTrack } from './playlist.js'
+import { analyzeBlob, recordToBlob, type SharedFileRecord } from '../utils/audioBlob'
+import { useAudioEngineStore } from './audioEngine'
+import { usePlaylistStore, createTrack, type Track } from './playlist'
 
 /**
  * Player: Wiedergabe (HTMLAudioElement), Position und Lautstärke. Hängt sich
@@ -23,15 +23,15 @@ export const usePlayerStore = defineStore('player', () => {
   const volume = ref(0.8)
   const isMuted = ref(false)
   const isLoading = ref(false)
-  const error = ref(null)
+  const error = ref<string | null>(null)
 
   // Audio Elements
-  const audioElement = ref(null)
-  let mediaElementSource = null
+  const audioElement = ref<HTMLAudioElement | null>(null)
+  let mediaElementSource: MediaElementAudioSourceNode | null = null
   let isSourceConnected = false
   // Set while an external source (live audio input) owns the processing chain:
   // the function that releases it again. Playback never steals the chain then.
-  let externalSourceRelease = null
+  let externalSourceRelease: (() => void) | null = null
 
   // Computed
   const progress = computed(() => {
@@ -43,14 +43,15 @@ export const usePlayerStore = defineStore('player', () => {
   const formattedDuration = computed(() => formatTime(duration.value))
 
   // Initialize audio element
-  function initAudio() {
+  function initAudio(): void {
     if (!audioElement.value) {
-      audioElement.value = new Audio()
-      audioElement.value.crossOrigin = 'anonymous'
+      const audio = new Audio()
+      audio.crossOrigin = 'anonymous'
 
       for (const [event, handler] of mediaEventHandlers) {
-        audioElement.value.addEventListener(event, handler)
+        audio.addEventListener(event, handler)
       }
+      audioElement.value = audio
     }
   }
 
@@ -58,7 +59,7 @@ export const usePlayerStore = defineStore('player', () => {
    * Hand the processing chain to an external source (e.g. a live audio input).
    * Playback pauses; `release` is called when the user starts playback again.
    */
-  function setExternalSource(release) {
+  function setExternalSource(release: () => void): void {
     pause()
     externalSourceRelease = release
     isSourceConnected = false
@@ -67,13 +68,13 @@ export const usePlayerStore = defineStore('player', () => {
   /**
    * Called after the external source disconnected itself: reattach playback.
    */
-  function clearExternalSource() {
+  function clearExternalSource(): void {
     externalSourceRelease = null
     if (audioElement.value) connectToAudioEngine()
   }
 
   // Connect audio to processing chain
-  function connectToAudioEngine() {
+  function connectToAudioEngine(): boolean {
     if (externalSourceRelease) return false
 
     if (!audioEngineRef || !audioElement.value) {
@@ -111,16 +112,16 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   // Event handlers
-  function handleLoadedMetadata() {
-    duration.value = audioElement.value.duration || 0
+  function handleLoadedMetadata(): void {
+    duration.value = audioElement.value?.duration || 0
     isLoading.value = false
   }
 
-  function handleTimeUpdate() {
-    currentTime.value = audioElement.value.currentTime || 0
+  function handleTimeUpdate(): void {
+    currentTime.value = audioElement.value?.currentTime || 0
   }
 
-  function handleEnded() {
+  function handleEnded(): void {
     isPlaying.value = false
     isPaused.value = false
     currentTime.value = 0
@@ -140,28 +141,28 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function handleError(e) {
+  function handleError(e: Event): void {
     console.error('Audio playback error:', e)
     error.value = 'Fehler beim Abspielen der Datei'
     isLoading.value = false
     isPlaying.value = false
   }
 
-  function handleCanPlay() {
+  function handleCanPlay(): void {
     isLoading.value = false
   }
 
-  function handleWaiting() {
+  function handleWaiting(): void {
     isLoading.value = true
   }
 
-  function handlePlaying() {
+  function handlePlaying(): void {
     isLoading.value = false
     isPlaying.value = true
   }
 
   // Media element events handled by the player (added in initAudio, removed in cleanup)
-  const mediaEventHandlers = [
+  const mediaEventHandlers: ReadonlyArray<[string, EventListener]> = [
     ['loadedmetadata', handleLoadedMetadata],
     ['timeupdate', handleTimeUpdate],
     ['ended', handleEnded],
@@ -185,7 +186,7 @@ export const usePlayerStore = defineStore('player', () => {
   })
 
   // ---- Playlist operations that touch playback ----
-  function addFiles(files) {
+  function addFiles(files: Iterable<File> | ArrayLike<File>): Track[] {
     const hadTrack = playlist.hasTrack
     const newTracks = playlist.addFiles(files)
 
@@ -197,7 +198,7 @@ export const usePlayerStore = defineStore('player', () => {
     return newTracks
   }
 
-  function removeTrack(index) {
+  function removeTrack(index: number): void {
     const { removedCurrent, nextIndex } = playlist.removeTrack(index)
     if (removedCurrent) {
       stop()
@@ -205,18 +206,20 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function clearPlaylist() {
+  function clearPlaylist(): void {
     stop()
     playlist.clear()
   }
 
   // Playback control
-  async function loadTrack(index) {
+  async function loadTrack(index: number): Promise<boolean> {
     if (index < 0 || index >= playlist.tracks.length) {
       return false
     }
 
     initAudio()
+    const audio = audioElement.value
+    if (!audio) return false
 
     error.value = null
     isLoading.value = true
@@ -226,8 +229,8 @@ export const usePlayerStore = defineStore('player', () => {
       const track = playlist.tracks[index]
 
       // Load new audio
-      audioElement.value.src = track.url
-      await audioElement.value.load()
+      audio.src = track.url
+      await audio.load()
 
       // Connect to AudioEngine
       connectToAudioEngine()
@@ -241,7 +244,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  async function play() {
+  async function play(): Promise<void> {
     // Starting playback switches back from a live input to the playlist
     if (externalSourceRelease) {
       const release = externalSourceRelease
@@ -259,6 +262,8 @@ export const usePlayerStore = defineStore('player', () => {
     }
 
     initAudio()
+    const audio = audioElement.value
+    if (!audio) return
 
     try {
       // Ensure AudioEngine connection
@@ -271,7 +276,7 @@ export const usePlayerStore = defineStore('player', () => {
         }
       }
 
-      await audioElement.value.play()
+      await audio.play()
       isPlaying.value = true
       isPaused.value = false
       error.value = null
@@ -282,7 +287,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function pause() {
+  function pause(): void {
     if (audioElement.value && isPlaying.value) {
       audioElement.value.pause()
       isPlaying.value = false
@@ -290,7 +295,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function stop() {
+  function stop(): void {
     if (audioElement.value) {
       audioElement.value.pause()
       audioElement.value.currentTime = 0
@@ -300,7 +305,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function togglePlayPause() {
+  function togglePlayPause(): void {
     if (isPlaying.value) {
       pause()
     } else {
@@ -308,21 +313,21 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  async function playNext() {
+  async function playNext(): Promise<void> {
     const nextIndex = playlist.getNextIndex()
     if (nextIndex < 0) return
     if (playlist.isShuffle) playlist.rememberShuffleStep()
     await playTrack(nextIndex)
   }
 
-  async function playPrevious() {
+  async function playPrevious(): Promise<void> {
     // If more than 3 seconds played, restart the current track
     if (currentTime.value > 3) {
       seek(0)
       return
     }
 
-    let prevIndex
+    let prevIndex: number
     if (playlist.isShuffle) {
       prevIndex = playlist.popShuffleStep()
       if (prevIndex < 0) prevIndex = playlist.getNextIndex()
@@ -332,13 +337,13 @@ export const usePlayerStore = defineStore('player', () => {
     await playTrack(prevIndex)
   }
 
-  async function playTrack(index) {
+  async function playTrack(index: number): Promise<void> {
     const success = await loadTrack(index)
     if (success) await play()
   }
 
   // Seek
-  function seek(time) {
+  function seek(time: number): void {
     if (audioElement.value && duration.value > 0) {
       const seekTime = Math.max(0, Math.min(time, duration.value))
       audioElement.value.currentTime = seekTime
@@ -346,7 +351,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  function seekToPercent(percent) {
+  function seekToPercent(percent: number): void {
     if (duration.value > 0) {
       const time = (percent / 100) * duration.value
       seek(time)
@@ -354,16 +359,18 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   // Volume
-  function setVolume(val) {
+  function setVolume(val: number): void {
     volume.value = Math.max(0, Math.min(1, val))
   }
 
-  function toggleMute() {
+  function toggleMute(): void {
     isMuted.value = !isMuted.value
   }
 
   // Handle shared files from IndexedDB (Audio Konverter handoff)
-  async function handleSharedFiles(sharedRecords) {
+  async function handleSharedFiles(
+    sharedRecords: readonly SharedFileRecord[]
+  ): Promise<{ processed: number }> {
     let processed = 0
 
     for (const record of sharedRecords) {
@@ -395,13 +402,14 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   // Cleanup
-  function cleanup() {
-    if (audioElement.value) {
-      audioElement.value.pause()
+  function cleanup(): void {
+    const audio = audioElement.value
+    if (audio) {
+      audio.pause()
       for (const [event, handler] of mediaEventHandlers) {
-        audioElement.value.removeEventListener(event, handler)
+        audio.removeEventListener(event, handler)
       }
-      audioElement.value.src = ''
+      audio.src = ''
       audioElement.value = null
     }
 

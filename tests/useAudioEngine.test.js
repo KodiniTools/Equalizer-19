@@ -71,7 +71,7 @@ class FakeAudioContext {
 
 globalThis.window = { AudioContext: FakeAudioContext }
 const { createPinia, setActivePinia } = await import('pinia')
-const { useAudioEngineStore } = await import('../src/stores/audioEngine.js')
+const { useAudioEngineStore } = await import('../src/stores/audioEngine')
 
 // Each test gets its own Pinia, so the store starts from scratch
 function useAudioEngine() {
