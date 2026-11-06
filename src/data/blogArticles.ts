@@ -9,22 +9,29 @@
 // braucht.
 // ==========================================================================
 
-/**
- * @typedef {{ de: string, en: string }} LocalizedText
- *
- * @typedef {Object} BlogArticle
- * @property {string} id            Eindeutige Kennung (wird als Vue-Key genutzt)
- * @property {string} date          Veröffentlichungsdatum als ISO-Datum (YYYY-MM-DD)
- * @property {number} minutes       Lesezeit in Minuten
- * @property {LocalizedText} tag    Kategorie-Badge
- * @property {LocalizedText} url    Vollständige URL des Beitrags je Sprache
- * @property {LocalizedText} image  Vollständige URL des Vorschaubilds je Sprache
- * @property {LocalizedText} title
- * @property {LocalizedText} description
- */
+export interface LocalizedText {
+  de: string
+  en: string
+}
 
-/** @type {BlogArticle[]} */
-export const blogArticles = [
+export interface BlogArticle {
+  /** Eindeutige Kennung (wird als Vue-Key genutzt) */
+  id: string
+  /** Veröffentlichungsdatum als ISO-Datum (YYYY-MM-DD) */
+  date: string
+  /** Lesezeit in Minuten */
+  minutes: number
+  /** Kategorie-Badge */
+  tag: LocalizedText
+  /** Vollständige URL des Beitrags je Sprache */
+  url: LocalizedText
+  /** Vollständige URL des Vorschaubilds je Sprache */
+  image: LocalizedText
+  title: LocalizedText
+  description: LocalizedText
+}
+
+export const blogArticles: readonly BlogArticle[] = [
   {
     id: 'equalizer-19-aufnahme',
     date: '2026-10-04',
@@ -74,8 +81,7 @@ export const blogArticles = [
 /**
  * Liefert die Beiträge nach Datum absteigend (neuester zuerst), unabhängig
  * von der Reihenfolge im Array. Das Array selbst bleibt unverändert.
- * @returns {BlogArticle[]}
  */
-export function getBlogArticlesNewestFirst() {
+export function getBlogArticlesNewestFirst(): BlogArticle[] {
   return [...blogArticles].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
 }

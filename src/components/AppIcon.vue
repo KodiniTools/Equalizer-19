@@ -19,10 +19,10 @@
 
 <script setup>
   import { computed } from 'vue'
-  import { ICONS } from '../utils/icons.js'
+  import { ICONS } from '../utils/icons'
 
   /**
-   * Inline SVG icon from utils/icons.js. Sized in em so it follows the
+   * Inline SVG icon from utils/icons.ts. Sized in em so it follows the
    * surrounding font size; colour comes from `currentColor`.
    */
   const props = defineProps({

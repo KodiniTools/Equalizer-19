@@ -1,22 +1,29 @@
 /**
- * Blog-Karten der Landing-Page: reine Funktionen ohne Vue, damit sie mit
- * node:test prüfbar sind. Die Beiträge selbst stehen in src/data/blogArticles.js.
+ * Blog-Karten der Landing-Page: reine Funktionen ohne Vue, damit sie ohne
+ * DOM prüfbar sind. Die Beiträge selbst stehen in src/data/blogArticles.ts.
  */
+import type { BlogArticle, LocalizedText } from '../data/blogArticles'
 
-const DATE_LOCALES = { de: 'de-DE', en: 'en-US' }
+const DATE_LOCALES: Record<string, string> = { de: 'de-DE', en: 'en-US' }
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+export interface BlogCard {
+  id: string
+  url: string
+  image: string
+  tag: string
+  title: string
+  description: string
+  meta: string
+}
 
 /**
  * ISO-Datum (YYYY-MM-DD) sprachabhängig formatieren:
  * de → „16. September 2026“, en → „September 16, 2026“.
  * Unbekannte Sprachen fallen auf Deutsch zurück, ungültige Werte werden
  * unverändert zurückgegeben.
- *
- * @param {string} isoDate
- * @param {string} [lang='de']
- * @returns {string}
  */
-export function formatBlogDate(isoDate, lang = 'de') {
+export function formatBlogDate(isoDate: unknown, lang = 'de'): string {
   const value = String(isoDate ?? '')
   if (!ISO_DATE.test(value)) return value
   // UTC, damit das Datum nicht von der Zeitzone des Geräts verschoben wird
@@ -34,13 +41,16 @@ export function formatBlogDate(isoDate, lang = 'de') {
  * Beiträge in Kartendaten der aktiven Sprache umwandeln. Fehlt eine
  * Übersetzung, fällt der Text auf Deutsch zurück.
  *
- * @param {import('../data/blogArticles.js').BlogArticle[]} articles
- * @param {string} lang           'de' | 'en'
- * @param {string} minutesLabel   Einheit der Lesezeit, z. B. „Min.“ oder „min“
- * @returns {{ id: string, url: string, image: string, tag: string, title: string, description: string, meta: string }[]}
+ * @param lang          'de' | 'en'
+ * @param minutesLabel  Einheit der Lesezeit, z. B. „Min.“ oder „min“
  */
-export function buildBlogCards(articles, lang, minutesLabel) {
-  const pick = (field) => field?.[lang] ?? field?.de ?? ''
+export function buildBlogCards(
+  articles: readonly BlogArticle[],
+  lang: string,
+  minutesLabel: string
+): BlogCard[] {
+  const pick = (field: Partial<LocalizedText> | undefined): string =>
+    field?.[lang as keyof LocalizedText] ?? field?.de ?? ''
   return articles.map((article) => ({
     id: article.id,
     url: pick(article.url),

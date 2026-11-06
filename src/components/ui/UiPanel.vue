@@ -26,7 +26,7 @@
 
   /**
    * Karten-Rahmen der Sidebar-Panels: Kopfzeile (Icon, Titel, Aktionen rechts),
-   * Body und optionaler Footer. `icon` ist ein Name aus utils/icons.js, Aktionen
+   * Body und optionaler Footer. `icon` ist ein Name aus utils/icons.ts, Aktionen
    * sind UiIconButton (`pressed` = an).
    *
    * Hilfsklassen für Slot-Inhalte: .panel-badge (kleine Pille) und

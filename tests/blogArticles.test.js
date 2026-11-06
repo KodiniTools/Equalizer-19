@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { blogArticles, getBlogArticlesNewestFirst } from '../src/data/blogArticles.js'
-import { formatBlogDate, buildBlogCards } from '../src/utils/blogCards.js'
+import { blogArticles, getBlogArticlesNewestFirst } from '../src/data/blogArticles'
+import { formatBlogDate, buildBlogCards } from '../src/utils/blogCards'
 
 const LOCALIZED_FIELDS = ['tag', 'url', 'image', 'title', 'description']
 

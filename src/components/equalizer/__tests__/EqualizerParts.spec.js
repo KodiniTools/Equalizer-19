@@ -4,7 +4,7 @@ import { i18nStub } from '../../../__tests__/i18nStub'
 import EqBands from '../EqBands.vue'
 import EqPresetControls from '../EqPresetControls.vue'
 import EqPresetForm from '../EqPresetForm.vue'
-import { EQ_BAND_FREQUENCIES, EQ_PRESETS } from '../../../utils/presets.js'
+import { EQ_BAND_FREQUENCIES, EQ_PRESETS } from '../../../utils/presets'
 
 const global = { provide: i18nStub() }
 const bands = EQ_BAND_FREQUENCIES.map((frequency, i) => ({ frequency, gain: i === 0 ? -3 : 0 }))

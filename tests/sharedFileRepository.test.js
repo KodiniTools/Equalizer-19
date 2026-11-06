@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { RECEIVABLE_SOURCES, isReceivableSource } from '../src/utils/sharedFileRepository.js'
+import { RECEIVABLE_SOURCES, isReceivableSource } from '../src/utils/sharedFileRepository'
 
 test('isReceivableSource accepts the converter and the audio cutter', () => {
   assert.deepEqual(RECEIVABLE_SOURCES, ['audiokonverter', 'audio-cutter'])

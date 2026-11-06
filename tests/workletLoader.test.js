@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
-import { loadWorkletModule } from '../src/utils/workletLoader.js'
+import { loadWorkletModule } from '../src/utils/workletLoader'
 
 vi.spyOn(console, 'warn').mockImplementation(() => {})
 

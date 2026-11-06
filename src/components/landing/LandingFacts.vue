@@ -23,7 +23,7 @@
 
 <script setup>
   import { inject } from 'vue'
-  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../utils/presets.js'
+  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../utils/presets'
 
   const { t } = inject('i18n')
 

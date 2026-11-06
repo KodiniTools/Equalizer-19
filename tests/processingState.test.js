@@ -3,14 +3,14 @@ import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAudioEngineStore } from '../src/stores/audioEngine.js'
-import { DEFAULT_DYNAMICS, EQ_BAND_FREQUENCIES } from '../src/utils/presets.js'
+import { DEFAULT_DYNAMICS, EQ_BAND_FREQUENCIES } from '../src/utils/presets'
 import {
   captureProcessingState,
   applyProcessingState,
   processingStatesEqual,
   describeProcessingChange,
   canMergeProcessingChanges,
-} from '../src/utils/processingState.js'
+} from '../src/utils/processingState'
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
 

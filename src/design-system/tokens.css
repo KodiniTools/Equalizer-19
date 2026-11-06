@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    Laufzeit-Quelle der Design-Tokens als CSS Custom Properties. Die Namen sind
    die Quellnamen der App (--accent-primary, --text-primary, --font-sans, …).
-   Maschinenlesbar: tokens.json · Zugriff aus JS: tokens.js · Doku: README.md
+   Maschinenlesbar: tokens.json · Zugriff aus TS: tokens.ts · Doku: README.md
 
    Theme-Mechanik: Dark auf :root (Standard), Light auf html[data-theme='light']
    (gesetzt von useTheme.js, auch von den SSI-Partials gelesen). Jedes

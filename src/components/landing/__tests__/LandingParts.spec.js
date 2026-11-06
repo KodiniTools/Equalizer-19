@@ -7,8 +7,8 @@ import LandingSteps from '../LandingSteps.vue'
 import LandingDetails from '../LandingDetails.vue'
 import LandingBlog from '../LandingBlog.vue'
 import LandingCta from '../LandingCta.vue'
-import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../../utils/presets.js'
-import { getBlogArticlesNewestFirst } from '../../../data/blogArticles.js'
+import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../../utils/presets'
+import { getBlogArticlesNewestFirst } from '../../../data/blogArticles'
 
 const global = { provide: i18nStub(), stubs: { RouterLink: true } }
 

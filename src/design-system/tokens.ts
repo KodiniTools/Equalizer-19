@@ -1,5 +1,5 @@
 /**
- * Design Tokens von Equalizer 19: Zugriff auf tokens.json aus JavaScript,
+ * Design Tokens von Equalizer 19: Zugriff auf tokens.json aus TypeScript,
  * z. B. für Canvas- oder SVG-Zeichnung (AudioMeter, Visualization), wo kein
  * CSS var() verfügbar ist. Laufzeit-Quelle für Styles bleibt tokens.css.
  *
@@ -8,7 +8,13 @@
  */
 import tokens from './tokens.json'
 
-/** @typedef {'dark' | 'light'} ThemeName */
+export type ThemeName = 'dark' | 'light'
+
+/** Ein Eintrag in tokens.json: `$value` plus optionale Metadaten. */
+interface TokenEntry {
+  $value: unknown
+  [meta: string]: unknown
+}
 
 export const designTokens = tokens
 
@@ -17,46 +23,43 @@ const ALIAS = /^\{([\w-]+(?:\.[\w-]+)*)\}$/
 
 /**
  * Löst einen Token-Wert auf; Aliase werden rekursiv ersetzt.
- * @param {unknown} value
- * @param {number} [depth]
- * @returns {string}
  */
-function resolveValue(value, depth = 0) {
+function resolveValue(value: unknown, depth = 0): string {
   if (Array.isArray(value)) return value.join(', ')
   const text = String(value)
   const alias = text.match(ALIAS)
   if (!alias) return text
   if (depth > 8) throw new Error(`Token-Alias zu tief verschachtelt: ${text}`)
-  /** @type {any} */
-  let node = tokens
+  let node: unknown = tokens
   for (const key of alias[1].split('.')) {
-    node = node?.[key]
+    node = (node as Record<string, unknown> | undefined)?.[key]
     if (node === undefined) throw new Error(`Unbekannter Token-Alias: ${text}`)
   }
-  return resolveValue(node.$value, depth + 1)
+  return resolveValue((node as TokenEntry).$value, depth + 1)
+}
+
+/** Die Farb-Tokens eines Themes als Name → Eintrag. */
+function themeEntries(theme: ThemeName): Record<string, TokenEntry> {
+  const color = tokens.color as unknown as Record<string, Record<string, TokenEntry>>
+  return color[theme] ?? {}
 }
 
 /**
  * Farbwert eines Tokens für ein Theme, z. B. colorToken('dark', '--accent-primary') → '#c9984d'.
- * @param {ThemeName} theme
- * @param {string} name CSS-Variablenname inklusive `--`
- * @returns {string}
+ * @param name CSS-Variablenname inklusive `--`
  */
-export function colorToken(theme, name) {
-  const entry = tokens.color[theme]?.[name]
+export function colorToken(theme: ThemeName, name: string): string {
+  const entry = themeEntries(theme)[name]
   if (!entry) throw new Error(`Unbekanntes Farb-Token: ${name} (${theme})`)
   return resolveValue(entry.$value)
 }
 
 /**
  * Flache Farbkarte eines Themes, Schlüssel sind die CSS-Variablennamen.
- * @param {ThemeName} theme
- * @returns {Readonly<Record<string, string>>}
  */
-export function themeColors(theme) {
-  /** @type {Record<string, string>} */
-  const result = {}
-  for (const name of Object.keys(tokens.color[theme])) {
+export function themeColors(theme: ThemeName): Readonly<Record<string, string>> {
+  const result: Record<string, string> = {}
+  for (const name of Object.keys(themeEntries(theme))) {
     if (name.startsWith('--')) result[name] = colorToken(theme, name)
   }
   return result
@@ -64,20 +67,14 @@ export function themeColors(theme) {
 
 /**
  * var()-Ausdruck für ein Token, z. B. cssVar('--text-primary') → 'var(--text-primary)'.
- * @param {string} name
- * @param {string} [fallback]
- * @returns {string}
  */
-export function cssVar(name, fallback) {
+export function cssVar(name: string, fallback?: string): string {
   return fallback === undefined ? `var(${name})` : `var(${name}, ${fallback})`
 }
 
 /**
  * Aktueller Wert eines Tokens im Dokument (nach Theme und Kontrastmodus).
- * @param {string} name
- * @param {Element} [element]
- * @returns {string}
  */
-export function readCssVar(name, element = document.documentElement) {
+export function readCssVar(name: string, element: Element = document.documentElement): string {
   return getComputedStyle(element).getPropertyValue(name).trim()
 }

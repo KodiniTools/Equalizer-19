@@ -23,7 +23,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 - **Vite 7** als Build-Tool
 - **Web Audio API** (BiquadFilter, DynamicsCompressor, Analyser, AudioWorklet) und MediaRecorder API
 - **Design-Tokens** als CSS Custom Properties (`src/design-system/`) und ein eigener Satz **Ui-Komponenten** (`src/components/ui/`)
-- **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.js`), keine Icon-Font
+- **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.ts`), keine Icon-Font
 - **TypeScript** für die Übersetzungen (`src/i18n/`), Typprüfung per `vue-tsc` auch für JS-Dateien (`allowJs`)
 - **Tests**: Vitest für alles, Vue Test Utils (jsdom) für Komponenten und Stores, Node-Umgebung für reine Logik
 - **ESLint + Prettier**, GitHub-Actions-CI
@@ -81,7 +81,7 @@ Equalizer-19/
 │   ├── App.vue                 # Root: stellt i18n und Theme bereit, Tastaturkürzel
 │   ├── assets/
 │   │   └── style.css           # Globale Styles; importiert design-system/tokens.css
-│   ├── design-system/          # Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
+│   ├── design-system/          # Tokens: tokens.css (Laufzeit), tokens.json, tokens.ts, Tests, README
 │   ├── components/
 │   │   ├── ui/                 # Design-System-Komponenten: UiButton, UiIconButton, UiSwitch, SliderField,
 │   │   │                       #   UiSegmentedControl, UiPanel, UiDialog, UiToast (+ range.css, README, Tests)
@@ -90,7 +90,7 @@ Equalizer-19/
 │   │   ├── equalizer/          # Teile des Equalizers: EqPresetControls, EqPresetForm, EqBands
 │   │   ├── recorder/           # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons,
 │   │   │                       #   CountdownOverlay, DownloadDialog
-│   │   ├── AppIcon.vue         # Inline-SVG-Icon (Namen aus utils/icons.js)
+│   │   ├── AppIcon.vue         # Inline-SVG-Icon (Namen aus utils/icons.ts)
 │   │   ├── AudioMeter.vue      # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue # Kompressor-Preset-Dropdown (in DynamicsProcessor)
 │   │   ├── DynamicsProcessor.vue # Kompressor-UI
@@ -109,7 +109,7 @@ Equalizer-19/
 │   │   ├── audioEngine.js      # Audio-Verarbeitungskette (AudioNodes shallowRef + markRaw)
 │   │   ├── playlist.js         # Playlist: Tracks, Reihenfolge, Shuffle/Repeat
 │   │   ├── player.js           # Wiedergabe: Audio-Element, Position, Lautstärke
-│   │   ├── history.js          # Undo/Redo
+│   │   ├── history.ts          # Undo/Redo
 │   │   └── toast.js            # Benachrichtigungen
 │   ├── composables/
 │   │   ├── useCountdown.js     # Countdown vor der Aufnahme
@@ -123,24 +123,24 @@ Equalizer-19/
 │   │   └── useUndoRedo.js      # Undo/Redo der Klangeinstellungen (beobachtet die Engine)
 │   ├── i18n/                   # de.ts (Referenz, TranslationKey), en.ts (typgeprüft gegen de), index.ts
 │   ├── data/
-│   │   └── blogArticles.js     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
+│   │   └── blogArticles.ts     # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   ├── pages/                  # LandingPage, AppPage, FaqPage
 │   ├── router/                 # Vue Router (Meta-Tags je Route)
 │   ├── worklets/               # AudioWorklet (PCM-Aufnahme)
 │   ├── utils/
-│   │   ├── audioBlob.js        # Blob-Prüfung für übergebene Dateien
-│   │   ├── audioChain.js       # Routing der Verarbeitungskette (reine Funktionen)
-│   │   ├── blogCards.js        # Blog-Karten: Datum/Sprache (reine Funktionen)
-│   │   ├── eqCurve.js          # Frequenzkurve als SVG-Pfad (reine Funktionen)
-│   │   ├── history.js          # Generischer Undo/Redo-Stack (reine Funktionen)
-│   │   ├── icons.js            # Inline-SVG-Icon-Set
-│   │   ├── playbackOrder.js    # Playlist-Navigation (reine Funktionen)
-│   │   ├── presets.js          # EQ/Comp Presets, Bandfrequenzen
-│   │   ├── processingState.js  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
-│   │   ├── seoMeta.js          # Titel/Description je Route und Sprache
-│   │   ├── sharedFileRepository.js # Übergabe vom Audio-Konverter (IndexedDB)
-│   │   ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
-│   │   └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
+│   │   ├── audioBlob.ts        # Blob-Prüfung für übergebene Dateien
+│   │   ├── audioChain.ts       # Routing der Verarbeitungskette (reine Funktionen)
+│   │   ├── blogCards.ts        # Blog-Karten: Datum/Sprache (reine Funktionen)
+│   │   ├── eqCurve.ts          # Frequenzkurve als SVG-Pfad (reine Funktionen)
+│   │   ├── history.ts          # Generischer Undo/Redo-Stack (reine Funktionen)
+│   │   ├── icons.ts            # Inline-SVG-Icon-Set
+│   │   ├── playbackOrder.ts    # Playlist-Navigation (reine Funktionen)
+│   │   ├── presets.ts          # EQ/Comp Presets, Bandfrequenzen
+│   │   ├── processingState.ts  # Snapshot/Diff der Klangeinstellungen für Undo/Redo
+│   │   ├── seoMeta.ts          # Titel/Description je Route und Sprache
+│   │   ├── sharedFileRepository.ts # Übergabe vom Audio-Konverter (IndexedDB)
+│   │   ├── wavEncoder.ts       # WAV-Export (16/24/32 Bit)
+│   │   └── workletLoader.ts    # AudioWorklet laden (mit Timeout/Fallback)
 │   └── __tests__/              # Vitest-Setup und i18n-Stub für Komponententests
 └── tests/                      # Logik-Tests (Vitest, Node-Umgebung); Komponenten-/Store-Tests liegen in src/**/__tests__
 ```
@@ -187,6 +187,6 @@ MIT License - Erstellt von KodiniTools
 
 - Original JavaScript-Version: EQUALIZER 19
 - Vue 3 Migration: 2025
-- Icons: eigenes Inline-SVG-Set (`src/utils/icons.js`)
+- Icons: eigenes Inline-SVG-Set (`src/utils/icons.ts`)
 
   Author: Dinko Ramić - Kodini Tools - kodinitools.com

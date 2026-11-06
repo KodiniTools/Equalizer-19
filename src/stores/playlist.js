@@ -6,7 +6,7 @@ import {
   nextRepeatMode,
   moveItem,
   indexAfterMove,
-} from '../utils/playbackOrder.js'
+} from '../utils/playbackOrder'
 
 /**
  * Track-Modell der Playlist. Die Blob-URL gehört dem Store und wird beim

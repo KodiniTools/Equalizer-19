@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
-import { encodeWavFromChunks, WAV_BIT_DEPTHS, DEFAULT_WAV_BIT_DEPTH } from '../utils/wavEncoder.js'
-import { loadWorkletModule } from '../utils/workletLoader.js'
+import { encodeWavFromChunks, WAV_BIT_DEPTHS, DEFAULT_WAV_BIT_DEPTH } from '../utils/wavEncoder'
+import { loadWorkletModule } from '../utils/workletLoader'
 
 const PCM_WORKLET_URL = new URL('../worklets/pcm-recorder.worklet.js', import.meta.url)
 const BIT_DEPTH_STORAGE_KEY = 'eq19_wav_bit_depth'

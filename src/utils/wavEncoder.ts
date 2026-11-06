@@ -6,33 +6,37 @@
  *   24 → PCM integer (WAVE_FORMAT_PCM), studio quality
  *   32 → IEEE float (WAVE_FORMAT_IEEE_FLOAT), lossless copy of the Float32 samples
  */
-export const WAV_BIT_DEPTHS = [16, 24, 32]
-export const DEFAULT_WAV_BIT_DEPTH = 16
+export type WavBitDepth = 16 | 24 | 32
+
+export const WAV_BIT_DEPTHS: readonly WavBitDepth[] = [16, 24, 32]
+export const DEFAULT_WAV_BIT_DEPTH: WavBitDepth = 16
+
+/** chunk[ch] = Float32Array of frames for channel ch */
+export type SampleChunk = Float32Array[]
 
 const FORMAT_PCM = 1
 const FORMAT_IEEE_FLOAT = 3
 
-function writeString(view, offset, str) {
+function writeString(view: DataView, offset: number, str: string): void {
   for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i))
 }
 
 /**
  * Encode a list of sample chunks into a WAV Blob.
  *
- * @param {Float32Array[][]} chunks   chunks[i][ch] = Float32Array of frames for channel ch.
- *                                    Chunks with fewer channels are up-mixed from channel 0.
- * @param {number} numChannels        channel count of the output file
- * @param {number} sampleRate         sample rate in Hz
- * @param {number} bitDepth           16 | 24 | 32
- * @returns {Blob}
+ * @param chunks       chunks[i][ch] = Float32Array of frames for channel ch.
+ *                     Chunks with fewer channels are up-mixed from channel 0.
+ * @param numChannels  channel count of the output file
+ * @param sampleRate   sample rate in Hz
+ * @param bitDepth     16 | 24 | 32
  */
 export function encodeWavFromChunks(
-  chunks,
-  numChannels,
-  sampleRate,
-  bitDepth = DEFAULT_WAV_BIT_DEPTH
-) {
-  if (!WAV_BIT_DEPTHS.includes(bitDepth)) {
+  chunks: readonly SampleChunk[],
+  numChannels: number,
+  sampleRate: number,
+  bitDepth: number = DEFAULT_WAV_BIT_DEPTH
+): Blob {
+  if (!WAV_BIT_DEPTHS.includes(bitDepth as WavBitDepth)) {
     throw new Error(`Unsupported WAV bit depth: ${bitDepth}`)
   }
   if (!Number.isInteger(numChannels) || numChannels < 1) {
@@ -123,8 +127,11 @@ export function encodeWavFromChunks(
 /**
  * Convenience wrapper for a decoded AudioBuffer.
  */
-export function audioBufferToWav(audioBuffer, bitDepth = DEFAULT_WAV_BIT_DEPTH) {
-  const channels = []
+export function audioBufferToWav(
+  audioBuffer: AudioBuffer,
+  bitDepth: number = DEFAULT_WAV_BIT_DEPTH
+): Blob {
+  const channels: Float32Array[] = []
   for (let ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
     channels.push(audioBuffer.getChannelData(ch))
   }

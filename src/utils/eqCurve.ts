@@ -4,12 +4,35 @@
  * so both draw the same curve for the same gains.
  */
 
+export type Point = [number, number]
+
+export interface EqCurveOptions {
+  /** SVG width in user units */
+  w: number
+  /** SVG height in user units */
+  h: number
+  /** dB that maps to the top/bottom (default 12) */
+  maxGain?: number
+  /** distance in user units from the 0 dB line to maxGain (default 42 % of h) */
+  range?: number
+}
+
+export interface EqCurve {
+  mid: number
+  points: Point[]
+  /** open spline through the band centres */
+  line: string
+  /** the same spline closed against the 0 dB line (fill it clipped above/below mid) */
+  area: string
+  /** y positions of the ±maxGain/2 and ±maxGain helper lines */
+  grid: Array<{ db: number; y: number }>
+}
+
 /**
  * Smooth cubic-Bézier path through the points (Catmull-Rom spline).
- * @param {Array<[number, number]>} pts
- * @returns {string} SVG path data, '' for fewer than two points
+ * @returns SVG path data, '' for fewer than two points
  */
-export function smoothPath(pts) {
+export function smoothPath(pts: readonly Point[]): string {
   if (pts.length < 2) return ''
   let d = `M${fmt(pts[0][0])},${fmt(pts[0][1])}`
   for (let i = 0; i < pts.length - 1; i++) {
@@ -28,23 +51,17 @@ export function smoothPath(pts) {
 
 /**
  * Build the SVG geometry for an EQ curve.
- *
- * @param {number[]} gains  gain per band in dB
- * @param {{ w: number, h: number, maxGain?: number, range?: number }} opts
- *   w/h: SVG size in user units; maxGain: dB that maps to the top/bottom
- *   (default 12); range: distance in user units from the 0 dB line to
- *   maxGain (default 42 % of h).
- * @returns {{ mid: number, points: Array<[number, number]>, line: string,
- *            area: string, grid: Array<{ db: number, y: number }> }}
- *   line: open spline through the band centres; area: the same spline closed
- *   against the 0 dB line (fill it clipped above/below mid for boost/cut);
- *   grid: y positions of the ±maxGain/2 and ±maxGain helper lines.
+ * @param gains gain per band in dB
  */
-export function buildEqCurve(gains, { w, h, maxGain = 12, range = h * 0.42 }) {
+export function buildEqCurve(
+  gains: readonly number[],
+  { w, h, maxGain = 12, range = h * 0.42 }: EqCurveOptions
+): EqCurve {
   const mid = h / 2
   const step = gains.length ? w / gains.length : w
-  const toY = (db) => mid - (Math.max(-maxGain, Math.min(maxGain, db)) / maxGain) * range
-  const points = gains.map((g, i) => [i * step + step / 2, toY(g)])
+  const toY = (db: number): number =>
+    mid - (Math.max(-maxGain, Math.min(maxGain, db)) / maxGain) * range
+  const points: Point[] = gains.map((g, i) => [i * step + step / 2, toY(g)])
   const line = smoothPath(points)
   const area = points.length
     ? `${line} L${fmt(points[points.length - 1][0])},${fmt(mid)} L${fmt(points[0][0])},${fmt(mid)} Z`
@@ -54,16 +71,16 @@ export function buildEqCurve(gains, { w, h, maxGain = 12, range = h * 0.42 }) {
 }
 
 /** "+3", "−2.5", "0" with a typographic minus sign. */
-export function formatGain(db) {
+export function formatGain(db: number): string {
   if (db > 0) return `+${trim(db)}`
   if (db < 0) return `−${trim(-db)}`
   return '0'
 }
 
-function trim(n) {
+function trim(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1)
 }
 
-function fmt(n) {
+function fmt(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1)
 }
