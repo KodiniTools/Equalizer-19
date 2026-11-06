@@ -7,7 +7,7 @@ import {
   DEFAULT_DYNAMICS,
   compPresetToDynamics,
   findCompPreset,
-} from '../src/utils/presets.js'
+} from '../src/utils/presets'
 
 test('every compressor preset is listed in exactly one group', () => {
   const grouped = COMP_PRESET_GROUPS.flatMap((g) => g.presets)

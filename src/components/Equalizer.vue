@@ -20,7 +20,7 @@
 
 <script setup>
   import { ref, inject, watch, computed, onMounted } from 'vue'
-  import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets.js'
+  import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../utils/presets'
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets.js'
   import EqPresetControls from './equalizer/EqPresetControls.vue'
   import EqPresetForm from './equalizer/EqPresetForm.vue'

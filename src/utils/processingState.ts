@@ -1,4 +1,4 @@
-import { DEFAULT_DYNAMICS } from './presets.js'
+import { DEFAULT_DYNAMICS, type DynamicsKey, type DynamicsSettings } from './presets'
 
 /**
  * Snapshot of everything undo/redo covers: the sound-processing settings of
@@ -13,13 +13,52 @@ import { DEFAULT_DYNAMICS } from './presets.js'
  * toggleEqBypass, toggleDynamics), so they work without a Web Audio context.
  */
 
-const DYNAMICS_KEYS = Object.keys(DEFAULT_DYNAMICS)
+const DYNAMICS_KEYS = Object.keys(DEFAULT_DYNAMICS) as DynamicsKey[]
+
+/** The part of the audio engine store the snapshot functions use. */
+export interface ProcessingEngine {
+  eqBands: ReadonlyArray<{ gain: number }>
+  eqBypass: boolean
+  dynamics: DynamicsSettings
+  dynamicsEnabled: boolean
+  updateEqBand(index: number, gain: number): void
+  updateDynamics(settings: Partial<DynamicsSettings>): void
+  toggleEqBypass(): void
+  toggleDynamics(): void
+}
+
+export interface ProcessingState {
+  eqGains: number[]
+  eqBypass: boolean
+  dynamics: DynamicsSettings
+  dynamicsEnabled: boolean
+}
+
+/**
+ * i18n-neutral description of what changed between two snapshots; rendered
+ * into text by the UI.
+ */
+export type ProcessingChange =
+  /** one EQ band moved */
+  | { type: 'eq-band'; index: number }
+  /** several bands at once (preset, reset) */
+  | { type: 'eq-curve' }
+  /** EQ switched on (enabled = true) / off */
+  | { type: 'eq-bypass'; enabled: boolean }
+  /** one compressor parameter moved */
+  | { type: 'dyn-param'; param: DynamicsKey }
+  /** several parameters (preset, reset) */
+  | { type: 'dyn-params' }
+  /** compressor switched on / off */
+  | { type: 'dyn-toggle'; enabled: boolean }
+  /** changes in more than one of the above */
+  | { type: 'mixed' }
 
 /**
  * Read the current processing settings as a plain, immutable-by-convention object.
  */
-export function captureProcessingState(engine) {
-  const dynamics = {}
+export function captureProcessingState(engine: ProcessingEngine): ProcessingState {
+  const dynamics = {} as DynamicsSettings
   for (const key of DYNAMICS_KEYS) dynamics[key] = engine.dynamics[key]
   return {
     eqGains: engine.eqBands.map((band) => band.gain),
@@ -34,14 +73,14 @@ export function captureProcessingState(engine) {
  * so filters are not rewritten needlessly and the processing chain is only
  * rebuilt when a bypass state really changes.
  */
-export function applyProcessingState(engine, state) {
+export function applyProcessingState(engine: ProcessingEngine, state: ProcessingState): void {
   state.eqGains.forEach((gain, index) => {
     if (engine.eqBands[index] && engine.eqBands[index].gain !== gain) {
       engine.updateEqBand(index, gain)
     }
   })
 
-  const dynamics = {}
+  const dynamics: Partial<DynamicsSettings> = {}
   let dynamicsChanged = false
   for (const key of DYNAMICS_KEYS) {
     if (engine.dynamics[key] !== state.dynamics[key]) {
@@ -58,7 +97,10 @@ export function applyProcessingState(engine, state) {
 /**
  * Value equality of two snapshots.
  */
-export function processingStatesEqual(a, b) {
+export function processingStatesEqual(
+  a: ProcessingState | null | undefined,
+  b: ProcessingState | null | undefined
+): boolean {
   if (a === b) return true
   if (!a || !b) return false
   if (a.eqBypass !== b.eqBypass || a.dynamicsEnabled !== b.dynamicsEnabled) return false
@@ -69,22 +111,16 @@ export function processingStatesEqual(a, b) {
 }
 
 /**
- * Describe what changed between two snapshots. The result is i18n-neutral and
- * rendered into text by the UI:
- *
- *   { type: 'eq-band', index }           one EQ band moved
- *   { type: 'eq-curve' }                 several bands at once (preset, reset)
- *   { type: 'eq-bypass', enabled }       EQ switched on (enabled = true) / off
- *   { type: 'dyn-param', param }         one compressor parameter moved
- *   { type: 'dyn-params' }               several parameters (preset, reset)
- *   { type: 'dyn-toggle', enabled }      compressor switched on / off
- *   { type: 'mixed' }                    changes in more than one of the above
- *   null                                 nothing changed
+ * Describe what changed between two snapshots (see ProcessingChange);
+ * null when nothing changed.
  */
-export function describeProcessingChange(prev, next) {
-  const changes = []
+export function describeProcessingChange(
+  prev: ProcessingState,
+  next: ProcessingState
+): ProcessingChange | null {
+  const changes: ProcessingChange[] = []
 
-  const bands = []
+  const bands: number[] = []
   next.eqGains.forEach((gain, index) => {
     if (prev.eqGains[index] !== gain) bands.push(index)
   })
@@ -112,9 +148,12 @@ export function describeProcessingChange(prev, next) {
  * continuous controls merge (dragging the same slider); switching presets or
  * toggling bypass always stays its own step.
  */
-export function canMergeProcessingChanges(prev, next) {
+export function canMergeProcessingChanges(
+  prev: ProcessingChange | null | undefined,
+  next: ProcessingChange | null | undefined
+): boolean {
   if (!prev || !next || prev.type !== next.type) return false
-  if (prev.type === 'eq-band') return prev.index === next.index
-  if (prev.type === 'dyn-param') return prev.param === next.param
+  if (prev.type === 'eq-band') return prev.index === (next as typeof prev).index
+  if (prev.type === 'dyn-param') return prev.param === (next as typeof prev).param
   return false
 }

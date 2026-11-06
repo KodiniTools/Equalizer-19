@@ -25,14 +25,14 @@
 |-------------|-------|
 | **Web Audio API** | Echtzeit-Audio-Processing (BiquadFilter, DynamicsCompressor, AnalyserNode) |
 | **MediaRecorder API** | Audio-Aufnahme in WebM (Opus) |
-| **AudioWorklet** | Verlustfreie WAV-Aufnahme: PCM-Mitschnitt hinter dem Master-Gain (`src/worklets/pcm-recorder.worklet.js`), Encoder in `src/utils/wavEncoder.js` (16/24 Bit PCM, 32 Bit Float). Lädt das Worklet-Modul nicht innerhalb von 2 s, nutzt die Aufnahme den ScriptProcessor-Fallback (`src/utils/workletLoader.js`) |
+| **AudioWorklet** | Verlustfreie WAV-Aufnahme: PCM-Mitschnitt hinter dem Master-Gain (`src/worklets/pcm-recorder.worklet.js`), Encoder in `src/utils/wavEncoder.ts` (16/24 Bit PCM, 32 Bit Float). Lädt das Worklet-Modul nicht innerhalb von 2 s, nutzt die Aufnahme den ScriptProcessor-Fallback (`src/utils/workletLoader.ts`) |
 
 ### Styling & Icons
 | Technologie | Version | Zweck |
 |-------------|---------|-------|
 | **Design-Tokens** | - | `src/design-system/tokens.css` (Dark/Light über `[data-theme]`), Quelle `tokens.json`; Komponenten nutzen nur `var(--token)` |
 | **Ui-Komponenten** | - | `src/components/ui/` (UiButton, UiSwitch, UiDialog, …), siehe dortige README |
-| **Inline-SVG-Icons** | - | `AppIcon.vue` + `src/utils/icons.js`, keine externe Icon-Library |
+| **Inline-SVG-Icons** | - | `AppIcon.vue` + `src/utils/icons.ts`, keine externe Icon-Library |
 
 ### Build & Bundling
 | Technologie | Version | Zweck |
@@ -75,7 +75,7 @@ Equalizer-19/
 │   ├── assets/
 │   │   └── style.css       # Globale Styles; importiert design-system/tokens.css
 │   │
-│   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.js, Tests, README
+│   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.ts, Tests, README
 │   │
 │   ├── components/         # Vue-Komponenten
 │   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiSegmentedControl, UiPanel, UiDialog, UiToast), README
@@ -84,7 +84,7 @@ Equalizer-19/
 │   │   ├── recorder/                  # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons, CountdownOverlay, DownloadDialog
 │   │   ├── __tests__/                 # Komponententests (Vitest), auch in ui/, landing/, equalizer/, recorder/
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
-│   │   ├── AppIcon.vue                # Inline-SVG-Icon nach Name (utils/icons.js)
+│   │   ├── AppIcon.vue                # Inline-SVG-Icon nach Name (utils/icons.ts)
 │   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Dropdown (in DynamicsProcessor)
 │   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
@@ -100,13 +100,13 @@ Equalizer-19/
 │   │   └── Visualization.vue          # Spektrum-Analyzer
 │   │
 │   ├── data/
-│   │   └── blogArticles.js            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
+│   │   └── blogArticles.ts            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   │
 │   ├── stores/             # Pinia-Stores (globaler Zustand, src/main.js: app.use(createPinia()))
 │   │   ├── audioEngine.js             # Audio-Verarbeitungskette: Parameter reaktiv, AudioNodes shallowRef + markRaw
 │   │   ├── playlist.js                # Playlist: Tracks, aktueller Index, Shuffle/Repeat, Navigation
 │   │   ├── player.js                  # Wiedergabe (HTMLAudioElement), Position, Lautstärke; Listenänderungen mit Wiedergabe-Folgen
-│   │   ├── history.js                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
+│   │   ├── history.ts                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
 │   │   └── toast.js                   # Benachrichtigungen: notify(message, type)
 │   │
 │   ├── i18n/               # Übersetzungen: de.ts (Referenz, TranslationKey), en.ts (Record<TranslationKey, string>), index.ts (translations, LANGUAGES)
@@ -123,19 +123,19 @@ Equalizer-19/
 │   │   └── useUndoRedo.js             # Verlauf der Klangeinstellungen (vom History-Store genutzt)
 │   │
 │   ├── utils/              # Hilfsfunktionen & Konstanten
-│   │   ├── audioBlob.js            # Blob-Prüfung für übergebene Dateien
-│   │   ├── audioChain.js           # Routing der Verarbeitungskette (reine Funktionen)
-│   │   ├── blogCards.js            # Blog-Karten: Datum/Sprache (reine Funktionen)
-│   │   ├── eqCurve.js              # Frequenzgang-Kurve aus den Band-Gains (reine Funktionen)
-│   │   ├── history.js              # Verlaufsmodell für Undo/Redo (max. 100 Schritte)
-│   │   ├── icons.js                # Inline-SVG-Pfade für AppIcon
-│   │   ├── playbackOrder.js        # Playlist-Navigation (reine Funktionen)
-│   │   ├── presets.js              # EQ- und Kompressor-Presets
-│   │   ├── processingState.js      # Snapshot/Anwenden der Klangeinstellungen
-│   │   ├── seoMeta.js              # Title/Description/Canonical je Route und Sprache
-│   │   ├── sharedFileRepository.js # Übergabe vom Audio-Konverter
-│   │   ├── wavEncoder.js           # WAV-Export (16/24/32 Bit)
-│   │   └── workletLoader.js        # AudioWorklet laden (mit Timeout/Fallback)
+│   │   ├── audioBlob.ts            # Blob-Prüfung für übergebene Dateien
+│   │   ├── audioChain.ts           # Routing der Verarbeitungskette (reine Funktionen)
+│   │   ├── blogCards.ts            # Blog-Karten: Datum/Sprache (reine Funktionen)
+│   │   ├── eqCurve.ts              # Frequenzgang-Kurve aus den Band-Gains (reine Funktionen)
+│   │   ├── history.ts              # Verlaufsmodell für Undo/Redo (max. 100 Schritte)
+│   │   ├── icons.ts                # Inline-SVG-Pfade für AppIcon
+│   │   ├── playbackOrder.ts        # Playlist-Navigation (reine Funktionen)
+│   │   ├── presets.ts              # EQ- und Kompressor-Presets
+│   │   ├── processingState.ts      # Snapshot/Anwenden der Klangeinstellungen
+│   │   ├── seoMeta.ts              # Title/Description/Canonical je Route und Sprache
+│   │   ├── sharedFileRepository.ts # Übergabe vom Audio-Konverter
+│   │   ├── wavEncoder.ts           # WAV-Export (16/24/32 Bit)
+│   │   └── workletLoader.ts        # AudioWorklet laden (mit Timeout/Fallback)
 │   │
 │   ├── worklets/
 │   │   └── pcm-recorder.worklet.js # AudioWorklet für die WAV-Aufnahme
@@ -183,7 +183,7 @@ Equalizer-19/
 
 ```javascript
 // Definiert in: src/stores/audioEngine.js
-// Frequenzen: EQ_BAND_FREQUENCIES in src/utils/presets.js
+// Frequenzen: EQ_BAND_FREQUENCIES in src/utils/presets.ts
 // 19 Bänder von 20 Hz bis 20 kHz (logarithmisch, ca. Halboktav-Abstand), alle 'peaking'
 {
   frequency: Number,    // Frequenz in Hz
@@ -212,7 +212,7 @@ Equalizer-19/
 ### EQ-Presets
 
 ```javascript
-// Definiert in: src/utils/presets.js
+// Definiert in: src/utils/presets.ts
 EQ_PRESETS = {
   'Flat': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   'Rock': [-2, 0, 2, 4, 3, 1, -1, 0, 1, 2, 3, 4, 3, 2, 1, 0, -1, -2, -3],
@@ -228,7 +228,7 @@ EQ_PRESETS = {
 ### Kompressor-Presets
 
 ```javascript
-// Definiert in: src/utils/presets.js
+// Definiert in: src/utils/presets.ts
 // Format: { th: threshold, kn: knee, ra: ratio, at: attack(ms), re: release(ms) }
 COMP_PRESETS = {
   // Basic
@@ -309,7 +309,7 @@ Die Komponenten lesen weiterhin `t.value.key` (bzw. `t.key` im Template) über `
     └────────────┘  └────────────┘  └────────────┘
 ```
 
-Die Kette ist für Playlist und Audio-Eingang identisch. Der Recorder greift hinter dem Master-Gain ab, also immer das bearbeitete Signal – auch Änderungen an EQ und Kompressor während einer laufenden Aufnahme. `src/utils/audioChain.js` baut die Kette bei jedem Routing-Wechsel (Bypass, Gerätewechsel, Playlist ↔ Eingang) komplett neu auf: Alle Knoten vor dem Master-Gain werden erst getrennt und dann in Reihenfolge verbunden, damit keine Kante einer früheren Verschaltung (z. B. EQ → Kompressor bei umgangenem Kompressor) eine zweite Signalkopie in Ausgang und Aufnahme mischt. Die Ausgänge des Master-Gain (Analyser, Monitor, Recorder) bleiben dabei unangetastet.
+Die Kette ist für Playlist und Audio-Eingang identisch. Der Recorder greift hinter dem Master-Gain ab, also immer das bearbeitete Signal – auch Änderungen an EQ und Kompressor während einer laufenden Aufnahme. `src/utils/audioChain.ts` baut die Kette bei jedem Routing-Wechsel (Bypass, Gerätewechsel, Playlist ↔ Eingang) komplett neu auf: Alle Knoten vor dem Master-Gain werden erst getrennt und dann in Reihenfolge verbunden, damit keine Kante einer früheren Verschaltung (z. B. EQ → Kompressor bei umgangenem Kompressor) eine zweite Signalkopie in Ausgang und Aufnahme mischt. Die Ausgänge des Master-Gain (Analyser, Monitor, Recorder) bleiben dabei unangetastet.
 
 ---
 
@@ -349,7 +349,7 @@ const { t } = inject('i18n')
 
 ### Undo/Redo
 
-`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.js`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
+`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.ts`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.js`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
 
 ### Browser-Kompatibilität
 

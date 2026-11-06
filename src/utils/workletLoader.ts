@@ -8,13 +8,25 @@
  * loaded and later calls resolve true.
  *
  * State is kept per context and per module URL.
- *
- * @param {BaseAudioContext} audioContext
- * @param {string|URL} url
- * @param {number} timeoutMs
- * @returns {Promise<boolean>}
  */
-export async function loadWorkletModule(audioContext, url, timeoutMs) {
+
+interface WorkletLoadState {
+  loaded: boolean
+  loading: Promise<boolean> | null
+  timedOut: boolean
+}
+
+/** The part of BaseAudioContext used here, plus the per-context load registry. */
+export interface WorkletHost {
+  audioWorklet?: { addModule(url: string | URL): Promise<void> }
+  __eq19Worklets?: Record<string, WorkletLoadState>
+}
+
+export async function loadWorkletModule(
+  audioContext: WorkletHost,
+  url: string | URL,
+  timeoutMs: number
+): Promise<boolean> {
   if (!audioContext.audioWorklet) return false
 
   const key = String(url)
@@ -37,7 +49,7 @@ export async function loadWorkletModule(audioContext, url, timeoutMs) {
           state.loaded = true
           return true
         },
-        (error) => {
+        (error: unknown) => {
           console.warn('AudioWorklet unavailable, falling back to ScriptProcessor:', error)
           return false
         }
@@ -48,8 +60,8 @@ export async function loadWorkletModule(audioContext, url, timeoutMs) {
       })
   }
 
-  let timer = null
-  const timeout = new Promise((resolve) => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timeout = new Promise<null>((resolve) => {
     timer = setTimeout(() => resolve(null), timeoutMs)
   })
   const loaded = await Promise.race([state.loading, timeout])

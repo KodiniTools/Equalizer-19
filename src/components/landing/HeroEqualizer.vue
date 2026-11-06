@@ -77,8 +77,8 @@
 
 <script setup>
   import { computed, inject, ref } from 'vue'
-  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../../utils/presets.js'
-  import { buildEqCurve, formatGain } from '../../utils/eqCurve.js'
+  import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../../utils/presets'
+  import { buildEqCurve, formatGain } from '../../utils/eqCurve'
   import { UiButton } from '../ui'
 
   /**

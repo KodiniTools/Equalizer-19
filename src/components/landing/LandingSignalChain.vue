@@ -85,8 +85,8 @@
 
 <script setup>
   import { inject } from 'vue'
-  import { EQ_PRESETS } from '../../utils/presets.js'
-  import { buildEqCurve, smoothPath } from '../../utils/eqCurve.js'
+  import { EQ_PRESETS } from '../../utils/presets'
+  import { buildEqCurve, smoothPath } from '../../utils/eqCurve'
 
   const { t } = inject('i18n')
 

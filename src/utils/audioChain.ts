@@ -10,26 +10,37 @@
  */
 
 /**
- * The nodes of the chain in signal order for the given routing.
- *
- * @param {object} routing
- * @param {AudioNode} routing.source           file player or live input
- * @param {AudioNode[]} [routing.eqFilters]    EQ filters, lowest band first
- * @param {AudioNode|null} [routing.dynamicsNode]
- * @param {AudioNode|null} [routing.gainNode]
- * @param {boolean} [routing.eqBypass]
- * @param {boolean} [routing.dynamicsEnabled]
- * @returns {AudioNode[]}
+ * The part of the AudioNode interface the chain needs. Tests pass plain
+ * fakes, so nothing here depends on the Web Audio classes themselves.
  */
-export function processingChainOrder({
+export interface ChainNode {
+  connect(destination: ChainNode): unknown
+  disconnect(): void
+}
+
+export interface ChainRouting<N extends ChainNode = ChainNode> {
+  /** file player or live input */
+  source: N
+  /** EQ filters, lowest band first */
+  eqFilters?: N[]
+  dynamicsNode?: N | null
+  gainNode?: N | null
+  eqBypass?: boolean
+  dynamicsEnabled?: boolean
+}
+
+/**
+ * The nodes of the chain in signal order for the given routing.
+ */
+export function processingChainOrder<N extends ChainNode>({
   source,
   eqFilters = [],
   dynamicsNode = null,
   gainNode = null,
   eqBypass = false,
   dynamicsEnabled = true,
-}) {
-  const order = [source]
+}: ChainRouting<N>): N[] {
+  const order: N[] = [source]
   if (!eqBypass) order.push(...eqFilters)
   if (dynamicsEnabled && dynamicsNode) order.push(dynamicsNode)
   if (gainNode) order.push(gainNode)
@@ -46,19 +57,19 @@ export function processingChainOrder({
  * bypassed would sum a second copy of the signal into output and recording.
  *
  * The last node (master gain) keeps its outputs untouched.
- *
- * @param {AudioNode[]} order
- * @param {AudioNode[]} [staleNodes]
  */
-export function connectProcessingChain(order, staleNodes = []) {
-  const toDetach = new Set([...order.slice(0, -1), ...staleNodes])
+export function connectProcessingChain<N extends ChainNode>(
+  order: N[],
+  staleNodes: Array<N | null | undefined> = []
+): void {
+  const toDetach = new Set<N | null | undefined>([...order.slice(0, -1), ...staleNodes])
   for (const node of toDetach) disconnectAll(node)
   for (let i = 0; i < order.length - 1; i++) {
     order[i].connect(order[i + 1])
   }
 }
 
-function disconnectAll(node) {
+function disconnectAll(node: ChainNode | null | undefined): void {
   if (!node) return
   try {
     node.disconnect()

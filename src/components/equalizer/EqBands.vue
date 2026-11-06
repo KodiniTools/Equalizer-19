@@ -52,8 +52,8 @@
 
 <script setup>
   import { computed, inject } from 'vue'
-  import { formatFrequency } from '../../utils/presets.js'
-  import { buildEqCurve } from '../../utils/eqCurve.js'
+  import { formatFrequency } from '../../utils/presets'
+  import { buildEqCurve } from '../../utils/eqCurve'
 
   /**
    * Die 19 Band-Regler mit der Frequenzkurve dahinter. Rein darstellend:

@@ -1,6 +1,6 @@
 <template>
   <section id="blog" class="lp-section lp-section-alt">
-    <!-- Blog: posts about Equalizer 19 on kodinitools.com (src/data/blogArticles.js) -->
+    <!-- Blog: posts about Equalizer 19 on kodinitools.com (src/data/blogArticles.ts) -->
     <div class="lp-wrap">
       <header class="lp-section-head">
         <h2>{{ t.lp_blog_title }}</h2>
@@ -37,12 +37,12 @@
 
 <script setup>
   import { inject, computed } from 'vue'
-  import { getBlogArticlesNewestFirst } from '../../data/blogArticles.js'
-  import { buildBlogCards } from '../../utils/blogCards.js'
+  import { getBlogArticlesNewestFirst } from '../../data/blogArticles'
+  import { buildBlogCards } from '../../utils/blogCards'
 
   const { t, currentLanguage } = inject('i18n')
 
-  // Blog cards in the active language, newest post first (src/data/blogArticles.js)
+  // Blog cards in the active language, newest post first (src/data/blogArticles.ts)
   const blogCards = computed(() =>
     buildBlogCards(getBlogArticlesNewestFirst(), currentLanguage.value, t.value.lp_blog_minutes)
   )

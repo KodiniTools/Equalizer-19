@@ -26,7 +26,7 @@
 <script setup>
   import { inject, computed, watch } from 'vue'
   import AppIcon from './AppIcon.vue'
-  import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets.js'
+  import { EQ_BAND_FREQUENCIES, formatFrequency } from '../utils/presets'
   import { UiIconButton } from './ui'
   import { storeToRefs } from 'pinia'
   import { useHistoryStore } from '../stores/history'
@@ -45,7 +45,7 @@
     storeToRefs(history)
 
   /**
-   * Turn a change descriptor (see utils/processingState.js) into text.
+   * Turn a change descriptor (see utils/processingState.ts) into text.
    */
   function describe(change) {
     const tr = t.value

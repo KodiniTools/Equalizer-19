@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { processingChainOrder, connectProcessingChain } from '../src/utils/audioChain.js'
+import { processingChainOrder, connectProcessingChain } from '../src/utils/audioChain'
 
 // ---- Fake AudioNodes: record outgoing edges ---------------------------------
 function node(name) {

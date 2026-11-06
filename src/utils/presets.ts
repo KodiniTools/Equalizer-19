@@ -3,7 +3,7 @@
  * roughly half-octave steps from 20 Hz to 20 kHz.
  * Single source of truth for the audio engine, the UI and the presets below.
  */
-export const EQ_BAND_FREQUENCIES = [
+export const EQ_BAND_FREQUENCIES: readonly number[] = [
   20, 30, 45, 63, 90, 135, 200, 300, 450, 630, 900, 1350, 2000, 3000, 4500, 6300, 9000, 13500,
   20000,
 ]
@@ -17,7 +17,7 @@ export const EQ_BAND_Q = 2.5
 /**
  * Human-readable band frequency: 630 → "630", 1350 → "1.4k", 2000 → "2k".
  */
-export function formatFrequency(freq) {
+export function formatFrequency(freq: number): string {
   if (freq >= 1000) {
     const k = freq / 1000
     return (Number.isInteger(k) ? k.toString() : k.toFixed(1)) + 'k'
@@ -25,11 +25,21 @@ export function formatFrequency(freq) {
   return freq.toString()
 }
 
+/** Engine dynamics settings; attack / release in seconds. */
+export interface DynamicsSettings {
+  threshold: number
+  knee: number
+  ratio: number
+  attack: number
+  release: number
+}
+
+export type DynamicsKey = keyof DynamicsSettings
+
 /**
  * Default dynamics compressor settings (moderate, to prevent clipping).
- * attack / release in seconds.
  */
-export const DEFAULT_DYNAMICS = Object.freeze({
+export const DEFAULT_DYNAMICS: Readonly<DynamicsSettings> = Object.freeze({
   threshold: -30, // dB (higher = less compression)
   knee: 20, // dB (smoother transition)
   ratio: 4, // ratio (gentler compression)
@@ -39,7 +49,7 @@ export const DEFAULT_DYNAMICS = Object.freeze({
 
 // Gains in dB, one value per band in EQ_BAND_FREQUENCIES:
 //  20  30  45  63  90 135 200 300 450 630 900 1.35k 2k 3k 4.5k 6.3k 9k 13.5k 20k
-export const EQ_PRESETS = {
+export const EQ_PRESETS: Record<string, readonly number[]> = {
   Flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   Rock: [4, 4, 3, 2, 1, 0, -1, -1, -1, 0, 0, 1, 2, 3, 3, 3, 2, 2, 1],
   Pop: [-1, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 2, 2, 1, 1, 0, -1, -1, -1],
@@ -52,7 +62,16 @@ export const EQ_PRESETS = {
   'V-Shape': [5, 4, 3, 2, 1, 0, -1, -2, -3, -3, -2, -1, 0, 1, 2, 3, 4, 4, 3],
 }
 
-export const COMP_PRESETS = {
+/** Compressor preset as stored: threshold, knee, ratio, attack / release in ms. */
+export interface CompPreset {
+  th: number
+  kn: number
+  ra: number
+  at: number
+  re: number
+}
+
+export const COMP_PRESETS: Record<string, CompPreset> = {
   // Basic
   Gentle: { th: -18, kn: 8, ra: 2, at: 10, re: 100 },
   Medium: { th: -24, kn: 15, ra: 4, at: 5, re: 50 },
@@ -77,10 +96,16 @@ export const COMP_PRESETS = {
   Limiter: { th: -6, kn: 0, ra: 20, at: 0.5, re: 10 },
 }
 
+export interface CompPresetGroup {
+  /** translation key of the group label */
+  labelKey: string
+  presets: string[]
+}
+
 /**
  * Compressor preset groups (label = translation key) in display order.
  */
-export const COMP_PRESET_GROUPS = [
+export const COMP_PRESET_GROUPS: readonly CompPresetGroup[] = [
   { labelKey: 'comp_cat_basic', presets: ['Gentle', 'Medium', 'Heavy'] },
   {
     labelKey: 'comp_cat_genre',
@@ -94,7 +119,7 @@ export const COMP_PRESET_GROUPS = [
  * Convert a COMP_PRESETS entry (attack / release in ms) to engine dynamics
  * settings (attack / release in seconds).
  */
-export function compPresetToDynamics(preset) {
+export function compPresetToDynamics(preset: CompPreset): DynamicsSettings {
   return {
     threshold: preset.th,
     ratio: preset.ra,
@@ -108,12 +133,15 @@ export function compPresetToDynamics(preset) {
  * Name of the compressor preset whose values equal the given dynamics
  * settings, or '' when they match none (e.g. after manual adjustments).
  */
-export function findCompPreset(dynamics) {
+export function findCompPreset(dynamics: Partial<DynamicsSettings> | null | undefined): string {
   if (!dynamics) return ''
-  const same = (a, b) => Math.abs(a - b) < 1e-9
+  const same = (a: number, b: number | undefined): boolean =>
+    b !== undefined && Math.abs(a - b) < 1e-9
   for (const [name, preset] of Object.entries(COMP_PRESETS)) {
     const target = compPresetToDynamics(preset)
-    if (Object.keys(target).every((key) => same(target[key], dynamics[key]))) return name
+    if ((Object.keys(target) as DynamicsKey[]).every((key) => same(target[key], dynamics[key]))) {
+      return name
+    }
   }
   return ''
 }

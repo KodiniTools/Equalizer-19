@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { smoothPath, buildEqCurve, formatGain } from '../src/utils/eqCurve.js'
-import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../src/utils/presets.js'
+import { smoothPath, buildEqCurve, formatGain } from '../src/utils/eqCurve'
+import { EQ_PRESETS, EQ_BAND_FREQUENCIES } from '../src/utils/presets'
 
 test('smoothPath: empty for fewer than two points', () => {
   assert.equal(smoothPath([]), '')

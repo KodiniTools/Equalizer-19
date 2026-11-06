@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import { formatTime } from '../utils/playbackOrder.js'
-import { analyzeBlob, recordToBlob } from '../utils/audioBlob.js'
+import { formatTime } from '../utils/playbackOrder'
+import { analyzeBlob, recordToBlob } from '../utils/audioBlob'
 import { useAudioEngineStore } from './audioEngine.js'
 import { usePlaylistStore, createTrack } from './playlist.js'
 

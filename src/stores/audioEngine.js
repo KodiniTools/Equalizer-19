@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, shallowRef, reactive, markRaw, watch } from 'vue'
-import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets.js'
-import { processingChainOrder, connectProcessingChain } from '../utils/audioChain.js'
+import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets'
+import { processingChainOrder, connectProcessingChain } from '../utils/audioChain'
 
 /**
  * Audio-Engine: Web-Audio-Kette Source → 19 EQ-Filter → Kompressor → Master-Gain →

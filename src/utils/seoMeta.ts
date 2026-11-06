@@ -4,7 +4,24 @@
 export const SITE_BASE = 'https://kodinitools.com/equaliser19'
 const BASE_PATH = '/equaliser19'
 
-const META = {
+export type MetaLanguage = 'de' | 'en'
+type RouteKey = '/' | '/app' | '/faq'
+
+interface RouteMeta {
+  title: string
+  description: string
+}
+
+export interface PageMeta extends RouteMeta {
+  canonical: string
+}
+
+export interface Alternate {
+  hreflang: string
+  href: string
+}
+
+const META: Record<MetaLanguage, Record<RouteKey, RouteMeta>> = {
   de: {
     '/': {
       title: 'Equalizer online – 19-Band-EQ mit Kompressor | KodiniTools',
@@ -42,35 +59,38 @@ const META = {
 }
 
 /** Router path ('/', '/app/', '') → known key, unknown paths fall back to '/'. */
-function routeKey(path) {
+function routeKey(path: string | null | undefined): RouteKey {
   const trimmed = (path || '/').replace(/\/+$/, '') || '/'
-  return Object.hasOwn(META.de, trimmed) ? trimmed : '/'
+  return Object.hasOwn(META.de, trimmed) ? (trimmed as RouteKey) : '/'
 }
 
 /** Router path from a full pathname such as '/equaliser19/faq'. */
-export function routePathFromLocation(pathname) {
+export function routePathFromLocation(pathname: string | null | undefined): string {
   const p = pathname || '/'
   return p.startsWith(BASE_PATH) ? p.slice(BASE_PATH.length) || '/' : p
 }
 
-const isLang = (value) => value === 'de' || value === 'en'
+const isLang = (value: unknown): value is MetaLanguage => value === 'de' || value === 'en'
 
 /** Startsprache: ?lang=de|en, dann gespeicherte Wahl, sonst Deutsch. */
-export function resolveInitialLanguage(search, ...stored) {
+export function resolveInitialLanguage(
+  search: string | null | undefined,
+  ...stored: unknown[]
+): MetaLanguage {
   const fromUrl = new URLSearchParams(search || '').get('lang')
   if (isLang(fromUrl)) return fromUrl
   return stored.find(isLang) ?? 'de'
 }
 
 /** Absolute canonical URL for a router path; English gets ?lang=en. */
-export function canonicalFor(path, lang = 'de') {
+export function canonicalFor(path: string | null | undefined, lang: string = 'de'): string {
   const key = routeKey(path)
   const url = key === '/' ? `${SITE_BASE}/` : `${SITE_BASE}${key}`
   return lang === 'en' ? `${url}?lang=en` : url
 }
 
 /** hreflang targets for a router path (identical for both languages). */
-export function alternatesFor(path) {
+export function alternatesFor(path: string | null | undefined): Alternate[] {
   return [
     { hreflang: 'de', href: canonicalFor(path, 'de') },
     { hreflang: 'en', href: canonicalFor(path, 'en') },
@@ -79,17 +99,17 @@ export function alternatesFor(path) {
 }
 
 /** Title, description and canonical for a router path and language. */
-export function pageMeta(path, lang) {
+export function pageMeta(path: string | null | undefined, lang: string | undefined): PageMeta {
   const key = routeKey(path)
-  const language = lang === 'en' ? 'en' : 'de'
+  const language: MetaLanguage = lang === 'en' ? 'en' : 'de'
   return { ...META[language][key], canonical: canonicalFor(key, language) }
 }
 
-function setAttr(doc, selector, attr, value) {
+function setAttr(doc: Document, selector: string, attr: string, value: string): void {
   doc.querySelector(selector)?.setAttribute(attr, value)
 }
 
-function upsertLink(doc, selector, attrs) {
+function upsertLink(doc: Document, selector: string, attrs: Record<string, string>): void {
   let link = doc.querySelector(selector)
   if (!link) {
     link = doc.createElement('link')
@@ -99,7 +119,11 @@ function upsertLink(doc, selector, attrs) {
 }
 
 /** Write the page meta into the document head. */
-export function applyPageMeta(path, lang, doc = globalThis.document) {
+export function applyPageMeta(
+  path: string | null | undefined,
+  lang: string | undefined,
+  doc: Document | undefined = globalThis.document
+): void {
   if (!doc) return
   const meta = pageMeta(path, lang)
   doc.documentElement?.setAttribute('lang', lang === 'en' ? 'en' : 'de')

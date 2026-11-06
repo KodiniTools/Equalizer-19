@@ -5,7 +5,7 @@ import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAudioEngineStore } from '../src/stores/audioEngine.js'
 import { useUndoRedo } from '../src/composables/useUndoRedo.js'
-import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets.js'
+import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets'
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
 

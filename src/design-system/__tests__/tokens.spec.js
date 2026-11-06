@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import tokens from '../tokens.json'
-import { colorToken, themeColors } from '../tokens.js'
+import { colorToken, themeColors } from '../tokens'
 import { DESIGN_SYSTEM, SRC, cssBlock, mediaBlock, normalizeValue } from './tokenTestUtils'
 
 const tokensCss = readFileSync(join(DESIGN_SYSTEM, 'tokens.css'), 'utf8')
@@ -125,7 +125,7 @@ describe('tokens.css ↔ tokens.json', () => {
   })
 })
 
-describe('tokens.js', () => {
+describe('tokens.ts', () => {
   it('löst Aliase auf', () => {
     expect(colorToken('dark', '--primary-bg')).toBe('#0a1426')
     expect(colorToken('dark', '--eq-boost')).toBe(colorToken('dark', '--accent-primary'))

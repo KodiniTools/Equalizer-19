@@ -9,7 +9,7 @@ import {
   pageMeta,
   resolveInitialLanguage,
   routePathFromLocation,
-} from '../src/utils/seoMeta.js'
+} from '../src/utils/seoMeta'
 
 // Minimal head: only what applyPageMeta touches.
 function fakeDocument({ withCanonical = false } = {}) {

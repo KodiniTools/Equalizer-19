@@ -8,7 +8,7 @@ import {
   moveItem,
   indexAfterMove,
   formatTime,
-} from '../src/utils/playbackOrder.js'
+} from '../src/utils/playbackOrder'
 
 test('getNextIndex: sequential, end of list', () => {
   assert.equal(getNextIndex(3, 0, false, 'off'), 1)

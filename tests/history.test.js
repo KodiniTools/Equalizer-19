@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { createHistory } from '../src/utils/history.js'
+import { createHistory } from '../src/utils/history'
 
 // Manual clock so merge windows are deterministic
 function clock(start = 0) {

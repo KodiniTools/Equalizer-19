@@ -1,12 +1,12 @@
 import { ref, computed, watch } from 'vue'
-import { createHistory } from '../utils/history.js'
+import { createHistory } from '../utils/history'
 import {
   captureProcessingState,
   applyProcessingState,
   processingStatesEqual,
   describeProcessingChange,
   canMergeProcessingChanges,
-} from '../utils/processingState.js'
+} from '../utils/processingState'
 
 /**
  * Undo/redo for the audio engine's processing settings (EQ, compressor).

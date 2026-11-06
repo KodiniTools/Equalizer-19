@@ -5,6 +5,15 @@
  */
 const SPEAKER = 'M4 9v6h4l5 4V5L8 9H4z'
 
+export interface IconDefinition {
+  /** SVG path data on a 24×24 grid */
+  d: string
+  /** filled shape instead of a stroke */
+  fill?: boolean
+  /** stroke width, default set by AppIcon */
+  width?: number
+}
+
 export const ICONS = {
   alert: { d: 'M12 4v10M12 19h.01' },
   check: { d: 'M4 12.5l5 5L20 6.5' },
@@ -57,6 +66,12 @@ export const ICONS = {
   'volume-mute': { d: `${SPEAKER}M17 9l4 6M21 9l-4 6` },
   warning: { d: 'M12 3 2 21h20zM12 10v4M12 18h.01' },
   wave: { d: 'M3 12h3l2-6 3 12 3-9 2 6 2-3h3' },
-}
+} satisfies Record<string, IconDefinition>
 
-export const ICON_NAMES = Object.keys(ICONS)
+export type IconName = keyof typeof ICONS
+
+export const ICON_NAMES = Object.keys(ICONS) as IconName[]
+
+export function isIconName(value: unknown): value is IconName {
+  return typeof value === 'string' && Object.hasOwn(ICONS, value)
+}
