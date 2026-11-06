@@ -1,8 +1,9 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { useOutputRecorder } from '../src/composables/useOutputRecorder.js'
 
-mock.method(console, 'error', () => {})
+vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // ---- Fake Web Audio (no AudioWorklet → ScriptProcessor path) -----------------
 function fakeNode(name) {

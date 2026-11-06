@@ -25,7 +25,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 - **Design-Tokens** als CSS Custom Properties (`src/design-system/`) und ein eigener Satz **Ui-Komponenten** (`src/components/ui/`)
 - **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.js`), keine Icon-Font
 - **TypeScript** für die Übersetzungen (`src/i18n/`), Typprüfung per `vue-tsc` auch für JS-Dateien (`allowJs`)
-- **Tests**: node:test für reine Logik, Vitest + Vue Test Utils (jsdom) für Komponenten und Stores
+- **Tests**: Vitest für alles, Vue Test Utils (jsdom) für Komponenten und Stores, Node-Umgebung für reine Logik
 - **ESLint + Prettier**, GitHub-Actions-CI
 
 ## Installation
@@ -49,12 +49,10 @@ npm run preview
 ## Qualitätssicherung
 
 ```bash
-npm test               # beide Test-Läufer: node:test (tests/) und Vitest (src/**/__tests__)
-npm run test:node      # nur Logik-Tests (tests/*.test.js)
-npm run test:unit      # nur Komponenten-/Store-Tests (Vitest, jsdom)
+npm test               # Vitest: Logik-Tests (tests/) und Komponenten-/Store-Tests (src/**/__tests__)
 npm run test:watch     # Vitest im Watch-Modus
 
-npm run lint           # ESLint (JS, Vue)
+npm run lint           # ESLint (JS, TS, Vue)
 npm run format:check   # Prettier
 npm run type-check     # vue-tsc: TypeScript und JS (allowJs), inkl. en.ts gegen de.ts
 ```
@@ -144,7 +142,7 @@ Equalizer-19/
 │   │   ├── wavEncoder.js       # WAV-Export (16/24/32 Bit)
 │   │   └── workletLoader.js    # AudioWorklet laden (mit Timeout/Fallback)
 │   └── __tests__/              # Vitest-Setup und i18n-Stub für Komponententests
-└── tests/                      # Logik-Tests (node:test); Komponenten-/Store-Tests liegen in src/**/__tests__
+└── tests/                      # Logik-Tests (Vitest, Node-Umgebung); Komponenten-/Store-Tests liegen in src/**/__tests__
 ```
 
 Weitere Dokumente: `CONTEXT.md` (Architektur, Datenmodelle, Stores), `INSTALLATION.md`, `DEPLOY.md`, `LIESMICH.txt`.

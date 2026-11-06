@@ -1,8 +1,9 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { loadWorkletModule } from '../src/utils/workletLoader.js'
 
-mock.method(console, 'warn', () => {})
+vi.spyOn(console, 'warn').mockImplementation(() => {})
 
 const URL_A = 'https://example.test/a.worklet.js'
 const TIMEOUT = 20

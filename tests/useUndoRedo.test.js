@@ -1,4 +1,5 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
@@ -6,7 +7,7 @@ import { useAudioEngineStore } from '../src/stores/audioEngine.js'
 import { useUndoRedo } from '../src/composables/useUndoRedo.js'
 import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets.js'
 
-mock.method(console, 'log', () => {})
+vi.spyOn(console, 'log').mockImplementation(() => {})
 
 function clock(start = 1000) {
   let t = start
