@@ -1,7 +1,39 @@
 import { defineStore } from 'pinia'
 import { ref, shallowRef, reactive, markRaw, watch } from 'vue'
-import { EQ_PRESETS, EQ_BAND_FREQUENCIES, EQ_BAND_Q, DEFAULT_DYNAMICS } from '../utils/presets'
+import {
+  EQ_PRESETS,
+  EQ_BAND_FREQUENCIES,
+  EQ_BAND_Q,
+  DEFAULT_DYNAMICS,
+  type DynamicsKey,
+  type DynamicsSettings,
+} from '../utils/presets'
 import { processingChainOrder, connectProcessingChain } from '../utils/audioChain'
+
+/** One EQ band: centre frequency, gain in dB, Q. */
+export interface EqBand {
+  frequency: number
+  gain: number
+  q: number
+}
+
+/** The nodes getAudioNodes() hands out (null while the engine is not initialised). */
+export interface AudioNodes {
+  audioContext: AudioContext | null
+  sourceNode: AudioNode | null
+  analyserNode: AnalyserNode | null
+  gainNode: GainNode | null
+  dynamicsNode: DynamicsCompressorNode | null
+  eqFilters: BiquadFilterNode[]
+}
+
+type AudioContextCtor = new () => AudioContext
+
+/** Safari < 14.1 only has the prefixed constructor. */
+function audioContextCtor(): AudioContextCtor {
+  const w = window as Window & { webkitAudioContext?: AudioContextCtor }
+  return window.AudioContext || (w.webkitAudioContext as AudioContextCtor)
+}
 
 /**
  * Audio-Engine: Web-Audio-Kette Source → 19 EQ-Filter → Kompressor → Master-Gain →
@@ -11,28 +43,28 @@ import { processingChainOrder, connectProcessingChain } from '../utils/audioChai
  */
 export const useAudioEngineStore = defineStore('audioEngine', () => {
   // Audio Context
-  const audioContext = shallowRef(null)
+  const audioContext = shallowRef<AudioContext | null>(null)
   const isInitialized = ref(false)
 
   // Audio Nodes
-  const sourceNode = shallowRef(null)
-  const analyserNode = shallowRef(null)
-  const inputAnalyserNode = shallowRef(null)
-  const gainNode = shallowRef(null)
+  const sourceNode = shallowRef<AudioNode | null>(null)
+  const analyserNode = shallowRef<AnalyserNode | null>(null)
+  const inputAnalyserNode = shallowRef<AnalyserNode | null>(null)
+  const gainNode = shallowRef<GainNode | null>(null)
   // Between the end of the chain and the speakers; recording/meters tap before it
-  const monitorNode = shallowRef(null)
-  const dynamicsNode = shallowRef(null)
+  const monitorNode = shallowRef<GainNode | null>(null)
+  const dynamicsNode = shallowRef<DynamicsCompressorNode | null>(null)
 
   // Equalizer Filters (19 Bands)
-  const eqFilters = shallowRef([])
+  const eqFilters = shallowRef<BiquadFilterNode[]>([])
 
   // Equalizer Settings (19 bands, 20 Hz – 20 kHz)
-  const eqBands = reactive(
+  const eqBands = reactive<EqBand[]>(
     EQ_BAND_FREQUENCIES.map((frequency) => ({ frequency, gain: 0, q: EQ_BAND_Q }))
   )
 
   // Dynamics Settings (moderate defaults to prevent clipping)
-  const dynamics = reactive({ ...DEFAULT_DYNAMICS })
+  const dynamics = reactive<DynamicsSettings>({ ...DEFAULT_DYNAMICS })
 
   // Master Gain (reduced to prevent clipping)
   const masterGain = ref(0.7)
@@ -49,36 +81,41 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Initialize Audio Context and create audio nodes
    */
-  function initAudioContext() {
+  function initAudioContext(): void {
     if (isInitialized.value) return
 
     try {
-      audioContext.value = markRaw(new (window.AudioContext || window.webkitAudioContext)())
+      const ctx = markRaw(new (audioContextCtor())())
+      audioContext.value = ctx
 
       // Create Analyser Nodes
-      analyserNode.value = markRaw(audioContext.value.createAnalyser())
-      analyserNode.value.fftSize = 2048
-      analyserNode.value.smoothingTimeConstant = 0.8
+      const analyser = markRaw(ctx.createAnalyser())
+      analyser.fftSize = 2048
+      analyser.smoothingTimeConstant = 0.8
+      analyserNode.value = analyser
 
-      inputAnalyserNode.value = markRaw(audioContext.value.createAnalyser())
-      inputAnalyserNode.value.fftSize = 1024
-      inputAnalyserNode.value.smoothingTimeConstant = 0.3
+      const inputAnalyser = markRaw(ctx.createAnalyser())
+      inputAnalyser.fftSize = 1024
+      inputAnalyser.smoothingTimeConstant = 0.3
+      inputAnalyserNode.value = inputAnalyser
 
       // Create Dynamics Compressor
-      dynamicsNode.value = markRaw(audioContext.value.createDynamicsCompressor())
+      dynamicsNode.value = markRaw(ctx.createDynamicsCompressor())
       applyDynamicsToNode(dynamics)
 
       // Create Equalizer Filters (19 bands)
-      createEqFilters()
+      createEqFilters(ctx)
 
       // Create Master Gain Node
-      gainNode.value = markRaw(audioContext.value.createGain())
-      gainNode.value.gain.value = masterGain.value
+      const gain = markRaw(ctx.createGain())
+      gain.gain.value = masterGain.value
+      gainNode.value = gain
 
       // Monitor (speaker output) gain – muted for live inputs to avoid feedback
-      monitorNode.value = markRaw(audioContext.value.createGain())
-      monitorNode.value.gain.value = monitorEnabled.value ? 1 : 0
-      monitorNode.value.connect(audioContext.value.destination)
+      const monitor = markRaw(ctx.createGain())
+      monitor.gain.value = monitorEnabled.value ? 1 : 0
+      monitor.connect(ctx.destination)
+      monitorNode.value = monitor
 
       isInitialized.value = true
     } catch (error) {
@@ -92,11 +129,11 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
    * the edges of the audible range (20 Hz / 20 kHz), shelving filters there
    * would only act outside the hearing range and the sliders would do nothing.
    */
-  function createEqFilters() {
-    const filters = []
+  function createEqFilters(ctx: AudioContext): void {
+    const filters: BiquadFilterNode[] = []
 
     eqBands.forEach((band) => {
-      const filter = markRaw(audioContext.value.createBiquadFilter())
+      const filter = markRaw(ctx.createBiquadFilter())
 
       filter.type = 'peaking'
       filter.frequency.value = band.frequency
@@ -119,14 +156,16 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
    * sound. Rebuilding the chain never touches the gain node's outputs, so a
    * running recording survives routing changes.
    */
-  function connectAudioSource(source) {
+  function connectAudioSource(source: AudioNode): void {
     if (!audioContext.value || !isInitialized.value) {
       initAudioContext()
     }
+    const ctx = audioContext.value
+    if (!ctx) return
 
     // Resume context if suspended
-    if (audioContext.value.state === 'suspended') {
-      audioContext.value.resume()
+    if (ctx.state === 'suspended') {
+      ctx.resume()
     }
 
     // Disconnect previous source if exists
@@ -142,7 +181,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
 
     // Build the chain: source → [EQ] → [dynamics] → gain. Bypassed parts are
     // detached as well so no edge of an earlier routing keeps feeding the output.
-    const order = processingChainOrder({
+    const order = processingChainOrder<AudioNode>({
       source,
       eqFilters: eqFilters.value,
       dynamicsNode: dynamicsNode.value,
@@ -151,7 +190,9 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
       dynamicsEnabled: dynamicsEnabled.value,
     })
     try {
-      connectProcessingChain(order, [...eqFilters.value, dynamicsNode.value])
+      const processors: AudioNode[] = [...eqFilters.value]
+      if (dynamicsNode.value) processors.push(dynamicsNode.value)
+      connectProcessingChain(order, processors)
     } catch (e) {
       console.error('❌ Error building the processing chain:', e)
     }
@@ -178,7 +219,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
 
     // CRITICAL: Connect to Destination (speakers) via the monitor gain
     try {
-      tail.connect(monitorNode.value || audioContext.value.destination)
+      tail.connect(monitorNode.value || ctx.destination)
     } catch (e) {
       console.error('❌ Error connecting to destination:', e)
     }
@@ -187,7 +228,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Disconnect audio source
    */
-  function disconnectAudioSource() {
+  function disconnectAudioSource(): void {
     if (sourceNode.value) {
       try {
         sourceNode.value.disconnect()
@@ -201,7 +242,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Rebuild the processing chain for the current source (after routing changes)
    */
-  function reconnectSource() {
+  function reconnectSource(): void {
     if (sourceNode.value) {
       const source = sourceNode.value
       disconnectAudioSource()
@@ -212,12 +253,13 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Update a specific EQ band
    */
-  function updateEqBand(index, gain) {
+  function updateEqBand(index: number, gain: number): void {
     if (index >= 0 && index < eqBands.length) {
       eqBands[index].gain = gain
 
-      if (eqFilters.value[index]) {
-        eqFilters.value[index].gain.value = gain
+      const filter = eqFilters.value[index]
+      if (filter) {
+        filter.gain.value = gain
       }
     }
   }
@@ -225,7 +267,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Update all EQ bands at once
    */
-  function updateAllEqBands(gains) {
+  function updateAllEqBands(gains: readonly number[]): void {
     gains.forEach((gain, index) => {
       updateEqBand(index, gain)
     })
@@ -234,8 +276,8 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Reset all EQ bands to 0
    */
-  function resetEq() {
-    eqBands.forEach((band, index) => {
+  function resetEq(): void {
+    eqBands.forEach((_band, index) => {
       updateEqBand(index, 0)
     })
   }
@@ -243,7 +285,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Toggle EQ bypass
    */
-  function toggleEqBypass() {
+  function toggleEqBypass(): void {
     eqBypass.value = !eqBypass.value
     reconnectSource()
   }
@@ -251,7 +293,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Update dynamics compressor settings
    */
-  function updateDynamics(settings) {
+  function updateDynamics(settings: Partial<DynamicsSettings>): void {
     Object.assign(dynamics, settings)
     applyDynamicsToNode(settings)
   }
@@ -259,11 +301,13 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Write the given (partial) dynamics settings to the compressor node
    */
-  function applyDynamicsToNode(settings) {
-    if (!dynamicsNode.value) return
-    for (const key of Object.keys(DEFAULT_DYNAMICS)) {
-      if (settings[key] !== undefined) {
-        dynamicsNode.value[key].value = settings[key]
+  function applyDynamicsToNode(settings: Partial<DynamicsSettings>): void {
+    const node = dynamicsNode.value
+    if (!node) return
+    for (const key of Object.keys(DEFAULT_DYNAMICS) as DynamicsKey[]) {
+      const value = settings[key]
+      if (value !== undefined) {
+        node[key].value = value
       }
     }
   }
@@ -271,7 +315,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Toggle dynamics compressor
    */
-  function toggleDynamics() {
+  function toggleDynamics(): void {
     dynamicsEnabled.value = !dynamicsEnabled.value
     reconnectSource()
   }
@@ -279,7 +323,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Update master gain
    */
-  function updateMasterGain(value) {
+  function updateMasterGain(value: number): void {
     // The masterGain watcher below forwards the value to the gain node
     masterGain.value = Math.max(0, Math.min(2, value))
   }
@@ -287,7 +331,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Mute / unmute the speaker output without affecting recording and meters
    */
-  function setMonitorEnabled(enabled) {
+  function setMonitorEnabled(enabled: boolean): void {
     monitorEnabled.value = !!enabled
     if (monitorNode.value && audioContext.value) {
       monitorNode.value.gain.setTargetAtTime(
@@ -301,7 +345,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Get frequency data for visualization
    */
-  function getFrequencyData() {
+  function getFrequencyData(): Uint8Array {
     if (!analyserNode.value) return new Uint8Array(0)
 
     const bufferLength = analyserNode.value.frequencyBinCount
@@ -314,7 +358,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Get time domain data for waveform
    */
-  function getTimeDomainData() {
+  function getTimeDomainData(): Uint8Array {
     if (!analyserNode.value) return new Uint8Array(0)
 
     const bufferLength = analyserNode.value.frequencyBinCount
@@ -324,16 +368,17 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
     return dataArray
   }
 
-  function applyEqPreset(preset) {
-    if (EQ_PRESETS[preset]) {
-      updateAllEqBands(EQ_PRESETS[preset])
+  function applyEqPreset(preset: string): void {
+    const gains = EQ_PRESETS[preset]
+    if (gains) {
+      updateAllEqBands(gains)
     }
   }
 
   /**
    * Compute RMS dBFS for a given AnalyserNode (-Infinity when silent)
    */
-  function _rmsDb(node) {
+  function _rmsDb(node: AnalyserNode | null): number {
     if (!node) return -Infinity
     const buf = new Float32Array(node.fftSize)
     node.getFloatTimeDomainData(buf)
@@ -343,17 +388,17 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
     return rms > 0 ? 20 * Math.log10(rms) : -Infinity
   }
 
-  function getInputLevel() {
+  function getInputLevel(): number {
     return _rmsDb(inputAnalyserNode.value)
   }
-  function getOutputLevel() {
+  function getOutputLevel(): number {
     return _rmsDb(analyserNode.value)
   }
 
   /**
    * Get all audio nodes for external use
    */
-  function getAudioNodes() {
+  function getAudioNodes(): AudioNodes {
     return {
       audioContext: audioContext.value,
       sourceNode: sourceNode.value,
@@ -367,7 +412,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   /**
    * Cleanup
    */
-  function cleanup() {
+  function cleanup(): void {
     disconnectAudioSource()
 
     if (audioContext.value) {

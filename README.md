@@ -77,7 +77,7 @@ Equalizer-19/
 ├── eslint.config.js
 ├── .github/workflows/ci.yml    # Lint, Format, Type-Check, Tests, Build
 ├── src/
-│   ├── main.js                 # Entry Point: Pinia, Router
+│   ├── main.ts                 # Entry Point: Pinia, Router
 │   ├── App.vue                 # Root: stellt i18n und Theme bereit, Tastaturkürzel
 │   ├── assets/
 │   │   └── style.css           # Globale Styles; importiert design-system/tokens.css
@@ -106,11 +106,11 @@ Equalizer-19/
 │   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
 │   │   └── Visualization.vue   # Spektrum-Analyzer
 │   ├── stores/                 # Pinia-Stores (Setup-Stores)
-│   │   ├── audioEngine.js      # Audio-Verarbeitungskette (AudioNodes shallowRef + markRaw)
-│   │   ├── playlist.js         # Playlist: Tracks, Reihenfolge, Shuffle/Repeat
-│   │   ├── player.js           # Wiedergabe: Audio-Element, Position, Lautstärke
+│   │   ├── audioEngine.ts      # Audio-Verarbeitungskette (AudioNodes shallowRef + markRaw)
+│   │   ├── playlist.ts         # Playlist: Tracks, Reihenfolge, Shuffle/Repeat
+│   │   ├── player.ts           # Wiedergabe: Audio-Element, Position, Lautstärke
 │   │   ├── history.ts          # Undo/Redo
-│   │   └── toast.js            # Benachrichtigungen
+│   │   └── toast.ts            # Benachrichtigungen
 │   ├── composables/
 │   │   ├── useCountdown.ts     # Countdown vor der Aufnahme
 │   │   ├── useCustomPresets.ts # Eigene EQ-Presets (localStorage)

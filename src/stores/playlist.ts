@@ -6,13 +6,40 @@ import {
   nextRepeatMode,
   moveItem,
   indexAfterMove,
+  type RepeatMode,
 } from '../utils/playbackOrder'
+
+/** A playlist entry. */
+export interface Track {
+  id: number
+  name: string
+  /** the original File, or null for audio handed over as a Blob (shared files) */
+  file: File | null
+  /** Blob-URL, owned by the store and revoked when the track is removed */
+  url: string
+  size: number
+  type: string
+  duration: number
+}
+
+export interface RemoveResult {
+  /** the current track was removed (the index is -1 then) */
+  removedCurrent: boolean
+  /** the track that should take its place, or -1 */
+  nextIndex: number
+}
 
 /**
  * Track-Modell der Playlist. Die Blob-URL gehört dem Store und wird beim
  * Entfernen des Tracks wieder freigegeben.
  */
-export function createTrack(id, name, blob, file, type) {
+export function createTrack(
+  id: number,
+  name: string,
+  blob: Blob,
+  file: File | null,
+  type: string
+): Track {
   return {
     id,
     name,
@@ -26,19 +53,19 @@ export function createTrack(id, name, blob, file, type) {
 
 /**
  * Playlist: Tracks, aktueller Index, Shuffle/Repeat und die Navigation darin.
- * Kennt keine Wiedergabe – der Player-Store (stores/player.js) lädt und
+ * Kennt keine Wiedergabe – der Player-Store (stores/player.ts) lädt und
  * spielt Tracks und ruft hier nur die reinen Listenoperationen auf.
  */
 export const usePlaylistStore = defineStore('playlist', () => {
-  const tracks = ref([])
+  const tracks = ref<Track[]>([])
   const currentTrackIndex = ref(-1)
 
   // Playback modes
   const isShuffle = ref(false)
-  const repeatMode = ref('off') // 'off' | 'all' | 'one'
-  const shuffleHistory = ref([]) // visited indices, for shuffle "previous"
+  const repeatMode = ref<RepeatMode>('off')
+  const shuffleHistory = ref<number[]>([]) // visited indices, for shuffle "previous"
 
-  const currentTrack = computed(() => {
+  const currentTrack = computed<Track | null>(() => {
     if (currentTrackIndex.value >= 0 && currentTrackIndex.value < tracks.value.length) {
       return tracks.value[currentTrackIndex.value]
     }
@@ -61,9 +88,9 @@ export const usePlaylistStore = defineStore('playlist', () => {
 
   /**
    * Hängt einen Track an. Ist noch keiner gewählt, wird er der aktuelle.
-   * @returns {boolean} true, wenn der Track zum aktuellen wurde
+   * @returns true, wenn der Track zum aktuellen wurde
    */
-  function addTrack(track) {
+  function addTrack(track: Track): boolean {
     tracks.value.push(track)
     if (currentTrackIndex.value === -1) {
       currentTrackIndex.value = 0
@@ -73,7 +100,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
   }
 
   /** Dateien (FileList oder Array) als Tracks anhängen. */
-  function addFiles(files) {
+  function addFiles(files: Iterable<File> | ArrayLike<File>): Track[] {
     const newTracks = Array.from(files).map((file, index) =>
       createTrack(Date.now() + index, file.name, file, file, file.type)
     )
@@ -81,13 +108,8 @@ export const usePlaylistStore = defineStore('playlist', () => {
     return newTracks
   }
 
-  /**
-   * Entfernt einen Track und gibt seine URL frei.
-   * @returns {{ removedCurrent: boolean, nextIndex: number }} removedCurrent:
-   *   der aktuelle Track wurde entfernt (der Index ist dann -1); nextIndex: der
-   *   Track, der an seine Stelle rücken sollte, oder -1
-   */
-  function removeTrack(index) {
+  /** Entfernt einen Track und gibt seine URL frei. */
+  function removeTrack(index: number): RemoveResult {
     const track = tracks.value[index]
     if (track && track.url) {
       URL.revokeObjectURL(track.url)
@@ -107,20 +129,20 @@ export const usePlaylistStore = defineStore('playlist', () => {
     return { removedCurrent: false, nextIndex: currentTrackIndex.value }
   }
 
-  function reorderTracks(fromIndex, toIndex) {
+  function reorderTracks(fromIndex: number, toIndex: number): void {
     if (fromIndex === toIndex) return
     tracks.value = moveItem(tracks.value, fromIndex, toIndex)
     currentTrackIndex.value = indexAfterMove(currentTrackIndex.value, fromIndex, toIndex)
   }
 
-  function revokeAll() {
+  function revokeAll(): void {
     tracks.value.forEach((track) => {
       if (track.url) URL.revokeObjectURL(track.url)
     })
   }
 
   /** Leert die Playlist und gibt alle URLs frei. */
-  function clear() {
+  function clear(): void {
     revokeAll()
     tracks.value = []
     currentTrackIndex.value = -1
@@ -128,7 +150,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
   }
 
   // Navigation for the current playlist state
-  function getNextIndex() {
+  function getNextIndex(): number {
     return nextIndexFor(
       tracks.value.length,
       currentTrackIndex.value,
@@ -137,27 +159,27 @@ export const usePlaylistStore = defineStore('playlist', () => {
     )
   }
 
-  function getPrevIndex() {
+  function getPrevIndex(): number {
     return prevIndexFor(tracks.value.length, currentTrackIndex.value, repeatMode.value)
   }
 
   /** Merkt sich den aktuellen Index, damit "zurück" im Shuffle dorthin führt. */
-  function rememberShuffleStep() {
+  function rememberShuffleStep(): void {
     shuffleHistory.value.push(currentTrackIndex.value)
   }
 
   /** Letzter gemerkter Shuffle-Index oder -1, wenn es keinen gibt. */
-  function popShuffleStep() {
-    return shuffleHistory.value.length > 0 ? shuffleHistory.value.pop() : -1
+  function popShuffleStep(): number {
+    return shuffleHistory.value.length > 0 ? (shuffleHistory.value.pop() ?? -1) : -1
   }
 
-  function toggleShuffle() {
+  function toggleShuffle(): boolean {
     isShuffle.value = !isShuffle.value
     shuffleHistory.value = []
     return isShuffle.value
   }
 
-  function cycleRepeat() {
+  function cycleRepeat(): RepeatMode {
     repeatMode.value = nextRepeatMode(repeatMode.value)
     return repeatMode.value
   }

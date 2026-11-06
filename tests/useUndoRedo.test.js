@@ -3,7 +3,7 @@ import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
-import { useAudioEngineStore } from '../src/stores/audioEngine.js'
+import { useAudioEngineStore } from '../src/stores/audioEngine'
 import { useUndoRedo } from '../src/composables/useUndoRedo'
 import { EQ_PRESETS, DEFAULT_DYNAMICS } from '../src/utils/presets'
 

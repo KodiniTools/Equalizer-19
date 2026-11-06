@@ -12,7 +12,7 @@
 | Technologie | Version | Zweck |
 |-------------|---------|-------|
 | **Vue 3** | ^3.5.44 | UI-Framework mit Composition API |
-| **Vue Router** | ^4.6.4 | Seiten `/`, `/app`, `/faq` (`src/router/index.js`, `src/pages/`) |
+| **Vue Router** | ^4.6.4 | Seiten `/`, `/app`, `/faq` (`src/router/index.ts`, `src/pages/`) |
 | **Pinia** | ^3.0.4 | Globaler Zustand (`src/stores/`) |
 | **Vite** | ^7.3.7 | Build-Tool und Dev-Server |
 | **@vitejs/plugin-vue** | ^6.0.10 | Vue-Integration für Vite |
@@ -61,7 +61,7 @@ Equalizer-19/
 ├── eslint.config.js        # ESLint Flat Config
 │
 ├── src/                    # Quellcode
-│   ├── main.js             # Vue App Entry Point (Router, Pinia)
+│   ├── main.ts             # Vue App Entry Point (Router, Pinia)
 │   ├── App.vue             # Root-Komponente: globale Nav, provide i18n/theme, <router-view>
 │   │
 │   ├── pages/              # Seiten des Routers
@@ -70,7 +70,7 @@ Equalizer-19/
 │   │   └── FaqPage.vue                # FAQ
 │   │
 │   ├── router/
-│   │   └── index.js                   # Routen /, /app, /faq; SEO-Meta je Route
+│   │   └── index.ts                   # Routen /, /app, /faq; SEO-Meta je Route
 │   │
 │   ├── assets/
 │   │   └── style.css       # Globale Styles; importiert design-system/tokens.css
@@ -102,12 +102,12 @@ Equalizer-19/
 │   ├── data/
 │   │   └── blogArticles.ts            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page
 │   │
-│   ├── stores/             # Pinia-Stores (globaler Zustand, src/main.js: app.use(createPinia()))
-│   │   ├── audioEngine.js             # Audio-Verarbeitungskette: Parameter reaktiv, AudioNodes shallowRef + markRaw
-│   │   ├── playlist.js                # Playlist: Tracks, aktueller Index, Shuffle/Repeat, Navigation
-│   │   ├── player.js                  # Wiedergabe (HTMLAudioElement), Position, Lautstärke; Listenänderungen mit Wiedergabe-Folgen
+│   ├── stores/             # Pinia-Stores (globaler Zustand, src/main.ts: app.use(createPinia()))
+│   │   ├── audioEngine.ts             # Audio-Verarbeitungskette: Parameter reaktiv, AudioNodes shallowRef + markRaw
+│   │   ├── playlist.ts                # Playlist: Tracks, aktueller Index, Shuffle/Repeat, Navigation
+│   │   ├── player.ts                  # Wiedergabe (HTMLAudioElement), Position, Lautstärke; Listenänderungen mit Wiedergabe-Folgen
 │   │   ├── history.ts                 # Undo/Redo (useUndoRedo auf dem Engine-Store)
-│   │   └── toast.js                   # Benachrichtigungen: notify(message, type)
+│   │   └── toast.ts                   # Benachrichtigungen: notify(message, type)
 │   │
 │   ├── i18n/               # Übersetzungen: de.ts (Referenz, TranslationKey), en.ts (Record<TranslationKey, string>), index.ts (translations, LANGUAGES)
 │   │
@@ -167,7 +167,7 @@ Equalizer-19/
 ### Track-Modell (Playlist)
 
 ```javascript
-// Definiert in: src/stores/playlist.js (createTrack)
+// Definiert in: src/stores/playlist.ts (createTrack)
 {
   id: Number,           // Eindeutige ID (timestamp + index)
   name: String,         // Dateiname
@@ -182,7 +182,7 @@ Equalizer-19/
 ### EQ-Band-Modell
 
 ```javascript
-// Definiert in: src/stores/audioEngine.js
+// Definiert in: src/stores/audioEngine.ts
 // Frequenzen: EQ_BAND_FREQUENCIES in src/utils/presets.ts
 // 19 Bänder von 20 Hz bis 20 kHz (logarithmisch, ca. Halboktav-Abstand), alle 'peaking'
 {
@@ -199,7 +199,7 @@ Equalizer-19/
 ### Dynamics/Kompressor-Einstellungen
 
 ```javascript
-// Definiert in: src/stores/audioEngine.js
+// Definiert in: src/stores/audioEngine.ts
 {
   threshold: Number,    // Schwellenwert in dB (-100 bis 0, Standard: -30)
   knee: Number,         // Knee in dB (0 bis 40, Standard: 20)
@@ -349,7 +349,7 @@ const { t } = inject('i18n')
 
 ### Undo/Redo
 
-`useUndoRedo(audioEngine)` (als Store `src/stores/history.js`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.ts`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.ts`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
+`useUndoRedo(audioEngine)` (als Store `src/stores/history.ts`) beobachtet die Klangeinstellungen der Engine – EQ-Gains, EQ-Bypass, Kompressor-Parameter, Kompressor an/aus – und legt bei jeder Änderung einen Snapshot im Verlauf ab (`src/utils/history.ts`, max. 100 Schritte). Die Engine bleibt Single Source of Truth: egal ob Slider, Preset, Reset oder Bypass-Button, alle synchronen Mutationen eines Ticks werden zu einem Schritt; aufeinanderfolgende Bewegungen desselben Sliders innerhalb von 1 s verschmelzen (`canMergeProcessingChanges`). `undo()`/`redo()` schreiben den Nachbar-Snapshot per `applyProcessingState` zurück; der Zustand entspricht danach dem Verlaufseintrag, sodass der Beobachter nichts aufzeichnet. Die Komponenten (`Equalizer.vue`, `DynamicsProcessor.vue`, `CompressorPresets.vue`) leiten ihre Anzeige aus der Engine ab und folgen damit auch externen Änderungen. Tastenkürzel: Strg/Cmd+Z, Strg/Cmd+Shift+Z, Strg+Y (`useKeyboardShortcuts.ts`, ausgewertet über `e.key`, damit QWERTZ nicht vertauscht; in Textfeldern bleibt das native Undo). Wiedergabe-Einstellungen (Lautstärke, Position, Playlist) sind bewusst nicht Teil des Verlaufs.
 
 ### Browser-Kompatibilität
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { useUndoRedo } from '../composables/useUndoRedo'
-import { useAudioEngineStore } from './audioEngine.js'
+import { useAudioEngineStore } from './audioEngine'
 
 /**
  * Undo/Redo-Verlauf der Verarbeitungseinstellungen (EQ, Kompressor), beobachtet
