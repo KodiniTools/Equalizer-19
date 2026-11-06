@@ -24,7 +24,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 - **Web Audio API** (BiquadFilter, DynamicsCompressor, Analyser, AudioWorklet) und MediaRecorder API
 - **Design-Tokens** als CSS Custom Properties (`src/design-system/`) und ein eigener Satz **Ui-Komponenten** (`src/components/ui/`)
 - **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.ts`), keine Icon-Font
-- **TypeScript** für Übersetzungen, Utils, Composables, Stores, Router und alle Komponenten (`<script setup lang="ts">`); Typprüfung per `vue-tsc` auch für die verbliebenen JS-Tests (`allowJs`)
+- **TypeScript** durchgehend: Übersetzungen, Utils, Composables, Stores, Router, alle Komponenten (`<script setup lang="ts">`) und Tests; Typprüfung per `vue-tsc` (strict). Einzige JS-Datei ist das AudioWorklet `src/worklets/pcm-recorder.worklet.js`, das Vite unverändert als Asset ausliefert
 - **Tests**: Vitest für alles, Vue Test Utils (jsdom) für Komponenten und Stores, Node-Umgebung für reine Logik
 - **ESLint + Prettier**, GitHub-Actions-CI
 
@@ -54,16 +54,16 @@ npm run test:watch     # Vitest im Watch-Modus
 
 npm run lint           # ESLint (JS, TS, Vue)
 npm run format:check   # Prettier
-npm run type-check     # vue-tsc: TypeScript und JS (allowJs), inkl. en.ts gegen de.ts
+npm run type-check     # vue-tsc (strict) über src/ und tests/, inkl. en.ts gegen de.ts
 ```
 
 Die CI (`.github/workflows/ci.yml`) führt Lint, Format, Type-Check, Tests und Build bei jedem Pull Request aus.
 
 Besondere Tests:
 
-- `src/design-system/__tests__/designTokens.spec.js` sorgt dafür, dass Styles nur Design-Tokens verwenden. Die Liste der verbliebenen Farb-Literale ist eingefroren und darf nur kleiner werden.
-- `src/i18n/__tests__/translations.spec.js` prüft, dass `en` dieselben Schlüssel und Platzhalter hat wie `de`; `en.ts` ist zusätzlich als `Record<TranslationKey, string>` typisiert.
-- Komponententests bekommen die Übersetzungen über `src/__tests__/i18nStub.js` (jeder Schlüssel liefert sich selbst).
+- `src/design-system/__tests__/designTokens.spec.ts` sorgt dafür, dass Styles nur Design-Tokens verwenden. Die Liste der verbliebenen Farb-Literale ist eingefroren und darf nur kleiner werden.
+- `src/i18n/__tests__/translations.spec.ts` prüft, dass `en` dieselben Schlüssel und Platzhalter hat wie `de`; `en.ts` ist zusätzlich als `Record<TranslationKey, string>` typisiert.
+- Komponententests bekommen die Übersetzungen über `src/__tests__/i18nStub.ts` (jeder Schlüssel liefert sich selbst).
 
 ## Projektstruktur
 
@@ -72,8 +72,8 @@ Equalizer-19/
 ├── index.html                  # Entry-Point, bindet die SSI-Partials der Hauptseite ein
 ├── package.json
 ├── vite.config.js              # Base /equaliser19/, Alias @ → src, Worklet nicht inlinen
-├── vitest.config.js            # Komponententests (jsdom), setup in src/__tests__/setup.js
-├── tsconfig.json               # strict, allowJs; Grundlage für vue-tsc
+├── vitest.config.js            # Komponententests (jsdom), setup in src/__tests__/setup.ts
+├── tsconfig.json               # strict; Grundlage für vue-tsc
 ├── eslint.config.js
 ├── .github/workflows/ci.yml    # Lint, Format, Type-Check, Tests, Build
 ├── src/

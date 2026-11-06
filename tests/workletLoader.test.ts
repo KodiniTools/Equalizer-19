@@ -1,22 +1,27 @@
 // @vitest-environment node
 import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
-import { loadWorkletModule } from '../src/utils/workletLoader'
+import { loadWorkletModule, type WorkletHost } from '../src/utils/workletLoader'
 
 vi.spyOn(console, 'warn').mockImplementation(() => {})
 
 const URL_A = 'https://example.test/a.worklet.js'
 const TIMEOUT = 20
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 // Fake context whose addModule calls are resolved/rejected by the test
-function fakeContext() {
-  const calls = []
+interface PendingLoad {
+  resolve: () => void
+  reject: (reason: unknown) => void
+}
+
+function fakeContext(): WorkletHost & { calls: PendingLoad[] } {
+  const calls: PendingLoad[] = []
   return {
     calls,
     audioWorklet: {
       addModule: () =>
-        new Promise((resolve, reject) => {
+        new Promise<void>((resolve, reject) => {
           calls.push({ resolve, reject })
         }),
     },

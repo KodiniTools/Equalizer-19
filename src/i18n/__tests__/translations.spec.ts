@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { LANGUAGES, translations } from '../index'
+import { LANGUAGES, translations, type TranslationKey } from '../index'
 import de from '../de'
 import en from '../en'
 
-const placeholders = (text) => [...text.matchAll(/\{\w+\}/g)].map((m) => m[0]).sort()
+const placeholders = (text: string) => [...text.matchAll(/\{\w+\}/g)].map((m) => m[0]).sort()
 
 describe('Übersetzungen', () => {
   it('index bündelt de und en', () => {
@@ -25,7 +25,7 @@ describe('Übersetzungen', () => {
   })
 
   it('Platzhalter wie {name} stimmen zwischen de und en überein', () => {
-    const mismatched = Object.keys(de).filter(
+    const mismatched = (Object.keys(de) as TranslationKey[]).filter(
       (key) => placeholders(de[key]).join() !== placeholders(en[key]).join()
     )
     expect(mismatched).toEqual([])

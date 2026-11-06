@@ -3,13 +3,21 @@ import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAudioEngineStore } from '../src/stores/audioEngine'
-import { DEFAULT_DYNAMICS, EQ_BAND_FREQUENCIES } from '../src/utils/presets'
+import {
+  DEFAULT_DYNAMICS,
+  EQ_BAND_FREQUENCIES,
+  type DynamicsKey,
+  type DynamicsSettings,
+} from '../src/utils/presets'
 import {
   captureProcessingState,
   applyProcessingState,
   processingStatesEqual,
   describeProcessingChange,
   canMergeProcessingChanges,
+  type ProcessingChange,
+  type ProcessingEngine,
+  type ProcessingState,
 } from '../src/utils/processingState'
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -62,10 +70,10 @@ test('applyProcessingState only touches values that differ', () => {
   const e = engine()
   e.updateEqBand(0, 2)
   const calls = { band: 0, dyn: 0, eqToggle: 0, dynToggle: 0 }
-  const spy = {
+  const spy: ProcessingEngine = {
     ...e,
-    updateEqBand: (i, g) => (calls.band++, e.updateEqBand(i, g)),
-    updateDynamics: (d) => (calls.dyn++, e.updateDynamics(d)),
+    updateEqBand: (i: number, g: number) => (calls.band++, e.updateEqBand(i, g)),
+    updateDynamics: (d: Partial<DynamicsSettings>) => (calls.dyn++, e.updateDynamics(d)),
     toggleEqBypass: () => (calls.eqToggle++, e.toggleEqBypass()),
     toggleDynamics: () => (calls.dynToggle++, e.toggleDynamics()),
   }
@@ -99,7 +107,7 @@ test('processingStatesEqual compares by value', () => {
 test('describeProcessingChange names the kind of change', () => {
   const e = engine()
   const base = captureProcessingState(e)
-  const mod = (fn) => {
+  const mod = (fn: (s: ProcessingState) => void) => {
     const s = captureProcessingState(e)
     fn(s)
     return s
@@ -167,15 +175,17 @@ test('describeProcessingChange names the kind of change', () => {
 })
 
 test('only moves of the same slider merge', () => {
-  const band = (index) => ({ type: 'eq-band', index })
-  const param = (p) => ({ type: 'dyn-param', param: p })
+  const band = (index: number): ProcessingChange => ({ type: 'eq-band', index })
+  const param = (p: DynamicsKey): ProcessingChange => ({ type: 'dyn-param', param: p })
   assert.equal(canMergeProcessingChanges(band(2), band(2)), true)
   assert.equal(canMergeProcessingChanges(band(2), band(3)), false)
   assert.equal(canMergeProcessingChanges(param('ratio'), param('ratio')), true)
   assert.equal(canMergeProcessingChanges(param('ratio'), param('knee')), false)
   assert.equal(canMergeProcessingChanges({ type: 'eq-curve' }, { type: 'eq-curve' }), false)
   assert.equal(
-    canMergeProcessingChanges({ type: 'eq-bypass', enabled: true }, { type: 'eq-bypass' }),
+    canMergeProcessingChanges({ type: 'eq-bypass', enabled: true }, {
+      type: 'eq-bypass',
+    } as ProcessingChange),
     false
   )
   assert.equal(canMergeProcessingChanges(null, band(1)), false)

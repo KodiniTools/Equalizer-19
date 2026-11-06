@@ -59,7 +59,7 @@ test('restarting replaces a running countdown', () => {
   vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
   try {
     const c = useCountdown()
-    const fired = []
+    const fired: string[] = []
     c.start(10, () => fired.push('first'))
     vi.advanceTimersByTime(1000)
     c.start(3, () => fired.push('second'))

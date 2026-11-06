@@ -1,14 +1,24 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { processingChainOrder, connectProcessingChain } from '../src/utils/audioChain'
+import {
+  processingChainOrder,
+  connectProcessingChain,
+  type ChainNode,
+  type ChainRouting,
+} from '../src/utils/audioChain'
 
 // ---- Fake AudioNodes: record outgoing edges ---------------------------------
-function node(name) {
+interface FakeNode extends ChainNode {
+  name: string
+  outputs: Set<FakeNode>
+}
+
+function node(name: string): FakeNode {
   return {
     name,
-    outputs: new Set(),
-    connect(target) {
+    outputs: new Set<FakeNode>(),
+    connect(target: FakeNode) {
       this.outputs.add(target)
       return target
     },
@@ -26,10 +36,10 @@ function graph() {
   return { source, eqFilters, dynamicsNode, gainNode }
 }
 
-const names = (nodes) => nodes.map((n) => n.name)
-const outs = (n) => [...n.outputs].map((t) => t.name)
+const names = (nodes: FakeNode[]) => nodes.map((n) => n.name)
+const outs = (n: FakeNode) => [...n.outputs].map((t) => t.name)
 
-function wire(g, routing = {}) {
+function wire(g: ReturnType<typeof graph>, routing: Partial<ChainRouting<FakeNode>> = {}) {
   const order = processingChainOrder({ ...g, ...routing })
   connectProcessingChain(order, [...g.eqFilters, g.dynamicsNode])
   return order
@@ -80,7 +90,7 @@ test('bypassing the compressor leaves no stale edge into it', () => {
   wire(g)
   wire(g, { dynamicsEnabled: false })
 
-  const last = g.eqFilters.at(-1)
+  const last = g.eqFilters[g.eqFilters.length - 1]
   assert.deepEqual(outs(last), ['gain'])
   assert.deepEqual(outs(g.dynamicsNode), [], 'bypassed compressor is detached')
 })
@@ -91,7 +101,7 @@ test('re-enabling the compressor removes the direct EQ → gain edge (no doubled
   wire(g, { dynamicsEnabled: false })
   wire(g, { dynamicsEnabled: true })
 
-  const last = g.eqFilters.at(-1)
+  const last = g.eqFilters[g.eqFilters.length - 1]
   assert.deepEqual(outs(last), ['dynamics'])
   assert.deepEqual(outs(g.dynamicsNode), ['gain'])
 })
@@ -104,7 +114,7 @@ test('EQ bypass detaches the filters; re-enabling restores the full chain', () =
 
   wire(g, { eqBypass: false })
   assert.deepEqual(outs(g.source), ['eq0'])
-  assert.deepEqual(outs(g.eqFilters.at(-1)), ['dynamics'])
+  assert.deepEqual(outs(g.eqFilters[g.eqFilters.length - 1]), ['dynamics'])
 })
 
 test('the gain node keeps its outputs (recorder/analyser taps survive rebuilds)', () => {

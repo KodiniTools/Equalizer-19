@@ -36,7 +36,7 @@ class FakeAudioContext {
 describe('audioEngine store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    window.AudioContext = FakeAudioContext
+    window.AudioContext = FakeAudioContext as unknown as typeof AudioContext
   })
 
   it('hält die Parameter reaktiv, die Audio-Nodes aber roh', () => {

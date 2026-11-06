@@ -8,9 +8,9 @@ Design-Tokens von Equalizer 19. Die Namen sind die Quellnamen der App
 | `tokens.css`                   | **Laufzeit-Quelle.** CSS Custom Properties: Dark auf `:root`, Light auf `html[data-theme='light']`, Kontrastmodus. Wird von `src/assets/style.css` importiert. |
 | `tokens.json`                  | Maschinenlesbare Fassung (W3C-Design-Tokens-nah). Farben je Theme, dazu Skalen (Abstände, Schrift, Radien, Schatten, Bewegung) als Dokumentation der im Code verwendeten Werte. |
 | `tokens.ts`                    | Zugriff aus TypeScript: `colorToken(theme, name)`, `themeColors(theme)`, `cssVar(name)`, `readCssVar(name)`; löst `{color.dark.--x}`-Aliase auf. |
-| `__tests__/tokens.spec.js`     | Konsistenz JSON ↔ CSS (dark, light, high-contrast, nav-light), Light-Gegenstücke, Verweise.            |
-| `__tests__/designTokens.spec.js` | Alle Styles unter `src/`: keine Literal-Fallbacks, nur definierte Variablen, keine neuen Farb-Literale. |
-| `__tests__/tokenTestUtils.js`  | Gemeinsame Helfer: CSS-Block-Parser, Style-Sammler.                                                     |
+| `__tests__/tokens.spec.ts`     | Konsistenz JSON ↔ CSS (dark, light, high-contrast, nav-light), Light-Gegenstücke, Verweise.            |
+| `__tests__/designTokens.spec.ts` | Alle Styles unter `src/`: keine Literal-Fallbacks, nur definierte Variablen, keine neuen Farb-Literale. |
+| `__tests__/tokenTestUtils.ts`  | Gemeinsame Helfer: CSS-Block-Parser, Style-Sammler.                                                     |
 
 ## Theme-Mechanik
 
@@ -39,7 +39,7 @@ themeColors('light')['--primary-bg'] // '#f6f2e8'
 ```
 
 Keine Literal-Fallbacks (`var(--card-bg, #252530)`): `tokens.css` ist immer geladen, und ein
-Fallback verdeckt nur Tippfehler. Der Test `designTokens.spec.js` lehnt sie ab.
+Fallback verdeckt nur Tippfehler. Der Test `designTokens.spec.ts` lehnt sie ab.
 
 ## Token hinzufügen oder ändern
 
@@ -52,7 +52,7 @@ Fallback verdeckt nur Tippfehler. Der Test `designTokens.spec.js` lehnt sie ab.
 ## Offen (Schritt 2)
 
 - 57 Farb-Literale in Komponenten und `style.css` (Overlays, Schatten, Meter-Farben,
-  Status-Tints auf der App-Seite) sind in `designTokens.spec.js` eingefroren und werden mit
+  Status-Tints auf der App-Seite) sind in `designTokens.spec.ts` eingefroren und werden mit
   den Ui-Komponenten auf Tokens umgestellt.
 - Die Skalen in `tokens.json` (`spacing`, `radius`, `shadow`, `motion`, …) sind noch keine
   CSS-Variablen; sie beschreiben die im Code verwendeten Werte.

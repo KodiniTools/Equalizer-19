@@ -12,34 +12,44 @@ import {
 } from '../src/utils/seoMeta'
 
 // Minimal head: only what applyPageMeta touches.
+interface FakeElement {
+  setAttribute(name: string, value: string): void
+  getAttribute(name: string): string | undefined
+}
+
 function fakeDocument({ withCanonical = false } = {}) {
-  const el = () => {
-    const attrs = {}
-    return { setAttribute: (k, v) => (attrs[k] = v), getAttribute: (k) => attrs[k] }
+  const el = (): FakeElement => {
+    const attrs: Record<string, string> = {}
+    return {
+      setAttribute: (k, v) => {
+        attrs[k] = v
+      },
+      getAttribute: (k) => attrs[k],
+    }
   }
-  const nodes = {
+  const nodes: Record<string, FakeElement> = {
     'meta[name="description"]': el(),
     'meta[property="og:title"]': el(),
     'meta[property="og:description"]': el(),
     'meta[property="og:url"]': el(),
   }
   if (withCanonical) nodes['link[rel="canonical"]'] = el()
-  const selectorOf = (node) => {
+  const selectorOf = (node: FakeElement) => {
     const hreflang = node.getAttribute('hreflang')
     return hreflang
       ? `link[rel="alternate"][hreflang="${hreflang}"]`
       : `link[rel="${node.getAttribute('rel')}"]`
   }
-  const appended = []
+  const appended: FakeElement[] = []
   return {
     title: '',
     nodes,
     documentElement: el(),
-    querySelector: (sel) => nodes[sel] ?? null,
+    querySelector: (sel: string) => nodes[sel] ?? null,
     createElement: () => el(),
     head: {
       // Attributes are set after appendChild, so resolve the selector lazily.
-      appendChild: (node) => appended.push(node),
+      appendChild: (node: FakeElement) => appended.push(node),
     },
     flush() {
       for (const node of appended.splice(0)) nodes[selectorOf(node)] = node
@@ -47,6 +57,9 @@ function fakeDocument({ withCanonical = false } = {}) {
     },
   }
 }
+
+/** The fake covers everything applyPageMeta touches; the cast keeps the test honest about that. */
+const asDocument = (doc: ReturnType<typeof fakeDocument>) => doc as unknown as Document
 
 test('canonicalFor maps router paths to absolute URLs', () => {
   assert.equal(canonicalFor('/'), `${SITE_BASE}/`)
@@ -101,7 +114,7 @@ test('routePathFromLocation strips the deploy base', () => {
 
 test('applyPageMeta updates title, meta tags and an existing canonical', () => {
   const doc = fakeDocument({ withCanonical: true })
-  applyPageMeta('/faq', 'de', doc)
+  applyPageMeta('/faq', 'de', asDocument(doc))
   assert.equal(doc.title, pageMeta('/faq', 'de').title)
   assert.equal(
     doc.nodes['meta[name="description"]'].getAttribute('content'),
@@ -113,7 +126,7 @@ test('applyPageMeta updates title, meta tags and an existing canonical', () => {
 
 test('applyPageMeta creates canonical and hreflang links when missing', () => {
   const doc = fakeDocument()
-  applyPageMeta('/app', 'en', doc)
+  applyPageMeta('/app', 'en', asDocument(doc))
   doc.flush()
   assert.equal(doc.documentElement.getAttribute('lang'), 'en')
   assert.equal(doc.nodes['link[rel="canonical"]'].getAttribute('href'), `${SITE_BASE}/app?lang=en`)
@@ -126,6 +139,6 @@ test('applyPageMeta creates canonical and hreflang links when missing', () => {
     `${SITE_BASE}/app`
   )
   // A second call reuses the links instead of adding duplicates.
-  applyPageMeta('/app', 'de', doc)
+  applyPageMeta('/app', 'de', asDocument(doc))
   assert.equal(doc.flush().nodes['link[rel="canonical"]'].getAttribute('href'), `${SITE_BASE}/app`)
 })

@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { usePlaylistStore } from '../playlist'
+import { usePlaylistStore, type Track } from '../playlist'
 
 const revoke = vi.fn()
 let urlCounter = 0
 
-function files(n) {
-  return Array.from({ length: n }, (_, i) => ({
-    name: `track${i}.mp3`,
-    size: 10,
-    type: 'audio/mpeg',
-  }))
+/** Datei-Attrappen: der Store liest nur name, size und type. */
+function files(n: number): File[] {
+  return Array.from(
+    { length: n },
+    (_, i) => ({ name: `track${i}.mp3`, size: 10, type: 'audio/mpeg' }) as File
+  )
 }
 
 describe('Playlist-Store', () => {
@@ -28,8 +28,8 @@ describe('Playlist-Store', () => {
     expect(added).toHaveLength(2)
     expect(playlist.tracks.map((t) => t.name)).toEqual(['track0.mp3', 'track1.mp3'])
     expect(playlist.currentTrackIndex).toBe(0)
-    expect(playlist.currentTrack.name).toBe('track0.mp3')
-    expect(playlist.addTrack({ id: 9, name: 'x', url: 'blob:x' })).toBe(false)
+    expect(playlist.currentTrack?.name).toBe('track0.mp3')
+    expect(playlist.addTrack({ id: 9, name: 'x', url: 'blob:x' } as Track)).toBe(false)
     expect(playlist.currentTrackIndex).toBe(0)
   })
 

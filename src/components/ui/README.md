@@ -131,5 +131,5 @@ Die vertikalen Regler in `equalizer/EqBands.vue` und `landing/HeroEqualizer.vue`
 ## Schritt 2 ist abgeschlossen
 
 Alle Bausteine aus dem Playlist-Generator-Muster, die der Equalizer braucht, liegen hier. Die in
-`designTokens.spec.js` eingefrorenen Farb-Literale der restlichen Komponenten (AudioMeter,
+`designTokens.spec.ts` eingefrorenen Farb-Literale der restlichen Komponenten (AudioMeter,
 equalizer/, recorder/, AppPage) werden in späteren Schritten abgebaut.

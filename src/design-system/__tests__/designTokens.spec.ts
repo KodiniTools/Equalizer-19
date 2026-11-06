@@ -18,7 +18,7 @@ const tokenNames = new Set([
 ])
 
 /** Variablen, die außerhalb von tokens.css definiert werden dürfen, je mit Grund. */
-const LOCAL_VARIABLES = {
+const LOCAL_VARIABLES: Readonly<Record<string, string>> = {
   // Layout-Maße des EQ, je Breakpoint neu gesetzt
   '--eq-pad-x': 'components/equalizer/EqBands.vue',
   '--eq-pad-y': 'components/equalizer/EqBands.vue',
@@ -47,7 +47,7 @@ const RUNTIME_VARIABLES = new Set(['--sticky-player-h'])
  * Überwiegend Overlays, Schatten und Meter-Farben; sie werden in Schritt 2 auf
  * Tokens umgestellt. Ein neuer Eintrag oder eine höhere Anzahl lässt den Test fehlschlagen.
  */
-const FROZEN_LITERALS = {
+const FROZEN_LITERALS: Readonly<Record<string, number>> = {
   'assets/style.css: #001d3d': 1,
   'assets/style.css: #003971': 1,
   'assets/style.css: #014f99': 1,
@@ -102,7 +102,7 @@ describe('Styles außerhalb von src/design-system', () => {
   })
 
   it('definieren keine eigenen Variablen außer den dokumentierten', () => {
-    const hits = []
+    const hits: string[] = []
     for (const [file, css] of styleSheets()) {
       // Nur Deklarationen am Zeilenanfang; BEM-Modifier wie .ui-button--primary: sind keine
       for (const [, name] of css.matchAll(/^\s*(--[\w-]+)\s*:/gm)) {
@@ -118,7 +118,7 @@ describe('Styles außerhalb von src/design-system', () => {
   })
 
   it('bringen keine neuen Farb-Literale mit (eingefrorene Liste darf nur schrumpfen)', () => {
-    const counts = {}
+    const counts: Record<string, number> = {}
     for (const hit of findInStyles(/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/g)) {
       counts[hit] = (counts[hit] ?? 0) + 1
     }

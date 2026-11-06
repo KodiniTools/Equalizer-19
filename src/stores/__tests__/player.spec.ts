@@ -5,18 +5,19 @@ import { usePlaylistStore } from '../playlist'
 
 /** HTMLAudioElement-Ersatz: jsdom implementiert load/play nicht. */
 class FakeAudio {
+  static instances: FakeAudio[] = []
+  src = ''
+  paused = true
+  currentTime = 0
+  volume = 1
+  listeners: Record<string, () => void> = {}
   constructor() {
-    this.src = ''
-    this.paused = true
-    this.currentTime = 0
-    this.volume = 1
-    this.listeners = {}
     FakeAudio.instances.push(this)
   }
-  addEventListener(event, handler) {
+  addEventListener(event: string, handler: () => void) {
     this.listeners[event] = handler
   }
-  removeEventListener(event) {
+  removeEventListener(event: string) {
     delete this.listeners[event]
   }
   load() {}
@@ -27,10 +28,12 @@ class FakeAudio {
     this.paused = true
   }
 }
-FakeAudio.instances = []
-
-function files(n) {
-  return Array.from({ length: n }, (_, i) => ({ name: `t${i}.mp3`, size: 1, type: 'audio/mpeg' }))
+/** Datei-Attrappen: der Store liest nur name, size und type. */
+function files(n: number): File[] {
+  return Array.from(
+    { length: n },
+    (_, i) => ({ name: `t${i}.mp3`, size: 1, type: 'audio/mpeg' }) as File
+  )
 }
 
 describe('Player-Store', () => {
@@ -38,7 +41,10 @@ describe('Player-Store', () => {
     setActivePinia(createPinia())
     FakeAudio.instances = []
     vi.stubGlobal('Audio', FakeAudio)
-    vi.stubGlobal('URL', { createObjectURL: (b) => `blob:${b.name}`, revokeObjectURL: () => {} })
+    vi.stubGlobal('URL', {
+      createObjectURL: (b: File) => `blob:${b.name}`,
+      revokeObjectURL: () => {},
+    })
     // Ohne Web Audio in jsdom meldet die Engine den fehlenden AudioContext
     vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.spyOn(console, 'warn').mockImplementation(() => {})

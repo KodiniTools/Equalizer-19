@@ -38,7 +38,7 @@ describe('toast store', () => {
   it('fällt bei unbekanntem Typ auf info zurück und lässt sich schließen', () => {
     const toast = useToastStore()
     toast.notify('Hallo', 'fatal')
-    expect(toast.current.type).toBe('info')
+    expect(toast.current?.type).toBe('info')
     toast.dismiss()
     expect(toast.current).toBeNull()
   })

@@ -3,11 +3,13 @@ import { test } from 'vitest'
 import assert from 'node:assert/strict'
 import { useCustomPresets, isCustomPresetId } from '../src/composables/useCustomPresets'
 
-function memoryStorage(initial = {}) {
-  const data = new Map(Object.entries(initial))
+function memoryStorage(initial: Record<string, string> = {}) {
+  const data = new Map<string, string>(Object.entries(initial))
   return {
-    getItem: (k) => (data.has(k) ? data.get(k) : null),
-    setItem: (k, v) => data.set(k, String(v)),
+    getItem: (k: string) => data.get(k) ?? null,
+    setItem: (k: string, v: string) => {
+      data.set(k, String(v))
+    },
     data,
   }
 }
@@ -26,7 +28,7 @@ test('add, find, remove and persist presets', () => {
   const preset = addPreset('Mine', [1, 2, 3])
   assert.equal(isCustomPresetId(preset.id), true)
   assert.deepEqual(findPreset(preset.id), preset)
-  assert.deepEqual(JSON.parse(storage.data.get('eq19_custom_presets')), [preset])
+  assert.deepEqual(JSON.parse(storage.data.get('eq19_custom_presets') ?? 'null'), [preset])
 
   assert.equal(removePreset('__custom__unknown'), null)
   assert.deepEqual(removePreset(preset.id), preset)
