@@ -1,4 +1,5 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import {
   useInputSource,
@@ -7,7 +8,7 @@ import {
   SYSTEM_AUDIO,
 } from '../src/composables/useInputSource.js'
 
-mock.method(console, 'error', () => {})
+vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // ---- Fakes -----------------------------------------------------------------
 function fakeTrack(label = 'Stereomix (Realtek)') {

@@ -1,8 +1,9 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 
-mock.method(console, 'log', () => {})
-mock.method(console, 'error', () => {})
+vi.spyOn(console, 'log').mockImplementation(() => {})
+vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // ---- Fake Web Audio ----------------------------------------------------------
 function param(value) {

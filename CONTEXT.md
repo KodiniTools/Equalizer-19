@@ -18,7 +18,7 @@
 | **@vitejs/plugin-vue** | ^6.0.10 | Vue-Integration für Vite |
 | **Vitest + @vue/test-utils** | ^3.2.7 / ^2.5.1 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
 | **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs`; `.ts` bisher nur unter `src/i18n/`) |
-| **ESLint + Prettier** | ^10.4.1 / ^3.8.4 | `npm run lint`, `npm run format:check` (`eslint.config.js`, lintet `.js`/`.vue`) |
+| **ESLint + Prettier** | ^10.4.1 / ^3.8.4 | `npm run lint`, `npm run format:check` (`eslint.config.js` über `@vue/eslint-config-typescript`, lintet `.js`, `.ts` und `.vue`) |
 
 ### Audio Processing
 | Technologie | Zweck |
@@ -142,7 +142,7 @@ Equalizer-19/
 │   │
 │   └── __tests__/          # Vitest-Setup (setup.js) und Test-Helfer (i18nStub.js)
 │
-├── tests/                  # Logik-Tests (node:test); Komponententests: src/**/__tests__ (Vitest)
+├── tests/                  # Logik-Tests (Vitest, Node-Umgebung); Komponententests: src/**/__tests__ (jsdom)
 ├── .github/workflows/ci.yml # CI: Lint, Format, Typecheck, Tests, Build
 │
 ├── node_modules/           # Dependencies
@@ -337,7 +337,7 @@ notify(t.value.eq_reset_done, 'info')
 
 Die AudioNodes im Engine-Store sind `shallowRef` und `markRaw`: Vue darf sie nie in Proxies
 wickeln, weil `connect()`/`disconnect()` auf einem Proxy fehlschlägt. Tests erzeugen die Stores
-mit `setActivePinia(createPinia())` (auch unter node:test).
+mit `setActivePinia(createPinia())`.
 
 i18n und Theme laufen bewusst über provide/inject aus `App.vue` (`useI18n` liest `src/i18n/`):
 
@@ -367,20 +367,19 @@ Benötigt Web Audio API und MediaRecorder API Support.
 npm run dev           # Startet Vite Dev-Server auf Port 3000
 npm run build         # Production Build nach /dist
 npm run preview       # Preview des Production Builds
-npm run lint          # ESLint (.js, .vue)
+npm run lint          # ESLint (.js, .ts, .vue)
 npm run format        # Prettier schreibt
 npm run format:check  # Prettier prüft (CI)
 npm run type-check    # vue-tsc --noEmit
-npm test              # test:node + test:unit
-npm run test:node     # Logik-Tests in tests/ (node:test)
-npm run test:unit     # Komponententests src/**/__tests__/*.spec.js (Vitest, jsdom)
+npm test              # Vitest: tests/ (Node) und src/**/__tests__ (jsdom)
 npm run test:watch    # Vitest im Watch-Modus
 ```
 
 ## Tests
 
-- **`tests/*.test.js`** (node:test): reine Logik und Composables ohne DOM, z. B. `audioChain`, `history`,
-  `useOutputRecorder`. Stores werden mit `setActivePinia(createPinia())` erzeugt.
+- **`tests/*.test.js`** (Vitest, Kopfzeile `// @vitest-environment node`): reine Logik und Composables ohne
+  DOM, z. B. `audioChain`, `history`, `useOutputRecorder`; Assertions über `node:assert/strict`, Stubs über
+  `vi.spyOn`/`vi.useFakeTimers`. Stores werden mit `setActivePinia(createPinia())` erzeugt.
 - **`src/**/__tests__/*.spec.js`** (Vitest + @vue/test-utils, jsdom): Komponenten; i18n per
   `global: { provide: i18nStub() }` aus `src/__tests__/i18nStub.js`.
 - **Regressionsschutz:** `src/design-system/__tests__/` prüft Tokens (CSS = JSON = JS) und dass Styles

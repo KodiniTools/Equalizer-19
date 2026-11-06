@@ -1,4 +1,5 @@
-import { test, mock } from 'node:test'
+// @vitest-environment node
+import { test, vi } from 'vitest'
 import assert from 'node:assert/strict'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAudioEngineStore } from '../src/stores/audioEngine.js'
@@ -11,7 +12,7 @@ import {
   canMergeProcessingChanges,
 } from '../src/utils/processingState.js'
 
-mock.method(console, 'log', () => {})
+vi.spyOn(console, 'log').mockImplementation(() => {})
 
 // The engine works without an AudioContext: settings are kept in reactive
 // state and only forwarded to nodes once they exist.

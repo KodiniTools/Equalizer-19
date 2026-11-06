@@ -45,7 +45,7 @@ Fallback verdeckt nur Tippfehler. Der Test `designTokens.spec.js` lehnt sie ab.
 
 1. Wert in `tokens.css` setzen (theme-abhängig in `:root` **und** `[data-theme='light']`).
 2. Denselben Wert in `tokens.json` eintragen (`color.dark` / `color.light`).
-3. `npm run test:unit` ausführen. Die Tests schlagen fehl bei Abweichungen zwischen JSON und
+3. `npm test` ausführen. Die Tests schlagen fehl bei Abweichungen zwischen JSON und
    CSS, fehlenden Light-Gegenstücken, Variablen ohne Definition und neuen Farb-Literalen in
    Komponenten.
 

@@ -1,4 +1,5 @@
-import { test } from 'node:test'
+// @vitest-environment node
+import { test } from 'vitest'
 import assert from 'node:assert/strict'
 import { blogArticles, getBlogArticlesNewestFirst } from '../src/data/blogArticles.js'
 import { formatBlogDate, buildBlogCards } from '../src/utils/blogCards.js'
