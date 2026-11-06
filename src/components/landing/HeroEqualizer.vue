@@ -62,7 +62,7 @@
           :value="gains[i]"
           :aria-label="`${formatFrequency(freq)} Hz`"
           :aria-valuetext="`${formatGain(gains[i])} dB`"
-          @input="setGain(i, $event.target.value)"
+          @input="setGain(i, $event)"
         />
       </div>
     </div>
@@ -75,23 +75,27 @@
   </div>
 </template>
 
-<script setup>
-  import { computed, inject, ref } from 'vue'
+<script setup lang="ts">
+  import { computed, ref } from 'vue'
   import { EQ_BAND_FREQUENCIES, EQ_PRESETS, formatFrequency } from '../../utils/presets'
   import { buildEqCurve, formatGain } from '../../utils/eqCurve'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiButton } from '../ui'
 
   /**
    * Interactive 19-band demo for the landing page. Uses the real preset data
-   * from presets.js, so what the visitor sees here is what the app does.
+   * from presets.ts, so what the visitor sees here is what the app does.
    * Purely visual: nothing here touches the audio engine.
    */
-  const props = defineProps({
-    /** Preset shown on first paint. */
-    initialPreset: { type: String, default: 'V-Shape' },
-  })
+  const props = withDefaults(
+    defineProps<{
+      /** Preset shown on first paint. */
+      initialPreset?: string
+    }>(),
+    { initialPreset: 'V-Shape' }
+  )
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   const W = 380
   const H = 110
@@ -99,20 +103,20 @@
   const uid = `heq-${Math.random().toString(36).slice(2, 8)}`
 
   const presetNames = Object.keys(EQ_PRESETS)
-  const activePreset = ref(props.initialPreset)
-  const gains = ref([...(EQ_PRESETS[props.initialPreset] || EQ_PRESETS.Flat)])
+  const activePreset = ref<string | null>(props.initialPreset)
+  const gains = ref<number[]>([...(EQ_PRESETS[props.initialPreset] || EQ_PRESETS.Flat)])
 
   const curve = computed(() => buildEqCurve(gains.value, { w: W, h: H }))
   const presetLabel = computed(() => activePreset.value || t.value.lp_demo_custom)
 
-  function loadPreset(name) {
+  function loadPreset(name: string): void {
     gains.value = [...EQ_PRESETS[name]]
     activePreset.value = name
   }
 
-  function setGain(i, value) {
+  function setGain(i: number, event: Event): void {
     const next = [...gains.value]
-    next[i] = Number(value)
+    next[i] = Number((event.target as HTMLInputElement).value)
     gains.value = next
     activePreset.value = null
   }

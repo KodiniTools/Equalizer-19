@@ -8,7 +8,7 @@
       :options="formatOptions"
       :label="t.rec_format_label"
       size="sm"
-      @update:model-value="emit('update:format', $event)"
+      @update:model-value="onFormat"
     />
 
     <!-- WAV bit depth (only for WAV, changeable while idle) -->
@@ -18,7 +18,7 @@
       :options="bitDepthOptions"
       :label="t.rec_bit_depth"
       size="sm"
-      @update:model-value="emit('update:bitDepth', $event)"
+      @update:model-value="onBitDepth"
     />
 
     <!-- Start delay (countdown before recording starts) -->
@@ -28,51 +28,67 @@
         class="delay-select"
         :value="startDelay"
         :aria-label="t.rec_delay"
-        @change="emit('update:startDelay', parseInt($event.target.value, 10))"
+        @change="onStartDelay"
       >
         <option v-for="d in START_DELAYS" :key="d" :value="d">
-          {{ d === 0 ? t.rec_delay_none : t.rec_delay_s.replace('{n}', d) }}
+          {{ d === 0 ? t.rec_delay_none : t.rec_delay_s.replace('{n}', String(d)) }}
         </option>
       </select>
     </label>
   </div>
 </template>
 
-<script setup>
-  import { computed, inject } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import AppIcon from '../AppIcon.vue'
   import { START_DELAYS } from '../../composables/useCountdown'
-  import { UiSegmentedControl } from '../ui'
+  import { injectI18n } from '../../composables/useI18n'
+  import { UiSegmentedControl, type UiSegmentedOption } from '../ui'
 
   /**
    * Aufnahme-Einstellungen in der Leiste: Format, WAV-Bit-Tiefe, Startverzögerung.
    * Sichtbar nur im Leerlauf (`idle` = weder Aufnahme noch Countdown).
    */
-  const props = defineProps({
-    format: { type: String, required: true },
-    bitDepth: { type: Number, required: true },
-    bitDepths: { type: Array, required: true },
-    startDelay: { type: Number, required: true },
-    idle: { type: Boolean, default: true },
-    hasRecording: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      format: string
+      bitDepth: number
+      bitDepths: readonly number[]
+      startDelay: number
+      idle?: boolean
+      hasRecording?: boolean
+    }>(),
+    { idle: true, hasRecording: false }
+  )
 
-  const emit = defineEmits(['update:format', 'update:bitDepth', 'update:startDelay'])
+  const emit = defineEmits<{
+    'update:format': [value: string]
+    'update:bitDepth': [value: number]
+    'update:startDelay': [value: number]
+  }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
-  const formatOptions = computed(() => [
+  const formatOptions = computed<UiSegmentedOption<string>[]>(() => [
     { value: 'wav', label: 'WAV', title: t.value.rec_format_wav },
     { value: 'webm', label: 'WebM', title: t.value.rec_format_webm },
   ])
 
-  const bitDepthOptions = computed(() =>
+  const bitDepthOptions = computed<UiSegmentedOption<number>[]>(() =>
     props.bitDepths.map((depth) => ({
       value: depth,
       label: depth === 32 ? '32f' : String(depth),
       title: t.value[`rec_bit_${depth}`] || `${depth} Bit`,
     }))
   )
+
+  // UiSegmentedControl meldet string | number; die Optionen oben sind je Gruppe einheitlich
+  const onFormat = (value: string | number): void => emit('update:format', String(value))
+  const onBitDepth = (value: string | number): void => emit('update:bitDepth', Number(value))
+
+  function onStartDelay(event: Event): void {
+    emit('update:startDelay', parseInt((event.target as HTMLSelectElement).value, 10))
+  }
 </script>
 
 <style scoped>

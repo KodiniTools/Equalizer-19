@@ -24,7 +24,7 @@ Eine moderne, professionelle 19-Band-Audio-Equalizer-Anwendung, die mit Vue 3 un
 - **Web Audio API** (BiquadFilter, DynamicsCompressor, Analyser, AudioWorklet) und MediaRecorder API
 - **Design-Tokens** als CSS Custom Properties (`src/design-system/`) und ein eigener Satz **Ui-Komponenten** (`src/components/ui/`)
 - **Inline-SVG-Icons** (`AppIcon.vue`, `src/utils/icons.ts`), keine Icon-Font
-- **TypeScript** für die Übersetzungen (`src/i18n/`), Typprüfung per `vue-tsc` auch für JS-Dateien (`allowJs`)
+- **TypeScript** für Übersetzungen, Utils, Composables, Stores und Router sowie die Komponenten unter `ui/`, `equalizer/`, `recorder/` und `landing/`; Typprüfung per `vue-tsc` auch für die verbliebenen JS-Dateien (`allowJs`)
 - **Tests**: Vitest für alles, Vue Test Utils (jsdom) für Komponenten und Stores, Node-Umgebung für reine Logik
 - **ESLint + Prettier**, GitHub-Actions-CI
 

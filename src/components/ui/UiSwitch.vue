@@ -8,14 +8,14 @@
       :checked="modelValue"
       :disabled="disabled"
       :aria-checked="modelValue"
-      @change="emit('update:modelValue', $event.target.checked)"
+      @change="onChange"
     />
     <span class="ui-switch__track" aria-hidden="true"></span>
     <span class="ui-switch__label" :class="{ 'sr-only': labelHidden }">{{ label }}</span>
   </label>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { computed, useId } from 'vue'
 
   /**
@@ -23,18 +23,25 @@
    * und steht rechts; mit `labelHidden` bleibt es nur für Screenreader.
    * Weitere Attribute (title, class) landen auf dem <label>.
    */
-  const props = defineProps({
-    modelValue: { type: Boolean, required: true },
-    label: { type: String, required: true },
-    labelHidden: { type: Boolean, default: false },
-    disabled: { type: Boolean, default: false },
-    id: { type: String, default: '' },
-  })
+  const props = withDefaults(
+    defineProps<{
+      modelValue: boolean
+      label: string
+      labelHidden?: boolean
+      disabled?: boolean
+      id?: string
+    }>(),
+    { labelHidden: false, disabled: false, id: '' }
+  )
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
   const generatedId = useId()
   const inputId = computed(() => props.id || generatedId)
+
+  function onChange(event: Event): void {
+    emit('update:modelValue', (event.target as HTMLInputElement).checked)
+  }
 </script>
 
 <style scoped>

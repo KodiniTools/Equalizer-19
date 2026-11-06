@@ -4,20 +4,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+  import type { UiToastType } from './types'
+
   /**
    * Eine Benachrichtigung: Kartenfläche mit Statusfarbe als linker Linie.
    * Fehler sind role=alert, alles andere role=status. Position und Ein-/Ausblenden
    * übernimmt der Aufrufer (components/Notification.vue).
    */
-  defineProps({
-    message: { type: String, required: true },
-    type: {
-      type: String,
-      default: 'info',
-      validator: (v) => ['info', 'success', 'warning', 'error'].includes(v),
-    },
-  })
+  withDefaults(defineProps<{ message: string; type?: UiToastType }>(), { type: 'info' })
 </script>
 
 <style scoped>

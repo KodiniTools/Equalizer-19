@@ -17,7 +17,7 @@
 | **Vite** | ^7.3.7 | Build-Tool und Dev-Server |
 | **@vitejs/plugin-vue** | ^6.0.10 | Vue-Integration für Vite |
 | **Vitest + @vue/test-utils** | ^3.2.7 / ^2.5.1 | Komponententests (jsdom) unter `src/**/__tests__/*.spec.js` |
-| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs`; `.ts` bisher nur unter `src/i18n/`) |
+| **TypeScript + vue-tsc** | ~5.9.0 / ^3.3.14 | `npm run type-check` (`allowJs`; `.ts` unter `src/i18n/`, `utils/`, `composables/`, `stores/`, `router/`; Komponenten in `ui/`, `equalizer/`, `recorder/`, `landing/` mit `lang="ts"`) |
 | **ESLint + Prettier** | ^10.4.1 / ^3.8.4 | `npm run lint`, `npm run format:check` (`eslint.config.js` über `@vue/eslint-config-typescript`, lintet `.js`, `.ts` und `.vue`) |
 
 ### Audio Processing
@@ -272,7 +272,9 @@ export const translations = { de, en } // Language = 'de' | 'en'
 
 Neue Texte zuerst in `de.ts` eintragen, dann in `en.ts`. `src/i18n/__tests__/translations.spec.js` prüft
 zusätzlich zur Laufzeit: gleiche Schlüssel, keine leeren Texte, gleiche Platzhalter (`{name}`, `{count}`).
-Die Komponenten lesen weiterhin `t.value.key` (bzw. `t.key` im Template) über `inject('i18n')`.
+Die Komponenten lesen weiterhin `t.value.key` (bzw. `t.key` im Template); TS-Komponenten holen die API
+über `injectI18n()` aus `composables/useI18n.ts` (typisiert als `I18n`, `t` ist `Translations`: bekannte
+Schlüssel sind `string`, dynamisch gebaute wie `lp_step${n}_title` sind `string | undefined`).
 
 ---
 
@@ -344,7 +346,8 @@ i18n und Theme laufen bewusst über provide/inject aus `App.vue` (`useI18n` lies
 ```javascript
 provide('i18n', { t, currentLanguage, setLanguage })
 provide('theme', { currentTheme, setTheme })
-const { t } = inject('i18n')
+const { t } = inject('i18n') // JS-Komponenten
+const { t } = injectI18n() // TS-Komponenten: typisiert, aus composables/useI18n.ts (analog injectTheme)
 ```
 
 ### Undo/Redo

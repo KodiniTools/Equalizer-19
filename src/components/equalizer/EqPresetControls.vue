@@ -8,7 +8,7 @@
       class="preset-select"
       :value="modelValue"
       :aria-label="t.a11y_eq_select_preset"
-      @change="onChange($event.target.value)"
+      @change="onChange"
     >
       <option value="">Custom</option>
       <optgroup :label="t.eq_builtin_group">
@@ -45,41 +45,46 @@
   </div>
 </template>
 
-<script setup>
-  import { computed, inject } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import AppIcon from '../AppIcon.vue'
   import { EQ_PRESETS } from '../../utils/presets'
-  import { isCustomPresetId } from '../../composables/useCustomPresets'
+  import { isCustomPresetId, type CustomPreset } from '../../composables/useCustomPresets'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiIconButton } from '../ui'
 
   /**
    * Kopfzeile des Equalizers: Bypass, Preset-Auswahl (eingebaut + eigene),
    * Löschen/Speichern eigener Presets, Reset. Hält keinen Zustand selbst.
    */
-  const props = defineProps({
-    /** Gewähltes Preset: Name eines eingebauten, ID eines eigenen oder '' (Custom) */
-    modelValue: { type: String, default: '' },
-    customPresets: { type: Array, default: () => [] },
-    bypassed: { type: Boolean, default: false },
-    /** Speichern-Formular offen: blendet den Speichern-Button aus */
-    saving: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      /** Gewähltes Preset: Name eines eingebauten, ID eines eigenen oder '' (Custom) */
+      modelValue?: string
+      customPresets?: readonly CustomPreset[]
+      bypassed?: boolean
+      /** Speichern-Formular offen: blendet den Speichern-Button aus */
+      saving?: boolean
+    }>(),
+    { modelValue: '', customPresets: () => [], bypassed: false, saving: false }
+  )
 
-  const emit = defineEmits([
-    'update:modelValue',
-    'change',
-    'toggle-bypass',
-    'delete',
-    'save',
-    'reset',
-  ])
+  const emit = defineEmits<{
+    'update:modelValue': [value: string]
+    change: [value: string]
+    'toggle-bypass': []
+    delete: []
+    save: []
+    reset: []
+  }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   const isCustomSelected = computed(() => isCustomPresetId(props.modelValue))
 
   // Erst den Wert nach oben geben, dann die Änderung melden (wie v-model + @change)
-  function onChange(value) {
+  function onChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value
     emit('update:modelValue', value)
     emit('change', value)
   }

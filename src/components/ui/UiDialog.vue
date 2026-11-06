@@ -30,7 +30,7 @@
   </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue'
   import AppIcon from '../AppIcon.vue'
   import UiIconButton from './UiIconButton.vue'
@@ -42,26 +42,29 @@
    * in den Dialog (sofern der Aufrufer nicht selbst ein Element fokussiert), beim
    * Schließen zurück zum vorher fokussierten Element.
    */
-  const props = defineProps({
-    open: { type: Boolean, required: true },
-    title: { type: String, required: true },
-    closeLabel: { type: String, required: true },
-    icon: { type: String, default: '' },
-  })
+  const props = withDefaults(
+    defineProps<{
+      open: boolean
+      title: string
+      closeLabel: string
+      icon?: string
+    }>(),
+    { icon: '' }
+  )
 
-  const emit = defineEmits(['close'])
+  const emit = defineEmits<{ close: [] }>()
 
   const titleId = useId()
-  const panel = ref(null)
-  let previouslyFocused = null
+  const panel = ref<HTMLElement | null>(null)
+  let previouslyFocused: HTMLElement | null = null
 
-  function requestClose() {
+  function requestClose(): void {
     emit('close')
   }
 
   // Escape auch dann, wenn der Fokus den Dialog verlassen hat; innerhalb des
   // Dialogs greift bereits @keydown.esc.
-  function onDocumentKeydown(event) {
+  function onDocumentKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return
     if (event.target instanceof Node && panel.value?.contains(event.target)) return
     event.preventDefault()

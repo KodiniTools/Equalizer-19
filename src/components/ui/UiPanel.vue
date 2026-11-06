@@ -20,7 +20,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { useId } from 'vue'
   import AppIcon from '../AppIcon.vue'
 
@@ -32,10 +32,7 @@
    * Hilfsklassen für Slot-Inhalte: .panel-badge (kleine Pille) und
    * .panel-section-label (kleine Kapitälchen-Beschriftung).
    */
-  defineProps({
-    title: { type: String, required: true },
-    icon: { type: String, default: '' },
-  })
+  withDefaults(defineProps<{ title: string; icon?: string }>(), { icon: '' })
 
   const titleId = useId()
 </script>

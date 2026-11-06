@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 
 export type Theme = 'dark' | 'light'
 
@@ -59,3 +59,10 @@ export function useTheme() {
 
 /** What `provide('theme', …)` hands to the components. */
 export type ThemeApi = ReturnType<typeof useTheme>
+
+/** The theme API provided by App.vue (`provide('theme', …)`), typed for the components. */
+export function injectTheme(): ThemeApi {
+  const theme = inject<ThemeApi>('theme')
+  if (!theme) throw new Error("theme is not provided: App.vue calls provide('theme', …)")
+  return theme
+}

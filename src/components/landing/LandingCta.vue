@@ -13,11 +13,11 @@
   </section>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
+  import { injectI18n } from '../../composables/useI18n'
   import { UiButton } from '../ui'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 </script>
 
 <style scoped src="./landing.css"></style>

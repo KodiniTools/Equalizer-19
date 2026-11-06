@@ -36,12 +36,12 @@
           :aria-label="
             t.a11y_eq_band
               .replace('{freq}', formatFrequency(band.frequency))
-              .replace('{gain}', band.gain)
+              .replace('{gain}', String(band.gain))
           "
           :aria-valuenow="band.gain"
           aria-valuemin="-12"
           aria-valuemax="12"
-          @input="emit('change', index, parseFloat($event.target.value))"
+          @input="onInput(index, $event)"
         />
       </div>
       <span class="val">{{ band.gain > 0 ? '+' : '' }}{{ band.gain }}</span>
@@ -50,25 +50,35 @@
   </div>
 </template>
 
-<script setup>
-  import { computed, inject } from 'vue'
+<script setup lang="ts">
+  import { computed } from 'vue'
   import { formatFrequency } from '../../utils/presets'
   import { buildEqCurve } from '../../utils/eqCurve'
+  import { injectI18n } from '../../composables/useI18n'
+
+  /** What EqBands needs of a band (stores/audioEngine EqBand fits). */
+  export interface EqBandView {
+    frequency: number
+    gain: number
+  }
 
   /**
    * Die 19 Band-Regler mit der Frequenzkurve dahinter. Rein darstellend:
    * `bands` kommt vom Container, jede Reglerbewegung wird als
    * change(index, gain) gemeldet.
    */
-  const props = defineProps({
-    /** [{ frequency, gain }] in Band-Reihenfolge */
-    bands: { type: Array, required: true },
-    disabled: { type: Boolean, default: false },
-  })
+  const props = withDefaults(
+    defineProps<{
+      /** in Band-Reihenfolge */
+      bands: readonly EqBandView[]
+      disabled?: boolean
+    }>(),
+    { disabled: false }
+  )
 
-  const emit = defineEmits(['change'])
+  const emit = defineEmits<{ change: [index: number, gain: number] }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   // Curve geometry (SVG user units, stretched to the slider area). The ±12 dB
   // range maps to 43 % of the height, which is where the slider thumbs travel.
@@ -79,6 +89,10 @@
       { w: CURVE.w, h: CURVE.h, range: CURVE.h * 0.43 }
     )
   )
+
+  function onInput(index: number, event: Event): void {
+    emit('change', index, parseFloat((event.target as HTMLInputElement).value))
+  }
 </script>
 
 <style scoped>

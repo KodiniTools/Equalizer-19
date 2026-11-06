@@ -25,9 +25,10 @@
   </div>
 </template>
 
-<script setup>
-  import { inject, onMounted, ref } from 'vue'
+<script setup lang="ts">
+  import { onMounted, ref } from 'vue'
   import AppIcon from '../AppIcon.vue'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiIconButton } from '../ui'
 
   /**
@@ -35,14 +36,14 @@
    * eingeblendet und fokussiert das Feld beim Einhängen.
    * Emits: save(name) mit dem getrimmten Namen, cancel.
    */
-  const emit = defineEmits(['save', 'cancel'])
+  const emit = defineEmits<{ save: [name: string]; cancel: [] }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
   const name = ref('')
-  const presetNameInput = ref(null)
+  const presetNameInput = ref<HTMLInputElement | null>(null)
 
-  function confirm() {
+  function confirm(): void {
     const trimmed = name.value.trim()
     if (!trimmed) return
     emit('save', trimmed)

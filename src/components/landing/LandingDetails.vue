@@ -14,12 +14,12 @@
   </section>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
+  import { injectI18n } from '../../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
-  const details = ['privacy', 'realtime', 'viz', 'playlist', 'keys', 'devices']
+  const details = ['privacy', 'realtime', 'viz', 'playlist', 'keys', 'devices'] as const
 </script>
 
 <style scoped src="./landing.css"></style>

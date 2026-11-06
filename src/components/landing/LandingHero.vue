@@ -25,15 +25,15 @@
   </section>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import AppIcon from '../AppIcon.vue'
   import HeroEqualizer from './HeroEqualizer.vue'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiButton } from '../ui'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
-  const trust = ['uploads', 'account', 'browsers']
+  const trust = ['uploads', 'account', 'browsers'] as const
 </script>
 
 <style scoped src="./landing.css"></style>

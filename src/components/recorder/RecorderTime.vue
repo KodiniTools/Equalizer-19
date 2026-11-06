@@ -6,13 +6,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { computed } from 'vue'
 
   /** Laufende Aufnahmezeit als mm:ss mit pulsierendem Punkt. */
-  const props = defineProps({
-    seconds: { type: Number, required: true },
-  })
+  const props = defineProps<{ seconds: number }>()
 
   const formatted = computed(() => {
     const mins = Math.floor(props.seconds / 60)

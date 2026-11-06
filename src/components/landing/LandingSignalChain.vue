@@ -83,14 +83,14 @@
   </section>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import { EQ_PRESETS } from '../../utils/presets'
-  import { buildEqCurve, smoothPath } from '../../utils/eqCurve'
+  import { buildEqCurve, smoothPath, type Point } from '../../utils/eqCurve'
+  import { injectI18n } from '../../composables/useI18n'
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 
-  const modules = [{ key: 'input' }, { key: 'eq' }, { key: 'comp' }, { key: 'rec' }]
+  const modules = [{ key: 'input' }, { key: 'eq' }, { key: 'comp' }, { key: 'rec' }] as const
 
   // Small illustrations in the signal-chain cards (SVG user units)
   const ART = { w: 160, h: 56 }
@@ -98,7 +98,7 @@
 
   // Live input: a waveform whose envelope swells and fades across the card.
   const inputWave = smoothPath(
-    Array.from({ length: 33 }, (_, i) => {
+    Array.from({ length: 33 }, (_, i): Point => {
       const x = (i / 32) * ART.w
       const env = Math.sin((i / 32) * Math.PI)
       const y = ART.h / 2 - Math.sin(i * 1.9) * env * (ART.h * 0.42)
@@ -107,7 +107,7 @@
   )
 
   // Compressor transfer curve: unity below the threshold, 4:1 above, soft knee.
-  const compPoints = [
+  const compPoints: Point[] = [
     [0, ART.h],
     [ART.w * 0.42, ART.h * 0.58],
     [ART.w * 0.58, ART.h * 0.47],

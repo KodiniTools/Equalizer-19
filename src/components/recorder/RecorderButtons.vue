@@ -47,25 +47,34 @@
   </div>
 </template>
 
-<script setup>
-  import { inject } from 'vue'
+<script setup lang="ts">
   import AppIcon from '../AppIcon.vue'
+  import { injectI18n } from '../../composables/useI18n'
   import { UiIconButton } from '../ui'
 
   /**
    * Aufnahme-Buttons je nach Zustand: Aufnehmen, Countdown abbrechen, Stopp,
    * Download, neue Aufnahme. Emits: start, stop, download, new, cancel-countdown.
    */
-  defineProps({
-    isRecording: { type: Boolean, default: false },
-    hasRecording: { type: Boolean, default: false },
-    isCounting: { type: Boolean, default: false },
-    countdownRemaining: { type: Number, default: 0 },
-  })
+  withDefaults(
+    defineProps<{
+      isRecording?: boolean
+      hasRecording?: boolean
+      isCounting?: boolean
+      countdownRemaining?: number
+    }>(),
+    { isRecording: false, hasRecording: false, isCounting: false, countdownRemaining: 0 }
+  )
 
-  const emit = defineEmits(['start', 'stop', 'download', 'new', 'cancel-countdown'])
+  const emit = defineEmits<{
+    start: []
+    stop: []
+    download: []
+    new: []
+    'cancel-countdown': []
+  }>()
 
-  const { t } = inject('i18n')
+  const { t } = injectI18n()
 </script>
 
 <style scoped>

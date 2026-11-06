@@ -2,7 +2,8 @@
 
 Bausteine des Design-Systems, Muster: `components/ui/` im Playlist-Generator. Alle Komponenten:
 
-- `<script setup>` mit validierten Props, Vue 3.5.
+- `<script setup lang="ts">` mit typisierten Props und Emits (`defineProps<…>()`, `withDefaults`), Vue 3.5;
+  gemeinsame Typen (`UiButtonVariant`, `UiSize`, `UiSegmentedOption`, `UiToastType`) in `types.ts`, Barrel `index.ts`.
 - Styling ausschließlich über die Tokens aus `src/design-system/tokens.css`, scoped.
 - Native Elemente (`<button>`, `<a>`, RouterLink, `<input type="range">`, Checkbox mit
   `role="switch"`), Fokus-Ring über `outline`.

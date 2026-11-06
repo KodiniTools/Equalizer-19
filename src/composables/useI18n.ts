@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import { translations, type Language } from '../i18n'
+import { ref, computed, inject, type ComputedRef } from 'vue'
+import { translations, type Language, type Translations } from '../i18n'
 import { applyPageMeta, resolveInitialLanguage, routePathFromLocation } from '../utils/seoMeta'
 
 // ?lang=en (hreflang-Ziel) hat Vorrang vor der gespeicherten Sprache, sonst Deutsch.
@@ -58,7 +58,7 @@ interface LanguageEventDetail {
 }
 
 export function useI18n() {
-  const t = computed(() => translations[currentLanguage.value])
+  const t: ComputedRef<Translations> = computed(() => translations[currentLanguage.value])
 
   // Apply a language: state, storage, <html lang>, meta tags
   function applyLanguage(lang: Language): void {
@@ -118,3 +118,14 @@ export function useI18n() {
 
 /** What `provide('i18n', …)` hands to the components. */
 export type I18n = ReturnType<typeof useI18n>
+
+/**
+ * The i18n API provided by App.vue (`provide('i18n', …)`), typed for the
+ * components. Throws when used outside that tree, like the previous
+ * destructuring of `inject('i18n')` did.
+ */
+export function injectI18n(): I18n {
+  const i18n = inject<I18n>('i18n')
+  if (!i18n) throw new Error("i18n is not provided: App.vue calls provide('i18n', …)")
+  return i18n
+}
