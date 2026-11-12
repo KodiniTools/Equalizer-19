@@ -7,7 +7,10 @@
  * encoded here, so the captured audio is bit-identical to the processing
  * chain's output (after EQ, compressor and master gain).
  *
- * Messages to the processor:  'stop'  → flush remaining samples, reply 'done'
+ * Messages to the processor:  'pause'  → drop incoming samples (nothing is
+ *                                         recorded, the buffer is kept)
+ *                              'resume' → record again, seamlessly
+ *                              'stop'   → flush remaining samples, reply 'done'
  * Messages from the processor: { type: 'data', channels: Float32Array[] }
  *                              { type: 'done' }
  */
@@ -17,12 +20,17 @@ class PcmRecorderProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super()
     this._active = true
+    this._paused = false
     this._fallbackChannels = Math.max(1, options?.processorOptions?.channelCount || 2)
     this._buffers = null
     this._filled = 0
 
     this.port.onmessage = (event) => {
-      if (event.data === 'stop') {
+      if (event.data === 'pause') {
+        this._paused = true
+      } else if (event.data === 'resume') {
+        this._paused = false
+      } else if (event.data === 'stop') {
         this._active = false
         this._flush()
         this.port.postMessage({ type: 'done' })
@@ -47,6 +55,8 @@ class PcmRecorderProcessor extends AudioWorkletProcessor {
 
   process(inputs) {
     if (!this._active) return false
+    // Paused: keep the node alive but record nothing, so the pause leaves no gap
+    if (this._paused) return true
 
     const input = inputs[0] || []
     // A connected but currently silent input may arrive with zero channels

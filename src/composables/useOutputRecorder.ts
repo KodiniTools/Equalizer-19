@@ -13,6 +13,9 @@ const BIT_DEPTH_STORAGE_KEY = 'eq19_wav_bit_depth'
 const SCRIPT_PROCESSOR_BUFFER = 4096
 // Max. wait for the worklet module before recording falls back to ScriptProcessor
 const WORKLET_LOAD_TIMEOUT_MS = 2000
+// Clock refresh; the displayed value is whole seconds, so a short tick keeps
+// the second boundary accurate after pause/resume
+const TIMER_TICK_MS = 250
 
 export type RecordingFormat = 'wav' | 'webm'
 
@@ -34,6 +37,8 @@ interface PcmNodes {
   source: AudioNode
   capture: AudioNode & { port?: MessagePort }
   silent: GainNode
+  /** true = drop incoming samples (paused); the graph keeps running */
+  setPaused: (paused: boolean) => void
   stop: () => Promise<void>
 }
 
@@ -63,6 +68,7 @@ function savePicker(): ShowSaveFilePicker | undefined {
  */
 export function useOutputRecorder() {
   const isRecording = ref(false)
+  const isPaused = ref(false)
   const recordedChunks = ref<Blob[]>([]) // WebM blobs
   const mediaRecorder = ref<MediaRecorder | null>(null)
   const recordingFormat = ref<RecordingFormat>('webm')
@@ -71,6 +77,9 @@ export function useOutputRecorder() {
   const pcmFrames = ref(0) // recorded PCM frames (reactive counter only)
 
   let timerInterval: ReturnType<typeof setInterval> | null = null
+  // Recording clock: paused time is excluded, so it matches the output length
+  let elapsedBeforeSegmentMs = 0
+  let segmentStartMs = 0
   let audioEngineRef: RecorderEngine | null = null
 
   // --- PCM capture state (kept non-reactive: large typed arrays) ---
@@ -106,6 +115,32 @@ export function useOutputRecorder() {
     pcmChannels = 0
     wavCache = null
     recordingTime.value = 0
+    elapsedBeforeSegmentMs = 0
+  }
+
+  // ---------------------------------------------------------------------------
+  // Recording clock (whole seconds, pause-aware)
+  // ---------------------------------------------------------------------------
+  function elapsedMs(): number {
+    return elapsedBeforeSegmentMs + (Date.now() - segmentStartMs)
+  }
+
+  function startClock(): void {
+    segmentStartMs = Date.now()
+    if (timerInterval) clearInterval(timerInterval)
+    timerInterval = setInterval(() => {
+      recordingTime.value = Math.floor(elapsedMs() / 1000)
+    }, TIMER_TICK_MS)
+  }
+
+  /** Freeze the clock; the running segment is folded into the total. */
+  function stopClock(): void {
+    if (timerInterval) {
+      clearInterval(timerInterval)
+      timerInterval = null
+      elapsedBeforeSegmentMs = elapsedMs()
+      recordingTime.value = Math.floor(elapsedBeforeSegmentMs / 1000)
+    }
   }
 
   function pushPcmChunk(channels: Float32Array[] | undefined): void {
@@ -151,6 +186,7 @@ export function useOutputRecorder() {
         source: sourceNode,
         capture,
         silent,
+        setPaused: (paused) => capture.port.postMessage(paused ? 'pause' : 'resume'),
         stop: () =>
           new Promise<void>((resolve) => {
             resolveDone = resolve
@@ -169,8 +205,9 @@ export function useOutputRecorder() {
       channelCount
     )
     let capturing = true
+    let paused = false
     capture.onaudioprocess = (event: AudioProcessingEvent) => {
-      if (!capturing) return
+      if (!capturing || paused) return
       const channels: Float32Array[] = []
       for (let ch = 0; ch < event.inputBuffer.numberOfChannels; ch++) {
         channels.push(new Float32Array(event.inputBuffer.getChannelData(ch)))
@@ -183,6 +220,9 @@ export function useOutputRecorder() {
       source: sourceNode,
       capture,
       silent,
+      setPaused: (value) => {
+        paused = value
+      },
       stop: () => {
         capturing = false
         return Promise.resolve()
@@ -274,9 +314,8 @@ export function useOutputRecorder() {
       if (!started) return false
 
       isRecording.value = true
-      timerInterval = setInterval(() => {
-        recordingTime.value++
-      }, 1000)
+      isPaused.value = false
+      startClock()
       return true
     } catch (error) {
       console.error('Failed to start recording:', error)
@@ -286,14 +325,41 @@ export function useOutputRecorder() {
     }
   }
 
+  /**
+   * Pause the take. Paused time never reaches the output: the WebM recorder
+   * stops collecting (MediaRecorder.pause) and the PCM capture drops samples,
+   * so stop/resume yields a seamless file. The clock freezes as well.
+   */
+  function pauseRecording(): boolean {
+    if (!isRecording.value || isPaused.value) return false
+    if (pcmNodes) {
+      pcmNodes.setPaused(true)
+    } else if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
+      mediaRecorder.value.pause()
+    }
+    isPaused.value = true
+    stopClock()
+    return true
+  }
+
+  /** Continue a paused take; samples flow into the same buffers again. */
+  function resumeRecording(): boolean {
+    if (!isRecording.value || !isPaused.value) return false
+    if (pcmNodes) {
+      pcmNodes.setPaused(false)
+    } else if (mediaRecorder.value && mediaRecorder.value.state === 'paused') {
+      mediaRecorder.value.resume()
+    }
+    isPaused.value = false
+    startClock()
+    return true
+  }
+
   async function stopRecording(): Promise<boolean> {
     if (!isRecording.value) return false
     isRecording.value = false
-
-    if (timerInterval) {
-      clearInterval(timerInterval)
-      timerInterval = null
-    }
+    isPaused.value = false
+    stopClock()
 
     if (pcmNodes) await stopPcmCapture()
     else stopWebmCapture()
@@ -438,10 +504,7 @@ export function useOutputRecorder() {
   }
 
   function cleanup(): void {
-    if (timerInterval) {
-      clearInterval(timerInterval)
-      timerInterval = null
-    }
+    stopClock()
     if (isRecording.value) {
       stopRecording()
     }
@@ -449,6 +512,7 @@ export function useOutputRecorder() {
 
   return {
     isRecording,
+    isPaused,
     recordingFormat,
     bitDepth,
     bitDepths: WAV_BIT_DEPTHS,
@@ -456,6 +520,8 @@ export function useOutputRecorder() {
     recordingTime,
     setAudioEngine,
     startRecording,
+    pauseRecording,
+    resumeRecording,
     stopRecording,
     saveRecordingAs,
     supportsFolderPicker,

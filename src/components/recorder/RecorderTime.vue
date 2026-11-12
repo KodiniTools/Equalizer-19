@@ -1,16 +1,25 @@
 <template>
-  <div class="rec-time" aria-live="assertive" aria-atomic="true">
-    <!-- Recording time display -->
+  <div class="rec-time" :class="{ paused }" aria-live="assertive" aria-atomic="true">
+    <!-- Recording time display; paused: still dot, amber tint, "Paused" label -->
     <span class="rec-dot" aria-hidden="true"></span>
     <span class="time">{{ formatted }}</span>
+    <span v-if="paused" class="paused-label">{{ t.rec_paused }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
   import { computed } from 'vue'
+  import { injectI18n } from '../../composables/useI18n'
 
-  /** Laufende Aufnahmezeit als mm:ss mit pulsierendem Punkt. */
-  const props = defineProps<{ seconds: number }>()
+  /**
+   * Laufende Aufnahmezeit als mm:ss mit pulsierendem Punkt.
+   * `paused` friert den Punkt ein und blendet „Pausiert“ ein.
+   */
+  const props = withDefaults(defineProps<{ seconds: number; paused?: boolean }>(), {
+    paused: false,
+  })
+
+  const { t } = injectI18n()
 
   const formatted = computed(() => {
     const mins = Math.floor(props.seconds / 60)
@@ -53,5 +62,23 @@
 
   .rec-time .time {
     font-weight: 600;
+  }
+
+  .rec-time.paused {
+    background: color-mix(in srgb, var(--warning) 18%, transparent);
+  }
+
+  .rec-time.paused .rec-dot {
+    background: var(--warning);
+    animation: none;
+  }
+
+  .paused-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--warning);
   }
 </style>

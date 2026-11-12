@@ -1,6 +1,6 @@
 <template>
   <div class="recorder">
-    <RecorderTime v-if="isRecording" :seconds="recordingTime" />
+    <RecorderTime v-if="isRecording" :seconds="recordingTime" :paused="isPaused" />
 
     <RecorderSettings
       :format="recordingFormat"
@@ -16,10 +16,13 @@
 
     <RecorderButtons
       :is-recording="isRecording"
+      :is-paused="isPaused"
       :has-recording="hasRecording"
       :is-counting="isCounting"
       :countdown-remaining="countdownRemaining"
       @start="handleStartRecording"
+      @pause="pauseRecording"
+      @resume="resumeRecording"
       @stop="handleStopRecording"
       @download="handleDownload"
       @new="handleNewRecording"
@@ -76,6 +79,7 @@
   // ---- Output recorder (record + download) ----
   const {
     isRecording,
+    isPaused,
     recordingFormat,
     bitDepth,
     bitDepths,
@@ -83,6 +87,8 @@
     recordingTime,
     setAudioEngine,
     startRecording,
+    pauseRecording,
+    resumeRecording,
     stopRecording,
     saveRecordingAs,
     supportsFolderPicker,

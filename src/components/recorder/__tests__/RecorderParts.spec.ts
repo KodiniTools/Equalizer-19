@@ -8,6 +8,42 @@ import RecorderButtons from '../RecorderButtons.vue'
 const global = { provide: i18nStub() }
 
 describe('Recorder-Teile', () => {
+  it('RecorderTime zeigt den Pause-Zustand an', async () => {
+    const wrapper = mount(RecorderTime, { props: { seconds: 61 }, global })
+    expect(wrapper.classes()).not.toContain('paused')
+    expect(wrapper.find('.paused-label').exists()).toBe(false)
+
+    await wrapper.setProps({ paused: true })
+    expect(wrapper.classes()).toContain('paused')
+    expect(wrapper.find('.paused-label').text()).toBe('rec_paused')
+    expect(wrapper.find('.time').text()).toBe('01:01')
+  })
+
+  it('RecorderButtons: Pause-Button nur während der Aufnahme, wechselt zu Fortsetzen', async () => {
+    const wrapper = mount(RecorderButtons, { global })
+    expect(wrapper.find('.rec-btn.pause').exists()).toBe(false)
+
+    await wrapper.setProps({ isRecording: true })
+    const pause = wrapper.find('.rec-btn.pause')
+    expect(pause.attributes('aria-label')).toBe('rec_pause')
+    expect(pause.classes()).not.toContain('paused')
+    await pause.trigger('click')
+    expect(wrapper.emitted('pause')).toHaveLength(1)
+    expect(wrapper.emitted('resume')).toBeUndefined()
+
+    await wrapper.setProps({ isPaused: true })
+    expect(pause.attributes('aria-label')).toBe('rec_resume')
+    expect(pause.classes()).toContain('paused')
+    await pause.trigger('click')
+    expect(wrapper.emitted('resume')).toHaveLength(1)
+    expect(wrapper.emitted('pause')).toHaveLength(1)
+    // Stop bleibt auch in der Pause erreichbar
+    expect(wrapper.find('.rec-btn.stop').exists()).toBe(true)
+
+    await wrapper.setProps({ isRecording: false, isPaused: false })
+    expect(wrapper.find('.rec-btn.pause').exists()).toBe(false)
+  })
+
   it('RecorderTime formatiert Sekunden als mm:ss', () => {
     expect(
       mount(RecorderTime, { props: { seconds: 5 }, global })
@@ -73,6 +109,7 @@ describe('Recorder-Teile', () => {
     await wrapper.setProps({ isCounting: false, isRecording: true })
     await wrapper.find('.rec-btn.stop').trigger('click')
     expect(wrapper.emitted('stop')).toHaveLength(1)
+    expect(wrapper.find('.rec-btn.download').exists()).toBe(false)
 
     await wrapper.setProps({ isRecording: false, hasRecording: true })
     await wrapper.find('.rec-btn.download').trigger('click')

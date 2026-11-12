@@ -20,6 +20,17 @@
       <AppIcon name="record" />
     </UiIconButton>
 
+    <!-- Pause / resume while recording -->
+    <UiIconButton
+      v-if="isRecording"
+      class="rec-btn pause"
+      :class="{ paused: isPaused }"
+      :label="isPaused ? t.rec_resume : t.rec_pause"
+      @click="isPaused ? emit('resume') : emit('pause')"
+    >
+      <AppIcon :name="isPaused ? 'record' : 'pause'" />
+    </UiIconButton>
+
     <!-- Stop recording button -->
     <UiIconButton v-if="isRecording" class="rec-btn stop" :label="t.stop" @click="emit('stop')">
       <AppIcon name="stop" />
@@ -53,21 +64,31 @@
   import { UiIconButton } from '../ui'
 
   /**
-   * Aufnahme-Buttons je nach Zustand: Aufnehmen, Countdown abbrechen, Stopp,
-   * Download, neue Aufnahme. Emits: start, stop, download, new, cancel-countdown.
+   * Aufnahme-Buttons je nach Zustand: Aufnehmen, Countdown abbrechen,
+   * Pause/Fortsetzen, Stopp, Download, neue Aufnahme.
+   * Emits: start, pause, resume, stop, download, new, cancel-countdown.
    */
   withDefaults(
     defineProps<{
       isRecording?: boolean
+      isPaused?: boolean
       hasRecording?: boolean
       isCounting?: boolean
       countdownRemaining?: number
     }>(),
-    { isRecording: false, hasRecording: false, isCounting: false, countdownRemaining: 0 }
+    {
+      isRecording: false,
+      isPaused: false,
+      hasRecording: false,
+      isCounting: false,
+      countdownRemaining: 0,
+    }
   )
 
   const emit = defineEmits<{
     start: []
+    pause: []
+    resume: []
     stop: []
     download: []
     new: []
@@ -83,15 +104,18 @@
     gap: 6px;
   }
 
-  /* Record / stop / download: UiIconButton with a status colour */
+  /* Record / stop / download: UiIconButton with a status colour.
+     Pause is neutral while recording and turns red ("continue") when paused. */
   .ui-button.rec-btn.rec,
-  .ui-button.rec-btn.countdown {
+  .ui-button.rec-btn.countdown,
+  .ui-button.rec-btn.pause.paused {
     background: var(--error);
     border-color: var(--error);
     color: #ffffff;
   }
 
-  .ui-button.rec-btn.rec:hover:not(:disabled) {
+  .ui-button.rec-btn.rec:hover:not(:disabled),
+  .ui-button.rec-btn.pause.paused:hover:not(:disabled) {
     background: color-mix(in srgb, var(--error) 85%, #000);
     border-color: color-mix(in srgb, var(--error) 85%, #000);
   }
