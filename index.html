@@ -33,6 +33,27 @@
 
     <meta name="theme-color" content="#0a1426" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f6f2e8" media="(prefers-color-scheme: light)" />
+
+    <!-- Webfonts (served site-wide from /fonts/) start loading before the CSS
+         bundle is parsed, which shortens the font swap and the shift it causes. -->
+    <link
+      rel="preload"
+      href="/fonts/Supreme-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="/fonts/Supreme-Bold.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Critical layout before the app mounts: the SSI footer must not sit
+         directly under the navigation and then jump down when Vue renders
+         (CLS). The empty #app already reserves a full viewport of height. -->
+    <style>
+      #app {
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+    </style>
   </head>
   <body>
     <!--#include virtual="/partials/nav.html" -->
