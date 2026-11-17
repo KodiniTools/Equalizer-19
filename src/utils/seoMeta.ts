@@ -58,6 +58,17 @@ const META: Record<MetaLanguage, Record<RouteKey, RouteMeta>> = {
   },
 }
 
+/**
+ * Englische Sprachfassungen, die der Build neben dist/index.html schreibt (vite.config.js).
+ * Unterseiten heißen wie ihr Pfad (/app -> app.en.html), damit nginx sie für `?lang=en`
+ * per map findet.
+ */
+export const EN_PAGES: ReadonlyArray<{ file: string; path: RouteKey }> = [
+  { file: 'index.en.html', path: '/' },
+  { file: 'app.en.html', path: '/app' },
+  { file: 'faq.en.html', path: '/faq' },
+]
+
 /** Router path ('/', '/app/', '') → known key, unknown paths fall back to '/'. */
 function routeKey(path: string | null | undefined): RouteKey {
   const trimmed = (path || '/').replace(/\/+$/, '') || '/'
