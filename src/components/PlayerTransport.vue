@@ -81,13 +81,19 @@
 <style scoped>
   /* ---- Transport controls (UiIconButton) ---- */
   .ui-button.play {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
+    margin: 0 4px;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  }
+
+  .ui-button.play:hover:not(:disabled) {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 26%, transparent);
   }
 
   .play .icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   /* Shuffle / repeat mode buttons */
@@ -114,8 +120,8 @@
 
   @media (max-width: 600px) {
     .ui-button.play {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
     }
   }
 </style>

@@ -78,16 +78,17 @@ Equalizer-19/
 │   ├── design-system/      # Design-Tokens: tokens.css (Laufzeit), tokens.json, tokens.ts, Tests, README
 │   │
 │   ├── components/         # Vue-Komponenten
-│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiSegmentedControl, UiPanel, UiDialog, UiToast), README
+│   │   ├── ui/                        # Design-System-Komponenten (UiButton, UiIconButton, UiSwitch, SliderField, UiKnob, UiSegmentedControl, UiPanel, UiDialog, UiToast), README
 │   │   ├── landing/                   # Abschnitte der Landing-Page (LandingHero, LandingFacts, LandingSignalChain, LandingSteps, LandingDetails, LandingBlog, LandingCta), HeroNav, HeroEqualizer, landing.css
-│   │   ├── equalizer/                 # Teile des Equalizers: EqPresetControls (Kopfzeile), EqPresetForm (Preset speichern), EqBands (19 Regler + Kurve)
+│   │   ├── equalizer/                 # Teile des Equalizers: EqPresetControls (Kopfzeile), EqPresetForm (Preset speichern), EqCurveEditor (Kurve mit ziehbaren Punkten + Live-Spektrum)
 │   │   ├── recorder/                  # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons, CountdownOverlay, DownloadDialog
 │   │   ├── __tests__/                 # Komponententests (Vitest), auch in ui/, landing/, equalizer/, recorder/
 │   │   ├── RelatedTools.vue           # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── AppIcon.vue                # Inline-SVG-Icon nach Name (utils/icons.ts)
-│   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel
+│   │   ├── AudioMeter.vue             # Ein-/Ausgangspegel (horizontale Balken unter dem EQ)
 │   │   ├── CompressorPresets.vue      # Kompressor-Preset-Dropdown (in DynamicsProcessor)
-│   │   ├── DynamicsProcessor.vue      # Kompressor-UI mit Reglern
+│   │   ├── dynamics/                  # Teile des Kompressors: GainReductionMeter
+│   │   ├── DynamicsProcessor.vue      # Kompressor-UI: Presets, Gain-Reduction, Slider + Drehregler
 │   │   ├── Equalizer.vue              # 19-Band EQ: Container (Bänder, Presets, Engine-Store) für components/equalizer/
 │   │   ├── HistoryControls.vue        # Undo/Redo-Buttons (History-Store)
 │   │   ├── InputSource.vue            # Audio-Eingang wählen (Line-In, Mikrofon, PC-Ton)
@@ -96,8 +97,7 @@ Equalizer-19/
 │   │   ├── Playlist.vue               # Track-Playlist
 │   │   ├── RecorderControls.vue       # Aufnahme & Download: Container (Recorder, Countdown) für components/recorder/
 │   │   ├── StickyPlayerBar.vue        # Player-Leiste: Upload, Fortschritt, Layout
-│   │   ├── VolumeControl.vue          # Lautstärke (in StickyPlayerBar)
-│   │   └── Visualization.vue          # Spektrum-Analyzer
+│   │   └── VolumeControl.vue          # Lautstärke (in StickyPlayerBar)
 │   │
 │   ├── data/
 │   │   └── blogArticles.ts            # Blog-Beiträge (kodinitools.com/blog) für die Landing-Page

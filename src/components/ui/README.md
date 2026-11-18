@@ -29,6 +29,7 @@ import {
 | `UiIconButton` | Quadratischer Icon-Button, `label` ist Pflicht  | `label` (wird aria-label und title), `variant`, `size` (Standard sm), `pressed`, `round`                              |
 | `UiSwitch`     | Schalter (Checkbox mit `role="switch"`)         | `v-model` (Boolean), `label` (Pflicht), `labelHidden`, `disabled`, `id`                                               |
 | `SliderField`  | Beschrifteter Regler mit Wertanzeige            | `v-model` (Number), `label` (Pflicht), `valueText`, `min`, `max`, `step`, `disabled`, `ariaLabel`, `ariaValueText`     |
+| `UiKnob`       | Drehregler (56 px, `role="slider"`)             | wie `SliderField`, dazu `defaultValue` (Doppelklick), `dragRange` (Pixel je Wertebereich, Standard 180)                 |
 | `UiSegmentedControl` | Umschalter mit genau einer gewählten Option (Radiogroup) | `v-model` (String oder Number), `options` `[{ value, label, title?, disabled? }]`, `label`, `variant` accent · surface, `size` sm · md · lg, `block` |
 | `UiPanel` | Karten-Rahmen der Sidebar-Panels mit Kopfzeile | `title` (Pflicht), `icon`; Slots default, `actions`, `footer` |
 | `UiDialog` | Modaler Dialog, teleportiert nach body | `open`, `title`, `closeLabel` (Pflicht), `icon`; Slots default, `footer`; Event `close` (Escape, Hintergrund, Button) |
@@ -69,7 +70,7 @@ Die Optik horizontaler Regler (Spur 4 px, Daumen 12 px, auf Smartphones 16 px) l
 <style scoped src="./ui/range.css"></style>
 ```
 
-Die vertikalen Regler in `equalizer/EqBands.vue` und `landing/HeroEqualizer.vue` haben weiterhin eigene Styles.
+Die vertikalen Regler in `landing/HeroEqualizer.vue` und die Kurvenpunkte in `equalizer/EqCurveEditor.vue` haben weiterhin eigene Styles.
 
 ## Beispiel
 

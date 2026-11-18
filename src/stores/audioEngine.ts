@@ -391,6 +391,12 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
   function getInputLevel(): number {
     return _rmsDb(inputAnalyserNode.value)
   }
+  /** Current gain reduction of the compressor in dB (≤ 0; 0 when off or idle). */
+  function getGainReduction(): number {
+    if (!dynamicsEnabled.value || !dynamicsNode.value) return 0
+    const reduction = dynamicsNode.value.reduction
+    return Number.isFinite(reduction) ? Math.min(0, reduction) : 0
+  }
   function getOutputLevel(): number {
     return _rmsDb(analyserNode.value)
   }
@@ -464,6 +470,7 @@ export const useAudioEngineStore = defineStore('audioEngine', () => {
     getTimeDomainData,
     getInputLevel,
     getOutputLevel,
+    getGainReduction,
     getAudioNodes,
     applyEqPreset,
     cleanup,

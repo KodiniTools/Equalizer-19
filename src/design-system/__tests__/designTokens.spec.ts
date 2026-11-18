@@ -19,10 +19,6 @@ const tokenNames = new Set([
 
 /** Variablen, die außerhalb von tokens.css definiert werden dürfen, je mit Grund. */
 const LOCAL_VARIABLES: Readonly<Record<string, string>> = {
-  // Layout-Maße des EQ, je Breakpoint neu gesetzt
-  '--eq-pad-x': 'components/equalizer/EqBands.vue',
-  '--eq-pad-y': 'components/equalizer/EqBands.vue',
-  '--eq-stage-h': 'components/equalizer/EqBands.vue',
   // Anker-Offset unter globaler Nav + HeroNav
   '--lp-anchor-offset': 'pages/LandingPage.vue',
   // Light-Palette des externen Nav-Partials (siehe tokens.json color.nav-light);
@@ -57,15 +53,8 @@ const FROZEN_LITERALS: Readonly<Record<string, number>> = {
   'assets/style.css: rgba(1, 79, 153, 0.08)': 1,
   'assets/style.css: rgba(1, 79, 153, 0.1)': 1,
   'assets/style.css: rgba(255, 255, 255, 0.97)': 1,
-  'components/AudioMeter.vue: #1db954': 2,
-  'components/AudioMeter.vue: #ef4444': 3,
-  'components/AudioMeter.vue: #f59e0b': 2,
-  'components/AudioMeter.vue: #fff': 1,
   'components/RecorderControls.vue: #ef4444': 1,
   'components/RecorderControls.vue: rgba(239, 68, 68, 0.2)': 1,
-  'components/equalizer/EqBands.vue: #ffffff': 2,
-  'components/equalizer/EqBands.vue: rgba(0, 0, 0, 0.35)': 2,
-  'components/equalizer/EqBands.vue: rgba(127, 127, 140, 0.08)': 1,
   'components/equalizer/EqPresetControls.vue: #ffffff': 1,
   'components/equalizer/EqPresetForm.vue: #ffffff': 2,
   'components/landing/HeroEqualizer.vue: rgba(0, 0, 0, 0.3)': 2,
@@ -75,8 +64,6 @@ const FROZEN_LITERALS: Readonly<Record<string, number>> = {
   'components/recorder/RecorderButtons.vue: rgba(239, 68, 68, 0.25)': 1,
   'components/recorder/RecorderTime.vue: #ef4444': 1,
   'components/recorder/RecorderTime.vue: rgba(239, 68, 68, 0.15)': 1,
-  'components/StickyPlayerBar.vue: rgba(0, 0, 0, 0.12)': 1,
-  'components/StickyPlayerBar.vue: rgba(0, 217, 255, 0.12)': 1,
   'pages/AppPage.vue: rgba(1, 79, 153, 0.12)': 1,
   'pages/AppPage.vue: rgba(1, 79, 153, 0.3)': 1,
   'pages/AppPage.vue: rgba(239, 68, 68, 0.12)': 1,

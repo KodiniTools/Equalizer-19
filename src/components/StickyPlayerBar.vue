@@ -183,29 +183,35 @@
 </script>
 
 <style scoped>
+  /* Floating glass bar, inset from the viewport edges (see --sticky-player-h in
+     style.css for the space reserved below the page) */
   .sticky-player {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
     z-index: 1000;
-    background: var(--card-bg);
-    border-top: 1px solid var(--border-color);
-    box-shadow: 0 -6px 24px var(--shadow-light);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    max-width: 1600px;
+    margin: 0 auto;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--card-bg) 88%, transparent);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 12px 32px var(--shadow-raised);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
     transition: border-color 0.2s;
   }
 
   .sticky-player.drop-active {
-    border-top-color: var(--accent-primary);
+    border-color: var(--accent-primary);
     background: color-mix(in srgb, var(--card-bg) 85%, var(--accent-primary));
   }
 
   /* Progress bar spans the full width along the top edge */
   .sp-progress {
     width: 100%;
-    padding: 5px 0 3px;
+    padding: 0 0 2px;
     cursor: pointer;
   }
 
@@ -231,8 +237,6 @@
     align-items: center;
     gap: 16px;
     padding: 8px 16px 10px;
-    max-width: 1600px;
-    margin: 0 auto;
   }
 
   .sp-section {
@@ -316,7 +320,7 @@
   .drop-hint {
     position: absolute;
     inset: 0;
-    background: rgba(0, 217, 255, 0.12);
+    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -357,6 +361,13 @@
   }
 
   @media (max-width: 600px) {
+    .sticky-player {
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border-radius: 14px;
+    }
+
     .sp-body {
       padding: 8px 10px 10px;
     }
@@ -379,13 +390,6 @@
 
     .sp-center {
       gap: 4px;
-    }
-  }
-
-  /* Light theme shadow tweak */
-  @media (prefers-color-scheme: light) {
-    .sticky-player {
-      box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.12);
     }
   }
 </style>

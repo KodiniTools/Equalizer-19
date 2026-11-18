@@ -26,6 +26,7 @@ class FakeAudioContext {
     knee: { value: 0 },
     attack: { value: 0 },
     release: { value: 0 },
+    reduction: -4.2,
   })
   createGain = () => node()
   createBiquadFilter = () => node()
@@ -66,5 +67,14 @@ describe('audioEngine store', () => {
     expect(engine.eqFilters[3].gain.value).toBe(6)
     engine.toggleEqBypass()
     expect(engine.eqBypass).toBe(true)
+  })
+
+  it('getGainReduction liefert die Absenkung des Kompressors, 0 ohne Engine oder im Bypass', () => {
+    const engine = useAudioEngineStore()
+    expect(engine.getGainReduction()).toBe(0)
+    engine.initAudioContext()
+    expect(engine.getGainReduction()).toBe(-4.2)
+    engine.toggleDynamics()
+    expect(engine.getGainReduction()).toBe(0)
   })
 })

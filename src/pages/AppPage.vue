@@ -11,14 +11,18 @@
 
     <!-- Main Content -->
     <main class="app-main">
-      <div class="container main-layout">
-        <!-- Way back to the landing page, undo/redo, help -->
+      <div class="container main-layout app-frame">
+        <!-- Console header: tool name, way back to the landing page, undo/redo, help -->
         <div class="app-topbar">
-          <nav :aria-label="t.app_back_home">
-            <router-link to="/" class="page-link page-link-strong">
-              <span aria-hidden="true">←</span> {{ t.app_back_home }}
-            </router-link>
-          </nav>
+          <div class="app-brand">
+            <span class="app-brand-badge" aria-hidden="true">19</span>
+            <h1 class="app-brand-title">Equalizer 19</h1>
+            <nav :aria-label="t.app_back_home">
+              <router-link to="/" class="page-link app-back">
+                <span aria-hidden="true">←</span> {{ t.app_back_home }}
+              </router-link>
+            </nav>
+          </div>
           <div class="app-topbar-tools">
             <HistoryControls />
             <router-link to="/faq" class="page-link">{{ t.app_help }}</router-link>
@@ -49,14 +53,11 @@
 
           <!-- Center Column: Equalizer & Visualizer -->
           <div class="column-center" :class="{ 'is-active': activeTab === 'eq' }">
-            <!-- Equalizer -->
+            <!-- Equalizer: curve editor with the live spectrum behind it -->
             <Equalizer />
 
             <!-- Input / Output Level Meter -->
             <AudioMeter />
-
-            <!-- Visualization -->
-            <Visualization />
           </div>
 
           <!-- Right Column: Dynamics Processor (incl. presets) -->
@@ -90,7 +91,6 @@
   import Equalizer from '../components/Equalizer.vue'
   import AudioMeter from '../components/AudioMeter.vue'
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
-  import Visualization from '../components/Visualization.vue'
   import Playlist from '../components/Playlist.vue'
   import InputSource from '../components/InputSource.vue'
   import HistoryControls from '../components/HistoryControls.vue'
@@ -239,18 +239,59 @@
   /* Main Content */
   .app-main {
     flex: 1;
-    padding-top: 16px;
+    padding: 12px 12px 32px;
     /* Space below the fixed player bar is reserved on <body> (has-sticky-player) */
-    padding-bottom: 32px;
   }
 
-  /* Top bar: back to landing page / undo-redo / help */
+  /* Console frame around header and the three columns */
+  .app-frame {
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 14px;
+  }
+
+  /* Top bar: tool name + back link / undo-redo / help */
   .app-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .app-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .app-brand-badge {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent-primary);
+    color: var(--on-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .app-brand-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .app-back {
+    margin-left: 6px;
   }
 
   .app-topbar-tools {
@@ -272,6 +313,34 @@
 
     .grid-three-column > :not(.is-active) {
       display: none;
+    }
+  }
+
+  /* Small screens: the frame costs more space than it gives */
+  @media (max-width: 600px) {
+    .app-main {
+      padding: 0 0 24px;
+    }
+
+    .app-frame {
+      padding: 10px;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+    }
+
+    .app-brand-title {
+      font-size: 14px;
+    }
+
+    .app-back {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .app-frame {
+      padding: 8px;
     }
   }
 

@@ -87,7 +87,7 @@ Equalizer-19/
 │   │   │                       #   UiSegmentedControl, UiPanel, UiDialog, UiToast (+ range.css, README, Tests)
 │   │   ├── landing/            # Abschnitte der Landing-Page (Hero, Facts, Signalkette, Schritte, Details,
 │   │   │                       #   Blog, CTA), HeroNav, HeroEqualizer, landing.css
-│   │   ├── equalizer/          # Teile des Equalizers: EqPresetControls, EqPresetForm, EqBands
+│   │   ├── equalizer/          # Teile des Equalizers: EqPresetControls, EqPresetForm, EqCurveEditor
 │   │   ├── recorder/           # Teile der Aufnahme: RecorderTime, RecorderSettings, RecorderButtons,
 │   │   │                       #   CountdownOverlay, DownloadDialog
 │   │   ├── AppIcon.vue         # Inline-SVG-Icon (Namen aus utils/icons.ts)
@@ -104,7 +104,6 @@ Equalizer-19/
 │   │   ├── RelatedTools.vue    # Links zu Konverter, Cutter, Normalisierer
 │   │   ├── StickyPlayerBar.vue # Player-Leiste: Upload, Fortschritt, Layout
 │   │   ├── VolumeControl.vue   # Lautstärke (Teil der Player-Leiste)
-│   │   └── Visualization.vue   # Spektrum-Analyzer
 │   ├── stores/                 # Pinia-Stores (Setup-Stores)
 │   │   ├── audioEngine.ts      # Audio-Verarbeitungskette (AudioNodes shallowRef + markRaw)
 │   │   ├── playlist.ts         # Playlist: Tracks, Reihenfolge, Shuffle/Repeat

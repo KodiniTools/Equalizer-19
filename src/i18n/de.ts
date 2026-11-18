@@ -294,7 +294,9 @@ const de = {
   comp_cat_mastering: 'Mastering',
   comp_preset_label: 'Preset',
   comp_preset_custom: 'Benutzerdefiniert',
+  comp_gain_reduction: 'Gain Reduction',
   comp_params: 'Parameter',
+  a11y_gain_reduction: 'Pegelabsenkung des Kompressors: {val}',
   a11y_comp_preset: 'Kompressor-Preset wählen',
 
   // Playlist
@@ -383,6 +385,7 @@ const de = {
   // Accessibility labels
   a11y_eq_bypass: 'Equalizer umschalten',
   a11y_eq_band: '{freq} Hz Band, {gain} dB',
+  a11y_eq_curve: 'EQ-Kurve: ein Punkt je Band, mit Pfeiltasten in 0,5-dB-Schritten',
   a11y_eq_select_preset: 'EQ-Preset auswählen',
   a11y_eq_save_name: 'Name für neues Preset',
   a11y_dynamics_toggle: 'Dynamics Processor umschalten',
@@ -392,7 +395,6 @@ const de = {
   a11y_attack: 'Attack: {val} ms',
   a11y_release: 'Release: {val} ms',
   a11y_volume: 'Lautstärke: {val}%',
-  a11y_visualization: 'Frequenzspektrum-Visualisierung',
   a11y_meter_in: 'Eingangs-Pegel: {val} dBFS',
   a11y_meter_out: 'Ausgangs-Pegel: {val} dBFS',
 }
