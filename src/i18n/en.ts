@@ -287,7 +287,9 @@ const en: Record<TranslationKey, string> = {
   comp_cat_mastering: 'Mastering',
   comp_preset_label: 'Preset',
   comp_preset_custom: 'Custom',
+  comp_gain_reduction: 'Gain reduction',
   comp_params: 'Parameters',
+  a11y_gain_reduction: 'Compressor gain reduction: {val}',
   a11y_comp_preset: 'Choose compressor preset',
 
   // Playlist
@@ -374,6 +376,7 @@ const en: Record<TranslationKey, string> = {
   // Accessibility labels
   a11y_eq_bypass: 'Toggle equalizer',
   a11y_eq_band: '{freq} Hz band, {gain} dB',
+  a11y_eq_curve: 'EQ curve: one point per band, arrow keys move it in 0.5 dB steps',
   a11y_eq_select_preset: 'Select EQ preset',
   a11y_eq_save_name: 'New preset name',
   a11y_dynamics_toggle: 'Toggle dynamics processor',
@@ -383,7 +386,6 @@ const en: Record<TranslationKey, string> = {
   a11y_attack: 'Attack: {val} ms',
   a11y_release: 'Release: {val} ms',
   a11y_volume: 'Volume: {val}%',
-  a11y_visualization: 'Frequency spectrum visualization',
   a11y_meter_in: 'Input level: {val} dBFS',
   a11y_meter_out: 'Output level: {val} dBFS',
 }

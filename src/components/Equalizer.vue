@@ -14,7 +14,13 @@
 
     <EqPresetForm v-if="showSaveForm" @save="confirmSavePreset" @cancel="cancelSavePreset" />
 
-    <EqBands :bands="localBands" :disabled="isEqBypassed" @change="handleGainChange" />
+    <EqCurveEditor
+      :bands="localBands"
+      :disabled="isEqBypassed"
+      :get-spectrum="spectrumSource"
+      :sample-rate="sampleRate"
+      @change="handleGainChange"
+    />
   </div>
 </template>
 
@@ -24,15 +30,15 @@
   import { useCustomPresets, isCustomPresetId } from '../composables/useCustomPresets'
   import EqPresetControls from './equalizer/EqPresetControls.vue'
   import EqPresetForm from './equalizer/EqPresetForm.vue'
-  import EqBands, { type EqBandView } from './equalizer/EqBands.vue'
+  import EqCurveEditor, { type EqBandView } from './equalizer/EqCurveEditor.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { useToastStore } from '../stores/toast'
   import { injectI18n } from '../composables/useI18n'
 
   /**
    * Container des 19-Band-Equalizers: hält Bänder, Preset-Auswahl und das
-   * Speichern-Formular und spricht mit dem Engine-Store. Die Darstellung liegt
-   * in components/equalizer/.
+   * Speichern-Formular und spricht mit dem Engine-Store. Die Darstellung
+   * (Kopfzeile, Kurven-Editor mit Live-Spektrum) liegt in components/equalizer/.
    */
   const { t } = injectI18n()
 
@@ -44,6 +50,13 @@
   )
 
   const selectedPreset = ref('')
+
+  // Live spectrum behind the curve: only once the engine runs (no analyser before)
+  const spectrumSource = computed(() =>
+    audioEngine.isInitialized ? audioEngine.getFrequencyData : null
+  )
+  const sampleRate = computed(() => audioEngine.audioContext?.sampleRate ?? 48000)
+
   // Mirrors the engine so external changes (undo/redo) are reflected as well
   const isEqBypassed = computed(() => audioEngine.eqBypass)
 

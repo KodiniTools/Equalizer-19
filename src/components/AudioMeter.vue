@@ -1,15 +1,10 @@
 <template>
   <div class="audio-meter-wrap">
-    <div class="meter-header">
-      <span class="meter-title"><AppIcon name="meter" /> {{ t.meter_title }}</span>
-      <span class="meter-hint" aria-hidden="true">dBFS</span>
-    </div>
-
-    <div class="meters-row" role="group" :aria-label="t.meter_title">
+    <div class="meters" role="group" :aria-label="t.meter_title">
       <div
         v-for="(m, i) in meters"
         :key="m.label"
-        class="meter-block"
+        class="meter-row"
         role="meter"
         :aria-label="(i === 0 ? t.a11y_meter_in : t.a11y_meter_out).replace('{val}', m.dbText)"
         :aria-valuenow="isFinite(m.db) ? m.db : -60"
@@ -18,12 +13,11 @@
       >
         <span class="meter-label" aria-hidden="true">{{ m.label }}</span>
 
-        <div ref="tracks" class="meter-track" aria-hidden="true">
-          <!-- Gradient background: green → yellow → red -->
-          <!-- Dark mask covers the empty (top) part of the bar -->
-          <div class="meter-mask" :style="{ height: 100 - m.fillPct + '%' }"></div>
+        <div class="meter-track" aria-hidden="true">
+          <!-- Gradient background: green → yellow → red; the mask covers the empty right part -->
+          <div class="meter-mask" :style="{ width: 100 - m.fillPct + '%' }"></div>
           <!-- Peak hold marker -->
-          <div v-if="m.peakPct > 0" class="meter-peak" :style="{ bottom: m.peakPct + '%' }"></div>
+          <div v-if="m.peakPct > 0" class="meter-peak" :style="{ left: m.peakPct + '%' }"></div>
         </div>
 
         <span class="meter-db" :class="{ clipping: m.db >= -0.5 }" aria-hidden="true">
@@ -32,21 +26,22 @@
       </div>
     </div>
 
-    <!-- Scale marks -->
+    <!-- Scale marks under the tracks (−60 … 0 dBFS, left to right) -->
     <div class="meter-scale" aria-hidden="true">
-      <span>0</span>
-      <span>-6</span>
-      <span>-12</span>
-      <span>-24</span>
-      <span>-40</span>
-      <span>-60</span>
+      <span
+        v-for="mark in SCALE"
+        :key="mark.label"
+        class="meter-scale-mark"
+        :style="{ left: mark.pct + '%' }"
+      >
+        {{ mark.label }}
+      </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { reactive, onMounted, onUnmounted } from 'vue'
-  import AppIcon from './AppIcon.vue'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { injectI18n } from '../composables/useI18n'
 
@@ -82,6 +77,12 @@
   }
 
   const meters = reactive<MeterState[]>([createMeter('IN'), createMeter('OUT')])
+
+  // Scale labels as percent of the track width (−60 dB left, 0 dB right)
+  const SCALE = [-60, -40, -24, -12, -6, 0].map((db) => ({
+    label: String(db),
+    pct: ((db - DB_MIN) / DB_RANGE) * 100,
+  }))
 
   let rafId: number | null = null
 
@@ -135,51 +136,23 @@
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 10px 12px 8px;
-  }
-
-  .meter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .meter-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .meter-title .icon {
-    width: 14px;
-    height: 14px;
-    color: var(--accent-primary);
-  }
-
-  .meter-hint {
-    font-size: 10.5px;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .meters-row {
-    display: flex;
-    gap: 6px;
-    height: 80px;
-    align-items: flex-end;
-  }
-
-  .meter-block {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+  }
+
+  .meters {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Label | track | value, the labels share one column width in both rows */
+  .meter-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 44px;
     align-items: center;
-    gap: 4px;
-    height: 100%;
+    gap: 8px;
   }
 
   .meter-label {
@@ -190,45 +163,43 @@
   }
 
   .meter-track {
-    flex: 1;
-    width: 100%;
-    border-radius: 3px;
     position: relative;
+    height: 10px;
+    border-radius: 5px;
     overflow: hidden;
-    /* gradient: green bottom → yellow → red top */
+    border: 1px solid var(--border-color);
+    /* gradient: green left → yellow → red right */
     background: linear-gradient(
-      to top,
-      #1db954 0%,
-      #1db954 65%,
-      #f59e0b 65%,
-      #f59e0b 85%,
-      #ef4444 85%,
-      #ef4444 100%
+      to right,
+      var(--success) 0%,
+      var(--success) 65%,
+      var(--warning) 65%,
+      var(--warning) 85%,
+      var(--error) 85%,
+      var(--error) 100%
     );
   }
 
-  /* Dark overlay covering the empty (un-filled) top portion */
+  /* Overlay covering the empty (un-filled) right portion */
   .meter-mask {
     position: absolute;
     top: 0;
-    left: 0;
     right: 0;
+    bottom: 0;
     background: var(--secondary-bg);
-    transition: height 40ms linear;
-    min-height: 0;
-    border-radius: 3px 3px 0 0;
+    transition: width 40ms linear;
   }
 
   /* Peak hold marker */
   .meter-peak {
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #fff;
-    opacity: 0.85;
-    border-radius: 1px;
-    transition: bottom 80ms ease-out;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--text-primary);
+    opacity: 0.9;
+    transition: left 80ms ease-out;
   }
 
   .meter-db {
@@ -236,34 +207,48 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     color: var(--text-muted);
-    min-width: 28px;
-    text-align: center;
+    text-align: right;
   }
 
   .meter-db.clipping {
-    color: #ef4444;
+    color: var(--error);
     font-weight: 700;
   }
 
-  /* Scale: right side tick marks */
+  /* Scale: positioned under the track column */
   .meter-scale {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-    padding: 0 2px;
+    position: relative;
+    height: 14px;
+    margin: 0 44px 0 32px;
+    padding: 0 8px;
   }
 
-  .meter-scale span {
-    font-size: 10.5px;
+  .meter-scale-mark {
+    position: absolute;
+    top: 0;
+    font-size: 10px;
     color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    opacity: 0.6;
+    opacity: 0.7;
   }
 
-  @media (max-width: 600px) {
-    .meters-row {
-      height: 60px;
+  .meter-scale-mark {
+    transform: translateX(-50%);
+  }
+
+  .meter-scale-mark:first-of-type {
+    transform: none;
+  }
+
+  .meter-scale-mark:last-of-type {
+    transform: translateX(-100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meter-mask,
+    .meter-peak {
+      transition: none;
     }
   }
 </style>

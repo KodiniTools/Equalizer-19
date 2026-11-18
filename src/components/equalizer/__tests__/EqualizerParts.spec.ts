@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { i18nStub } from '../../../__tests__/i18nStub'
-import EqBands from '../EqBands.vue'
+import EqCurveEditor from '../EqCurveEditor.vue'
 import EqPresetControls from '../EqPresetControls.vue'
 import EqPresetForm from '../EqPresetForm.vue'
 import { EQ_BAND_FREQUENCIES, EQ_PRESETS } from '../../../utils/presets'
@@ -10,22 +10,75 @@ const global = { provide: i18nStub() }
 const bands = EQ_BAND_FREQUENCIES.map((frequency, i) => ({ frequency, gain: i === 0 ? -3 : 0 }))
 
 describe('Equalizer-Teile', () => {
-  it('EqBands rendert 19 Regler und meldet Änderungen als Zahl', async () => {
-    const wrapper = mount(EqBands, { props: { bands }, global })
-    const sliders = wrapper.findAll('input[type="range"]')
-    expect(sliders).toHaveLength(19)
-    expect(sliders[0].classes()).toContain('negative')
-    expect(wrapper.findAll('.val')[0].text()).toBe('-3')
-    expect(wrapper.find('.eq-curve path.boost').exists()).toBe(true)
-    ;(sliders[3].element as HTMLInputElement).value = '4.5'
-    await sliders[3].trigger('input')
-    expect(wrapper.emitted('change')).toEqual([[3, 4.5]])
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
-  it('EqBands sperrt die Regler im Bypass', () => {
-    const wrapper = mount(EqBands, { props: { bands, disabled: true }, global })
+  it('EqCurveEditor rendert 19 Slider-Punkte und die Kurve', () => {
+    const wrapper = mount(EqCurveEditor, { props: { bands }, global })
+    const nodes = wrapper.findAll('[role="slider"]')
+    expect(nodes).toHaveLength(19)
+    expect(nodes[0].classes()).toContain('cut')
+    expect(nodes[0].attributes('aria-valuenow')).toBe('-3')
+    expect(nodes[0].attributes('aria-valuetext')).toBe('−3 dB')
+    expect(wrapper.findAll('.eq-band .val')[0].text()).toBe('−3')
+    expect(wrapper.find('path.eq-line.boost').exists()).toBe(true)
+    expect(wrapper.find('.eq-spectrum').exists()).toBe(false)
+  })
+
+  it('EqCurveEditor meldet Tastatur-Änderungen in 0,5-dB-Schritten, begrenzt auf ±12 dB', async () => {
+    // Props stay fixed (no v-model here), so every step starts from the initial gain
+    const wrapper = mount(EqCurveEditor, { props: { bands }, global })
+    const nodes = wrapper.findAll('[role="slider"]')
+    await nodes[3].trigger('keydown', { key: 'ArrowUp' })
+    await nodes[3].trigger('keydown', { key: 'PageDown' })
+    await nodes[3].trigger('keydown', { key: 'End' })
+    await nodes[0].trigger('keydown', { key: 'Home' })
+    await nodes[0].trigger('keydown', { key: 'ArrowDown' })
+    await nodes[0].trigger('keydown', { key: '0' })
+    expect(wrapper.emitted('change')).toEqual([
+      [3, 0.5],
+      [3, -3],
+      [3, 12],
+      [0, -12],
+      [0, -3.5],
+      [0, 0],
+    ])
+  })
+
+  it('EqCurveEditor zeichnet das Spektrum aus getSpectrum als Fläche auf der Frequenzachse', async () => {
+    // One synchronous animation frame, later requests are ignored (no loop in the test)
+    let frames = 0
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      if (frames++ === 0) cb(0)
+      return frames
+    })
+    vi.stubGlobal('cancelAnimationFrame', () => {})
+    const data = new Uint8Array(1024).fill(128)
+    const wrapper = mount(EqCurveEditor, {
+      props: { bands, getSpectrum: () => data, sampleRate: 48000 },
+      global,
+    })
+    await wrapper.vm.$nextTick()
+    const d = wrapper.get('.eq-spectrum').attributes('d') ?? ''
+    expect(d.startsWith('M')).toBe(true)
+    expect(d.endsWith('Z')).toBe(true)
+    // jsdom measures nothing, so the stage falls back to its 320 px minimum (~92 steps of 3 px)
+    expect((d.match(/ L/g) || []).length).toBeGreaterThan(80)
+
+    await wrapper.setProps({ getSpectrum: null })
+    expect(wrapper.find('.eq-spectrum').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('EqCurveEditor sperrt die Punkte im Bypass', async () => {
+    const wrapper = mount(EqCurveEditor, { props: { bands, disabled: true }, global })
     expect(wrapper.classes()).toContain('disabled')
-    expect(wrapper.find('input[type="range"]').attributes('disabled')).toBeDefined()
+    const node = wrapper.find('[role="slider"]')
+    expect(node.attributes('tabindex')).toBe('-1')
+    expect(node.attributes('aria-disabled')).toBe('true')
+    await node.trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('change')).toBeUndefined()
   })
 
   it('EqPresetControls listet Presets und meldet die Auswahl nach dem Wert', async () => {

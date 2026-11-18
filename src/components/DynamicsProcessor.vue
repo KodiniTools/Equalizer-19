@@ -20,7 +20,10 @@
       <CompressorPresets :id="ids.preset" />
     </div>
 
-    <!-- Parameters -->
+    <!-- How hard the compressor is working right now -->
+    <GainReductionMeter :class="{ disabled: !dynamicsEnabled }" />
+
+    <!-- Parameters: threshold and ratio as sliders, the time/knee values as knobs -->
     <div class="section">
       <span class="panel-section-label">{{ t.comp_params }}</span>
       <div class="params" :class="{ disabled: !dynamicsEnabled }">
@@ -48,42 +51,47 @@
           :aria-label="t.a11y_ratio.replace('{val}', String(ratio))"
           @input="applySettings"
         />
-        <SliderField
-          :id="ids.knee"
-          v-model="knee"
-          :label="t.knee"
-          :value-text="`${knee} dB`"
-          :min="0"
-          :max="40"
-          :step="1"
-          :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_knee.replace('{val}', String(knee))"
-          @input="applySettings"
-        />
-        <SliderField
-          :id="ids.attack"
-          v-model="attack"
-          :label="t.attack"
-          :value-text="`${(attack * 1000).toFixed(0)} ms`"
-          :min="0"
-          :max="1"
-          :step="0.001"
-          :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
-          @input="applySettings"
-        />
-        <SliderField
-          :id="ids.release"
-          v-model="release"
-          :label="t.release"
-          :value-text="`${(release * 1000).toFixed(0)} ms`"
-          :min="0"
-          :max="1"
-          :step="0.01"
-          :disabled="!dynamicsEnabled"
-          :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
-          @input="applySettings"
-        />
+        <div class="knobs">
+          <UiKnob
+            :id="ids.knee"
+            v-model="knee"
+            :label="t.knee"
+            :value-text="`${knee} dB`"
+            :min="0"
+            :max="40"
+            :step="1"
+            :default-value="DEFAULT_DYNAMICS.knee"
+            :disabled="!dynamicsEnabled"
+            :aria-label="t.a11y_knee.replace('{val}', String(knee))"
+            @input="applySettings"
+          />
+          <UiKnob
+            :id="ids.attack"
+            v-model="attack"
+            :label="t.attack"
+            :value-text="`${(attack * 1000).toFixed(0)} ms`"
+            :min="0"
+            :max="1"
+            :step="0.001"
+            :default-value="DEFAULT_DYNAMICS.attack"
+            :disabled="!dynamicsEnabled"
+            :aria-label="t.a11y_attack.replace('{val}', (attack * 1000).toFixed(0))"
+            @input="applySettings"
+          />
+          <UiKnob
+            :id="ids.release"
+            v-model="release"
+            :label="t.release"
+            :value-text="`${(release * 1000).toFixed(0)} ms`"
+            :min="0"
+            :max="1"
+            :step="0.01"
+            :default-value="DEFAULT_DYNAMICS.release"
+            :disabled="!dynamicsEnabled"
+            :aria-label="t.a11y_release.replace('{val}', (release * 1000).toFixed(0))"
+            @input="applySettings"
+          />
+        </div>
       </div>
     </div>
   </UiPanel>
@@ -94,7 +102,8 @@
   import AppIcon from './AppIcon.vue'
   import { DEFAULT_DYNAMICS } from '../utils/presets'
   import CompressorPresets from './CompressorPresets.vue'
-  import { SliderField, UiIconButton, UiPanel } from './ui'
+  import GainReductionMeter from './dynamics/GainReductionMeter.vue'
+  import { SliderField, UiIconButton, UiKnob, UiPanel } from './ui'
   import { useAudioEngineStore } from '../stores/audioEngine'
   import { injectI18n } from '../composables/useI18n'
 
@@ -178,8 +187,17 @@
     transition: opacity 0.2s;
   }
 
-  .params.disabled {
+  .params.disabled,
+  .gr-meter.disabled {
     opacity: 0.4;
     pointer-events: none;
+  }
+
+  /* Knee / attack / release side by side */
+  .knobs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 4px;
   }
 </style>

@@ -1,6 +1,6 @@
 /**
  * Design Tokens von Equalizer 19: Zugriff auf tokens.json aus TypeScript,
- * z. B. für Canvas- oder SVG-Zeichnung (AudioMeter, Visualization), wo kein
+ * z. B. für Canvas- oder SVG-Zeichnung (AudioMeter, EqCurveEditor), wo kein
  * CSS var() verfügbar ist. Laufzeit-Quelle für Styles bleibt tokens.css.
  *
  * Werte in tokens.json dürfen andere Tokens referenzieren
