@@ -3,7 +3,7 @@ import { test } from 'vitest'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { escapeHtml, localizeHtml } from '../src/utils/localizeHtml'
-import { EN_PAGES, SITE_BASE, alternatesFor, pageMeta } from '../src/utils/seoMeta'
+import { DE_PAGES, EN_PAGES, SITE_BASE, alternatesFor, pageMeta } from '../src/utils/seoMeta'
 
 // Prüft die englische Sprachfassung, die der Build als dist/index.en.html schreibt
 // (nginx liefert sie für ?lang=en aus), gegen die echte index.html.
@@ -130,4 +130,26 @@ test('alternates: unbekannter hreflang-Wert bricht ab', () => {
     () => localizeHtml(html, { lang: 'en', ...EN, canonical: EN_URL, alternates: { fr: EN_URL } }),
     /hreflang="fr"/
   )
+})
+
+test('deutsche Unterseiten haben eigenen Titel und Canonical auf sich selbst', () => {
+  assert.deepEqual(
+    DE_PAGES.map((page) => page.file),
+    ['faq.html']
+  )
+  for (const { file, path } of DE_PAGES) {
+    const page = pageMeta(path, 'de')
+    const out = localizeHtml(html, {
+      lang: 'de',
+      ...page,
+      alternates: Object.fromEntries(
+        alternatesFor(path).map(({ hreflang, href }) => [hreflang, href])
+      ),
+    })
+    assert.equal(lang(out), 'de', file)
+    assert.equal(title(out), page.title, file)
+    assert.notEqual(page.title, pageMeta('/', 'de').title, file)
+    assert.equal(canonical(out), `${SITE_BASE}${path}`, file)
+    assert.equal(meta(out, 'og:url'), `${SITE_BASE}${path}`, file)
+  }
 })

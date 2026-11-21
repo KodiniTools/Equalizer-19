@@ -69,6 +69,15 @@ export const EN_PAGES: ReadonlyArray<{ file: string; path: RouteKey }> = [
   { file: 'faq.en.html', path: '/faq' },
 ]
 
+/**
+ * Deutsche Unterseiten mit eigenem statischem Kopf (Titel, Description, Canonical auf sich
+ * selbst). Ohne Datei liefert nginx die index.html der Startseite (Canonical /equaliser19/).
+ * /app fehlt bewusst: reine App-Seite, nicht in der Sitemap.
+ */
+export const DE_PAGES: ReadonlyArray<{ file: string; path: RouteKey }> = [
+  { file: 'faq.html', path: '/faq' },
+]
+
 /** Router path ('/', '/app/', '') → known key, unknown paths fall back to '/'. */
 function routeKey(path: string | null | undefined): RouteKey {
   const trimmed = (path || '/').replace(/\/+$/, '') || '/'
