@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { localizeHtml } from './src/utils/localizeHtml'
-import { EN_PAGES, alternatesFor, pageMeta } from './src/utils/seoMeta'
+import { DE_PAGES, EN_PAGES, alternatesFor, pageMeta } from './src/utils/seoMeta'
 
 /**
  * Schreibt neben dist/index.html je Seite aus EN_PAGES eine englische Fassung mit
@@ -23,13 +23,18 @@ function localizedIndexHtml() {
       }
       const html =
         typeof index.source === 'string' ? index.source : new TextDecoder().decode(index.source)
-      for (const { file, path } of EN_PAGES) {
+      const pages = [
+        ...EN_PAGES.map((page) => ({ ...page, lang: 'en' })),
+        // Deutsche Unterseiten (faq.html): eigener Kopf statt Startseite.
+        ...DE_PAGES.map((page) => ({ ...page, lang: 'de' })),
+      ]
+      for (const { file, path, lang } of pages) {
         this.emitFile({
           type: 'asset',
           fileName: file,
           source: localizeHtml(html, {
-            lang: 'en',
-            ...pageMeta(path, 'en'),
+            lang,
+            ...pageMeta(path, lang),
             alternates: Object.fromEntries(
               alternatesFor(path).map(({ hreflang, href }) => [hreflang, href])
             ),
