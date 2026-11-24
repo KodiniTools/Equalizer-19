@@ -62,6 +62,10 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    padding: 8px 10px;
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
   }
 
   .gr-head {
@@ -92,10 +96,10 @@
 
   .gr-track {
     position: relative;
-    height: 8px;
-    border-radius: 4px;
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
+    height: 10px;
+    border-radius: 999px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-strong);
     overflow: hidden;
   }
 
@@ -104,7 +108,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    border-radius: 4px;
+    border-radius: 999px;
     background: var(--eq-cut);
     transition: width 60ms linear;
   }

@@ -132,9 +132,9 @@
 
 <style scoped>
   .audio-meter-wrap {
-    background: var(--card-bg);
+    background: linear-gradient(155deg, var(--card-bg), var(--secondary-bg));
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 10px 12px 8px;
     display: flex;
     flex-direction: column;
@@ -158,16 +158,16 @@
   .meter-label {
     font-size: 10.5px;
     font-weight: 400;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     letter-spacing: 0.05em;
   }
 
   .meter-track {
     position: relative;
-    height: 10px;
-    border-radius: 5px;
+    height: 12px;
+    border-radius: 999px;
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-strong);
     /* gradient: green left → yellow → red right */
     background: linear-gradient(
       to right,
@@ -219,8 +219,7 @@
   .meter-scale {
     position: relative;
     height: 14px;
-    margin: 0 44px 0 32px;
-    padding: 0 8px;
+    margin: 0 52px 0 40px;
   }
 
   .meter-scale-mark {
@@ -230,7 +229,6 @@
     color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    opacity: 0.7;
   }
 
   .meter-scale-mark {

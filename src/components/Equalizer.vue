@@ -167,9 +167,10 @@
 
 <style scoped>
   .equalizer {
-    background: var(--card-bg);
+    container-type: inline-size; /* Container-Queries des EqCurveEditor (Bandzeilen, Bühnenhöhe) */
+    background: linear-gradient(155deg, var(--card-bg), var(--secondary-bg));
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 12px;
   }
 

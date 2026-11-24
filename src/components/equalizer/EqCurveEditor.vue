@@ -449,7 +449,7 @@
   .eq-editor {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
 
   .eq-editor.disabled {
@@ -462,10 +462,17 @@
 
   .eq-stage {
     position: relative;
-    height: 280px;
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
+    /* cqw bezieht sich auf .equalizer (container-type: inline-size) */
+    height: clamp(190px, 42cqw, 340px);
+    background:
+      radial-gradient(
+        ellipse at 75% 0%,
+        color-mix(in srgb, var(--accent-secondary) 12%, transparent),
+        transparent 72%
+      ),
+      var(--primary-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
     overflow: hidden;
   }
 
@@ -504,13 +511,13 @@
   /* ---- Spectrum ---- */
   .eq-spectrum {
     fill: var(--accent-secondary);
-    opacity: 0.18;
+    opacity: 0.25;
     pointer-events: none;
   }
 
   /* ---- Curve ---- */
   .eq-fill {
-    opacity: 0.22;
+    opacity: 0.17;
     pointer-events: none;
   }
 
@@ -524,7 +531,7 @@
 
   .eq-line {
     fill: none;
-    stroke-width: 2.5;
+    stroke-width: 3;
     stroke-linejoin: round;
     stroke-linecap: round;
     pointer-events: none;
@@ -600,7 +607,7 @@
   .eq-band-row {
     display: grid;
     grid-template-columns: repeat(19, minmax(0, 1fr));
-    gap: 2px;
+    gap: 4px;
   }
 
   .eq-band {
@@ -609,10 +616,10 @@
     align-items: center;
     gap: 4px;
     min-width: 0;
-    padding: 4px 0 2px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
+    padding: 6px 2px 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--secondary-bg);
     color: inherit;
     font: inherit;
     cursor: pointer;
@@ -670,31 +677,23 @@
     white-space: nowrap;
   }
 
-  @media (max-width: 900px) {
-    .eq-stage {
-      height: 240px;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .eq-stage {
-      height: 210px;
-    }
-
-    /* 19 nodes on a narrow axis: smaller dots so neighbours stay apart */
-    .eq-node-dot {
-      r: 4;
-    }
-
-    /* 19 values at ≥ 10 px do not fit side by side: two rows of bands */
+  /* Bandzeilen nach Panelbreite (Container-Query auf .equalizer), denn das
+     Panel kann auch auf dem Desktop in der Drei-Spalten-Ansicht schmal sein:
+     eine Zeile (19), zwei Zeilen (10 + 9) oder drei Zeilen (7 + 7 + 5). */
+  @container (max-width: 760px) {
     .eq-band-row {
       grid-template-columns: repeat(10, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 400px) {
-    .eq-stage {
-      height: 190px;
+  @container (max-width: 400px) {
+    /* 19 nodes on a narrow axis: smaller dots so neighbours stay apart */
+    .eq-node-dot {
+      r: 4;
+    }
+
+    .eq-band-row {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
     }
   }
 

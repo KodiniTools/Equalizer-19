@@ -183,7 +183,11 @@
   .params {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--secondary-bg);
     transition: opacity 0.2s;
   }
 
@@ -198,6 +202,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
-    padding-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
   }
 </style>
