@@ -113,12 +113,12 @@
 <style scoped>
   .ui-segmented {
     display: inline-flex;
-    gap: 2px;
-    padding: 2px;
+    gap: 3px;
+    padding: 3px;
     box-sizing: border-box;
     max-width: 100%;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
     background: var(--secondary-bg);
   }
 

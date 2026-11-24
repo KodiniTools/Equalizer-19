@@ -73,9 +73,9 @@
     gap: 6px;
     height: 36px;
     padding: 0 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--secondary-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    background: linear-gradient(180deg, var(--card-bg), var(--secondary-bg));
     color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
