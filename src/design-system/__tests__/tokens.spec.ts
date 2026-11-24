@@ -140,7 +140,7 @@ describe('tokens.css ↔ tokens.json', () => {
 
 describe('tokens.ts', () => {
   it('löst Aliase auf', () => {
-    expect(colorToken('dark', '--primary-bg')).toBe('#0a1426')
+    expect(colorToken('dark', '--primary-bg')).toBe('#0a1324')
     expect(colorToken('dark', '--eq-boost')).toBe(colorToken('dark', '--accent-primary'))
     expect(colorToken('light', '--eq-cut')).toBe(colorToken('light', '--accent-secondary'))
   })

@@ -285,7 +285,7 @@
   .app-brand-title {
     margin: 0;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
     white-space: nowrap;
   }

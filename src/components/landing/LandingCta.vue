@@ -34,7 +34,7 @@
   .lp-final h2 {
     margin: 0 0 10px;
     font-size: clamp(26px, 3.2vw, 36px);
-    font-weight: 800;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

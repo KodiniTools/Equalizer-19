@@ -63,7 +63,7 @@
     gap: 8px;
     min-width: 0;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.2px;
     color: var(--text-primary);
   }

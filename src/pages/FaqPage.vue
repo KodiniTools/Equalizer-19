@@ -120,7 +120,7 @@
     margin: 0 0 14px;
     font-size: clamp(32px, 4.5vw, 48px);
     line-height: 1.1;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.5px;
     color: var(--text-primary);
   }
@@ -202,7 +202,7 @@
   .fq-category h2 {
     margin: 0 0 12px;
     font-size: 24px;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.2px;
     color: var(--text-primary);
   }
@@ -299,7 +299,7 @@
   .fq-final h2 {
     margin: 0 0 10px;
     font-size: clamp(26px, 3.2vw, 36px);
-    font-weight: 800;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

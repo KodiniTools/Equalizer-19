@@ -25,7 +25,7 @@
   margin: 0 0 12px;
   font-size: clamp(26px, 3.2vw, 36px);
   line-height: 1.2;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: -0.3px;
   color: var(--text-primary);
 }

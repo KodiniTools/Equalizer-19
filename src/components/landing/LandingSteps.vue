@@ -51,7 +51,7 @@
   .lp-step h3 {
     margin: 0 0 8px;
     font-size: 19px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

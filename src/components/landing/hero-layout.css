@@ -1,0 +1,108 @@
+/* Hero layout (Etappe 1 des Studio-Looks).
+   Desktop: Text links (Kopf + Rumpf), interaktive Demo rechts über beide Zeilen.
+   Schmal (≤ 960px): Kopf, dann Demo direkt unter dem Titel, dann Lead/Buttons/Trust. */
+.lp-hero {
+  background: var(--gradient-primary);
+  padding-block: clamp(38px, 8vw, 100px) clamp(32px, 5vw, 64px);
+}
+
+.lp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    'head demo'
+    'body demo';
+  align-items: center;
+  align-content: center;
+  column-gap: clamp(24px, 5vw, 72px);
+  row-gap: 0;
+}
+
+.lp-hero-head {
+  grid-area: head;
+  align-self: end;
+  min-width: 0;
+}
+
+.lp-hero-body {
+  grid-area: body;
+  align-self: start;
+  min-width: 0;
+}
+
+.lp-demo {
+  grid-area: demo;
+  min-width: 0;
+}
+
+.lp-eyebrow {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--accent-primary);
+}
+
+.lp-title {
+  margin: 0 0 20px;
+  font-size: clamp(44px, 6.3vw, 82px);
+  line-height: 1.08;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.lp-lead {
+  margin: 0 0 32px;
+  max-width: 560px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lp-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lp-trust .icon {
+  color: var(--success);
+}
+
+@media (max-width: 960px) {
+  .lp-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'demo'
+      'body';
+    row-gap: 32px;
+  }
+
+  .lp-title {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .lp-lead {
+    font-size: 16px;
+  }
+
+  .lp-actions .ui-button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}

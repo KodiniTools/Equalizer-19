@@ -81,7 +81,7 @@
   .rt-title {
     margin: 0 0 4px;
     font-size: 1em;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
   }
 
