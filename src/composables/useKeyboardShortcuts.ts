@@ -44,9 +44,29 @@ export type KeyLike = Pick<KeyboardEvent, 'ctrlKey' | 'metaKey' | 'altKey' | 'sh
   key?: unknown
 }
 
+/** The part of a focused element the shortcut guard looks at (an Element or a test stub). */
+export type FocusLike = {
+  tagName?: string
+  getAttribute?(name: string): string | null
+}
+
+/**
+ * Whether the focused element owns the arrow keys itself, so the global
+ * player shortcuts (seek, volume) must stay out of its way: form fields, and
+ * ARIA sliders/spinbuttons such as the EQ curve nodes (<g role="slider">) and
+ * the dynamics knobs (UiKnob). Without this, Arrow Down on a curve node lowered
+ * the band *and* the master volume at the same time.
+ */
+export function ownsArrowKeys(el: FocusLike | null | undefined): boolean {
+  if (!el) return false
+  const tag = el.tagName?.toLowerCase()
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return true
+  const role = el.getAttribute?.('role')
+  return role === 'slider' || role === 'spinbutton'
+}
+
 function isInputFocused(): boolean {
-  const tag = document.activeElement?.tagName?.toLowerCase()
-  return tag === 'input' || tag === 'textarea' || tag === 'select'
+  return ownsArrowKeys(document.activeElement)
 }
 
 // Text fields own Ctrl+Z natively (undoing typed text); sliders, selects and
