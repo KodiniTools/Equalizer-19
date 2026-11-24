@@ -146,8 +146,10 @@ select:focus {
 }
 
 @media (max-width: 1200px) {
+  /* Mittlere Breiten: linke Spalte (Quelle, Playlist, Dynamik) bleibt kompakt,
+     der Equalizer bekommt den restlichen Platz */
   .grid-three-column {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
     grid-template-rows: auto auto;
   }
 

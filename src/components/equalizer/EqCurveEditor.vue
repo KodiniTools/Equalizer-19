@@ -462,7 +462,9 @@
 
   .eq-stage {
     position: relative;
-    /* cqw bezieht sich auf .equalizer (container-type: inline-size) */
+    /* Feste Ersatzhöhe für Browser ohne Container-Einheiten; cqw bezieht
+       sich auf .equalizer (container-type: inline-size) */
+    height: 240px;
     height: clamp(190px, 42cqw, 340px);
     background:
       radial-gradient(
