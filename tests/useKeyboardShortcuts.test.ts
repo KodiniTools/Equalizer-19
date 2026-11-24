@@ -1,7 +1,11 @@
 // @vitest-environment node
 import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { historyActionForKey, type KeyLike } from '../src/composables/useKeyboardShortcuts'
+import {
+  historyActionForKey,
+  ownsArrowKeys,
+  type KeyLike,
+} from '../src/composables/useKeyboardShortcuts'
 
 const ev = (key: string | undefined, mods: Partial<KeyLike> = {}): KeyLike => ({
   key,
@@ -35,4 +39,23 @@ test('relies on the printed key, so QWERTZ layouts are not swapped', () => {
   const qwertzY: KeyLike & { code: string } = { ...ev('y', { ctrlKey: true }), code: 'KeyZ' }
   assert.equal(historyActionForKey(qwertzZ), 'undo')
   assert.equal(historyActionForKey(qwertzY), 'redo')
+})
+
+test('global shortcuts stay out of form fields and ARIA sliders (EQ nodes, knobs)', () => {
+  const el = (tagName: string, role: string | null = null) => ({
+    tagName,
+    getAttribute: (name: string) => (name === 'role' ? role : null),
+  })
+  assert.equal(ownsArrowKeys(el('INPUT')), true)
+  assert.equal(ownsArrowKeys(el('TEXTAREA')), true)
+  assert.equal(ownsArrowKeys(el('SELECT')), true)
+  // EqCurveEditor nodes are <g role="slider">, UiKnob is <div role="slider">
+  assert.equal(ownsArrowKeys(el('g', 'slider')), true)
+  assert.equal(ownsArrowKeys(el('DIV', 'slider')), true)
+  assert.equal(ownsArrowKeys(el('DIV', 'spinbutton')), true)
+  // Buttons, links and the body keep the player shortcuts
+  assert.equal(ownsArrowKeys(el('BUTTON')), false)
+  assert.equal(ownsArrowKeys(el('A')), false)
+  assert.equal(ownsArrowKeys(el('BODY')), false)
+  assert.equal(ownsArrowKeys(null), false)
 })
