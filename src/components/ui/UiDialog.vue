@@ -106,7 +106,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: clamp(10px, 4vw, 24px);
+    box-sizing: border-box;
     animation: ui-dialog-fade 0.15s ease-out;
   }
 
@@ -122,9 +123,13 @@
   .ui-dialog {
     width: 100%;
     max-width: 420px;
+    max-height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 18px;
     box-shadow: 0 20px 60px var(--shadow-overlay);
     overflow: hidden;
     animation: ui-dialog-pop 0.18s ease-out;
@@ -147,6 +152,8 @@
 
   .ui-dialog__header {
     display: flex;
+    flex-shrink: 0;
+    background: var(--secondary-bg);
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
@@ -167,12 +174,19 @@
     flex: 1;
   }
 
+  /* Auf kleinen Bildschirmen scrollt nur der Inhalt; Kopf und Aktionen bleiben sichtbar */
   .ui-dialog__body {
     padding: 18px 16px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .ui-dialog__footer {
     display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    background: var(--secondary-bg);
     justify-content: flex-end;
     gap: 8px;
     padding: 14px 16px;

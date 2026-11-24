@@ -266,6 +266,10 @@
   .upload-group {
     display: flex;
     gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--secondary-bg);
     flex-shrink: 0;
   }
 
@@ -319,13 +323,17 @@
   /* ---- Drop hint overlay ---- */
   .drop-hint {
     position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+    inset: 4px;
+    border: 1px dashed var(--accent-primary);
+    border-radius: 12px;
+    padding-inline: 12px;
+    text-align: center;
+    background: color-mix(in srgb, var(--secondary-bg) 94%, var(--accent-primary));
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: var(--accent-primary);
+    color: var(--text-primary);
     font-size: 14px;
     font-weight: 400;
     pointer-events: none;
@@ -335,6 +343,8 @@
   .drop-hint .icon {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
+    color: var(--accent-primary);
   }
 
   /* ===== Responsive ===== */

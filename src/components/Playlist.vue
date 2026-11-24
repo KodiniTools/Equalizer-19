@@ -179,7 +179,8 @@
     text-align: center;
     padding: 22px 12px;
     border: 1px dashed var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
+    background: var(--secondary-bg);
     color: var(--text-muted);
   }
 
@@ -189,7 +190,7 @@
     margin-bottom: 8px;
     display: block;
     margin-inline: auto;
-    opacity: 0.6;
+    color: var(--accent-primary);
   }
 
   .empty-state p {

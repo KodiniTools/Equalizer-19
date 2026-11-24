@@ -101,9 +101,10 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    height: 28px;
+    min-height: 28px;
     padding: 0 4px 0 8px;
-    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
     background: var(--secondary-bg);
     color: var(--text-muted);
     font-size: 11px;

@@ -156,10 +156,10 @@
 
   .device-select {
     width: 100%;
-    height: 32px;
+    min-height: 36px;
     padding: 0 30px 0 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
     background: var(--secondary-bg);
     color: var(--text-primary);
     font-size: 12px;

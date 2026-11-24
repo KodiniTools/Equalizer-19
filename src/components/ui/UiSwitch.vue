@@ -69,7 +69,7 @@
     height: 18px;
     border-radius: 999px;
     background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-strong);
     transition: background 0.2s;
   }
 
