@@ -7,12 +7,25 @@ import LandingSteps from '../LandingSteps.vue'
 import LandingDetails from '../LandingDetails.vue'
 import LandingBlog from '../LandingBlog.vue'
 import LandingCta from '../LandingCta.vue'
+import LandingHero from '../LandingHero.vue'
 import { EQ_BAND_FREQUENCIES, EQ_PRESETS, COMP_PRESETS } from '../../../utils/presets'
 import { getBlogArticlesNewestFirst } from '../../../data/blogArticles'
 
 const global = { provide: i18nStub(), stubs: { RouterLink: true } }
 
 describe('Landing-Abschnitte', () => {
+  it('LandingHero: Kopf, interaktive Demo, Rumpf in dieser Reihenfolge (Demo unter dem Titel auf schmalen Bildschirmen)', () => {
+    const wrapper = mount(LandingHero, {
+      global: { ...global, stubs: { ...global.stubs, HeroEqualizer: true } },
+    })
+    const grid = wrapper.find('.lp-hero-grid')
+    const order = [...grid.element.children].map((el) => el.className.split(' ')[0])
+    expect(order).toEqual(['lp-hero-head', 'lp-demo', 'lp-hero-body'])
+    expect(grid.find('.lp-hero-head h1').text()).toBe('lp_title')
+    expect(wrapper.findComponent({ name: 'HeroEqualizer' }).exists()).toBe(true)
+    expect(grid.find('.lp-hero-body .lp-lead').text()).toBe('lp_subtitle')
+  })
+
   it('LandingFacts leitet die Kennzahlen aus presets.js ab', () => {
     const values = mount(LandingFacts, { global })
       .findAll('dt')

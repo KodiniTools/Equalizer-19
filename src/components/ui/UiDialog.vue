@@ -162,7 +162,7 @@
   .ui-dialog__title {
     margin: 0;
     font-size: 1em;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-primary);
     flex: 1;
   }

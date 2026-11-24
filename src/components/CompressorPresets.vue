@@ -66,7 +66,7 @@
     background: var(--secondary-bg);
     color: var(--text-primary);
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 400;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;

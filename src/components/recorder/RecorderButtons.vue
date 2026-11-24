@@ -123,7 +123,7 @@
   /* Countdown in the bar: seconds left, click cancels */
   .ui-button.rec-btn.countdown {
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 400;
     font-variant-numeric: tabular-nums;
     animation: rec-countdown-pulse 1s infinite;
   }

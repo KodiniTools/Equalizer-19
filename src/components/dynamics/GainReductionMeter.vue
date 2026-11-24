@@ -73,7 +73,7 @@
 
   .gr-label {
     font-size: 10.5px;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--text-muted);

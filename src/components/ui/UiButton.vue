@@ -22,7 +22,8 @@
   /**
    * Textbutton des Design-Systems. Ersetzt das frühere globale .btn-System.
    *
-   * - `variant`: secondary (Standard) · primary · ghost · outline · danger
+   * - `variant`: secondary (Standard, neutrale Fläche) · primary · outline (beide dunkles
+   *   Gold mit weißem Text, --button-bg) · ghost · danger
    * - `size`: sm (30 px) · md (36 px) · lg (44 px)
    * - `pressed`: true/false setzt aria-pressed und den Zustand „an“ (.is-on);
    *   primary/secondary werden dann zur Akzentfläche, ghost zur getönten Fläche
@@ -78,7 +79,7 @@
     color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
@@ -113,16 +114,19 @@
   }
 
   /* ---- Varianten ---- */
-  .ui-button--primary {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: var(--on-accent);
+  /* Primär und Outline: die eine Button-Farbe (dunkles Gold, weißer Text) */
+  .ui-button--primary,
+  .ui-button--outline {
+    background: var(--button-bg);
+    border-color: var(--button-bg);
+    color: var(--on-button);
   }
 
-  .ui-button--primary:hover:not(:disabled) {
-    background: var(--accent-hover);
-    border-color: var(--accent-hover);
-    color: var(--on-accent);
+  .ui-button--primary:hover:not(:disabled),
+  .ui-button--outline:hover:not(:disabled) {
+    background: var(--button-bg-hover);
+    border-color: var(--button-bg-hover);
+    color: var(--on-button);
   }
 
   .ui-button--ghost {
@@ -134,16 +138,6 @@
   .ui-button--ghost:hover:not(:disabled) {
     background: var(--hover-bg);
     border-color: transparent;
-  }
-
-  .ui-button--outline {
-    background: transparent;
-    border-color: var(--border-color);
-  }
-
-  .ui-button--outline:hover:not(:disabled) {
-    background: transparent;
-    border-color: var(--accent-primary);
   }
 
   .ui-button--danger {
@@ -193,15 +187,15 @@
 
   /* ---- Zustand „an“ (aria-pressed): Vollfläche für Schalter … ---- */
   .ui-button.is-on {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: var(--on-accent);
+    background: var(--button-bg);
+    border-color: var(--button-bg);
+    color: var(--on-button);
   }
 
   .ui-button.is-on:hover:not(:disabled) {
-    background: var(--accent-hover);
-    border-color: var(--accent-hover);
-    color: var(--on-accent);
+    background: var(--button-bg-hover);
+    border-color: var(--button-bg-hover);
+    color: var(--on-button);
   }
 
   /* … und getönte Fläche für Modus-Buttons (Shuffle, Repeat) */

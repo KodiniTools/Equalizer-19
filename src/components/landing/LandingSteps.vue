@@ -44,14 +44,14 @@
     border-radius: 50%;
     border: 2px solid var(--accent-primary);
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 400;
     color: var(--accent-primary);
   }
 
   .lp-step h3 {
     margin: 0 0 8px;
     font-size: 19px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

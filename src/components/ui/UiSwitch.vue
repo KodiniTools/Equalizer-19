@@ -109,7 +109,7 @@
 
   .ui-switch__label {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

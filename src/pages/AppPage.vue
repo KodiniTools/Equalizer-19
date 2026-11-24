@@ -13,7 +13,7 @@
     <main class="app-main">
       <div class="container main-layout app-frame">
         <!-- Console header: tool name, way back to the landing page, undo/redo, help -->
-        <div class="app-topbar">
+        <header class="app-topbar">
           <div class="app-brand">
             <span class="app-brand-badge" aria-hidden="true">19</span>
             <h1 class="app-brand-title">Equalizer 19</h1>
@@ -26,8 +26,9 @@
           <div class="app-topbar-tools">
             <HistoryControls />
             <router-link to="/faq" class="page-link">{{ t.app_help }}</router-link>
+            <ThemeToggle />
           </div>
-        </div>
+        </header>
 
         <!-- Narrow screens: one section at a time instead of three stacked columns -->
         <UiSegmentedControl
@@ -93,6 +94,7 @@
   import DynamicsProcessor from '../components/DynamicsProcessor.vue'
   import Playlist from '../components/Playlist.vue'
   import InputSource from '../components/InputSource.vue'
+  import ThemeToggle from '../components/ui/ThemeToggle.vue'
   import HistoryControls from '../components/HistoryControls.vue'
   import { useInputSource } from '../composables/useInputSource'
   import { useAudioEngineStore } from '../stores/audioEngine'
@@ -253,6 +255,10 @@
 
   /* Top bar: tool name + back link / undo-redo / help */
   .app-topbar {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--header-bg);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -263,6 +269,7 @@
 
   .app-brand {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     min-width: 0;
@@ -277,7 +284,7 @@
     background: var(--accent-primary);
     color: var(--on-accent);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.02em;
     flex-shrink: 0;
   }
@@ -285,7 +292,7 @@
   .app-brand-title {
     margin: 0;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
     white-space: nowrap;
   }
@@ -296,6 +303,7 @@
 
   .app-topbar-tools {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
   }
@@ -353,7 +361,7 @@
     margin: 12px 16px 0;
     border-radius: 10px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     animation: slideIn 0.3s ease-out;
   }
 

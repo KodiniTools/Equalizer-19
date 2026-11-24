@@ -1,0 +1,124 @@
+/* Lokale Navigation der Landing-Page (HeroNav.vue), Etappe 2.
+   Klebt unter der globalen SSI-Navigation (--site-nav-height, 0 ohne Partial).
+   Auf schmalen Bildschirmen brechen die Links in mehrere Zeilen um. */
+.hero-nav {
+  position: sticky;
+  top: var(--site-nav-height);
+  z-index: 50; /* unter der globalen Navigation (100) und ihren Dropdowns */
+  background: var(--header-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  transition: box-shadow 0.3s ease;
+}
+
+.hero-nav.scrolled {
+  box-shadow: 0 6px 20px var(--shadow-raised);
+}
+
+.hero-nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 24px);
+}
+
+.hero-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.hero-nav-brand .icon {
+  color: var(--accent-primary);
+}
+
+.hero-nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+  margin-inline-start: auto;
+}
+
+.hero-nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.hero-nav-link:hover {
+  color: var(--text-primary);
+  background: var(--hover-bg);
+}
+
+.hero-nav-link.active {
+  color: var(--accent-primary);
+  background: var(--hover-bg);
+}
+
+/* Kompakte Variante des UiButton (lg) */
+.ui-button.hero-nav-cta {
+  margin-inline-start: 8px;
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.hero-nav-brand:focus-visible,
+.hero-nav-link:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  /* Mehrzeilig statt klebend: die umbrechende Leiste würde sonst zu viel Höhe binden */
+  .hero-nav {
+    position: static;
+  }
+
+  .hero-nav-inner {
+    flex-wrap: wrap;
+    padding-block: 10px;
+  }
+
+  .hero-nav-links {
+    order: 1;
+    width: 100%;
+    margin-inline-start: 0;
+  }
+
+  .hero-nav-link {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .ui-button.hero-nav-cta {
+    margin-inline-start: 0;
+  }
+
+  .theme-toggle {
+    margin-inline-start: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-nav,
+  .hero-nav-link {
+    transition: none;
+  }
+}

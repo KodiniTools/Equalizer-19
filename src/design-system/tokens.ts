@@ -18,24 +18,25 @@ interface TokenEntry {
 
 export const designTokens = tokens
 
-/** Alias-Syntax der Design-Tokens: `{group.theme.--name}`. */
-const ALIAS = /^\{([\w-]+(?:\.[\w-]+)*)\}$/
+/** Alias-Syntax der Design-Tokens: `{group.theme.--name}`, auch eingebettet (color-mix, Verläufe). */
+const ALIAS = /\{([\w-]+(?:\.[\w-]+)*)\}/g
 
 /**
- * Löst einen Token-Wert auf; Aliase werden rekursiv ersetzt.
+ * Löst einen Token-Wert auf; Aliase werden rekursiv ersetzt, auch innerhalb
+ * von Funktionen wie `color-mix(in srgb, {color.dark.--secondary-bg} 96%, transparent)`.
  */
 function resolveValue(value: unknown, depth = 0): string {
   if (Array.isArray(value)) return value.join(', ')
   const text = String(value)
-  const alias = text.match(ALIAS)
-  if (!alias) return text
   if (depth > 8) throw new Error(`Token-Alias zu tief verschachtelt: ${text}`)
-  let node: unknown = tokens
-  for (const key of alias[1].split('.')) {
-    node = (node as Record<string, unknown> | undefined)?.[key]
-    if (node === undefined) throw new Error(`Unbekannter Token-Alias: ${text}`)
-  }
-  return resolveValue((node as TokenEntry).$value, depth + 1)
+  return text.replace(ALIAS, (alias, path: string) => {
+    let node: unknown = tokens
+    for (const key of path.split('.')) {
+      node = (node as Record<string, unknown> | undefined)?.[key]
+      if (node === undefined) throw new Error(`Unbekannter Token-Alias: ${alias}`)
+    }
+    return resolveValue((node as TokenEntry).$value, depth + 1)
+  })
 }
 
 /** Die Farb-Tokens eines Themes als Name → Eintrag. */

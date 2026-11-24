@@ -3,9 +3,12 @@
     <!-- Header -->
     <header class="fq-hero">
       <div class="fq-wrap">
-        <router-link to="/" class="page-link page-link-strong fq-back">
-          <span aria-hidden="true">←</span> {{ t.app_back_home }}
-        </router-link>
+        <div class="fq-header-actions">
+          <router-link to="/" class="page-link page-link-strong fq-back">
+            <span aria-hidden="true">←</span> {{ t.app_back_home }}
+          </router-link>
+          <ThemeToggle />
+        </div>
         <p class="fq-eyebrow">{{ t.faq_eyebrow }}</p>
         <h1 class="fq-title">{{ t.faq_title }}</h1>
         <p class="fq-lead">{{ t.faq_subtitle }}</p>
@@ -58,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+  import ThemeToggle from '../components/ui/ThemeToggle.vue'
   import { UiButton } from '../components/ui'
   import { injectI18n } from '../composables/useI18n'
   import type { TranslationKey } from '../i18n'
@@ -104,6 +108,13 @@
     border-bottom: 1px solid var(--border-color);
   }
 
+  .fq-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
   .fq-back {
     margin-bottom: 28px;
   }
@@ -111,7 +122,7 @@
   .fq-eyebrow {
     margin: 0 0 14px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.4px;
     color: var(--accent-primary);
   }
@@ -120,7 +131,7 @@
     margin: 0 0 14px;
     font-size: clamp(32px, 4.5vw, 48px);
     line-height: 1.1;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.5px;
     color: var(--text-primary);
   }
@@ -151,7 +162,7 @@
   .fq-nav-label {
     margin: 0 0 12px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -202,7 +213,7 @@
   .fq-category h2 {
     margin: 0 0 12px;
     font-size: 24px;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.2px;
     color: var(--text-primary);
   }
@@ -224,7 +235,7 @@
     cursor: pointer;
     list-style: none;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-primary);
     transition: color 0.2s;
   }
@@ -299,7 +310,7 @@
   .fq-final h2 {
     margin: 0 0 10px;
     font-size: clamp(26px, 3.2vw, 36px);
-    font-weight: 800;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

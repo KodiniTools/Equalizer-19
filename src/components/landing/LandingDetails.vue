@@ -39,7 +39,7 @@
   .lp-detail h3 {
     margin: 0 0 6px;
     font-size: 17px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

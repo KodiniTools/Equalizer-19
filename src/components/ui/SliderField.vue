@@ -99,7 +99,7 @@
 
   .slider-field__label {
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-secondary);
   }
 

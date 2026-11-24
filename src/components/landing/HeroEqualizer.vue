@@ -148,7 +148,7 @@
   }
 
   .heq-head b {
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-primary);
   }
 

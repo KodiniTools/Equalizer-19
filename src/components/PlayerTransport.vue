@@ -106,7 +106,7 @@
     top: 0;
     right: 1px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 400;
     line-height: 1;
     color: var(--accent-primary);
     background: var(--card-bg);
