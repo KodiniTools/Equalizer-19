@@ -21,6 +21,8 @@ const tokenNames = new Set([
 const LOCAL_VARIABLES: Readonly<Record<string, string>> = {
   // Anker-Offset unter globaler Nav + HeroNav
   '--lp-anchor-offset': 'pages/LandingPage.vue',
+  // Höhe der globalen SSI-Navigation (0 ohne Partial), für HeroNav und Anker-Offsets
+  '--site-nav-height': 'assets/style.css',
   // Light-Palette des externen Nav-Partials (siehe tokens.json color.nav-light);
   // --nav-bg wird dort bewusst für .global-nav neu aufgebaut
   '--nav-bg': 'assets/style.css',
@@ -46,7 +48,6 @@ const RUNTIME_VARIABLES = new Set(['--sticky-player-h'])
 const FROZEN_LITERALS: Readonly<Record<string, number>> = {
   'assets/style.css: #001d3d': 1,
   'assets/style.css: #003971': 1,
-  'assets/style.css: #014f99': 1,
   'assets/style.css: rgba(0, 57, 113, 0.08)': 1,
   'assets/style.css: rgba(0, 57, 113, 0.12)': 1,
   'assets/style.css: rgba(1, 79, 153, 0.06)': 1,

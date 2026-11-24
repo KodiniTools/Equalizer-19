@@ -19,6 +19,7 @@ const highContrast = mediaBlock(tokensCss, '(prefers-contrast: high)')
 const hcDark = cssBlock(highContrast, ':root')
 const hcLight = cssBlock(highContrast, "[data-theme='light']")
 const navLight = cssBlock(styleCss, "[data-theme='light'] .global-nav")
+const navDark = cssBlock(styleCss, ":root[data-theme='dark'] .global-nav")
 
 /** Alle JSON-Einträge, die eine CSS-Variable beschreiben: name → [{ path, value }]. */
 interface JsonVariable {
@@ -99,6 +100,12 @@ describe('tokens.css ↔ tokens.json', () => {
         .filter((k) => k.startsWith('--'))
         .sort()
     )
+  })
+
+  it('nav-dark: der Block :root[data-theme=dark] .global-nav in style.css steht gleich in tokens.json', () => {
+    expect(navDark.size).toBeGreaterThan(0)
+    expectThemeMatchesJson(navDark, 'nav-dark', 'nav-dark')
+    expect([...navDark.keys()].sort()).toEqual([...navLight.keys()].sort())
   })
 
   it('jedes Farb-Token aus tokens.json ist in tokens.css deklariert', () => {

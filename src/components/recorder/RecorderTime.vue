@@ -61,7 +61,7 @@
   }
 
   .rec-time .time {
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .rec-time.paused {
@@ -76,7 +76,7 @@
   .paused-label {
     font-family: var(--font-sans);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--warning);

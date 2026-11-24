@@ -140,7 +140,7 @@
     font-family: inherit;
     line-height: normal;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -166,8 +166,8 @@
 
   /* Varianten */
   .ui-segmented--accent .ui-segmented__option.is-active {
-    background: var(--accent-primary);
-    color: var(--on-accent);
+    background: var(--button-bg);
+    color: var(--on-button);
   }
 
   .ui-segmented--surface .ui-segmented__option {

@@ -50,6 +50,12 @@
   --shadow-raised: rgba(0, 0, 0, 0.2); /* neutraler Schatten erhabener Flächen (Tabs) */
   --shadow-overlay: rgba(0, 0, 0, 0.45); /* Schatten schwebender Flächen (Dialoge) */
   --overlay-backdrop: rgba(0, 0, 0, 0.55); /* Abdunkelung hinter Dialogen */
+  /* Header surfaces (HeroNav, App-Topbar, FAQ) and the one button colour:
+     dark gold with white text in both themes (Etappe 2) */
+  --header-bg: color-mix(in srgb, var(--secondary-bg) 96%, transparent);
+  --button-bg: #8f6320;
+  --button-bg-hover: #a8762a;
+  --on-button: #ffffff;
   /* EQ band colours: boost in the brand accent, cut in the secondary accent.
      Traffic-light colours stay reserved for meters and status. */
   --eq-boost: var(--accent-primary);
@@ -94,6 +100,10 @@
   --shadow-raised: rgba(0, 0, 0, 0.2);
   --shadow-overlay: rgba(0, 0, 0, 0.45);
   --overlay-backdrop: rgba(0, 0, 0, 0.55);
+  --header-bg: color-mix(in srgb, var(--secondary-bg) 96%, transparent);
+  --button-bg: #8f6320;
+  --button-bg-hover: #755019;
+  --on-button: #ffffff;
   /* EQ band colours follow the accents (explicit per theme, like tokens.json) */
   --eq-boost: var(--accent-primary);
   --eq-cut: var(--accent-secondary);

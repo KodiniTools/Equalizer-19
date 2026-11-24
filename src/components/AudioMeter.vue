@@ -157,7 +157,7 @@
 
   .meter-label {
     font-size: 10.5px;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-muted);
     letter-spacing: 0.05em;
   }
@@ -212,7 +212,7 @@
 
   .meter-db.clipping {
     color: var(--error);
-    font-weight: 700;
+    font-weight: 400;
   }
 
   /* Scale: positioned under the track column */

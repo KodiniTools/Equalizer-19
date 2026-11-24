@@ -104,7 +104,7 @@
     padding: 2px 8px;
     border-radius: 999px;
     font-size: 10.5px;
-    font-weight: 600;
+    font-weight: 400;
     white-space: nowrap;
     color: var(--accent-primary);
     background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
@@ -114,7 +114,7 @@
   :slotted(.panel-section-label) {
     display: block;
     font-size: 10.5px;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--text-muted);

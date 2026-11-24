@@ -251,7 +251,7 @@
   /* ---- Link to the FAQ ---- */
   .help-link {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--accent-primary);
     text-decoration: none;
   }

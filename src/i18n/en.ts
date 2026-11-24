@@ -12,6 +12,8 @@ const en: Record<TranslationKey, string> = {
   app_tab_dynamics: 'Dynamics',
   language: 'Language',
   theme: 'Theme',
+  theme_dark: 'Dark theme',
+  theme_light: 'Light theme',
 
   // Landing page
   lp_eyebrow: 'Free · In your browser · No installation',

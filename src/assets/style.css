@@ -3,6 +3,8 @@
 @import '../design-system/tokens.css';
 
 /* ===== CUSTOM FONTS ===== */
+/* Einzige Schriftschnitt-Datei: Supreme Regular (public/fonts/, Vite hängt den
+   Basispfad an). Es gibt keinen Bold-Schnitt; alle Gewichte in der App sind 400. */
 @font-face {
   font-family: 'Supreme';
   src: url('/fonts/Supreme-Regular.woff2') format('woff2');
@@ -11,17 +13,23 @@
   font-display: swap;
 }
 
-/* Bold cut: without it the browser synthesises bold from the regular face
-   (blurry, too wide). Weights 600-800 resolve to this file. */
-@font-face {
-  font-family: 'Supreme';
-  src: url('/fonts/Supreme-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+/* ===== MAIN CONTENT STYLES ===== */
+/* Höhe der globalen SSI-Navigation (nav.html): 70px Desktop, 60px mobil, 0 ohne
+   Partial (lokale Vorschau). HeroNav klebt darunter, Anker-Offsets rechnen damit. */
+:root {
+  --site-nav-height: 0px;
 }
 
-/* ===== MAIN CONTENT STYLES ===== */
+:root:has(.global-nav) {
+  --site-nav-height: 70px;
+}
+
+@media (max-width: 768px) {
+  :root:has(.global-nav) {
+    --site-nav-height: 60px;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   background: var(--gradient-primary);
@@ -31,6 +39,19 @@ body {
     background-color 0.3s ease,
     color 0.3s ease;
   line-height: 1.5;
+}
+
+/* Nur der Regular-Schnitt von Supreme ist geladen: keine synthetische Fettung */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong,
+th {
+  font-weight: 400;
 }
 
 .container {
@@ -240,9 +261,56 @@ body.has-sticky-player {
   --dropdown-bg: rgba(255, 255, 255, 0.97);
   --dropdown-border: rgba(1, 79, 153, 0.08);
   --dropdown-shadow: rgba(0, 57, 113, 0.12);
-  --accent-color: #014f99;
+  --accent-color: var(--button-bg);
   /* Also replaces the partial's fixed yellow for browsers without backdrop-filter */
   background: var(--nav-bg);
+}
+
+/* Dark counterpart: the partial's own [data-theme=dark] .global-nav block (0,2,0)
+   comes later in the document, so :root[data-theme='dark'] (0,3,0) is needed to
+   put the app's dark blue surfaces under its logo, menus and theme toggle. */
+:root[data-theme='dark'] .global-nav {
+  --nav-bg: var(--header-bg);
+  --nav-text: var(--text-secondary);
+  --nav-text-hover: var(--text-primary);
+  --nav-bg-hover: var(--hover-bg);
+  --nav-border: var(--border-color);
+  --nav-shadow: var(--shadow-light);
+  --dropdown-bg: var(--card-bg);
+  --dropdown-border: var(--border-color);
+  --dropdown-shadow: var(--shadow-raised);
+  --accent-color: var(--button-bg);
+  background: var(--nav-bg);
+}
+
+/* Buttons of the partial (theme toggle, language switch) in the app's button
+   colour: dark gold with white text, both themes. :root lifts the specificity
+   above the partial's [data-theme=dark] rules. */
+:root .global-nav .global-nav-theme-toggle,
+:root .global-nav .global-nav-lang-btn.active {
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: var(--on-button);
+}
+
+:root .global-nav .global-nav-theme-toggle:hover,
+:root .global-nav .global-nav-lang-btn.active:hover {
+  background: var(--button-bg-hover);
+  border-color: var(--button-bg-hover);
+  color: var(--on-button);
+}
+
+/* Only the regular cut of Supreme is loaded: the partial's own 500-700 weights
+   would be synthesised, so every element of the global navigation uses 400. */
+:root .global-nav,
+:root .global-nav * {
+  font-weight: 400;
+}
+
+/* Local theme toggle (ThemeToggle.vue) only without the partial: the global
+   navigation already carries the site-wide switch. */
+body:has(.global-nav) .theme-toggle {
+  display: none;
 }
 
 /* ===== PAGE BUTTONS (landing, FAQ, app header) ===== */
@@ -258,20 +326,25 @@ body.has-sticky-player {
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--button-bg);
   border-radius: 8px;
+  background: var(--button-bg);
+  font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--on-button);
   text-decoration: none;
+  cursor: pointer;
   transition:
-    color 0.2s,
+    background-color 0.2s,
     border-color 0.2s;
 }
 
 .page-link:hover {
-  color: var(--text-primary);
-  border-color: var(--accent-primary);
+  background: var(--button-bg-hover);
+  border-color: var(--button-bg-hover);
+  color: var(--on-button);
 }
 
 .page-link:focus-visible {
@@ -280,7 +353,7 @@ body.has-sticky-player {
 }
 
 .page-link-strong {
-  color: var(--text-primary);
+  color: var(--on-button);
 }
 
 /* Reduced motion support */

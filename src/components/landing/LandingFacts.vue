@@ -61,7 +61,7 @@
   .lp-fact dt {
     font-family: var(--font-mono);
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.1;
     color: var(--text-primary);
   }

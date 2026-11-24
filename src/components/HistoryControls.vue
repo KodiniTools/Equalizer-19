@@ -117,7 +117,7 @@
     background: var(--accent-primary);
     color: var(--on-accent);
     font-size: 10.5px;
-    font-weight: 700;
+    font-weight: 400;
     line-height: 16px;
     text-align: center;
     font-variant-numeric: tabular-nums;

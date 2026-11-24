@@ -14,6 +14,8 @@ const de = {
   app_tab_dynamics: 'Dynamik',
   language: 'Sprache',
   theme: 'Design',
+  theme_dark: 'Dunkles Design',
+  theme_light: 'Helles Design',
 
   // Landing page
   lp_eyebrow: 'Kostenlos · Im Browser · Ohne Installation',

@@ -107,7 +107,7 @@
   .cd-title {
     margin: 0;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.3px;
     color: var(--text-primary);
   }
@@ -145,7 +145,7 @@
     align-items: center;
     justify-content: center;
     font-size: 84px;
-    font-weight: 800;
+    font-weight: 400;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     color: var(--text-primary);
@@ -172,7 +172,7 @@
     background: var(--secondary-bg);
     color: var(--text-primary);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     transition: border-color 0.2s;
   }

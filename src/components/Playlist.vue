@@ -286,7 +286,7 @@
 
   .playlist-item.active .track-number {
     color: var(--accent-primary);
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .track-info {
@@ -295,7 +295,7 @@
   }
 
   .track-name {
-    font-weight: 500;
+    font-weight: 400;
     font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
@@ -304,7 +304,7 @@
   }
 
   .playlist-item.active .track-name {
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .track-meta {
@@ -340,7 +340,7 @@
     cursor: pointer;
     list-style: none;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-muted);
     border-radius: 6px;
     transition: color 0.15s;

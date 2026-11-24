@@ -99,7 +99,7 @@
   .dl-label {
     display: block;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-secondary);
     margin-bottom: 8px;
   }

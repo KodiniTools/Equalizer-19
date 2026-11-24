@@ -127,7 +127,7 @@
     background: var(--accent-primary);
     color: var(--on-accent);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
@@ -159,7 +159,7 @@
     gap: 6px;
     margin-top: 4px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--accent-primary);
   }
 

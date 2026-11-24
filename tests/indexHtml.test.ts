@@ -17,8 +17,9 @@ test('reserves a full viewport for #app before Vue mounts', () => {
   assert.match(inline, /#app\s*\{[^}]*min-height:\s*100dvh/)
 })
 
-test('preloads both Supreme webfont cuts with crossorigin', () => {
-  for (const file of ['Supreme-Regular.woff2', 'Supreme-Bold.woff2']) {
+test('preloads the Supreme Regular webfont (the only cut) with crossorigin', () => {
+  assert.ok(!head.includes('Supreme-Bold'), 'no bold cut is preloaded')
+  for (const file of ['Supreme-Regular.woff2']) {
     const tag = head.match(new RegExp(`<link[^>]*href="/fonts/${file}"[^>]*>`))?.[0]
     assert.ok(tag, `${file} is preloaded`)
     assert.match(tag, /rel="preload"/)

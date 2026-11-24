@@ -114,7 +114,7 @@
     background: transparent;
     color: var(--text-primary);
     font-size: 1em;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     padding: 2px 2px;
   }

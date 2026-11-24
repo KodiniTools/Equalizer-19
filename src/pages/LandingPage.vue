@@ -28,8 +28,7 @@
 <style scoped>
   .landing-page {
     color: var(--text-primary);
-    /* Anchor targets must clear both sticky bars: global nav (70px) + HeroNav (56px) */
-    --lp-anchor-offset: 148px;
+    --lp-anchor-offset: calc(var(--site-nav-height) + 72px);
   }
 
   /* Keep anchored sections clear of the sticky navigation bars.
@@ -41,7 +40,7 @@
 
   @media (max-width: 768px) {
     .landing-page {
-      --lp-anchor-offset: 130px;
+      --lp-anchor-offset: calc(var(--site-nav-height) + 12px);
     }
   }
 </style>

@@ -280,7 +280,7 @@
 
   .track-name {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -327,7 +327,7 @@
     gap: 10px;
     color: var(--accent-primary);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     pointer-events: none;
     z-index: 5;
   }
