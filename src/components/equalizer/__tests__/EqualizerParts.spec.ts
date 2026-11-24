@@ -46,6 +46,21 @@ describe('Equalizer-Teile', () => {
     ])
   })
 
+  it('EqCurveEditor wechselt mit Pfeil links/rechts zum Nachbarband statt den Gain zu ändern', async () => {
+    const wrapper = mount(EqCurveEditor, { props: { bands }, global, attachTo: document.body })
+    const nodes = wrapper.findAll('[role="slider"]')
+    ;(nodes[3].element as SVGGElement).focus()
+    await nodes[3].trigger('keydown', { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(nodes[4].element)
+    await nodes[4].trigger('keydown', { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(nodes[3].element)
+    // Ends stay put instead of wrapping around
+    await nodes[0].trigger('keydown', { key: 'ArrowLeft' })
+    await nodes[18].trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('change')).toBeUndefined()
+    wrapper.unmount()
+  })
+
   it('EqCurveEditor zeichnet das Spektrum aus getSpectrum als Fläche auf der Frequenzachse', async () => {
     // One synchronous animation frame, later requests are ignored (no loop in the test)
     let frames = 0
