@@ -387,7 +387,8 @@ const de = {
   // Accessibility labels
   a11y_eq_bypass: 'Equalizer umschalten',
   a11y_eq_band: '{freq} Hz Band, {gain} dB',
-  a11y_eq_curve: 'EQ-Kurve: ein Punkt je Band, mit Pfeiltasten in 0,5-dB-Schritten',
+  a11y_eq_curve:
+    'EQ-Kurve: ein Punkt je Band, Pfeil auf/ab ändert in 0,5-dB-Schritten, Pfeil links/rechts wechselt das Band',
   a11y_eq_select_preset: 'EQ-Preset auswählen',
   a11y_eq_save_name: 'Name für neues Preset',
   a11y_dynamics_toggle: 'Dynamics Processor umschalten',

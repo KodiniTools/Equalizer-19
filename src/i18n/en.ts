@@ -378,7 +378,8 @@ const en: Record<TranslationKey, string> = {
   // Accessibility labels
   a11y_eq_bypass: 'Toggle equalizer',
   a11y_eq_band: '{freq} Hz band, {gain} dB',
-  a11y_eq_curve: 'EQ curve: one point per band, arrow keys move it in 0.5 dB steps',
+  a11y_eq_curve:
+    'EQ curve: one point per band, up/down arrows move it in 0.5 dB steps, left/right switch bands',
   a11y_eq_select_preset: 'Select EQ preset',
   a11y_eq_save_name: 'New preset name',
   a11y_dynamics_toggle: 'Toggle dynamics processor',

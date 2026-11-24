@@ -129,8 +129,9 @@
   /**
    * Die 19 Bänder als eine Kurve auf einer logarithmischen Frequenzachse:
    * jeder Punkt lässt sich mit Maus/Finger ziehen und ist per Tastatur ein
-   * Slider (Pfeile ±0,5 dB, Bild auf/ab ±3 dB, Pos1/Ende = −12/+12 dB,
-   * Doppelklick = 0 dB). Hinter der Kurve läuft das Live-Spektrum aus
+   * Slider (Pfeil auf/ab ±0,5 dB, mit Shift ±3 dB, Bild auf/ab ±3 dB,
+   * Pos1/Ende = −12/+12 dB, 0/Rücktaste = 0 dB, Pfeil links/rechts springt
+   * zum Nachbarband, Doppelklick = 0 dB). Hinter der Kurve läuft das Live-Spektrum aus
    * `getSpectrum`. Rein darstellend: jede Änderung wird als change(index, gain)
    * gemeldet, der Container schreibt sie in den Engine-Store.
    */
@@ -315,12 +316,19 @@
     const big = STEP * 6
     let next: number | null = null
     switch (event.key) {
+      // Left/right walk along the curve to the neighbouring band; the gain
+      // itself changes with up/down only (Kodini, 2026-11-24).
+      case 'ArrowLeft':
+      case 'ArrowRight': {
+        event.preventDefault()
+        const target = index + (event.key === 'ArrowRight' ? 1 : -1)
+        if (target >= 0 && target < props.bands.length) focusNode(target)
+        return
+      }
       case 'ArrowUp':
-      case 'ArrowRight':
         next = gain + (event.shiftKey ? big : STEP)
         break
       case 'ArrowDown':
-      case 'ArrowLeft':
         next = gain - (event.shiftKey ? big : STEP)
         break
       case 'PageUp':
