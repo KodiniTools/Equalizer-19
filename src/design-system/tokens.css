@@ -56,6 +56,8 @@
   --button-bg: #8f6320;
   --button-bg-hover: #a8762a;
   --on-button: #ffffff;
+  --button-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --button-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
   /* EQ band colours: boost in the brand accent, cut in the secondary accent.
      Traffic-light colours stay reserved for meters and status. */
   --eq-boost: var(--accent-primary);
@@ -104,6 +106,8 @@
   --button-bg: #8f6320;
   --button-bg-hover: #755019;
   --on-button: #ffffff;
+  --button-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --button-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
   /* EQ band colours follow the accents (explicit per theme, like tokens.json) */
   --eq-boost: var(--accent-primary);
   --eq-cut: var(--accent-secondary);

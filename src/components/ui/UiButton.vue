@@ -117,14 +117,14 @@
   /* Primär und Outline: die eine Button-Farbe (dunkles Gold, weißer Text) */
   .ui-button--primary,
   .ui-button--outline {
-    background: var(--button-bg);
+    background: var(--button-grad);
     border-color: var(--button-bg);
     color: var(--on-button);
   }
 
   .ui-button--primary:hover:not(:disabled),
   .ui-button--outline:hover:not(:disabled) {
-    background: var(--button-bg-hover);
+    background: var(--button-grad-hover);
     border-color: var(--button-bg-hover);
     color: var(--on-button);
   }
@@ -187,13 +187,13 @@
 
   /* ---- Zustand „an“ (aria-pressed): Vollfläche für Schalter … ---- */
   .ui-button.is-on {
-    background: var(--button-bg);
+    background: var(--button-grad);
     border-color: var(--button-bg);
     color: var(--on-button);
   }
 
   .ui-button.is-on:hover:not(:disabled) {
-    background: var(--button-bg-hover);
+    background: var(--button-grad-hover);
     border-color: var(--button-bg-hover);
     color: var(--on-button);
   }
