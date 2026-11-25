@@ -164,3 +164,15 @@ describe('tokens.ts', () => {
     expect(() => colorToken('dark', '--nope')).toThrow(/Unbekanntes Farb-Token/)
   })
 })
+
+describe('Button-Verlauf (dreistufig, dunkelgold)', () => {
+  it.each([
+    ['dark', dark],
+    ['light', light],
+  ])('%s: --button-grad und Hover vorhanden, weiße Schrift bleibt lesbar', (_name, vars) => {
+    expect(vars.get('--button-grad')).toContain('#9c6c26')
+    expect(vars.get('--button-grad')?.match(/#[0-9a-f]{6}/gi)).toHaveLength(3)
+    expect(vars.get('--button-grad-hover')).toContain('#8c5f1f')
+    expect(vars.get('--on-button')).toBe('#ffffff')
+  })
+})

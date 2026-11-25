@@ -166,7 +166,7 @@
 
   /* Varianten */
   .ui-segmented--accent .ui-segmented__option.is-active {
-    background: var(--button-bg);
+    background: var(--button-grad);
     color: var(--on-button);
   }
 
