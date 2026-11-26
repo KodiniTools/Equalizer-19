@@ -152,6 +152,9 @@ const en: Record<TranslationKey, string> = {
   faq_rec_q5: 'Can I start recording with a delay?',
   faq_rec_a5:
     'Yes. Next to WAV/WebM in the player bar you choose the start delay: instant, 3, 5 or 10 seconds. After clicking the record button a clearly visible countdown runs in the middle of the screen; the app stays usable, so you can still start playback, for example. Cancel with “Cancel countdown”, a click on the seconds display in the bar or the Esc key. Your choice is remembered.',
+  faq_rec_q6: 'Is there an offline export?',
+  faq_rec_a6:
+    'Yes, for tracks from the playlist. Select the track, set the equalizer and compressor, and click “Offline export” in the playlist card. The app renders the track with the current settings (equalizer, compressor, master volume) faster than it would play and saves it as WAV with 16, 24 or 32-bit float. Nothing is played through the speakers, and playback and recording are not affected. The settings apply as they are when you click “Save”. Live inputs (microphone, line-in, PC sound) cannot be pre-rendered; the normal recording stays for those. Tracks up to 20 minutes long are supported.',
 
   // Technical FAQ
   faq_tech_q1: 'Which browsers are supported?',
@@ -256,6 +259,19 @@ const en: Record<TranslationKey, string> = {
   rec_download_failed: 'Download failed',
 
   // Download dialog
+  // Offline export
+  export_open: 'Offline export',
+  export_open_title:
+    'Render the selected track as WAV with the current settings, faster than real time',
+  export_title: 'Offline export as WAV',
+  export_intro:
+    'The track is rendered with the current equalizer, compressor and master volume settings, faster than it would play. Nothing is played through the speakers.',
+  export_running: 'Rendering …',
+  export_suffix: 'processed',
+  export_error_too_long: 'The track is too long to export (maximum {n} minutes).',
+  export_error_decode: 'The file could not be read.',
+  export_error_render: 'Rendering failed.',
+  export_error_save: 'The file could not be saved.',
   dl_title: 'Download recording',
   dl_filename_label: 'File name',
   dl_name_placeholder: 'audio-export',
