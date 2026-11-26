@@ -1,3 +1,4 @@
+import { computed, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { i18nStub } from '../../../__tests__/i18nStub'
@@ -24,6 +25,25 @@ describe('Landing-Abschnitte', () => {
     expect(grid.find('.lp-hero-head h1').text()).toBe('lp_title')
     expect(wrapper.findComponent({ name: 'HeroEqualizer' }).exists()).toBe(true)
     expect(grid.find('.lp-hero-body .lp-lead').text()).toBe('lp_subtitle')
+  })
+
+  it('LandingHero färbt den Titel in zwei Teilen: bis zum ersten Komma, dann der Rest', () => {
+    const t = computed(
+      () =>
+        new Proxy(
+          {},
+          { get: (_, key) => (key === 'lp_title' ? 'Klang, direkt im Browser' : String(key)) }
+        )
+    )
+    const wrapper = mount(LandingHero, {
+      global: {
+        provide: { i18n: { t, currentLanguage: ref('de') } },
+        stubs: { RouterLink: true, HeroEqualizer: true },
+      },
+    })
+    expect(wrapper.find('h1 .lp-title-accent').text()).toBe('Klang,')
+    expect(wrapper.find('h1 .lp-title-blue').text()).toBe('direkt im Browser')
+    expect(wrapper.find('h1').text()).toBe('Klang, direkt im Browser')
   })
 
   it('LandingFacts leitet die Kennzahlen aus presets.js ab', () => {

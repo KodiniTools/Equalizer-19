@@ -2,7 +2,6 @@
    Desktop: Text links (Kopf + Rumpf), interaktive Demo rechts über beide Zeilen.
    Schmal (≤ 960px): Kopf, dann Demo direkt unter dem Titel, dann Lead/Buttons/Trust. */
 .lp-hero {
-  background: var(--gradient-primary);
   padding-block: clamp(38px, 8vw, 100px) clamp(32px, 5vw, 64px);
 }
 
@@ -45,19 +44,27 @@
 
 .lp-title {
   margin: 0 0 20px;
-  font-size: clamp(44px, 6.3vw, 82px);
-  line-height: 1.08;
+  font-size: clamp(2.25rem, 5.25vw, 4.5rem);
+  line-height: 1.05;
   font-weight: 400;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.045em;
   color: var(--text-primary);
+}
+
+.lp-title-accent {
+  color: var(--hero-title-accent);
+}
+
+.lp-title-blue {
+  color: var(--hero-title-blue);
 }
 
 .lp-lead {
   margin: 0 0 32px;
   max-width: 560px;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: var(--hero-lead);
 }
 
 .lp-trust {
@@ -97,10 +104,6 @@
 }
 
 @media (max-width: 600px) {
-  .lp-lead {
-    font-size: 16px;
-  }
-
   .lp-actions .ui-button {
     flex: 1 1 auto;
     justify-content: center;

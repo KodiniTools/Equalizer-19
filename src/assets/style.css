@@ -32,7 +32,11 @@
 
 body {
   font-family: var(--font-sans);
-  background: var(--gradient-primary);
+  /* Flat page colour with two glows (cyan right, blue left) across the top 42rem */
+  background-color: var(--primary-bg);
+  background-image: var(--gradient-primary);
+  background-repeat: no-repeat;
+  background-size: 100% 42rem;
   color: var(--text-primary);
   margin: 0;
   transition:

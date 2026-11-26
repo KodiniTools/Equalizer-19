@@ -103,7 +103,6 @@
 
   /* ---- Header ---- */
   .fq-hero {
-    background: var(--gradient-primary);
     padding: 80px 0 56px;
     border-bottom: 1px solid var(--border-color);
   }
