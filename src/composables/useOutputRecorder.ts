@@ -2,14 +2,14 @@ import { ref, computed } from 'vue'
 import {
   encodeWavFromChunks,
   WAV_BIT_DEPTHS,
-  DEFAULT_WAV_BIT_DEPTH,
   type SampleChunk,
   type WavBitDepth,
 } from '../utils/wavEncoder'
+import { loadBitDepth, storeBitDepth } from '../utils/wavSettings'
+import { savePicker, saveBlobAs, type SaveResult } from '../utils/saveFile'
 import { loadWorkletModule } from '../utils/workletLoader'
 
 const PCM_WORKLET_URL = new URL('../worklets/pcm-recorder.worklet.js', import.meta.url)
-const BIT_DEPTH_STORAGE_KEY = 'eq19_wav_bit_depth'
 const SCRIPT_PROCESSOR_BUFFER = 4096
 // Max. wait for the worklet module before recording falls back to ScriptProcessor
 const WORKLET_LOAD_TIMEOUT_MS = 2000
@@ -26,12 +26,7 @@ export interface RecorderEngine {
   gainNode: AudioNode | null
 }
 
-/** Result of saveRecordingAs(). */
-export interface SaveResult {
-  ok: boolean
-  /** the user dismissed the native save dialog */
-  aborted?: boolean
-}
+export type { SaveResult }
 
 interface PcmNodes {
   source: AudioNode
@@ -44,19 +39,6 @@ interface PcmNodes {
 
 /** Messages the pcm-recorder worklet posts back. */
 type WorkletMessage = { type: 'data'; channels: Float32Array[] } | { type: 'done' }
-
-/** File System Access API (not in lib.dom yet). */
-interface SaveFilePickerOptions {
-  suggestedName?: string
-  types?: Array<{ description?: string; accept: Record<string, string[]> }>
-}
-type ShowSaveFilePicker = (options?: SaveFilePickerOptions) => Promise<FileSystemFileHandle>
-
-function savePicker(): ShowSaveFilePicker | undefined {
-  if (typeof window === 'undefined') return undefined
-  const picker = (window as Window & { showSaveFilePicker?: ShowSaveFilePicker }).showSaveFilePicker
-  return typeof picker === 'function' ? picker.bind(window) : undefined
-}
 
 /**
  * Output Recorder - Records processed audio from AudioEngine
@@ -93,16 +75,6 @@ export function useOutputRecorder() {
   let webmDestination: MediaStreamAudioDestinationNode | null = null
 
   const hasRecording = computed(() => recordedChunks.value.length > 0 || pcmFrames.value > 0)
-
-  function loadBitDepth(): WavBitDepth {
-    try {
-      const stored = parseInt(localStorage.getItem(BIT_DEPTH_STORAGE_KEY) ?? '', 10)
-      if (WAV_BIT_DEPTHS.includes(stored as WavBitDepth)) return stored as WavBitDepth
-    } catch {
-      // storage unavailable
-    }
-    return DEFAULT_WAV_BIT_DEPTH
-  }
 
   function setAudioEngine(engine: RecorderEngine | null): void {
     audioEngineRef = engine
@@ -378,102 +350,23 @@ export function useOutputRecorder() {
     return { blob: new Blob(recordedChunks.value, { type: 'audio/webm' }), ext: 'webm' }
   }
 
-  /**
-   * Remove characters that are invalid in file names and strip a redundant
-   * audio extension the user may have typed.
-   */
-  function sanitizeFilename(name: unknown): string {
-    return String(name || '')
-      .replace(/[\\/:*?"<>|]+/g, '_')
-      .replace(/\.(wav|webm)$/i, '')
-      .replace(/\.+$/, '')
-      .trim()
-      .slice(0, 120)
-  }
-
-  const showSaveFilePicker = savePicker()
-  const supportsFolderPicker = showSaveFilePicker !== undefined
+  const supportsFolderPicker = savePicker() !== undefined
 
   /**
-   * Trigger a plain browser download to the default download folder.
-   */
-  function anchorDownload(blob: Blob, ext: string, filename: string): void {
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.style.display = 'none'
-    a.href = url
-    a.download = `${filename}.${ext}`
-
-    document.body.appendChild(a)
-    a.click()
-
-    setTimeout(() => {
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }, 100)
-  }
-
-  /**
-   * Save the recording with a user-chosen file name. When the browser supports
-   * the File System Access API, a native dialog lets the user pick the target
-   * folder as well; otherwise it falls back to a normal download.
+   * Save the recording with a user-chosen file name (native dialog with folder
+   * choice where the browser has one, otherwise a normal download).
    *
    * Returns { ok, aborted } so callers can react to a cancelled dialog.
    */
   async function saveRecordingAs(filename = 'audio-export'): Promise<SaveResult> {
     if (!hasRecording.value) return { ok: false }
-
-    const safeName = sanitizeFilename(filename) || 'audio-export'
     const ext: RecordingFormat = pcmChunks.length > 0 ? 'wav' : 'webm'
-    const mime = ext === 'wav' ? 'audio/wav' : 'audio/webm'
-
-    // Preferred path: native "Save As" dialog with folder selection.
-    if (showSaveFilePicker) {
-      let handle: FileSystemFileHandle | null = null
-      try {
-        // Request the handle first, while the click's user activation is fresh.
-        handle = await showSaveFilePicker({
-          suggestedName: `${safeName}.${ext}`,
-          types: [
-            {
-              description: `${ext.toUpperCase()} Audio`,
-              accept: { [mime]: [`.${ext}`] },
-            },
-          ],
-        })
-      } catch (error) {
-        // User dismissed the picker — do not fall back to an unwanted download.
-        if (error instanceof Error && error.name === 'AbortError')
-          return { ok: false, aborted: true }
-        console.warn('Save picker unavailable, falling back to download:', error)
-      }
-
-      if (handle) {
-        try {
-          const built = await buildBlob()
-          if (!built) return { ok: false }
-          const writable = await handle.createWritable()
-          await writable.write(built.blob)
-          await writable.close()
-          return { ok: true }
-        } catch (error) {
-          console.error('Saving file failed:', error)
-          return { ok: false }
-        }
-      }
-    }
-
-    // Fallback: standard download to the browser's default folder.
-    const built = await buildBlob()
-    if (!built) return { ok: false }
-
-    try {
-      anchorDownload(built.blob, built.ext, safeName)
-      return { ok: true }
-    } catch (error) {
-      console.error('Download failed:', error)
-      return { ok: false }
-    }
+    return saveBlobAs(
+      async () => (await buildBlob())?.blob ?? null,
+      filename,
+      ext,
+      ext === 'wav' ? 'audio/wav' : 'audio/webm'
+    )
   }
 
   function setFormat(format: string): void {
@@ -491,11 +384,7 @@ export function useOutputRecorder() {
     if (isRecording.value) return
     if (!WAV_BIT_DEPTHS.includes(depth as WavBitDepth)) return
     bitDepth.value = depth as WavBitDepth
-    try {
-      localStorage.setItem(BIT_DEPTH_STORAGE_KEY, String(depth))
-    } catch {
-      // storage unavailable
-    }
+    storeBitDepth(depth as WavBitDepth)
   }
 
   function discardRecording(): void {

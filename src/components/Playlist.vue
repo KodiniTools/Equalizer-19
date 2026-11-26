@@ -76,6 +76,9 @@
 
     <!-- Keyboard shortcuts (collapsed by default) -->
     <template #footer>
+      <div v-if="tracks.length > 0" class="offline-export-row">
+        <OfflineExport />
+      </div>
       <details class="shortcuts">
         <summary>
           <AppIcon name="keyboard" />
@@ -112,6 +115,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import AppIcon from './AppIcon.vue'
+  import OfflineExport from './OfflineExport.vue'
   import { UiIconButton, UiPanel } from './ui'
   import { storeToRefs } from 'pinia'
   import { usePlayerStore } from '../stores/player'
@@ -331,6 +335,11 @@
   .ui-button.btn-remove:hover:not(:disabled) {
     background: color-mix(in srgb, var(--error) 15%, transparent);
     color: var(--error);
+  }
+
+  /* ---- Offline export ---- */
+  .offline-export-row {
+    margin-bottom: 10px;
   }
 
   /* ---- Keyboard shortcuts ---- */

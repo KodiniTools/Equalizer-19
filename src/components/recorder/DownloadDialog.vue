@@ -1,11 +1,13 @@
 <template>
   <UiDialog
     :open="show"
-    :title="t.dl_title"
+    :title="title || t.dl_title"
     icon="download"
     :close-label="t.dl_cancel"
     @close="onCancel"
   >
+    <slot name="intro" />
+
     <label class="dl-label" for="dl-filename">{{ t.dl_filename_label }}</label>
     <div class="dl-input-wrap">
       <input
@@ -26,6 +28,8 @@
       <AppIcon :name="folderSupported ? 'folder' : 'info'" />
       <span>{{ folderSupported ? t.dl_folder_hint_supported : t.dl_folder_hint_unsupported }}</span>
     </p>
+
+    <slot name="options" />
 
     <template #footer>
       <UiButton @click="onCancel">{{ t.dl_cancel }}</UiButton>
@@ -49,6 +53,8 @@
       show?: boolean
       defaultName?: string
       format?: string
+      /** replaces the default title (t.dl_title) */
+      title?: string
       folderSupported?: boolean
       saving?: boolean
     }>(),
@@ -56,6 +62,7 @@
       show: false,
       defaultName: 'audio-export',
       format: 'webm',
+      title: '',
       folderSupported: false,
       saving: false,
     }

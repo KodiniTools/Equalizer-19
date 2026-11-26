@@ -158,6 +158,9 @@ const de = {
   faq_rec_q5: 'Kann ich die Aufnahme verzögert starten?',
   faq_rec_a5:
     'Ja. Neben WAV/WebM in der Player-Leiste wählst du die Startverzögerung: sofort, 3, 5 oder 10 Sekunden. Nach einem Klick auf den Aufnahme-Knopf läuft ein gut sichtbarer Countdown in der Mitte des Bildschirms; die App bleibt dabei bedienbar, sodass du zum Beispiel noch die Wiedergabe starten kannst. Mit „Countdown abbrechen“, einem Klick auf die Sekundenanzeige in der Leiste oder der Esc-Taste brichst du ab. Deine Wahl bleibt gespeichert.',
+  faq_rec_q6: 'Gibt es einen Offline-Export?',
+  faq_rec_a6:
+    'Ja, für Titel aus der Playlist. Wähle den Titel, stelle Equalizer und Kompressor ein und klicke in der Playlist-Karte auf „Offline-Export“. Die App rechnet den Titel mit den aktuellen Einstellungen (Equalizer, Kompressor, Master-Lautstärke) schneller, als er abgespielt würde, und speichert ihn als WAV mit 16, 24 oder 32 Bit Float. Dabei läuft nichts über die Lautsprecher, und Wiedergabe und Aufnahme bleiben unberührt. Die Einstellungen gelten so, wie sie beim Klick auf „Speichern“ sind. Live-Eingänge (Mikrofon, Line-In, PC-Ton) lassen sich nicht vorausrechnen, dafür bleibt die normale Aufnahme. Titel bis 20 Minuten Länge werden unterstützt.',
 
   // Technical FAQ
   faq_tech_q1: 'Welche Browser werden unterstützt?',
@@ -262,6 +265,19 @@ const de = {
   rec_download_failed: 'Download fehlgeschlagen',
 
   // Download dialog
+  // Offline export
+  export_open: 'Offline-Export',
+  export_open_title:
+    'Gewählten Titel mit den aktuellen Einstellungen schneller als in Echtzeit als WAV berechnen',
+  export_title: 'Offline-Export als WAV',
+  export_intro:
+    'Der Titel wird mit den aktuellen Einstellungen von Equalizer, Kompressor und Master-Lautstärke berechnet, schneller als er abgespielt würde. Dabei läuft nichts über die Lautsprecher.',
+  export_running: 'Wird berechnet …',
+  export_suffix: 'bearbeitet',
+  export_error_too_long: 'Der Titel ist zu lang für den Export (maximal {n} Minuten).',
+  export_error_decode: 'Die Datei konnte nicht gelesen werden.',
+  export_error_render: 'Die Berechnung ist fehlgeschlagen.',
+  export_error_save: 'Die Datei konnte nicht gespeichert werden.',
   dl_title: 'Aufnahme herunterladen',
   dl_filename_label: 'Dateiname',
   dl_name_placeholder: 'audio-export',
